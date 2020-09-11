@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30323.103
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepository", "Microsoft.Azure.CosmosRepository\src\Microsoft.Azure.CosmosRepository.csproj", "{82E2D15C-7E53-4B77-A90A-9BADF185D564}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C0FBFA4F-43FF-4E65-AB29-44BDE556210A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.github\ISSUE_TEMPLATE\bug_report.md = .github\ISSUE_TEMPLATE\bug_report.md
+		.github\ISSUE_TEMPLATE\feature_request.md = .github\ISSUE_TEMPLATE\feature_request.md
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTier", "Microsoft.Azure.CosmosRepository.Samples\ServiceTier\ServiceTier.csproj", "{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82E2D15C-7E53-4B77-A90A-9BADF185D564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82E2D15C-7E53-4B77-A90A-9BADF185D564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82E2D15C-7E53-4B77-A90A-9BADF185D564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82E2D15C-7E53-4B77-A90A-9BADF185D564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6AAE7641-B62C-48BA-8FE6-0F819E5B45EF}
+	EndGlobalSection
+EndGlobal
