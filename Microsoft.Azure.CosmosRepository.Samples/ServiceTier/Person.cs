@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosRepository;
+using Newtonsoft.Json;
 using System;
 
 namespace ServiceTier
@@ -14,8 +15,14 @@ namespace ServiceTier
         public string? MiddleName { get; set; }
         public string LastName { get; set; } = null!;
 
-        public int Age =>
+        [JsonIgnore]
+        public int AgeInYears =>
             (int)Math.Round(
                 DateTimeOffset.Now.Subtract(BirthDate).TotalMilliseconds / 3.1536E+10 /* ms in year */);
+
+        public override string ToString() =>
+            MiddleName is null
+                ? $"{FirstName} {LastName} ({AgeInYears} years old, born {BirthDate:MMM dd, yyyy})"
+                : $"{FirstName} {MiddleName} {LastName} ({AgeInYears} years old, born {BirthDate:MMM dd, yyyy})";
     }
 }

@@ -46,22 +46,23 @@ namespace Microsoft.Azure.CosmosRepository
         {
             try
             {
-                var iterator =
+                using (FeedIterator<T> iterator =
                     _containerProvider.GetContainer()
                                       .GetItemLinqQueryable<T>()
                                       .Where(predicate)
-                                      .ToFeedIterator();
-
-                var results = new List<T>();
-                while (iterator.HasMoreResults)
+                                      .ToFeedIterator())
                 {
-                    foreach (T result in await iterator.ReadNextAsync())
+                    List<T> results = new List<T>();
+                    while (iterator.HasMoreResults)
                     {
-                        results.Add(result);
+                        foreach (T result in await iterator.ReadNextAsync())
+                        {
+                            results.Add(result);
+                        }
                     }
-                }
 
-                return results;
+                    return results;
+                }
             }
             catch (CosmosException ex)
             {

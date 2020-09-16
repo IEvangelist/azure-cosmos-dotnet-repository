@@ -10,7 +10,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     /// The cosmos container provider exposes a means of providing
     /// an instance to the configured <see cref="Container"/> object.
     /// </summary>
-    public interface ICosmosContainerProvider
+    internal interface ICosmosContainerProvider
     {
         /// <summary>
         /// Gets the configured <see cref="Container"/> instance that corresponds to the 

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc/>
-    class DefaultCosmosContainerProvider : ICosmosContainerProvider, IDisposable
+    internal class DefaultCosmosContainerProvider : ICosmosContainerProvider, IDisposable
     {
         readonly RepositoryOptions _options;
         readonly Lazy<Container> _lazyContainer;
@@ -18,11 +18,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         CosmosClient _client;
 
-        public DefaultCosmosContainerProvider(
+        internal DefaultCosmosContainerProvider(
             IOptions<RepositoryOptions> options,
             ILogger<DefaultCosmosContainerProvider> logger)
         {
-            _options = options?.Value 
+            _options = options?.Value
                 ?? throw new ArgumentNullException(nameof(options), "Repository options are required.");
 
             _logger = logger;
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                 try
                 {
                     _client = new CosmosClient(_options.CosmosConnectionString);
-                    var database = _client.GetDatabase(_options.DatabaseId);
+                    Database database = _client.GetDatabase(_options.DatabaseId);
 
                     return database.GetContainer(_options.ContainerId);
                 }
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     _logger.LogError(ex.Message, ex);
 
                     throw;
-                }                
+                }
             });
         }
 
