@@ -34,12 +34,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     nameof(configuration), "A configuration is required.");
             }
 
-            //if (configuration[nameof(RepositoryOptions)] is null)
-            //{
-            //    throw new ArgumentNullException(
-            //        nameof(configuration), $"The {nameof(RepositoryOptions)} configuration section is required.");
-            //}
-
             return services.AddLogging()
                 .AddSingleton<ICosmosContainerProvider, DefaultCosmosContainerProvider>()
                 .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))

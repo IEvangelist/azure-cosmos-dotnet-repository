@@ -94,6 +94,9 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
+        public ValueTask<T> DeleteAsync(T value) => DeleteAsync(value.Id);
+
+        /// <inheritdoc/>
         public async ValueTask<T> DeleteAsync(string id)
         {
             Container container = await _containerProvider.GetContainerAsync();

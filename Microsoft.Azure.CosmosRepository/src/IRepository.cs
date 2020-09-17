@@ -66,6 +66,13 @@ namespace Microsoft.Azure.CosmosRepository
         ValueTask<TDocument> UpdateAsync(TDocument value);
 
         /// <summary>
+        /// Deletes the cosmos object that corresponds to the given <paramref name="value"/>.
+        /// </summary>
+        /// <param name="id">The string identifier.</param>
+        /// <returns>A <see cref="ValueTask{TDocument}"/> representing the <see cref="Document"/> subclass instance as a <see cref="{TDocument}"/>.</returns>
+        ValueTask<TDocument> DeleteAsync(TDocument value);
+
+        /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The string identifier.</param>

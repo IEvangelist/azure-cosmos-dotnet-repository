@@ -19,8 +19,26 @@ namespace ServiceTier
             using IHost host = CreateHostBuilder(args).Build();
             await host.StartAsync();
 
-            IRepository<Person> repository = host.Services.GetService<IRepository<Person>>();
+            // Demonstrate raw repo usage...
+            await RawRepositoryExampleAsync(host.Services.GetService<IRepository<Person>>());
 
+            // Demonstrate service wrapper around repo usage...
+            await ServiceExampleAsync(host.Services.GetService<IExampleService>());
+        }
+
+        static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((_, configuration) =>
+                {
+                    configuration.Sources.Clear();
+                    configuration.AddCommandLine(args);
+                })
+                .ConfigureServices((context, services) =>
+                    services.AddCosmosRepository(context.Configuration)
+                            .AddSingleton<IExampleService, ExampleService>());
+
+        static async Task RawRepositoryExampleAsync(IRepository<Person> repository)
+        {
             Person maryShaw = new Person
             {
                 FirstName = "Mary",
@@ -35,7 +53,7 @@ namespace ServiceTier
             };
 
             // Creating...
-            Console.WriteLine("Creating...");
+            Console.WriteLine("Repository creating...");
             _ = await repository.CreateAsync(new[] { maryShaw, calvinWeatherfield });
 
             // Reading...
@@ -46,7 +64,7 @@ namespace ServiceTier
             Console.WriteLine($"Read: {calvin}");
 
             // Updating...
-            Console.WriteLine("Updating...");
+            Console.WriteLine("Repository updating...");
             mary.BirthDate = new DateTime(1973, 7, 21); // Oops, Mary was actually born in 1973
             calvin.BirthDate = new DateTime(1982, 2, 14); // And Calvin was born in 1982...
 
@@ -61,7 +79,7 @@ namespace ServiceTier
             }
 
             // Deleting...
-            Console.WriteLine("Deleting...");
+            Console.WriteLine("Repository deleting...");
             await Task.WhenAll(new[]
             {
                 repository.DeleteAsync(mary.Id).AsTask(),
@@ -69,14 +87,54 @@ namespace ServiceTier
             });
         }
 
-        static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((_, configuration) =>
-                {
-                    configuration.Sources.Clear();
-                    configuration.AddCommandLine(args);
-                })
-                .ConfigureServices((context, services) =>
-                    services.AddCosmosRepository(context.Configuration));
+        static async Task ServiceExampleAsync(IExampleService service)
+        {
+            Person jamesBond = new Person
+            {
+                FirstName = "James",
+                LastName = "Bond",
+                BirthDate = new DateTime(1962, 3, 18)
+            };
+            Person adeleGoldberg = new Person
+            {
+                FirstName = "Adele",
+                LastName = "Goldberg",
+                BirthDate = new DateTime(1945, 7, 22)
+            };
+
+            // Creating...
+            Console.WriteLine("Service creating...");
+            _ = await service.AddPeopleAsync(new[] { jamesBond, adeleGoldberg });
+
+            // Reading...
+            Person mary = await service.ReadPersonByIdAsync(jamesBond.Id);
+            Person calvin = (await service.ReadPeopleAsync(p => p.LastName == "Goldberg")).Single();
+
+            Console.WriteLine($"Read: {mary}");
+            Console.WriteLine($"Read: {calvin}");
+
+            // Updating...
+            Console.WriteLine("Service updating...");
+            mary.BirthDate = new DateTime(1973, 7, 21); // Oops, Mary was actually born in 1973
+            calvin.BirthDate = new DateTime(1982, 2, 14); // And Calvin was born in 1982...
+
+            _ = service.UpdatePersonAsync(mary);
+            _ = service.UpdatePersonAsync(calvin);
+
+            // Read again / verify updates
+            IEnumerable<Person> peopleWithoutMiddleNames = await service.ReadPeopleAsync(p => p.MiddleName == null);
+            foreach (Person person in peopleWithoutMiddleNames)
+            {
+                Console.WriteLine($"Updated: {person}");
+            }
+
+            // Deleting...
+            Console.WriteLine("Service deleting...");
+            await Task.WhenAll(new[]
+            {
+                service.DeletePersonAsync(mary).AsTask(),
+                service.DeletePersonAsync(calvin).AsTask()
+            });
+        }
     }
 }
