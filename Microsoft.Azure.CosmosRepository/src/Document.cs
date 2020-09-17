@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.Cosmos;
@@ -11,7 +11,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// The base document used for all repository object or object graphs.
     /// </summary>
     /// <example>
-    // Here is an example subclass document, which adds several properties:
+    /// Here is an example subclass document, which adds several properties:
     /// <code language="c#">
     /// <![CDATA[
     /// public class SubDocument : Document

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosRepository;
@@ -9,6 +9,9 @@ using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    /// <summary>
+    /// Extension methods for adding and configuring the Azure Cosmos DB services.
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>
