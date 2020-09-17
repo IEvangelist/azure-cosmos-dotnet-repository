@@ -9,7 +9,7 @@ namespace ServiceTier
 {
     public class Person : Document
     {
-        public DateTimeOffset BirthDate { get; set; }
+        public DateTime BirthDate { get; set; }
 
         public string FirstName { get; set; } = null!;
         public string? MiddleName { get; set; }
@@ -17,8 +17,7 @@ namespace ServiceTier
 
         [JsonIgnore]
         public int AgeInYears =>
-            (int)Math.Round(
-                DateTimeOffset.Now.Subtract(BirthDate).TotalMilliseconds / 3.1536E+10 /* ms in year */);
+            (int)DateTime.Now.Subtract(BirthDate).TotalDays / 365; // Days in a year
 
         public override string ToString() =>
             MiddleName is null

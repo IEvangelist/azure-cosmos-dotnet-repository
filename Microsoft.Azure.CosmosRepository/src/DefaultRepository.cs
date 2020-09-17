@@ -29,7 +29,7 @@ namespace Microsoft.Azure.CosmosRepository
         {
             try
             {
-                Container container = _containerProvider.GetContainer();
+                Container container = await _containerProvider.GetContainerAsync();
                 ItemResponse<T> response = await container.ReadItemAsync<T>(id, new PartitionKey(id));
 
                 return response.Resource;
@@ -46,11 +46,11 @@ namespace Microsoft.Azure.CosmosRepository
         {
             try
             {
+                Container container = await _containerProvider.GetContainerAsync();
                 using (FeedIterator<T> iterator =
-                    _containerProvider.GetContainer()
-                                      .GetItemLinqQueryable<T>()
-                                      .Where(predicate)
-                                      .ToFeedIterator())
+                    container.GetItemLinqQueryable<T>()
+                             .Where(predicate)
+                             .ToFeedIterator())
                 {
                     List<T> results = new List<T>();
                     while (iterator.HasMoreResults)
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<T> CreateAsync(T value)
         {
-            Container container = _containerProvider.GetContainer();
+            Container container = await _containerProvider.GetContainerAsync();
             ItemResponse<T> response = await container.CreateItemAsync(value, value.PartitionKey);
 
             return response.Resource;
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<T> UpdateAsync(T value)
         {
-            Container container = _containerProvider.GetContainer();
+            Container container = await _containerProvider.GetContainerAsync();
             ItemResponse<T> response = await container.UpsertItemAsync<T>(value, value.PartitionKey);
 
             return response.Resource;
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<T> DeleteAsync(string id)
         {
-            Container container = _containerProvider.GetContainer();
+            Container container = await _containerProvider.GetContainerAsync();
             ItemResponse<T> response = await container.DeleteItemAsync<T>(id, new PartitionKey(id));
 
             return response.Resource;

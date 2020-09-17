@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Options;
 
@@ -13,10 +14,10 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     internal interface ICosmosContainerProvider
     {
         /// <summary>
-        /// Gets the configured <see cref="Container"/> instance that corresponds to the 
+        /// Asynchronously gets the configured <see cref="Container"/> instance that corresponds to the 
         /// cosmos <see cref="RepositoryOptions"/>.
         /// </summary>
         /// <returns>A <see cref="Container"/> instsance.</returns>
-        Container GetContainer();
+        Task<Container> GetContainerAsync();
     }
 }
