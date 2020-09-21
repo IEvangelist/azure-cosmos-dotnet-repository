@@ -21,7 +21,7 @@ namespace Microsoft.Azure.CosmosRepository.Options
 
         /// <summary>
         /// Gets or sets the name identifier for the cosmos container that corresponds to the <see cref="DatabaseId"/>.
-        /// </summary>        
+        /// </summary>
         public string ContainerId { get; set; }
     }
 }

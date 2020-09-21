@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTier", "Microsoft.Azure.CosmosRepository.Samples\ServiceTier\ServiceTier.csproj", "{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepositoryTests", "Microsoft.Azure.CosmosRepository\test\Microsoft.Azure.CosmosRepositoryTests.csproj", "{6287493F-E0CF-4F16-BF06-EA3AB501FA38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6287493F-E0CF-4F16-BF06-EA3AB501FA38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6287493F-E0CF-4F16-BF06-EA3AB501FA38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6287493F-E0CF-4F16-BF06-EA3AB501FA38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6287493F-E0CF-4F16-BF06-EA3AB501FA38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

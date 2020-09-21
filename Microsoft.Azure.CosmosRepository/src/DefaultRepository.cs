@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    class DefaultRepository<T> : IRepository<T> where T : Document
+    internal class DefaultRepository<T> : IRepository<T> where T : Document
     {
         readonly ICosmosContainerProvider _containerProvider;
         readonly ILogger<T> _logger;

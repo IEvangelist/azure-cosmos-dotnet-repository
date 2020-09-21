@@ -38,6 +38,10 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             {
                 throw new ArgumentNullException($"The {nameof(_options.ContainerId)} is required.");
             }
+            if (logger is null)
+            {
+                throw new ArgumentNullException($"The {nameof(logger)} is required.");
+            }
 
             _logger = logger;
             _lazyContainer = new Lazy<Task<Container>>(async () =>
