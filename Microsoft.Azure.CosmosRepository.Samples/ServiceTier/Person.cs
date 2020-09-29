@@ -7,7 +7,7 @@ using System;
 
 namespace ServiceTier
 {
-    public class Person : Document
+    public class Person : Item
     {
         public DateTime BirthDate { get; set; }
 

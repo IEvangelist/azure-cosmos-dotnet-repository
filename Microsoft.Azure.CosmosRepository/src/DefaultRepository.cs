@@ -14,23 +14,23 @@ using System.Threading.Tasks;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    internal class DefaultRepository<T> : IRepository<T> where T : Document
+    internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : Item
     {
         readonly ICosmosContainerProvider _containerProvider;
-        readonly ILogger<T> _logger;
+        readonly ILogger<DefaultRepository<TItem>> _logger;
 
         public DefaultRepository(
             ICosmosContainerProvider containerProvider,
-            ILogger<T> logger) =>
+            ILogger<DefaultRepository<TItem>> logger) =>
             (_containerProvider, _logger) = (containerProvider, logger);
 
         /// <inheritdoc/>
-        public async ValueTask<T> GetAsync(string id)
+        public async ValueTask<TItem> GetAsync(string id)
         {
             try
             {
                 Container container = await _containerProvider.GetContainerAsync();
-                ItemResponse<T> response = await container.ReadItemAsync<T>(id, new PartitionKey(id));
+                ItemResponse<TItem> response = await container.ReadItemAsync<TItem>(id, new PartitionKey(id));
 
                 return response.Resource;
             }
@@ -42,20 +42,20 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate)
+        public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate)
         {
             try
             {
                 Container container = await _containerProvider.GetContainerAsync();
-                using (FeedIterator<T> iterator =
-                    container.GetItemLinqQueryable<T>()
+                using (FeedIterator<TItem> iterator =
+                    container.GetItemLinqQueryable<TItem>()
                              .Where(predicate)
                              .ToFeedIterator())
                 {
-                    List<T> results = new List<T>();
+                    List<TItem> results = new List<TItem>();
                     while (iterator.HasMoreResults)
                     {
-                        foreach (T result in await iterator.ReadNextAsync())
+                        foreach (TItem result in await iterator.ReadNextAsync())
                         {
                             results.Add(result);
                         }
@@ -67,40 +67,40 @@ namespace Microsoft.Azure.CosmosRepository
             catch (CosmosException ex)
             {
                 _logger.LogError(ex.Message, ex);
-                return Enumerable.Empty<T>();
+                return Enumerable.Empty<TItem>();
             }
         }
 
         /// <inheritdoc/>
-        public async ValueTask<T> CreateAsync(T value)
+        public async ValueTask<TItem> CreateAsync(TItem value)
         {
             Container container = await _containerProvider.GetContainerAsync();
-            ItemResponse<T> response = await container.CreateItemAsync(value, value.PartitionKey);
+            ItemResponse<TItem> response = await container.CreateItemAsync(value, value.PartitionKey);
 
             return response.Resource;
         }
 
         /// <inheritdoc/>
-        public Task<T[]> CreateAsync(IEnumerable<T> values) =>
+        public Task<TItem[]> CreateAsync(IEnumerable<TItem> values) =>
             Task.WhenAll(values.Select(v => CreateAsync(v).AsTask()));
 
         /// <inheritdoc/>
-        public async ValueTask<T> UpdateAsync(T value)
+        public async ValueTask<TItem> UpdateAsync(TItem value)
         {
             Container container = await _containerProvider.GetContainerAsync();
-            ItemResponse<T> response = await container.UpsertItemAsync<T>(value, value.PartitionKey);
+            ItemResponse<TItem> response = await container.UpsertItemAsync<TItem>(value, value.PartitionKey);
 
             return response.Resource;
         }
 
         /// <inheritdoc/>
-        public ValueTask<T> DeleteAsync(T value) => DeleteAsync(value.Id);
+        public ValueTask<TItem> DeleteAsync(TItem value) => DeleteAsync(value.Id);
 
         /// <inheritdoc/>
-        public async ValueTask<T> DeleteAsync(string id)
+        public async ValueTask<TItem> DeleteAsync(string id)
         {
             Container container = await _containerProvider.GetContainerAsync();
-            ItemResponse<T> response = await container.DeleteItemAsync<T>(id, new PartitionKey(id));
+            ItemResponse<TItem> response = await container.DeleteItemAsync<TItem>(id, new PartitionKey(id));
 
             return response.Resource;
         }

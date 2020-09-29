@@ -34,7 +34,11 @@ namespace ServiceTier
                     configuration.AddCommandLine(args);
                 })
                 .ConfigureServices((context, services) =>
-                    services.AddCosmosRepository(context.Configuration)
+                    services.AddCosmosRepository(context.Configuration, options =>
+                            {
+                                options.ContainerId = "people-store";
+                                options.DatabaseId = "samples";
+                            })
                             .AddSingleton<IExampleService, ExampleService>());
 
         static async Task RawRepositoryExampleAsync(IRepository<Person> repository)

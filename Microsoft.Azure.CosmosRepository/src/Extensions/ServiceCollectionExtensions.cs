@@ -20,10 +20,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>
         /// <param name="configuration">The configuration representing the applications settings.</param>
+        /// <param name="setupAction">An action to configure the repository options</param>
         /// <returns>The same service collection that was provided, with the required cosmos services.</returns>
         public static IServiceCollection AddCosmosRepository(
             this IServiceCollection services,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            Action<RepositoryOptions> setupAction = default)
         {
             if (services is null)
             {
@@ -37,11 +39,18 @@ namespace Microsoft.Extensions.DependencyInjection
                     nameof(configuration), "A configuration is required.");
             }
 
-            return services.AddLogging()
+            services.AddLogging()
                 .AddSingleton<ICosmosContainerProvider, DefaultCosmosContainerProvider>()
                 .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
                 .Configure<RepositoryOptions>(
                     configuration.GetSection(nameof(RepositoryOptions)));
+
+            if (setupAction != default)
+            {
+                services.PostConfigure(setupAction);
+            }
+
+            return services;
         }
     }
 }

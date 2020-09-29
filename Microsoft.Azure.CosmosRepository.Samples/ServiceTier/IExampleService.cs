@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ServiceTier
@@ -13,7 +14,7 @@ namespace ServiceTier
         Task<Person[]> AddPeopleAsync(IEnumerable<Person> people);
 
         ValueTask<Person> ReadPersonByIdAsync(string id);
-        ValueTask<IEnumerable<Person>> ReadPeopleAsync(Func<Person, bool> matches);
+        ValueTask<IEnumerable<Person>> ReadPeopleAsync(Expression<Func<Person, bool>> matches);
 
         ValueTask<Person> UpdatePersonAsync(Person person);
 

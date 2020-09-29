@@ -17,11 +17,17 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <summary>
         /// Gets or sets the name identifier for the cosmos database.
         /// </summary>
-        public string DatabaseId { get; set; }
+        /// <remarks>
+        /// Defaults to "database", unless otherwise specified.
+        /// </remarks>
+        public string DatabaseId { get; set; } = "database";
 
         /// <summary>
         /// Gets or sets the name identifier for the cosmos container that corresponds to the <see cref="DatabaseId"/>.
         /// </summary>
-        public string ContainerId { get; set; }
+        /// <remarks>
+        /// Defaults to "container", unless otherwise specified.
+        /// </remarks>
+        public string ContainerId { get; set; } = "container";
     }
 }

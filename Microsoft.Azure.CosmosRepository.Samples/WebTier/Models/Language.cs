@@ -3,7 +3,7 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace WebTier.Models
 {
-    public class Language : Document
+    public class Language : Item
     {
         public string Name { get; set; }
 

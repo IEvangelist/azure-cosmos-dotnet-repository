@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository;
 
@@ -24,8 +25,8 @@ namespace ServiceTier
         public ValueTask<Person> DeletePersonAsync(Person person) =>
             _personRepository.DeleteAsync(person);
 
-        public ValueTask<IEnumerable<Person>> ReadPeopleAsync(Func<Person, bool> matches) =>
-            _personRepository.GetAsync(p => matches(p));
+        public ValueTask<IEnumerable<Person>> ReadPeopleAsync(Expression<Func<Person, bool>> matches) =>
+            _personRepository.GetAsync(matches);
 
         public ValueTask<Person> ReadPersonByIdAsync(string id) =>
             _personRepository.GetAsync(id);

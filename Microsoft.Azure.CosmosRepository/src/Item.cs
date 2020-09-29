@@ -8,13 +8,13 @@ using System;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <summary>
-    /// The base document used for all repository object or object graphs.
+    /// The base item used for all repository object or object graphs.
     /// </summary>
     /// <example>
-    /// Here is an example subclass document, which adds several properties:
+    /// Here is an example subclass item, which adds several properties:
     /// <code language="c#">
     /// <![CDATA[
-    /// public class SubDocument : Document
+    /// public class SubItem : Item
     /// {
     ///     public DateTimeOffset Date { get; set; }
     ///     public string Name { get; set; }
@@ -30,10 +30,10 @@ namespace Microsoft.Azure.CosmosRepository
     /// ]]>
     /// </code>
     /// </example>
-    public class Document
+    public class Item
     {
         /// <summary>
-        /// Gets or sets the document's globally unique identifier.
+        /// Gets or sets the item's globally unique identifier.
         /// </summary>
         /// <remarks>
         /// Initialized by <see cref="Guid.NewGuid"/>.
