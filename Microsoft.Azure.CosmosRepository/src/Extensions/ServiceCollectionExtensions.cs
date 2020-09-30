@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the services required to consume any number of <see cref="IRepository{TDocument}"/> 
+        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/> 
         /// instances to interact with Cosmos DB.
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>
