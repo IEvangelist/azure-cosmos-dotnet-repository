@@ -33,7 +33,7 @@ namespace WebTier.Controllers
             _repository.UpdateAsync(language);
 
         [HttpDelete("{id}")]
-        public ValueTask<Language> Delete(string id) =>
+        public ValueTask Delete(string id) =>
             _repository.DeleteAsync(id);
     }
 }

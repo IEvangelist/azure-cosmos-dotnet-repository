@@ -8,7 +8,9 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -16,9 +18,18 @@ namespace Microsoft.Azure.CosmosRepository
     internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : Item
     {
         readonly ICosmosContainerProvider _containerProvider;
+        readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
 
-        public DefaultRepository(ICosmosContainerProvider containerProvider) =>
-            _containerProvider = containerProvider;
+        (bool OptimizeBandwidth, ItemRequestOptions RequestOptions) PerRequestOptions =>
+            (_optionsMonitor.CurrentValue.OptimizeBandwidth, new ItemRequestOptions
+            {
+                EnableContentResponseOnWrite = !_optionsMonitor.CurrentValue.OptimizeBandwidth
+            });
+
+        public DefaultRepository(
+            IOptionsMonitor<RepositoryOptions> optionsMonitor,
+            ICosmosContainerProvider containerProvider) =>
+            (_optionsMonitor, _containerProvider) = (optionsMonitor, containerProvider);
 
         /// <inheritdoc/>
         public async ValueTask<TItem> GetAsync(string id)
@@ -55,7 +66,8 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<TItem> CreateAsync(TItem value)
         {
             Container container = await _containerProvider.GetContainerAsync();
-            ItemResponse<TItem> response = await container.CreateItemAsync(value, value.PartitionKey);
+            ItemResponse<TItem> response =
+                await container.CreateItemAsync(value, value.PartitionKey);
 
             return response.Resource;
         }
@@ -67,22 +79,24 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<TItem> UpdateAsync(TItem value)
         {
+            (bool optimizeBandwidth, ItemRequestOptions options) = PerRequestOptions;
             Container container = await _containerProvider.GetContainerAsync();
-            ItemResponse<TItem> response = await container.UpsertItemAsync<TItem>(value, value.PartitionKey);
+            ItemResponse<TItem> response =
+                await container.UpsertItemAsync<TItem>(value, value.PartitionKey, options);
 
-            return response.Resource;
+            return optimizeBandwidth ? value : response.Resource;
         }
 
         /// <inheritdoc/>
-        public ValueTask<TItem> DeleteAsync(TItem value) => DeleteAsync(value.Id);
+        public ValueTask DeleteAsync(TItem value) => DeleteAsync(value.Id);
 
         /// <inheritdoc/>
-        public async ValueTask<TItem> DeleteAsync(string id)
+        public async ValueTask DeleteAsync(string id)
         {
-            Container container = await _containerProvider.GetContainerAsync();
-            ItemResponse<TItem> response = await container.DeleteItemAsync<TItem>(id, new PartitionKey(id));
+            (_, ItemRequestOptions options) = PerRequestOptions;
 
-            return response.Resource;
+            Container container = await _containerProvider.GetContainerAsync();
+            _ = await container.DeleteItemAsync<TItem>(id, new PartitionKey(id), options);
         }
     }
 }

@@ -18,6 +18,6 @@ namespace ServiceTier
 
         ValueTask<Person> UpdatePersonAsync(Person person);
 
-        ValueTask<Person> DeletePersonAsync(Person person);
+        ValueTask DeletePersonAsync(Person person);
     }
 }

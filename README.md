@@ -14,9 +14,9 @@ public string Id { get; set; } = Guid.NewGuid().ToString();
 
 ## Getting started
 
-1. Create an Azure Cosmos DB SQL resource
-1. Obtain the resource connection string from the __Keys__ blade
-1. Call `AddCosmosRepository` and provide the apps configuration object
+1. Create an Azure Cosmos DB SQL resource.
+1. Obtain the resource connection string from the __Keys__ blade, be sure to get a connection string and not the key - these are different. The connection string is a compound key and endpoint URL.
+1. Call `AddCosmosRepository` and provide the apps configuration object:
 
     ```csharp
     public void ConfigureServices(IServiceCollection services)
@@ -25,7 +25,7 @@ public string Id { get; set; } = Guid.NewGuid().ToString();
     }
     ```
 
-    The optional `setupAction` allows consumers to manually configure the `RepositoryOptions` object
+    The optional `setupAction` allows consumers to manually configure the `RepositoryOptions` object:
 
     ```csharp
     public void ConfigureServices(IServiceCollection services)
@@ -40,7 +40,7 @@ public string Id { get; set; } = Guid.NewGuid().ToString();
     }
     ```
 
-1. Define your object graph, must inherit `Item`
+1. Define your object graph, objects must inherit `Item`, for example:
 
     ```csharp
     using Microsoft.Azure.CosmosRepository;
@@ -52,7 +52,7 @@ public string Id { get; set; } = Guid.NewGuid().ToString();
     }
     ```
 
-1. Ask for an instance of `IRepository<TItem>`
+1. Ask for an instance of `IRepository<TItem>`, in this case the `TItem` is `Person`:
 
     ```csharp
     using Microsoft.Azure.CosmosRepository;
@@ -68,4 +68,5 @@ public string Id { get; set; } = Guid.NewGuid().ToString();
     }
     ```
 
+1. Perform any of the operations on the `_repository` instance, create `Person` records, update them, read them, or delete.
 1. Enjoy!

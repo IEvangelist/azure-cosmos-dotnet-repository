@@ -22,7 +22,7 @@ namespace ServiceTier
         public ValueTask<Person> AddPersonAsync(Person person) =>
             _personRepository.CreateAsync(person);
 
-        public ValueTask<Person> DeletePersonAsync(Person person) =>
+        public ValueTask DeletePersonAsync(Person person) =>
             _personRepository.DeleteAsync(person);
 
         public ValueTask<IEnumerable<Person>> ReadPeopleAsync(Expression<Func<Person, bool>> matches) =>

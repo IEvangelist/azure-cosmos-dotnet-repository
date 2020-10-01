@@ -69,14 +69,14 @@ namespace Microsoft.Azure.CosmosRepository
         /// Deletes the cosmos object that corresponds to the given <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The object to delete.</param>
-        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
-        ValueTask<TItem> DeleteAsync(TItem value);
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
+        ValueTask DeleteAsync(TItem value);
 
         /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The string identifier.</param>
-        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
-        ValueTask<TItem> DeleteAsync(string id);
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
+        ValueTask DeleteAsync(string id);
     }
 }

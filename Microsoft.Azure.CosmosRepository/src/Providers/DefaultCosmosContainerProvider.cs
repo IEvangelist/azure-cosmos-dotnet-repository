@@ -13,18 +13,25 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     /// <inheritdoc/>
     internal class DefaultCosmosContainerProvider : ICosmosContainerProvider, IDisposable
     {
-        readonly RepositoryOptions _options;
         readonly Lazy<Task<Container>> _lazyContainer;
+        readonly CosmosClientOptions _cosmosClientOptions;
+        readonly RepositoryOptions _options;
         readonly ILogger<DefaultCosmosContainerProvider> _logger;
 
         CosmosClient _client;
 
         public DefaultCosmosContainerProvider(
+            CosmosClientOptions cosmosClientOptions,
             IOptions<RepositoryOptions> options,
             ILogger<DefaultCosmosContainerProvider> logger)
         {
+            _cosmosClientOptions = cosmosClientOptions
+                ?? throw new ArgumentNullException(
+                    nameof(cosmosClientOptions), "Cosmos Client options are required.");
+
             _options = options?.Value
-                ?? throw new ArgumentNullException(nameof(options), "Repository options are required.");
+                ?? throw new ArgumentNullException(
+                    nameof(options), "Repository options are required.");
 
             if (_options.CosmosConnectionString is null)
             {
@@ -42,13 +49,13 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             {
                 throw new ArgumentNullException($"The {nameof(logger)} is required.");
             }
-
+            
             _logger = logger;
             _lazyContainer = new Lazy<Task<Container>>(async () =>
             {
                 try
                 {
-                    _client = new CosmosClient(_options.CosmosConnectionString);
+                    _client = new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions);
                     Database database = await _client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId);
                     Container container = await database.CreateContainerIfNotExistsAsync(new ContainerProperties
                     {

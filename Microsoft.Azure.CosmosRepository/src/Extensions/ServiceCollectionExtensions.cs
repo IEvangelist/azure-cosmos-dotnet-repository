@@ -1,11 +1,13 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Net.Http;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -40,6 +42,15 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddLogging()
+                .AddHttpClient()
+                .AddSingleton<CosmosClientOptions>(provider =>
+                {
+                    IHttpClientFactory factory = provider.GetRequiredService<IHttpClientFactory>();
+                    return new CosmosClientOptions
+                    {
+                        HttpClientFactory = factory.CreateClient
+                    };
+                })
                 .AddSingleton<ICosmosContainerProvider, DefaultCosmosContainerProvider>()
                 .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
                 .Configure<RepositoryOptions>(

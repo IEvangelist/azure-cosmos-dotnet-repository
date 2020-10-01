@@ -38,6 +38,7 @@ namespace ServiceTier
                             {
                                 options.ContainerId = "people-store";
                                 options.DatabaseId = "samples";
+                                options.OptimizeBandwidth = true;
                             })
                             .AddSingleton<IExampleService, ExampleService>());
 

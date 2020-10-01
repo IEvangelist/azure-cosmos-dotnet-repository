@@ -1,6 +1,8 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.Cosmos;
+
 namespace Microsoft.Azure.CosmosRepository.Options
 {
     /// <summary>
@@ -29,5 +31,17 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// Defaults to "container", unless otherwise specified.
         /// </remarks>
         public string ContainerId { get; set; } = "container";
+
+        /// <summary>
+        /// Gets or sets whether to optimize bandwidth.
+        /// When false, the <see cref="ItemRequestOptions.EnableContentResponseOnWrite"/> is set to false and only
+        /// headers and status code in the Cosmos DB response for write item operation like Create, Upsert,
+        /// Patch and Replace. This reduces networking and CPU load by not sending the resource back over the
+        /// network and serializing it on the client.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to true, see: https://devblogs.microsoft.com/cosmosdb/enable-content-response-on-write
+        /// </remarks>
+        public bool OptimizeBandwidth { get; set; } = true;
     }
 }
