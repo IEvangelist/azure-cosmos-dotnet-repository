@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepository
         readonly ICosmosContainerProvider _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
 
-        (bool OptimizeBandwidth, ItemRequestOptions RequestOptions) PerRequestOptions =>
+        (bool optimizeBandwidth, ItemRequestOptions options) RequestOptions =>
             (_optionsMonitor.CurrentValue.OptimizeBandwidth, new ItemRequestOptions
             {
                 EnableContentResponseOnWrite = !_optionsMonitor.CurrentValue.OptimizeBandwidth
@@ -79,7 +79,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<TItem> UpdateAsync(TItem value)
         {
-            (bool optimizeBandwidth, ItemRequestOptions options) = PerRequestOptions;
+            (bool optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
             Container container = await _containerProvider.GetContainerAsync();
             ItemResponse<TItem> response =
                 await container.UpsertItemAsync<TItem>(value, value.PartitionKey, options);
@@ -93,7 +93,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask DeleteAsync(string id)
         {
-            (_, ItemRequestOptions options) = PerRequestOptions;
+            (_, ItemRequestOptions options) = RequestOptions;
 
             Container container = await _containerProvider.GetContainerAsync();
             _ = await container.DeleteItemAsync<TItem>(id, new PartitionKey(id), options);
