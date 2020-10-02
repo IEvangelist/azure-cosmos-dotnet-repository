@@ -43,5 +43,15 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// Defaults to true, see: https://devblogs.microsoft.com/cosmosdb/enable-content-response-on-write
         /// </remarks>
         public bool OptimizeBandwidth { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets whether to create a container per item. When true, a container for type `Foo` will be persisted in
+        /// a "Foo" container, and type `Bar` will be persisted in a "Bar" container, and so on. When false, all items share
+        /// a container - because it doesn't really matter.
+        /// </summary>
+        /// <remarks>
+        ///Defaults to false
+        /// </remarks>
+        public bool ContainerPerItemType { get; set; }
     }
 }

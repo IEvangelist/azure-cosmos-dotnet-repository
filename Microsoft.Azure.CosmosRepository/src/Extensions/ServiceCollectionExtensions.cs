@@ -51,7 +51,8 @@ namespace Microsoft.Extensions.DependencyInjection
                         HttpClientFactory = factory.CreateClient
                     };
                 })
-                .AddSingleton<ICosmosContainerProvider, DefaultCosmosContainerProvider>()
+                .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
+                .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
                 .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
                 .Configure<RepositoryOptions>(
                     configuration.GetSection(nameof(RepositoryOptions)));

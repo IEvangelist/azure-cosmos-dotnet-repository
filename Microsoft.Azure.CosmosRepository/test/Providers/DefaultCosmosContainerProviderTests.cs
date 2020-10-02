@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers
@@ -15,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullCosmosClientOptions() =>
             Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider(
+                () => new DefaultCosmosContainerProvider<TestItem>(
                     null,
                     Options.Create(new RepositoryOptions
                     {
@@ -23,22 +26,22 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                         DatabaseId = "data",
                         ContainerId = "container"
                     }),
-                    _loggerFactory.CreateLogger<DefaultCosmosContainerProvider>()));
+                    _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
 
 
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullOptions() =>
             Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider(
-                    new CosmosClientOptions(),
+                () => new DefaultCosmosContainerProvider<TestItem>(
+                    new TestCosmosClientProvider(),
                     null,
-                    _loggerFactory.CreateLogger<DefaultCosmosContainerProvider>()));
+                    _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
 
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullConnectionString() =>
             Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider(
-                    new CosmosClientOptions(),
+                () => new DefaultCosmosContainerProvider<TestItem>(
+                    new TestCosmosClientProvider(),
                     Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
@@ -47,8 +50,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullDatabaseId() =>
             Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider(
-                    new CosmosClientOptions(),
+                () => new DefaultCosmosContainerProvider<TestItem>(
+                    new TestCosmosClientProvider(),
                     Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
@@ -58,8 +61,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullContainerId() =>
             Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider(
-                    new CosmosClientOptions(),
+                () => new DefaultCosmosContainerProvider<TestItem>(
+                    new TestCosmosClientProvider(),
                     Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
@@ -69,13 +72,20 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullLogger() =>
             Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider(
-                    new CosmosClientOptions(),
+                () => new DefaultCosmosContainerProvider<TestItem>(
+                    new TestCosmosClientProvider(),
                     Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data",
                         ContainerId = "container"
                     }), null));
+    }
+
+    public class TestItem : Item { }
+
+    public class TestCosmosClientProvider : ICosmosClientProvider
+    {
+        public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) => throw new NotImplementedException();
     }
 }

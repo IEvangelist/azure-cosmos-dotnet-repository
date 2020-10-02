@@ -17,10 +17,10 @@ namespace Microsoft.Azure.CosmosRepository
     /// <inheritdoc/>
     internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : Item
     {
-        readonly ICosmosContainerProvider _containerProvider;
+        readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
 
-        (bool optimizeBandwidth, ItemRequestOptions options) RequestOptions =>
+        (bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
             (_optionsMonitor.CurrentValue.OptimizeBandwidth, new ItemRequestOptions
             {
                 EnableContentResponseOnWrite = !_optionsMonitor.CurrentValue.OptimizeBandwidth
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository
 
         public DefaultRepository(
             IOptionsMonitor<RepositoryOptions> optionsMonitor,
-            ICosmosContainerProvider containerProvider) =>
+            ICosmosContainerProvider<TItem> containerProvider) =>
             (_optionsMonitor, _containerProvider) = (optionsMonitor, containerProvider);
 
         /// <inheritdoc/>
@@ -93,8 +93,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask DeleteAsync(string id)
         {
-            (_, ItemRequestOptions options) = RequestOptions;
-
+            ItemRequestOptions options = RequestOptions.Options;
             Container container = await _containerProvider.GetContainerAsync();
             _ = await container.DeleteItemAsync<TItem>(id, new PartitionKey(id), options);
         }

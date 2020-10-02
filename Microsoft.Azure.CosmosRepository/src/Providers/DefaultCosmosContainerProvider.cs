@@ -11,23 +11,22 @@ using Microsoft.Extensions.Options;
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc/>
-    internal class DefaultCosmosContainerProvider : ICosmosContainerProvider, IDisposable
+    internal class DefaultCosmosContainerProvider<TItem>
+        : ICosmosContainerProvider<TItem> where TItem : Item
     {
         readonly Lazy<Task<Container>> _lazyContainer;
-        readonly CosmosClientOptions _cosmosClientOptions;
         readonly RepositoryOptions _options;
-        readonly ILogger<DefaultCosmosContainerProvider> _logger;
-
-        CosmosClient _client;
+        readonly ICosmosClientProvider _cosmosClientProvider;
+        readonly ILogger<DefaultCosmosContainerProvider<TItem>> _logger;
 
         public DefaultCosmosContainerProvider(
-            CosmosClientOptions cosmosClientOptions,
+            ICosmosClientProvider cosmosClientProvider,
             IOptions<RepositoryOptions> options,
-            ILogger<DefaultCosmosContainerProvider> logger)
+            ILogger<DefaultCosmosContainerProvider<TItem>> logger)
         {
-            _cosmosClientOptions = cosmosClientOptions
+            _cosmosClientProvider = cosmosClientProvider
                 ?? throw new ArgumentNullException(
-                    nameof(cosmosClientOptions), "Cosmos Client options are required.");
+                    nameof(cosmosClientProvider), "Cosmos client provider is required.");
 
             _options = options?.Value
                 ?? throw new ArgumentNullException(
@@ -55,13 +54,16 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             {
                 try
                 {
-                    _client = new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions);
-                    Database database = await _client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId);
-                    Container container = await database.CreateContainerIfNotExistsAsync(new ContainerProperties
-                    {
-                        Id = _options.ContainerId,
-                        PartitionKeyPath = "/id"
-                    });
+                    Database database =
+                        await _cosmosClientProvider.UseClientAsync(
+                            client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId));
+                    Container container =
+                        await database.CreateContainerIfNotExistsAsync(
+                            new ContainerProperties
+                            {
+                                Id = _options.ContainerPerItemType ? typeof(TItem).Name : _options.ContainerId,
+                                PartitionKeyPath = "/id"
+                            });
 
                     return container;
                 }
@@ -76,8 +78,5 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         /// <inheritdoc/>
         public Task<Container> GetContainerAsync() => _lazyContainer.Value;
-
-        /// <inheritdoc/>
-        public void Dispose() => _client?.Dispose();
     }
 }
