@@ -5,12 +5,21 @@
 This package wraps the [NuGet: Microsoft.Azure.Cosmos package](https://www.nuget.org/packages/Microsoft.Azure.Cosmos), 
 exposing a simple dependency-injection enabled `IRepository<T>` interface. The repository is responsible for all 
 of the create, read, update, and delete (CRUD) operations on objects `where T : Item`. The `Item` type adds 
-a single property which is a globally unique identifier defined as:
+several properties, one which is a globally unique identifier defined as:
 
 ```csharp
 [JsonProperty("id")]
 public string Id { get; set; } = Guid.NewGuid().ToString();
 ```
+
+Additionally, a type property exists which indicates the subclass name (this is used for filtering implicitly on your behalf):
+
+```csharp
+[JsonProperty("type")]
+public string Type { get; set; }
+```
+
+Finally, a partition key properpty is used internally to manage partitioning on your behalf.
 
 ## Getting started
 
