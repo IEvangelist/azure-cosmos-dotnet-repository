@@ -8,9 +8,12 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -19,6 +22,7 @@ namespace Microsoft.Azure.CosmosRepository
     {
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
+        readonly ILogger<DefaultRepository<TItem>> _logger;
 
         (bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
             (_optionsMonitor.CurrentValue.OptimizeBandwidth, new ItemRequestOptions
@@ -28,8 +32,9 @@ namespace Microsoft.Azure.CosmosRepository
 
         public DefaultRepository(
             IOptionsMonitor<RepositoryOptions> optionsMonitor,
-            ICosmosContainerProvider<TItem> containerProvider) =>
-            (_optionsMonitor, _containerProvider) = (optionsMonitor, containerProvider);
+            ICosmosContainerProvider<TItem> containerProvider,
+            ILogger<DefaultRepository<TItem>> logger) =>
+            (_optionsMonitor, _containerProvider, _logger) = (optionsMonitor, containerProvider, logger);
 
         /// <inheritdoc/>
         public async ValueTask<TItem> GetAsync(string id)
@@ -37,17 +42,26 @@ namespace Microsoft.Azure.CosmosRepository
             Container container = await _containerProvider.GetContainerAsync();
             ItemResponse<TItem> response = await container.ReadItemAsync<TItem>(id, new PartitionKey(id));
 
-            return response.Resource;
+            TItem item = response.Resource;
+
+            TryLogDebugDetails(_logger, () => $"Read: {JsonConvert.SerializeObject(item)}");
+
+            return item;
         }
 
         /// <inheritdoc/>
         public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate)
         {
             Container container = await _containerProvider.GetContainerAsync();
-            using (FeedIterator<TItem> iterator =
+
+            IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                         .Where(predicate)
-                         .ToFeedIterator())
+                    .Where(predicate.Compose(
+                        item => item.Type == typeof(TItem).Name, Expression.AndAlso));
+
+            TryLogDebugDetails(_logger, () => $"Read: {query}");
+
+            using (FeedIterator<TItem> iterator = query.ToFeedIterator())
             {
                 List<TItem> results = new List<TItem>();
                 while (iterator.HasMoreResults)
@@ -69,6 +83,8 @@ namespace Microsoft.Azure.CosmosRepository
             ItemResponse<TItem> response =
                 await container.CreateItemAsync(value, value.PartitionKey);
 
+            TryLogDebugDetails(_logger, () => $"Created: {JsonConvert.SerializeObject(value)}");
+
             return response.Resource;
         }
 
@@ -84,6 +100,8 @@ namespace Microsoft.Azure.CosmosRepository
             ItemResponse<TItem> response =
                 await container.UpsertItemAsync<TItem>(value, value.PartitionKey, options);
 
+            TryLogDebugDetails(_logger, () => $"Updated: {JsonConvert.SerializeObject(value)}");
+
             return optimizeBandwidth ? value : response.Resource;
         }
 
@@ -96,6 +114,16 @@ namespace Microsoft.Azure.CosmosRepository
             ItemRequestOptions options = RequestOptions.Options;
             Container container = await _containerProvider.GetContainerAsync();
             _ = await container.DeleteItemAsync<TItem>(id, new PartitionKey(id), options);
+
+            TryLogDebugDetails(_logger, () => $"Deleted: {id}");
+        }
+
+        static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
+        {
+            if (logger?.IsEnabled(LogLevel.Debug) ?? false)
+            {
+                logger.LogDebug(getMessage());
+            }
         }
     }
 }

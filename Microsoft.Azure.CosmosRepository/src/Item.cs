@@ -41,6 +41,17 @@ namespace Microsoft.Azure.CosmosRepository
         [JsonProperty("id")]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        /// <summary>
+        /// Gets or sets the item's type name.
+        /// </summary>
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
         internal PartitionKey PartitionKey => new PartitionKey(Id);
+
+        /// <summary>
+        /// Default constructor, assigns type name to <see cref="Type"/> property.
+        /// </summary>
+        public Item() => Type = GetType().Name;
     }
 }

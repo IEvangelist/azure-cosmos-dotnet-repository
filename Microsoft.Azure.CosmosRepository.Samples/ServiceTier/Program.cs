@@ -9,6 +9,7 @@ using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace ServiceTier
 {
@@ -35,6 +36,7 @@ namespace ServiceTier
                     configuration.Sources.Clear();
                     configuration.AddCommandLine(args);
                 })
+                .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Debug))
                 .ConfigureServices((context, services) =>
                     services.AddCosmosRepository(context.Configuration, options =>
                             {
@@ -66,7 +68,7 @@ namespace ServiceTier
 
             // Reading...
             Person mary = await repository.GetAsync(maryShaw.Id);
-            Person calvin = (await repository.GetAsync(p => p.LastName == "Weatherfield")).Single();
+            Person calvin = (await repository.GetAsync(p => p.BirthDate > new DateTime(1980, 1, 1))).Single();
 
             Console.WriteLine($"[Person] Read: {mary}");
             Console.WriteLine($"[Person] Read: {calvin}");
