@@ -1,4 +1,4 @@
-[![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository/)
+﻿[![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository/)
 
 # Azure Cosmos DB Repository .NET SDK
 
@@ -20,6 +20,8 @@ public string Type { get; set; }
 ```
 
 Finally, a partition key properpty is used internally to manage partitioning on your behalf.
+
+📣 [Azure Cosmos DB - Offical Blog](https://devblogs.microsoft.com/cosmosdb/azure-cosmos-db-repository-net-sdk-v-1-0-4)
 
 ## Getting started
 

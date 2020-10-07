@@ -57,7 +57,7 @@ namespace Microsoft.Azure.CosmosRepository
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
                     .Where(predicate.Compose(
-                        item => item.Type == null || item.Type == typeof(TItem).Name, Expression.AndAlso));
+                        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso));
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 

@@ -37,7 +37,7 @@
     <RootNamespace>Microsoft.Azure.CosmosRepository</RootNamespace>
     <NoWarn>NU5125</NoWarn>
     <Optimize Condition="'$(Configuration)'=='Release'">true</Optimize>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <RepositoryUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</RepositoryUrl>
     <PackageIcon></PackageIcon>
   </PropertyGroup>
