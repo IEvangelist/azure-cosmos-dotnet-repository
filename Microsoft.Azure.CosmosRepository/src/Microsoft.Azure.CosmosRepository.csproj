@@ -15,13 +15,13 @@
     <Version Condition=" '$(VersionSuffix)' == '' ">$(ClientVersion)</Version>
     <Version Condition=" '$(VersionSuffix)' != '' ">$(ClientVersion)-$(VersionSuffix)</Version>
     <FileVersion>$(ClientVersion)</FileVersion>
-    <Authors>IEvangelist</Authors>
+    <Authors>IEvangelist, Greg Dodd</Authors>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>Microsoft.Azure.CosmosRepository</AssemblyName>
     <Title>IEvangelist Azure Cosmos DB Repository Client library</Title>
     <PackageId>IEvangelist.Azure.CosmosRepository</PackageId>
     <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureofficial;dotnetcore;netcore;netstandard</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>2.0.0 - Enhanced to use custom partition key path and variables.</PackageReleaseNotes>
     <PackageLicenseUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
     <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
@@ -37,7 +37,7 @@
     <RootNamespace>Microsoft.Azure.CosmosRepository</RootNamespace>
     <NoWarn>NU5125</NoWarn>
     <Optimize Condition="'$(Configuration)'=='Release'">true</Optimize>
-    <Version>1.0.4</Version>
+    <Version>2.0.0</Version>
     <RepositoryUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</RepositoryUrl>
     <PackageIcon></PackageIcon>
   </PropertyGroup>

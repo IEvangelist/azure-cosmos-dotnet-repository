@@ -82,7 +82,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     }), null));
     }
 
-    public class TestItem : Item { }
+    public class TestItem : ItemBase { }
 
     public class TestCosmosClientProvider : ICosmosClientProvider
     {

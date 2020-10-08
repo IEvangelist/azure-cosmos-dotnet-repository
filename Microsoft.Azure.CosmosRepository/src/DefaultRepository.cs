@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : Item
+    internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : ItemBase
     {
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
@@ -39,8 +39,14 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<TItem> GetAsync(string id)
         {
+            return await GetAsync(id, id);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<TItem> GetAsync(string id, string partitionKey)
+        {
             Container container = await _containerProvider.GetContainerAsync();
-            ItemResponse<TItem> response = await container.ReadItemAsync<TItem>(id, new PartitionKey(id));
+            ItemResponse<TItem> response = await container.ReadItemAsync<TItem>(id, new PartitionKey(partitionKey));
 
             TItem item = response.Resource;
 
@@ -111,9 +117,15 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask DeleteAsync(string id)
         {
+            await DeleteAsync(id, id);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask DeleteAsync(string id, string partitionKey)
+        {
             ItemRequestOptions options = RequestOptions.Options;
             Container container = await _containerProvider.GetContainerAsync();
-            _ = await container.DeleteItemAsync<TItem>(id, new PartitionKey(id), options);
+            _ = await container.DeleteItemAsync<TItem>(id, new PartitionKey(partitionKey), options);
 
             TryLogDebugDetails(_logger, () => $"Deleted: {id}");
         }

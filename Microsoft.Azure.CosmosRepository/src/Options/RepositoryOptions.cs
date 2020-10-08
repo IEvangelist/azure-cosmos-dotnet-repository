@@ -53,5 +53,13 @@ namespace Microsoft.Azure.CosmosRepository.Options
         ///Defaults to false
         /// </remarks>
         public bool ContainerPerItemType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a custom partition key path.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to "/id" if not specified.
+        /// </remarks>
+        public string PartitionKeyPath { get; set; } = "/id";
     }
 }

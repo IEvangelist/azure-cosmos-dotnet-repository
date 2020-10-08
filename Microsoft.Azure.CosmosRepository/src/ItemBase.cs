@@ -14,7 +14,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// Here is an example subclass item, which adds several properties:
     /// <code language="c#">
     /// <![CDATA[
-    /// public class SubItem : Item
+    /// public class SubItem : ItemBase
     /// {
     ///     public DateTimeOffset Date { get; set; }
     ///     public string Name { get; set; }
@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// ]]>
     /// </code>
     /// </example>
-    public class Item
+    public abstract class ItemBase
     {
         /// <summary>
         /// Gets or sets the item's globally unique identifier.
@@ -47,11 +47,20 @@ namespace Microsoft.Azure.CosmosRepository
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        internal PartitionKey PartitionKey => new PartitionKey(Id);
+        internal PartitionKey PartitionKey => SetPartitionKey();
+
+        /// <summary>
+        /// Allows for setting a <see cref="PartitionKey"/> other than <see cref="Id"/>.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual PartitionKey SetPartitionKey()
+        {
+            return new PartitionKey(Id);
+        }
 
         /// <summary>
         /// Default constructor, assigns type name to <see cref="Type"/> property.
         /// </summary>
-        public Item() => Type = GetType().Name;
+        protected ItemBase() => Type = GetType().Name;
     }
 }

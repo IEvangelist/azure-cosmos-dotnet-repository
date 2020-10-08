@@ -2,8 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Attributes;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,7 +15,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc/>
     internal class DefaultCosmosContainerProvider<TItem>
-        : ICosmosContainerProvider<TItem> where TItem : Item
+        : ICosmosContainerProvider<TItem> where TItem : ItemBase
     {
         readonly Lazy<Task<Container>> _lazyContainer;
         readonly RepositoryOptions _options;
@@ -44,12 +47,9 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             {
                 throw new ArgumentNullException($"The {nameof(_options.ContainerId)} is required.");
             }
-            if (logger is null)
-            {
-                throw new ArgumentNullException($"The {nameof(logger)} is required.");
-            }
-            
-            _logger = logger;
+
+            _logger = logger ?? throw new ArgumentNullException($"The {nameof(logger)} is required.");
+
             _lazyContainer = new Lazy<Task<Container>>(async () =>
             {
                 try
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                             new ContainerProperties
                             {
                                 Id = _options.ContainerPerItemType ? typeof(TItem).Name : _options.ContainerId,
-                                PartitionKeyPath = "/id"
+                                PartitionKeyPath = SetPartitionKeyPath(options.Value)
                             });
 
                     return container;
@@ -74,6 +74,18 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     throw;
                 }
             });
+        }
+
+        private static string SetPartitionKeyPath(RepositoryOptions repositoryOptions)
+        {
+            if (!repositoryOptions.ContainerPerItemType)
+                return repositoryOptions.PartitionKeyPath;
+            
+            return typeof(TItem).GetCustomAttributes()
+                       .OfType<PartitionKeyPathAttribute>()
+                       .SingleOrDefault()
+                       ?.PartitionKeyPath
+                   ?? repositoryOptions.PartitionKeyPath;
         }
 
         /// <inheritdoc/>

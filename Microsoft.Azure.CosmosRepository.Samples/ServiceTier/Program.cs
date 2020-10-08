@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,7 @@ namespace ServiceTier
 
             // Demonstrate raw repo usage...
             await Task.WhenAll(
+                RawRepositoryExampleAsync(host.Services.GetService<IRepository<Place>>()),
                 RawRepositoryExampleAsync(host.Services.GetService<IRepository<Person>>()),
                 RawRepositoryExampleAsync(host.Services.GetService<IRepository<Widget>>()));
 
@@ -44,8 +46,32 @@ namespace ServiceTier
                                 options.DatabaseId = "samples";
                                 options.OptimizeBandwidth = true;
                                 options.ContainerPerItemType = true;
+                                options.CosmosConnectionString =
+                                    "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
                             })
                             .AddSingleton<IExampleService, ExampleService>());
+
+        static async Task RawRepositoryExampleAsync(IRepository<Place> repository)
+        {
+            Place atlanta = new Place
+            {
+                Location = "Atlanta",
+                Name = "CityOfAtlanta",
+                PartitionKey = "SomePartitionKey"
+            };
+
+            // Creating...
+            Console.WriteLine("[Person] Repository creating...");
+            _ = await repository.CreateAsync(new[] { atlanta });
+
+            //Reading...
+            Place atl = await repository.GetAsync(atlanta.Id, atlanta.PartitionKey);
+
+            Console.WriteLine($"[Place] Read: {atl}");
+
+            //Deleting...
+            await repository.DeleteAsync(atl);
+        }
 
         static async Task RawRepositoryExampleAsync(IRepository<Person> repository)
         {

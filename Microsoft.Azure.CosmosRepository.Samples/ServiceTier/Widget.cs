@@ -6,7 +6,7 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace ServiceTier
 {
-    public class Widget : Item
+    public class Widget : ItemBase
     {
         public string Name { get; set; }
 
