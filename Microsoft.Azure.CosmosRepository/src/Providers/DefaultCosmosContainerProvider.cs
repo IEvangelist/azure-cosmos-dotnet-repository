@@ -17,16 +17,22 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         readonly Lazy<Task<Container>> _lazyContainer;
         readonly RepositoryOptions _options;
         readonly ICosmosClientProvider _cosmosClientProvider;
+        readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
         readonly ILogger<DefaultCosmosContainerProvider<TItem>> _logger;
 
         public DefaultCosmosContainerProvider(
             ICosmosClientProvider cosmosClientProvider,
+            ICosmosPartitionKeyPathProvider cosmosPartitionKeyPathProvider,
             IOptions<RepositoryOptions> options,
             ILogger<DefaultCosmosContainerProvider<TItem>> logger)
         {
             _cosmosClientProvider = cosmosClientProvider
                 ?? throw new ArgumentNullException(
                     nameof(cosmosClientProvider), "Cosmos client provider is required.");
+
+            _cosmosPartitionKeyPathProvider = cosmosPartitionKeyPathProvider
+                ?? throw new ArgumentNullException(
+                    nameof(cosmosPartitionKeyPathProvider), "Cosmos partition key name provider is required.");
 
             _options = options?.Value
                 ?? throw new ArgumentNullException(
@@ -57,13 +63,16 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     Database database =
                         await _cosmosClientProvider.UseClientAsync(
                             client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId));
+
+                    ContainerProperties containerProperties = new ContainerProperties
+                    {
+                        Id = _options.ContainerPerItemType ? typeof(TItem).Name : _options.ContainerId,
+                        PartitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>()
+                    };
+
                     Container container =
                         await database.CreateContainerIfNotExistsAsync(
-                            new ContainerProperties
-                            {
-                                Id = _options.ContainerPerItemType ? typeof(TItem).Name : _options.ContainerId,
-                                PartitionKeyPath = "/id"
-                            });
+                            containerProperties);
 
                     return container;
                 }

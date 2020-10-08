@@ -2,11 +2,13 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
 using Newtonsoft.Json;
 using System;
 
 namespace ServiceTier
 {
+    [PartitionKeyPath("/synthetic")]
     public class Person : Item
     {
         public DateTime BirthDate { get; set; }
@@ -18,6 +20,12 @@ namespace ServiceTier
         [JsonIgnore]
         public int AgeInYears =>
             (int)DateTime.Now.Subtract(BirthDate).TotalDays / 365; // Days in a year
+
+        [JsonProperty("synthetic")]
+        public string SyntheticPartitionKey =>
+            $"{FirstName}-{LastName}";
+
+        protected override string GetPartitionKeyValue() => SyntheticPartitionKey;
 
         public override string ToString() =>
             MiddleName is null

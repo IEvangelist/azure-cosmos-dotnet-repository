@@ -37,10 +37,21 @@ namespace Microsoft.Azure.CosmosRepository
             (_optionsMonitor, _containerProvider, _logger) = (optionsMonitor, containerProvider, logger);
 
         /// <inheritdoc/>
-        public async ValueTask<TItem> GetAsync(string id)
+        public ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null) =>
+            GetAsync(id, new PartitionKey(partitionKeyValue ?? id));
+
+        /// <inheritdoc/>
+        public async ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey)
         {
             Container container = await _containerProvider.GetContainerAsync();
-            ItemResponse<TItem> response = await container.ReadItemAsync<TItem>(id, new PartitionKey(id));
+
+            if (partitionKey == default)
+            {
+                partitionKey = new PartitionKey(id);
+            }
+
+            ItemResponse<TItem> response =
+                await container.ReadItemAsync<TItem>(id, partitionKey);
 
             TItem item = response.Resource;
 
@@ -80,6 +91,7 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<TItem> CreateAsync(TItem value)
         {
             Container container = await _containerProvider.GetContainerAsync();
+
             ItemResponse<TItem> response =
                 await container.CreateItemAsync(value, value.PartitionKey);
 
@@ -97,6 +109,7 @@ namespace Microsoft.Azure.CosmosRepository
         {
             (bool optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
             Container container = await _containerProvider.GetContainerAsync();
+
             ItemResponse<TItem> response =
                 await container.UpsertItemAsync<TItem>(value, value.PartitionKey, options);
 
@@ -106,14 +119,24 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public ValueTask DeleteAsync(TItem value) => DeleteAsync(value.Id);
+        public ValueTask DeleteAsync(TItem value) => DeleteAsync(value.Id, value.PartitionKey);
 
         /// <inheritdoc/>
-        public async ValueTask DeleteAsync(string id)
+        public ValueTask DeleteAsync(string id, string partitionKeyValue = null) =>
+            DeleteAsync(id, new PartitionKey(partitionKeyValue ?? id));
+
+        /// <inheritdoc/>
+        public async ValueTask DeleteAsync(string id, PartitionKey partitionKey)
         {
             ItemRequestOptions options = RequestOptions.Options;
             Container container = await _containerProvider.GetContainerAsync();
-            _ = await container.DeleteItemAsync<TItem>(id, new PartitionKey(id), options);
+
+            if (partitionKey == default)
+            {
+                partitionKey = new PartitionKey(id);
+            }
+
+            _ = await container.DeleteItemAsync<TItem>(id, partitionKey, options);
 
             TryLogDebugDetails(_logger, () => $"Deleted: {id}");
         }

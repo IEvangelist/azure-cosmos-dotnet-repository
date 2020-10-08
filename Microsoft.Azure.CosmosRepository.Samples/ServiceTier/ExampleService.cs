@@ -28,8 +28,8 @@ namespace ServiceTier
         public ValueTask<IEnumerable<Person>> ReadPeopleAsync(Expression<Func<Person, bool>> matches) =>
             _personRepository.GetAsync(matches);
 
-        public ValueTask<Person> ReadPersonByIdAsync(string id) =>
-            _personRepository.GetAsync(id);
+        public ValueTask<Person> ReadPersonByIdAsync(string id, string partitionKey) =>
+            _personRepository.GetAsync(id, partitionKey);
 
         public ValueTask<Person> UpdatePersonAsync(Person person) =>
             _personRepository.UpdateAsync(person);

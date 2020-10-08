@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -36,8 +37,20 @@ namespace Microsoft.Azure.CosmosRepository
         /// If the typeof(<typeparamref name="TItem"/>).Name differs from the item.Type you're attempting to retrieve, null is returned.
         /// </remarks>
         /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKeyValue">The partition key value if different than the <see cref="Item.Id"/>.</param>
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
-        ValueTask<TItem> GetAsync(string id);
+        ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null);
+
+        /// <summary>
+        /// Gets the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
+        /// </summary>
+        /// <remarks>
+        /// If the typeof(<typeparamref name="TItem"/>).Name differs from the item.Type you're attempting to retrieve, null is returned.
+        /// </remarks>
+        /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKey">The <see cref="PartitionKey"/> value if different than the <see cref="Item.Id"/>.</param>
+        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
+        ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey);
 
         /// <summary>
         /// Gets an <see cref="IEnumerable{TItem}"/> collection of <see cref="Item"/> 
@@ -58,7 +71,7 @@ namespace Microsoft.Azure.CosmosRepository
         ValueTask<TItem> CreateAsync(TItem value);
 
         /// <summary>
-        /// Creates one or more cosmos item(s) representing the given <paramref name="values"/>. 
+        /// Creates one or more cosmos item(s) representing the given <paramref name="values"/>.
         /// </summary>
         /// <param name="values">The item values to create.</param>
         /// <returns>A <see cref="Task{TItem}"/></returns>
@@ -82,7 +95,16 @@ namespace Microsoft.Azure.CosmosRepository
         /// Deletes the cosmos object that corresponds to the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKeyValue">The partition key value if different than the <see cref="Item.Id"/>.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
-        ValueTask DeleteAsync(string id);
+        ValueTask DeleteAsync(string id, string partitionKeyValue = null);
+
+        /// <summary>
+        /// Deletes the cosmos object that corresponds to the given <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKey">The <see cref="PartitionKey"/> value if different than the <see cref="Item.Id"/>.</param>
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
+        ValueTask DeleteAsync(string id, PartitionKey partitionKey);
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -67,7 +68,7 @@ namespace ServiceTier
             _ = await repository.CreateAsync(new[] { maryShaw, calvinWeatherfield });
 
             // Reading...
-            Person mary = await repository.GetAsync(maryShaw.Id);
+            Person mary = await repository.GetAsync(maryShaw.Id, maryShaw.SyntheticPartitionKey);
             Person calvin = (await repository.GetAsync(p => p.BirthDate > new DateTime(1980, 1, 1))).Single();
 
             Console.WriteLine($"[Person] Read: {mary}");
@@ -92,8 +93,8 @@ namespace ServiceTier
             Console.WriteLine("[Person] Repository deleting...");
             await Task.WhenAll(new[]
             {
-                repository.DeleteAsync(mary.Id).AsTask(),
-                repository.DeleteAsync(calvin.Id).AsTask()
+                repository.DeleteAsync(mary.Id, mary.SyntheticPartitionKey).AsTask(),
+                repository.DeleteAsync(calvin.Id, calvin.SyntheticPartitionKey).AsTask()
             });
         }
 
@@ -165,19 +166,19 @@ namespace ServiceTier
             _ = await service.AddPeopleAsync(new[] { jamesBond, adeleGoldberg });
 
             // Reading...
-            Person mary = await service.ReadPersonByIdAsync(jamesBond.Id);
-            Person calvin = (await service.ReadPeopleAsync(p => p.LastName == "Goldberg")).Single();
+            Person james = await service.ReadPersonByIdAsync(jamesBond.Id, jamesBond.SyntheticPartitionKey);
+            Person adele = (await service.ReadPeopleAsync(p => p.LastName == "Goldberg")).Single();
 
-            Console.WriteLine($"[Person] Read: {mary}");
-            Console.WriteLine($"[Person] Read: {calvin}");
+            Console.WriteLine($"[Person] Read: {james}");
+            Console.WriteLine($"[Person] Read: {adele}");
 
             // Updating...
             Console.WriteLine("[Person] Service updating...");
-            mary.BirthDate = new DateTime(1973, 7, 21); // Oops, Mary was actually born in 1973
-            calvin.BirthDate = new DateTime(1982, 2, 14); // And Calvin was born in 1982...
+            james.BirthDate = new DateTime(1973, 7, 21); // Oops, Mary was actually born in 1973
+            adele.BirthDate = new DateTime(1982, 2, 14); // And Calvin was born in 1982...
 
-            _ = service.UpdatePersonAsync(mary);
-            _ = service.UpdatePersonAsync(calvin);
+            _ = service.UpdatePersonAsync(james);
+            _ = service.UpdatePersonAsync(adele);
 
             // Read again / verify updates
             IEnumerable<Person> peopleWithoutMiddleNames = await service.ReadPeopleAsync(p => p.MiddleName == null);
@@ -190,8 +191,8 @@ namespace ServiceTier
             Console.WriteLine("[Person] Service deleting...");
             await Task.WhenAll(new[]
             {
-                service.DeletePersonAsync(mary).AsTask(),
-                service.DeletePersonAsync(calvin).AsTask()
+                service.DeletePersonAsync(james).AsTask(),
+                service.DeletePersonAsync(adele).AsTask()
             });
         }
     }

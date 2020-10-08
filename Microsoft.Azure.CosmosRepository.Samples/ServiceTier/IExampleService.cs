@@ -13,7 +13,7 @@ namespace ServiceTier
         ValueTask<Person> AddPersonAsync(Person person);
         Task<Person[]> AddPeopleAsync(IEnumerable<Person> people);
 
-        ValueTask<Person> ReadPersonByIdAsync(string id);
+        ValueTask<Person> ReadPersonByIdAsync(string id, string partitionKey);
         ValueTask<IEnumerable<Person>> ReadPeopleAsync(Expression<Func<Person, bool>> matches);
 
         ValueTask<Person> UpdatePersonAsync(Person person);
