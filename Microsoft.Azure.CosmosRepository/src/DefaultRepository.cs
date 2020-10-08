@@ -46,10 +46,11 @@ namespace Microsoft.Azure.CosmosRepository
 
             TryLogDebugDetails(_logger, () => $"Read: {JsonConvert.SerializeObject(item)}");
 
-            return item;
+            return string.IsNullOrEmpty(item.Type) || item.Type == typeof(TItem).Name ? item : null;
         }
 
         /// <inheritdoc/>
+        /// <remarks></remarks>
         public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate)
         {
             Container container = await _containerProvider.GetContainerAsync();
