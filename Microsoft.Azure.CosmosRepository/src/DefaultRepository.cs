@@ -50,7 +50,6 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        /// <remarks></remarks>
         public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate)
         {
             Container container = await _containerProvider.GetContainerAsync();

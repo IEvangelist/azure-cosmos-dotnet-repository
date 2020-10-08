@@ -32,6 +32,9 @@ namespace Microsoft.Azure.CosmosRepository
         /// <summary>
         /// Gets the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
         /// </summary>
+        /// <remarks>
+        /// If the typeof(<typeparamref name="TItem"/>).Name differs from the item.Type you're attempting to retrieve, null is returned.
+        /// </remarks>
         /// <param name="id">The string identifier.</param>
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> GetAsync(string id);
@@ -40,6 +43,9 @@ namespace Microsoft.Azure.CosmosRepository
         /// Gets an <see cref="IEnumerable{TItem}"/> collection of <see cref="Item"/> 
         /// subclasses that match the given <paramref name="predicate"/>.
         /// </summary>
+        /// <remarks>
+        /// If the typeof(<typeparamref name="TItem"/>).Name differs from the item.Type you're attempting to retrieve, the item is not returned.
+        /// </remarks>
         /// <param name="predicate">The expression used for evaluating a matching item.</param>
         /// <returns>A collection of item instances who meet the <paramref name="predicate"/> condition.</returns>
         ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate);
