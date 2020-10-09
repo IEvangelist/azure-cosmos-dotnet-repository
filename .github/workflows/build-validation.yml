@@ -1,0 +1,37 @@
+name: Build validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOTNET_VERSION: '3.1.402' # set this to the dot net version to use
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: |
+        cd Microsoft.Azure.CosmosRepository
+        dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: |
+        cd Microsoft.Azure.CosmosRepository/test
+        dotnet test --no-restore --verbosity normal
