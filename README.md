@@ -1,4 +1,4 @@
-﻿[![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository/)
+﻿[![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository/) ![Build validation](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/Build%20validation/badge.svg)
 
 # Azure Cosmos DB Repository .NET SDK
 
