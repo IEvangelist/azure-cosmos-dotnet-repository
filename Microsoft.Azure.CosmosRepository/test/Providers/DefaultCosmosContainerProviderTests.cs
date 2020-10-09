@@ -106,7 +106,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
     internal class TestCosmosClientProvider : ICosmosClientProvider
     {
-        Task<T> ICosmosClientProvider.UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) =>
+        public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) =>
             Task.FromResult(default(T));
     }
 }
