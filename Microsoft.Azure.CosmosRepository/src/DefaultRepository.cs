@@ -43,7 +43,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey)
         {
-            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
             if (partitionKey == default)
             {
@@ -63,7 +64,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate)
         {
-            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
@@ -90,7 +92,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<TItem> CreateAsync(TItem value)
         {
-            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
             ItemResponse<TItem> response =
                 await container.CreateItemAsync(value, value.PartitionKey).ConfigureAwait(false);
@@ -101,8 +104,15 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public Task<TItem[]> CreateAsync(IEnumerable<TItem> values) =>
-            Task.WhenAll(values.Select(v => CreateAsync(v).AsTask()));
+        public async ValueTask<IEnumerable<TItem>> CreateAsync(IEnumerable<TItem> values)
+        {
+            IEnumerable<Task<TItem>> creationTasks =
+                values.Select(v => CreateAsync(v).AsTask()).ToList();
+
+            _ = await Task.WhenAll(creationTasks).ConfigureAwait(false);
+
+            return creationTasks.Select(x => x.Result);
+        }
 
         /// <inheritdoc/>
         public async ValueTask<TItem> UpdateAsync(TItem value)

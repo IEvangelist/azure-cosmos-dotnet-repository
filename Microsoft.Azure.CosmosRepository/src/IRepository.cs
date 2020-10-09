@@ -74,8 +74,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// Creates one or more cosmos item(s) representing the given <paramref name="values"/>.
         /// </summary>
         /// <param name="values">The item values to create.</param>
-        /// <returns>A <see cref="Task{TItem}"/></returns>
-        Task<TItem[]> CreateAsync(IEnumerable<TItem> values);
+        /// <returns>A collection of created item instances.</returns>
+        ValueTask<IEnumerable<TItem>> CreateAsync(IEnumerable<TItem> values);
 
         /// <summary>
         /// Updates the cosmos object that corresponds to the given <paramref name="value"/>.

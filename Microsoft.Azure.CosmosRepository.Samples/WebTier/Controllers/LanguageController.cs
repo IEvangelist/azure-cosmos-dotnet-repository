@@ -28,7 +28,7 @@ namespace WebTier.Controllers
             _repository.GetAsync(id);
 
         [HttpPost(Name = nameof(PostLanguages))]
-        public Task<Language[]> PostLanguages([FromBody] params Language[] languages) =>
+        public ValueTask<IEnumerable<Language>> PostLanguages([FromBody] params Language[] languages) =>
             _repository.CreateAsync(languages);
 
         [HttpPut(Name = nameof(PutLanguage))]

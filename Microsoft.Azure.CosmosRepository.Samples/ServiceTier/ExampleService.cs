@@ -16,7 +16,7 @@ namespace ServiceTier
         public ExampleService(IRepository<Person> personRepository) =>
             _personRepository = personRepository;
 
-        public Task<Person[]> AddPeopleAsync(IEnumerable<Person> people) =>
+        public ValueTask<IEnumerable<Person>> AddPeopleAsync(IEnumerable<Person> people) =>
             _personRepository.CreateAsync(people);
 
         public ValueTask<Person> AddPersonAsync(Person person) =>
