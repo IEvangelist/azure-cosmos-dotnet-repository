@@ -33,5 +33,4 @@ jobs:
 
     - name: Test
       run: |
-        cd Microsoft.Azure.CosmosRepository/test
         dotnet test --no-restore --verbosity normal
