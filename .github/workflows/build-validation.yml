@@ -28,7 +28,7 @@ jobs:
       
     - name: Build
       run: |
-        cd Microsoft.Azure.CosmosRepository
+        cd Microsoft.Azure.CosmosRepository/src
         dotnet build --configuration Release --no-restore
 
     - name: Test
