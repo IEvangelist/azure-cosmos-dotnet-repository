@@ -1,3 +1,6 @@
+// Copyright (c) IEvangelist. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
