@@ -8,6 +8,7 @@ using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Net.Http;
+using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -43,14 +44,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddLogging()
                 .AddHttpClient()
-                .AddSingleton<CosmosClientOptions>(provider =>
-                {
-                    IHttpClientFactory factory = provider.GetRequiredService<IHttpClientFactory>();
-                    return new CosmosClientOptions
-                    {
-                        HttpClientFactory = factory.CreateClient
-                    };
-                })
+                .AddSingleton(provider => provider.AddCosmosClientOptions(configuration))
                 .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
                 .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
                 .AddSingleton<ICosmosPartitionKeyPathProvider, DefaultCosmosPartitionKeyPathProvider>()
@@ -64,6 +58,37 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             return services;
+        }
+
+        static CosmosClientOptions AddCosmosClientOptions(
+            this IServiceProvider provider,
+            IConfiguration configuration)
+        {
+            IHttpClientFactory factory = provider.GetRequiredService<IHttpClientFactory>();
+
+            HttpClient clientFactory()
+            {
+                HttpClient client = factory.CreateClient();
+
+                string version =
+                    Assembly.GetExecutingAssembly()
+                        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                        .InformationalVersion;
+
+                client.DefaultRequestHeaders
+                    .UserAgent
+                    .ParseAdd($"ievangelist-cosmos-repository-sdk/{version}");
+
+                return client;
+            }
+
+            return new CosmosClientOptions
+            {
+                HttpClientFactory = clientFactory,
+                AllowBulkExecution =
+                    configuration.GetSection(nameof(RepositoryOptions))
+                        .GetValue<bool>(nameof(RepositoryOptions.AllowBulkExecution))
+            };
         }
     }
 }

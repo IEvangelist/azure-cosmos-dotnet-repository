@@ -42,13 +42,18 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             {
                 throw new ArgumentNullException($"The {nameof(_options.CosmosConnectionString)} is required.");
             }
-            if (_options.DatabaseId is null)
+            if (_options.ContainerPerItemType is false)
             {
-                throw new ArgumentNullException($"The {nameof(_options.DatabaseId)} is required.");
-            }
-            if (_options.ContainerId is null)
-            {
-                throw new ArgumentNullException($"The {nameof(_options.ContainerId)} is required.");
+                if (_options.DatabaseId is null)
+                {
+                    throw new ArgumentNullException(
+                        $"The {nameof(_options.DatabaseId)} is required when container per item type is false.");
+                }
+                if (_options.ContainerId is null)
+                {
+                    throw new ArgumentNullException(
+                        $"The {nameof(_options.ContainerId)} is required when container per item type is false.");
+                }
             }
             if (logger is null)
             {

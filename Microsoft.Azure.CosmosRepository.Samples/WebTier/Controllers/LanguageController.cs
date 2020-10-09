@@ -16,24 +16,24 @@ namespace WebTier.Controllers
         public LanguageController(IRepository<Language> repository) =>
             _repository = repository;
 
-        [HttpGet]
-        public ValueTask<IEnumerable<Language>> Get() =>
+        [HttpGet(Name = nameof(GetLanguages))]
+        public ValueTask<IEnumerable<Language>> GetLanguages() =>
             _repository.GetAsync(l => l.InitialReleaseDate > new DateTime(1984, 7, 7));
 
-        [HttpGet("{id}")]
-        public ValueTask<Language> Get(string id) =>
+        [HttpGet("{id}", Name = nameof(GetLanguageById))]
+        public ValueTask<Language> GetLanguageById(string id) =>
             _repository.GetAsync(id);
 
-        [HttpPost]
-        public ValueTask<Language> Post([FromBody] Language language) =>
-            _repository.CreateAsync(language);
+        [HttpPost(Name = nameof(PostLanguages))]
+        public Task<Language[]> PostLanguages([FromBody] params Language[] languages) =>
+            _repository.CreateAsync(languages);
 
-        [HttpPut]
-        public ValueTask<Language> Put([FromBody] Language language) =>
+        [HttpPut(Name = nameof(PutLanguage))]
+        public ValueTask<Language> PutLanguage([FromBody] Language language) =>
             _repository.UpdateAsync(language);
 
-        [HttpDelete("{id}")]
-        public ValueTask Delete(string id) =>
+        [HttpDelete("{id}", Name = nameof(DeleteLanguage))]
+        public ValueTask DeleteLanguage(string id) =>
             _repository.DeleteAsync(id);
     }
 }

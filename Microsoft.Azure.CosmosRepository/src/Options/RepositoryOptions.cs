@@ -50,8 +50,19 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// a container - because it doesn't really matter.
         /// </summary>
         /// <remarks>
-        ///Defaults to false
+        ///Defaults to false, see: https://docs.microsoft.com/azure/cosmos-db/how-to-model-partition-example?WC.m_id=dapine
         /// </remarks>
         public bool ContainerPerItemType { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets whether optimistic batching of service requests occurs. Setting this option might
+        /// impact the latency of the operations. Hence this option is recommended for non-latency
+        /// sensitive scenarios only.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to false, see: https://devblogs.microsoft.com/cosmosdb/introducing-bulk-support-in-the-net-sdk
+        /// </remarks>
+        public bool AllowBulkExecution { get; set; }
     }
 }

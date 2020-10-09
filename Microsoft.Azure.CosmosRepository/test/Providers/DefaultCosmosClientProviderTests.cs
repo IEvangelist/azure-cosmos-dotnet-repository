@@ -30,5 +30,23 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                () => new DefaultCosmosClientProvider(
                    new CosmosClientOptions(),
                    null));
+
+        [Fact]
+        public void DefaultCosmosClientProviderDisposeTest()
+        {
+            DefaultCosmosClientProvider provider =
+                new DefaultCosmosClientProvider(
+                    new CosmosClientOptions(),
+                    Options.Create(new RepositoryOptions
+                    {
+                        CosmosConnectionString =
+                            "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
+                    }));
+
+            provider.Dispose();
+
+            Assert.ThrowsAsync<ObjectDisposedException>(
+                async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+        }
     }
 }
