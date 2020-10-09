@@ -54,7 +54,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             {
                 throw new ArgumentNullException($"The {nameof(logger)} is required.");
             }
-            
+
             _logger = logger;
             _lazyContainer = new Lazy<Task<Container>>(async () =>
             {
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                 {
                     Database database =
                         await _cosmosClientProvider.UseClientAsync(
-                            client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId));
+                            client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId)).ConfigureAwait(false);
 
                     ContainerProperties containerProperties = new ContainerProperties
                     {
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
                     Container container =
                         await database.CreateContainerIfNotExistsAsync(
-                            containerProperties);
+                            containerProperties).ConfigureAwait(false);
 
                     return container;
                 }
