@@ -8,7 +8,7 @@ namespace ServiceTier
 {
     public class Widget : Item
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public DateTimeOffset CreatedOrUpdatedOn { get; set; } = DateTimeOffset.UtcNow;
 
