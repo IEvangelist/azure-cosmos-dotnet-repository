@@ -1,7 +1,7 @@
-name: Build validation
+name: Pull request validation
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -25,7 +25,7 @@ jobs:
       
     - name: Build
       run: |
-        dotnet build --configuration Release --no-restore
+        dotnet build --no-restore
 
     - name: Test
       run: |
