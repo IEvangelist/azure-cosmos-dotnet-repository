@@ -32,7 +32,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                    null));
 
         [Fact]
-        public void DefaultCosmosClientProviderDisposeTest()
+        public void DefaultCosmosClientProviderCorrectlyDisposes()
         {
             DefaultCosmosClientProvider provider =
                 new DefaultCosmosClientProvider(
