@@ -16,8 +16,8 @@ namespace WebTier.Controllers
     {
         private readonly IRepository<Language> _repository;
 
-        public LanguageController(IRepository<Language> repository) =>
-            _repository = repository;
+        public LanguageController(IRepositoryFactory factory) =>
+            _repository = factory.RepositoryOf<Language>();
 
         [HttpGet(Name = nameof(GetLanguages))]
         public ValueTask<IEnumerable<Language>> GetLanguages() =>

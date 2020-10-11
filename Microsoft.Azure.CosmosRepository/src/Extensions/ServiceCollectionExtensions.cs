@@ -49,6 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
                 .AddSingleton<ICosmosPartitionKeyPathProvider, DefaultCosmosPartitionKeyPathProvider>()
                 .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
+                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
                 .Configure<RepositoryOptions>(
                     configuration.GetSection(nameof(RepositoryOptions)));
 
