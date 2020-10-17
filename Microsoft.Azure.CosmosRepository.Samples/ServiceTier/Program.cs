@@ -1,35 +1,20 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿// Copyright (c) IEvangelist. All rights reserved. Licensed under the MIT License.
 
 namespace ServiceTier
 {
-    class Program
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.CosmosRepository;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
+
+    internal class Program
     {
-        static async Task Main(string[] args)
-        {
-            using IHost host = CreateHostBuilder(args).Build();
-            await host.StartAsync();
-
-            // Demonstrate raw repo usage...
-            await Task.WhenAll(
-                RawRepositoryExampleAsync(host.Services.GetService<IRepository<Person>>()),
-                RawRepositoryExampleAsync(host.Services.GetService<IRepository<Widget>>()));
-
-            // Demonstrate service wrapper around repo usage...
-            await ServiceExampleAsync(host.Services.GetService<IExampleService>());
-        }
-
-        static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((_, configuration) =>
                 {
@@ -47,7 +32,21 @@ namespace ServiceTier
                             })
                             .AddSingleton<IExampleService, ExampleService>());
 
-        static async Task RawRepositoryExampleAsync(IRepository<Person> repository)
+        private static async Task Main(string[] args)
+        {
+            using IHost host = CreateHostBuilder(args).Build();
+            await host.StartAsync();
+
+            // Demonstrate raw repo usage...
+            await Task.WhenAll(
+                RawRepositoryExampleAsync(host.Services.GetService<IRepository<Person>>()),
+                RawRepositoryExampleAsync(host.Services.GetService<IRepository<Widget>>()));
+
+            // Demonstrate service wrapper around repo usage...
+            await ServiceExampleAsync(host.Services.GetService<IExampleService>());
+        }
+
+        private static async Task RawRepositoryExampleAsync(IRepository<Person> repository)
         {
             Person maryShaw = new Person
             {
@@ -67,8 +66,10 @@ namespace ServiceTier
             _ = await repository.CreateAsync(new[] { maryShaw, calvinWeatherfield });
 
             // Reading...
-            Person mary = await repository.GetAsync(maryShaw.Id, maryShaw.SyntheticPartitionKey);
+            Person? mary = await repository.GetAsync(maryShaw.Id, maryShaw.SyntheticPartitionKey);
+            _ = mary ?? throw new NullReferenceException(nameof(mary));
             Person calvin = (await repository.GetAsync(p => p.BirthDate > new DateTime(1980, 1, 1))).Single();
+            _ = calvin ?? throw new NullReferenceException(nameof(calvin));
 
             Console.WriteLine($"[Person] Read: {mary}");
             Console.WriteLine($"[Person] Read: {calvin}");
@@ -97,7 +98,7 @@ namespace ServiceTier
             });
         }
 
-        static async Task RawRepositoryExampleAsync(IRepository<Widget> repository)
+        private static async Task RawRepositoryExampleAsync(IRepository<Widget> repository)
         {
             Widget widget1 = new Widget
             {
@@ -115,7 +116,8 @@ namespace ServiceTier
             _ = await repository.CreateAsync(new[] { widget1, widget2 });
 
             // Reading...
-            Widget contraption = await repository.GetAsync(widget1.Id);
+            Widget? contraption = await repository.GetAsync(widget1.Id);
+            _ = contraption ?? throw new NullReferenceException(nameof(contraption));
             Widget telescope = (await repository.GetAsync(p => p.Name.Contains("telescope"))).Single();
 
             Console.WriteLine($"[Widget] Read: {contraption}");
@@ -145,7 +147,7 @@ namespace ServiceTier
             });
         }
 
-        static async Task ServiceExampleAsync(IExampleService service)
+        private static async Task ServiceExampleAsync(IExampleService service)
         {
             Person jamesBond = new Person
             {
@@ -165,7 +167,8 @@ namespace ServiceTier
             _ = await service.AddPeopleAsync(new[] { jamesBond, adeleGoldberg });
 
             // Reading...
-            Person james = await service.ReadPersonByIdAsync(jamesBond.Id, jamesBond.SyntheticPartitionKey);
+            Person? james = await service.ReadPersonByIdAsync(jamesBond.Id, jamesBond.SyntheticPartitionKey);
+            _ = james ?? throw new NullReferenceException(nameof(james));
             Person adele = (await service.ReadPeopleAsync(p => p.LastName == "Goldberg")).Single();
 
             Console.WriteLine($"[Person] Read: {james}");

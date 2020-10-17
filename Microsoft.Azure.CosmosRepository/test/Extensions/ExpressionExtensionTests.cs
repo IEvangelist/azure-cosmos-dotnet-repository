@@ -1,14 +1,13 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using Microsoft.Azure.CosmosRepository.Extensions;
-using Xunit;
+﻿// Copyright (c) IEvangelist. All rights reserved. Licensed under the MIT License.
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+    using Microsoft.Azure.CosmosRepository.Extensions;
+    using Xunit;
+
     public class ExpressionExtensionTests
     {
         public static IEnumerable<object[]> CompositionInput => new[]

@@ -1,28 +1,28 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
-using System;
-using System.Collections.Concurrent;
-using Microsoft.Azure.CosmosRepository.Attributes;
+﻿// Copyright (c) IEvangelist. All rights reserved. Licensed under the MIT License.
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
+    using System;
+    using System.Collections.Concurrent;
+    using Microsoft.Azure.CosmosRepository.Attributes;
+
     /// <inheritdoc />
     internal class DefaultCosmosPartitionKeyPathProvider :
         ICosmosPartitionKeyPathProvider
     {
-        static readonly Type _partitionKeyNameAttributeType = typeof(PartitionKeyPathAttribute);
-        static readonly ConcurrentDictionary<Type, string> _partionKeyNameMap =
+        private static readonly ConcurrentDictionary<Type, string> partionKeyNameMap =
             new ConcurrentDictionary<Type, string>();
+
+        private static readonly Type partitionKeyNameAttributeType = typeof(PartitionKeyPathAttribute);
 
         /// <inheritdoc />
         public string GetPartitionKeyPath<TItem>() where TItem : Item =>
-            _partionKeyNameMap.GetOrAdd(typeof(TItem), GetPartitionKeyNameFactory);
+            partionKeyNameMap.GetOrAdd(typeof(TItem), GetPartitionKeyNameFactory);
 
-        static string GetPartitionKeyNameFactory(Type type)
+        private static string GetPartitionKeyNameFactory(Type type)
         {
-            PartitionKeyPathAttribute attribute =
-                Attribute.GetCustomAttribute(type, _partitionKeyNameAttributeType)
+            PartitionKeyPathAttribute? attribute =
+                Attribute.GetCustomAttribute(type, partitionKeyNameAttributeType)
                 as PartitionKeyPathAttribute;
 
             return attribute?.Path ?? "/id";

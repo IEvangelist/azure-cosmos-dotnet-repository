@@ -1,37 +1,36 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository;
+﻿// Copyright (c) IEvangelist. All rights reserved. Licensed under the MIT License.
 
 namespace ServiceTier
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.CosmosRepository;
+
     public class ExampleService : IExampleService
     {
-        readonly IRepository<Person> _personRepository;
+        private readonly IRepository<Person> personRepository;
 
         public ExampleService(IRepository<Person> personRepository) =>
-            _personRepository = personRepository;
+            this.personRepository = personRepository;
 
         public ValueTask<IEnumerable<Person>> AddPeopleAsync(IEnumerable<Person> people) =>
-            _personRepository.CreateAsync(people);
+            this.personRepository.CreateAsync(people);
 
         public ValueTask<Person> AddPersonAsync(Person person) =>
-            _personRepository.CreateAsync(person);
+            this.personRepository.CreateAsync(person);
 
         public ValueTask DeletePersonAsync(Person person) =>
-            _personRepository.DeleteAsync(person);
+            this.personRepository.DeleteAsync(person);
 
         public ValueTask<IEnumerable<Person>> ReadPeopleAsync(Expression<Func<Person, bool>> matches) =>
-            _personRepository.GetAsync(matches);
+            this.personRepository.GetAsync(matches);
 
-        public ValueTask<Person> ReadPersonByIdAsync(string id, string partitionKey) =>
-            _personRepository.GetAsync(id, partitionKey);
+        public ValueTask<Person?> ReadPersonByIdAsync(string id, string partitionKey) =>
+            this.personRepository.GetAsync(id, partitionKey);
 
         public ValueTask<Person> UpdatePersonAsync(Person person) =>
-            _personRepository.UpdateAsync(person);
+            this.personRepository.UpdateAsync(person);
     }
 }

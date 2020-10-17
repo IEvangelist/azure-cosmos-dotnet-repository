@@ -1,43 +1,82 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Extensions.Options;
+﻿// Copyright (c) IEvangelist. All rights reserved. Licensed under the MIT License.
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-    /// <inheritdoc/>
+    using System;
+    using System.Threading.Tasks;
+
+    using Microsoft.Azure.Cosmos;
+    using Microsoft.Azure.CosmosRepository.Options;
+    using Microsoft.Extensions.Options;
+
+    /// <inheritdoc />
     internal class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
     {
-        readonly Lazy<CosmosClient> _lazyCosmosClient;
-        readonly CosmosClientOptions _cosmosClientOptions;
-        readonly RepositoryOptions _options;
+        private readonly CosmosClientOptions cosmosClientOptions;
+        private readonly Lazy<CosmosClient> lazyCosmosClient;
+        private readonly RepositoryOptions options;
+        private bool disposedValue;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public DefaultCosmosClientProvider(
             CosmosClientOptions cosmosClientOptions,
             IOptions<RepositoryOptions> options)
         {
-            _cosmosClientOptions = cosmosClientOptions
+            this.cosmosClientOptions = cosmosClientOptions
                 ?? throw new ArgumentNullException(
-                    nameof(cosmosClientOptions), "Cosmos Client options are required.");
+                    nameof(cosmosClientOptions),
+                    Properties.Resources.CosmosClientOptionsAreRequired);
 
-            _options = options?.Value
+            this.options = options?.Value
                 ?? throw new ArgumentNullException(
-                    nameof(options), "Repository options are required.");
+                    nameof(options),
+                    Properties.Resources.RepositoryOptionsAreRequired);
 
-            _lazyCosmosClient = new Lazy<CosmosClient>(
-                () => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions));
+            this.lazyCosmosClient = new Lazy<CosmosClient>(
+                () => new CosmosClient(this.options.CosmosConnectionString, this.cosmosClientOptions));
         }
 
-        /// <inheritdoc/>
-        public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) =>
-            consume(_lazyCosmosClient.Value);
+        /// <summary>
+        /// Finalizes an instance of the <see cref="DefaultCosmosClientProvider" /> class.
+        /// </summary>
+        ~DefaultCosmosClientProvider()
+        {
+            this.Dispose(disposing: false);
+        }
 
-        /// <inheritdoc/>
-        public void Dispose() => _lazyCosmosClient.Value?.Dispose();
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            this.Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <inheritdoc />
+        public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) => consume(this.lazyCosmosClient.Value);
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release
+        /// only unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this.disposedValue)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (this.lazyCosmosClient.IsValueCreated)
+                {
+                    this.lazyCosmosClient.Value?.Dispose();
+                }
+            }
+
+            this.disposedValue = true;
+        }
     }
 }

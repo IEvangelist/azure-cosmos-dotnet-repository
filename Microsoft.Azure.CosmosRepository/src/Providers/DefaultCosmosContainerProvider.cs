@@ -1,24 +1,24 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿// Copyright (c) IEvangelist. All rights reserved. Licensed under the MIT License.
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-    /// <inheritdoc/>
+    using System;
+    using System.Threading.Tasks;
+
+    using Microsoft.Azure.Cosmos;
+    using Microsoft.Azure.CosmosRepository.Options;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+
+    /// <inheritdoc />
     internal class DefaultCosmosContainerProvider<TItem>
         : ICosmosContainerProvider<TItem> where TItem : Item
     {
-        readonly Lazy<Task<Container>> _lazyContainer;
-        readonly RepositoryOptions _options;
-        readonly ICosmosClientProvider _cosmosClientProvider;
-        readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
-        readonly ILogger<DefaultCosmosContainerProvider<TItem>> _logger;
+        private readonly ICosmosClientProvider cosmosClientProvider;
+        private readonly ICosmosPartitionKeyPathProvider cosmosPartitionKeyPathProvider;
+        private readonly Lazy<Task<Container>> lazyContainer;
+        private readonly ILogger<DefaultCosmosContainerProvider<TItem>> logger;
+        private readonly RepositoryOptions options;
 
         public DefaultCosmosContainerProvider(
             ICosmosClientProvider cosmosClientProvider,
@@ -26,71 +26,76 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             IOptions<RepositoryOptions> options,
             ILogger<DefaultCosmosContainerProvider<TItem>> logger)
         {
-            _cosmosClientProvider = cosmosClientProvider
+            this.cosmosClientProvider = cosmosClientProvider
                 ?? throw new ArgumentNullException(
-                    nameof(cosmosClientProvider), "Cosmos client provider is required.");
+                    nameof(cosmosClientProvider), Properties.Resources.CosmosClientProviderIsRequired);
 
-            _cosmosPartitionKeyPathProvider = cosmosPartitionKeyPathProvider
+            this.cosmosPartitionKeyPathProvider = cosmosPartitionKeyPathProvider
                 ?? throw new ArgumentNullException(
-                    nameof(cosmosPartitionKeyPathProvider), "Cosmos partition key name provider is required.");
+                    nameof(cosmosPartitionKeyPathProvider), Properties.Resources.CosmosPartitionKeyNameProviderIsRequired);
 
-            _options = options?.Value
+            this.options = options?.Value
                 ?? throw new ArgumentNullException(
-                    nameof(options), "Repository options are required.");
+                    nameof(options), Properties.Resources.RepositoryOptionsAreRequired);
 
-            if (_options.CosmosConnectionString is null)
+            if (this.options.CosmosConnectionString is null)
             {
-                throw new ArgumentNullException($"The {nameof(_options.CosmosConnectionString)} is required.");
+                throw new NullReferenceException(
+                    string.Format(
+                        Properties.Resources.TheInsertNameHereIsRequired,
+                        nameof(DefaultCosmosContainerProvider<TItem>.options.CosmosConnectionString)));
             }
-            if (_options.ContainerPerItemType is false)
+
+            if (this.options.ContainerPerItemType is false)
             {
-                if (_options.DatabaseId is null)
+                if (this.options.DatabaseId is null)
                 {
-                    throw new ArgumentNullException(
-                        $"The {nameof(_options.DatabaseId)} is required when container per item type is false.");
+                    throw new NullReferenceException(
+                        string.Format(
+                            Properties.Resources.TheInsertNameHereIsRequiredWhenContainerPerItemTypeIsFalse,
+                            nameof(DefaultCosmosContainerProvider<TItem>.options.DatabaseId)));
                 }
-                if (_options.ContainerId is null)
+
+                if (this.options.ContainerId is null)
                 {
-                    throw new ArgumentNullException(
-                        $"The {nameof(_options.ContainerId)} is required when container per item type is false.");
+                    throw new NullReferenceException(
+                        string.Format(
+                            Properties.Resources.TheInsertNameHereIsRequiredWhenContainerPerItemTypeIsFalse,
+                            nameof(DefaultCosmosContainerProvider<TItem>.options.ContainerId)));
                 }
-            }
-            if (logger is null)
-            {
-                throw new ArgumentNullException($"The {nameof(logger)} is required.");
             }
 
-            _logger = logger;
-            _lazyContainer = new Lazy<Task<Container>>(async () =>
+            this.logger = logger ?? throw new ArgumentNullException(
+                string.Format(Properties.Resources.TheInsertNameHereIsRequired, nameof(logger)));
+
+            this.lazyContainer = new Lazy<Task<Container>>(async () =>
             {
                 try
                 {
                     Database database =
-                        await _cosmosClientProvider.UseClientAsync(
-                            client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId)).ConfigureAwait(false);
+                        await this.cosmosClientProvider.UseClientAsync(
+                            client => client.CreateDatabaseIfNotExistsAsync(this.options.DatabaseId)).ConfigureAwait(false);
 
                     ContainerProperties containerProperties = new ContainerProperties
                     {
-                        Id = _options.ContainerPerItemType ? typeof(TItem).Name : _options.ContainerId,
-                        PartitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>()
+                        Id = this.options.ContainerPerItemType ? typeof(TItem).Name : this.options.ContainerId,
+                        PartitionKeyPath = this.cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>()
                     };
 
                     Container container =
-                        await database.CreateContainerIfNotExistsAsync(
-                            containerProperties).ConfigureAwait(false);
+                        await database.CreateContainerIfNotExistsAsync(containerProperties).ConfigureAwait(false);
 
                     return container;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message, ex);
-
+                    this.logger.LogError(ex.Message, ex);
                     throw;
                 }
             });
         }
 
-        /// <inheritdoc/>
-        public Task<Container> GetContainerAsync() => _lazyContainer.Value;
+        /// <inheritdoc />
+        public Task<Container> GetContainerAsync() => this.lazyContainer.Value;
     }
 }

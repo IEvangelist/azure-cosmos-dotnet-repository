@@ -1,14 +1,13 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Attributes;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Newtonsoft.Json;
-using Xunit;
+﻿// Copyright (c) IEvangelist. All rights reserved. Licensed under the MIT License.
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 {
+    using Microsoft.Azure.CosmosRepository;
+    using Microsoft.Azure.CosmosRepository.Attributes;
+    using Microsoft.Azure.CosmosRepository.Providers;
+    using Newtonsoft.Json;
+    using Xunit;
+
     public class DefaultCosmosPartitionKeyPathProviderTests
     {
         [Fact]
@@ -28,6 +27,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [JsonProperty(PropertyName = "pickles")]
         public string PartitionBits { get; set; } = "Hey, where's the chips?!";
 
-        protected override string GetPartitionKeyValue() => PartitionBits;
+        protected override string GetPartitionKeyValue() => this.PartitionBits;
     }
 }

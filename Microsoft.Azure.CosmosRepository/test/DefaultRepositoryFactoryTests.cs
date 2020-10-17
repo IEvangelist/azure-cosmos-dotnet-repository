@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-
-namespace Microsoft.Azure.CosmosRepositoryTests
+﻿namespace Microsoft.Azure.CosmosRepositoryTests
 {
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.Azure.CosmosRepository;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Xunit;
+
+    public class AndAnotherItem : Item { }
+
+    public class AnotherTestItem : Item { }
+
     public class DefaultRepositoryFactoryTests
     {
         [Fact]
@@ -34,7 +38,4 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.NotNull(factory.RepositoryOf<AndAnotherItem>());
         }
     }
-
-    public class AnotherTestItem : Item { }
-    public class AndAnotherItem : Item { }
 }

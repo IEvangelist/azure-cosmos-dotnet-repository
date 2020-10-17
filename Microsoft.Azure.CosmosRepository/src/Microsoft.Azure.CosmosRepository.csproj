@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Company>Microsoft Corporation</Company>
     <Product>IEvangelist Azure Cosmos Repository</Product>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Description>This client library enables client applications to connect to Azure Cosmos via a repository pattern around the official Azure Cosmos .NET SDK. Azure Cosmos is a globally distributed, multi-model database service. For more information, refer to http://azure.microsoft.com/services/cosmos-db/. </Description>
     <Copyright>© IEvangelist. All rights reserved.</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -40,17 +40,35 @@
     <Version>2.0.2</Version>
     <RepositoryUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</RepositoryUrl>
     <PackageIcon></PackageIcon>
+    <Nullable>enable</Nullable>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.14.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.8" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.8" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.9" />
+    <PackageReference Include="System.Linq.Async" Version="4.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   
 </Project>

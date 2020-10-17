@@ -1,13 +1,12 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Attributes;
-using Newtonsoft.Json;
-using System;
+﻿// Copyright (c) IEvangelist. All rights reserved. Licensed under the MIT License.
 
 namespace Microsoft.Azure.CosmosRepository
 {
+    using System;
+    using Microsoft.Azure.Cosmos;
+    using Microsoft.Azure.CosmosRepository.Attributes;
+    using Newtonsoft.Json;
+
     /// <summary>
     /// The base item used for all repository object or object graphs.
     /// </summary>
@@ -22,7 +21,6 @@ namespace Microsoft.Azure.CosmosRepository
     ///     public IEnumerable<Child> Children { get; set; }
     ///     public IEnumerable<string> Tags { get; set; }
     /// }
-    /// 
     /// public class Child
     /// {
     ///     public string Name { get; set; }
@@ -34,11 +32,14 @@ namespace Microsoft.Azure.CosmosRepository
     public abstract class Item
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="Item"/> class.
+        /// </summary>
+        protected Item() => this.Type = this.GetType().Name;
+
+        /// <summary>
         /// Gets or sets the item's globally unique identifier.
         /// </summary>
-        /// <remarks>
-        /// Initialized by <see cref="Guid.NewGuid"/>.
-        /// </remarks>
+        /// <remarks>Initialized by <see cref="Guid.NewGuid" />.</remarks>
         [JsonProperty("id")]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -48,20 +49,15 @@ namespace Microsoft.Azure.CosmosRepository
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        internal PartitionKey PartitionKey => new PartitionKey(GetPartitionKeyValue());
+        internal PartitionKey PartitionKey => new PartitionKey(this.GetPartitionKeyValue());
 
         /// <summary>
-        /// Default constructor, assigns type name to <see cref="Type"/> property.
+        /// Gets the partition key value for the given <see cref="Item" /> type. When overridden, be
+        /// sure that the <see cref="PartitionKeyPathAttribute.Path" /> value corresponds to the
+        /// <see cref="JsonPropertyAttribute.PropertyName" /> value, i.e.; "/partition" and
+        /// "partition" respectively. If these two values do not correspond an error will occur.
         /// </summary>
-        public Item() => Type = GetType().Name;
-
-        /// <summary>
-        /// Gets the partition key value for the given <see cref="Item"/> type.
-        /// When overridden, be sure that the <see cref="PartitionKeyPathAttribute.Path"/> value corresponds
-        /// to the <see cref="JsonPropertyAttribute.PropertyName"/> value, i.e.; "/partition" and "partition"
-        /// respectively. If these two values do not correspond an error will occur.
-        /// </summary>
-        /// <returns>The <see cref="Item.Id"/> unless overridden by the subclass.</returns>
-        protected virtual string GetPartitionKeyValue() => Id;
+        /// <returns>The <see cref="Item.Id" /> unless overridden by the subclass.</returns>
+        protected virtual string GetPartitionKeyValue() => this.Id;
     }
 }

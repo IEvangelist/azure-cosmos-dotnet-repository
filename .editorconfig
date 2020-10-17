@@ -18,16 +18,16 @@ trim_trailing_whitespace = true
 ############################### 
 # .NET Coding Conventions     # 
 ############################### 
-[*.cs] 
+
 # Organize usings 
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
 
 # this. preferences 
-dotnet_style_qualification_for_field = false:error 
-dotnet_style_qualification_for_property = false:error 
-dotnet_style_qualification_for_method = false:error 
-dotnet_style_qualification_for_event = false:error
+dotnet_style_qualification_for_field = true:error 
+dotnet_style_qualification_for_property = true:error 
+dotnet_style_qualification_for_method = true:error 
+dotnet_style_qualification_for_event = true:error
 
 # New line preferences 
 csharp_new_line_before_open_brace = all 
@@ -60,8 +60,8 @@ csharp_style_pattern_matching_over_is_with_cast_check = true:error
 csharp_style_pattern_matching_over_as_with_null_check = true:error
 
 ## Naming Conventions
+
 # Async methods should have [Async] suffix
-[*.cs]
 dotnet_naming_rule.async_method_must_end_with_async.symbols = async_methods
 dotnet_naming_symbols.async_methods.applicable_kinds = method
 dotnet_naming_symbols.async_methods.applicable_accessibilities = *
