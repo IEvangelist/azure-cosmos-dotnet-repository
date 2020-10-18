@@ -119,6 +119,16 @@ namespace Microsoft.Azure.CosmosRepository
 					foreach (TItem result in await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false))
 					{
 						results.Add(result);
+
+						if (cancellationToken.IsCancellationRequested)
+						{
+							break;
+						}
+					}
+
+					if (cancellationToken.IsCancellationRequested)
+					{
+						break;
 					}
 				}
 
