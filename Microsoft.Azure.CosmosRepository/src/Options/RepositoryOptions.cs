@@ -54,7 +54,6 @@ namespace Microsoft.Azure.CosmosRepository.Options
 		/// </remarks>
 		public bool ContainerPerItemType { get; set; }
 
-
 		/// <summary>
 		/// Gets or sets whether optimistic batching of service requests occurs. Setting this option might
 		/// impact the latency of the operations. Hence this option is recommended for non-latency

@@ -1,6 +1,8 @@
 ﻿// Copyright © IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosRepository.Properties;
+
 using System;
 
 namespace Microsoft.Azure.CosmosRepository.Attributes
@@ -22,13 +24,13 @@ namespace Microsoft.Azure.CosmosRepository.Attributes
 		/// <summary>
 		/// Gets or sets the path of the parition key.
 		/// </summary>
-		public string Path { get; } = "/id";
+		public string Path { get; } = Constants.DefaultPartitionKeyPath;
 
 		/// <summary>
 		/// Constructor accepting the <paramref name="path"/> of the partition key for a given <see cref="Item"/>.
 		/// </summary>
 		/// <param name="path"></param>
 		public PartitionKeyPathAttribute(string path) =>
-			Path = path ?? throw new ArgumentNullException(nameof(path), "A path is required.");
+			Path = path ?? throw new ArgumentNullException(nameof(path), Resources.APathIsRequired);
 	}
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Properties;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
@@ -24,11 +25,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 		{
 			_cosmosClientOptions = cosmosClientOptions
 				?? throw new ArgumentNullException(
-					nameof(cosmosClientOptions), "Cosmos Client options are required.");
+					nameof(cosmosClientOptions), Resources.CosmosClientOptionsAreRequired);
 
 			_options = options?.Value
 				?? throw new ArgumentNullException(
-					nameof(options), "Repository options are required.");
+					nameof(options), Resources.RepositoryOptionsAreRequired);
 
 			_lazyCosmosClient = new Lazy<CosmosClient>(
 				() => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions));

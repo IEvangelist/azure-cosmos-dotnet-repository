@@ -1,9 +1,10 @@
 ﻿// Copyright © IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-
+using Microsoft.Azure.CosmosRepository.Properties;
 using Microsoft.Extensions.DependencyInjection;
+
+using System;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -17,10 +18,8 @@ namespace Microsoft.Azure.CosmosRepository
 		/// </summary>
 		/// <param name="serviceProvider"></param>
 		public DefaultRepositoryFactory(IServiceProvider serviceProvider) =>
-			_serviceProvider = serviceProvider
-				?? throw new ArgumentNullException(
-					nameof(serviceProvider),
-					"A service provider instance is required.");
+			_serviceProvider = serviceProvider ?? throw new ArgumentNullException(
+				nameof(serviceProvider), Resources.AServiceProviderInstanceIsRequired);
 
 		/// <inheritdoc/>
 		public IRepository<TItem> RepositoryOf<TItem>()

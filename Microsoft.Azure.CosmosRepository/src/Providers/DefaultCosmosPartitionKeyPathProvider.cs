@@ -1,10 +1,10 @@
 ﻿// Copyright © IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosRepository.Attributes;
+
 using System;
 using System.Collections.Concurrent;
-
-using Microsoft.Azure.CosmosRepository.Attributes;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
@@ -26,7 +26,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 				Attribute.GetCustomAttribute(type, _partitionKeyNameAttributeType)
 				as PartitionKeyPathAttribute;
 
-			return attribute?.Path ?? "/id";
+			return attribute?.Path ?? Constants.DefaultPartitionKeyPath;
 		}
 	}
 }

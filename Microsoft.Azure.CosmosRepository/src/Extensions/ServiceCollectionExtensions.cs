@@ -4,6 +4,7 @@
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Properties;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 
@@ -34,16 +35,16 @@ namespace Microsoft.Extensions.DependencyInjection
 			if (services is null)
 			{
 				throw new ArgumentNullException(
-					nameof(services), "A service collection is required.");
+					nameof(services), Resources.AServiceCollectionIsRequired);
 			}
 
 			if (configuration is null)
 			{
 				throw new ArgumentNullException(
-					nameof(configuration), "A configuration is required.");
+					nameof(configuration), Resources.AConfigurationIsRequired);
 			}
 
-			services.AddLogging()
+			_ = services.AddLogging()
 				.AddHttpClient()
 				.AddSingleton(provider => provider.AddCosmosClientOptions(configuration))
 				.AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
@@ -56,7 +57,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
 			if (setupAction != default)
 			{
-				services.PostConfigure(setupAction);
+				_ = services.PostConfigure(setupAction);
 			}
 
 			return services;

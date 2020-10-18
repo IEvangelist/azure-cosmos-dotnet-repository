@@ -59,5 +59,131 @@ namespace Microsoft.Azure.CosmosRepository.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A configuration is required..
+        /// </summary>
+        internal static string AConfigurationIsRequired {
+            get {
+                return ResourceManager.GetString("AConfigurationIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A path is required..
+        /// </summary>
+        internal static string APathIsRequired {
+            get {
+                return ResourceManager.GetString("APathIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A service collection is required..
+        /// </summary>
+        internal static string AServiceCollectionIsRequired {
+            get {
+                return ResourceManager.GetString("AServiceCollectionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A service provider instance is required..
+        /// </summary>
+        internal static string AServiceProviderInstanceIsRequired {
+            get {
+                return ResourceManager.GetString("AServiceProviderInstanceIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cosmos Client options are required..
+        /// </summary>
+        internal static string CosmosClientOptionsAreRequired {
+            get {
+                return ResourceManager.GetString("CosmosClientOptionsAreRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cosmos client provider is required..
+        /// </summary>
+        internal static string CosmosClientProviderIsRequired {
+            get {
+                return ResourceManager.GetString("CosmosClientProviderIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cosmos partition key name provider is required..
+        /// </summary>
+        internal static string CosmosPartitionKeyNameProviderIsRequired {
+            get {
+                return ResourceManager.GetString("CosmosPartitionKeyNameProviderIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created: {0}.
+        /// </summary>
+        internal static string CreatedBlank {
+            get {
+                return ResourceManager.GetString("CreatedBlank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted: {0}.
+        /// </summary>
+        internal static string DeletedBlank {
+            get {
+                return ResourceManager.GetString("DeletedBlank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read: {0}.
+        /// </summary>
+        internal static string ReadBlank {
+            get {
+                return ResourceManager.GetString("ReadBlank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Repository options are required..
+        /// </summary>
+        internal static string RepositoryOptionsAreRequired {
+            get {
+                return ResourceManager.GetString("RepositoryOptionsAreRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} is required..
+        /// </summary>
+        internal static string TheBlankIsRequired {
+            get {
+                return ResourceManager.GetString("TheBlankIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} is required when container per item type is false..
+        /// </summary>
+        internal static string TheBlankIsRequiredWhenContainerPerItemTypeIsFalse {
+            get {
+                return ResourceManager.GetString("TheBlankIsRequiredWhenContainerPerItemTypeIsFalse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated: {0}.
+        /// </summary>
+        internal static string UpdatedBlank {
+            get {
+                return ResourceManager.GetString("UpdatedBlank", resourceCulture);
+            }
+        }
     }
 }
