@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.Azure.CosmosRepository
@@ -23,12 +24,12 @@ namespace Microsoft.Azure.CosmosRepository
 	/// <inheritdoc />
 	internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : Item
 	{
-		readonly ICosmosContainerProvider<TItem> _containerProvider;
-		readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
-		readonly ILogger<DefaultRepository<TItem>> _logger;
+		private readonly ICosmosContainerProvider<TItem> _containerProvider;
+		private readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
+		private readonly ILogger<DefaultRepository<TItem>> _logger;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DefaultRepository{TItem}"/> class.
+		/// Initializes a new instance of the <see cref="DefaultRepository{TItem}" /> class.
 		/// </summary>
 		/// <param name="optionsMonitor">The options monitor.</param>
 		/// <param name="containerProvider">The container provider.</param>
@@ -47,7 +48,7 @@ namespace Microsoft.Azure.CosmosRepository
 				logger ?? throw new ArgumentNullException(nameof(logger))
 			);
 
-		(bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
+		private (bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
 			(
 				_optionsMonitor.CurrentValue.OptimizeBandwidth,
 				new ItemRequestOptions
@@ -57,13 +58,20 @@ namespace Microsoft.Azure.CosmosRepository
 			);
 
 		/// <inheritdoc />
-		public ValueTask<TItem> GetAsync(string id, string partitionKeyValue) =>
+		public ValueTask<TItem> GetAsync(
+			string id,
+			string partitionKeyValue,
+			CancellationToken cancellationToken = default) =>
 			GetAsync(
 				id ?? throw new ArgumentNullException(nameof(id)),
-				new PartitionKey(partitionKeyValue ?? id));
+				new PartitionKey(partitionKeyValue ?? id),
+				cancellationToken);
 
 		/// <inheritdoc />
-		public async ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey = default)
+		public async ValueTask<TItem> GetAsync(
+			string id,
+			PartitionKey partitionKey = default,
+			CancellationToken cancellationToken = default)
 		{
 			_ = id ?? throw new ArgumentNullException(nameof(id));
 
@@ -75,8 +83,8 @@ namespace Microsoft.Azure.CosmosRepository
 			Container container =
 				await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-			ItemResponse<TItem> response =
-				await container.ReadItemAsync<TItem>(id, partitionKey).ConfigureAwait(false);
+			ItemResponse<TItem> response = await container.ReadItemAsync<TItem>(
+				id, partitionKey, RequestOptions.Options, cancellationToken).ConfigureAwait(false);
 
 			TItem item = response.Resource;
 
@@ -86,7 +94,9 @@ namespace Microsoft.Azure.CosmosRepository
 		}
 
 		/// <inheritdoc />
-		public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate = null)
+		public async ValueTask<IEnumerable<TItem>> GetAsync(
+			Expression<Func<TItem, bool>> predicate = null,
+			CancellationToken cancellationToken = default)
 		{
 			predicate = predicate ?? (item => true);
 
@@ -106,7 +116,7 @@ namespace Microsoft.Azure.CosmosRepository
 				List<TItem> results = new List<TItem>();
 				while (iterator.HasMoreResults)
 				{
-					foreach (TItem result in await iterator.ReadNextAsync().ConfigureAwait(false))
+					foreach (TItem result in await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false))
 					{
 						results.Add(result);
 					}
@@ -116,37 +126,39 @@ namespace Microsoft.Azure.CosmosRepository
 			}
 		}
 
-		/// <inheritdoc/>
-		public async ValueTask<TItem> CreateAsync(TItem value)
+		/// <inheritdoc />
+		public async ValueTask<TItem> CreateAsync(TItem value, CancellationToken cancellationToken = default)
 		{
 			_ = value ?? throw new ArgumentNullException(nameof(value));
 
 			Container container =
 				await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-			ItemResponse<TItem> response =
-				await container.CreateItemAsync(value, value.PartitionKey).ConfigureAwait(false);
+			ItemResponse<TItem> response = await container.CreateItemAsync(
+				value, value.PartitionKey, RequestOptions.Options, cancellationToken).ConfigureAwait(false);
 
 			TryLogDebugDetails(_logger, () => Resources.CreatedBlank.Format(JsonConvert.SerializeObject(value)));
 
 			return response.Resource;
 		}
 
-		/// <inheritdoc/>
-		public async ValueTask<IEnumerable<TItem>> CreateAsync(IEnumerable<TItem> values)
+		/// <inheritdoc />
+		public async ValueTask<IEnumerable<TItem>> CreateAsync(
+			IEnumerable<TItem> values,
+			CancellationToken cancellationToken = default)
 		{
 			_ = values ?? throw new ArgumentNullException(nameof(values));
 
 			IEnumerable<Task<TItem>> creationTasks =
-				values.Select(v => CreateAsync(v).AsTask()).ToList();
+				values.Select(v => CreateAsync(v, cancellationToken).AsTask()).ToList();
 
 			_ = await Task.WhenAll(creationTasks).ConfigureAwait(false);
 
 			return creationTasks.Select(x => x.Result);
 		}
 
-		/// <inheritdoc/>
-		public async ValueTask<TItem> UpdateAsync(TItem value)
+		/// <inheritdoc />
+		public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default)
 		{
 			_ = value ?? throw new ArgumentNullException(nameof(value));
 
@@ -154,29 +166,39 @@ namespace Microsoft.Azure.CosmosRepository
 			Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
 			ItemResponse<TItem> response =
-				await container.UpsertItemAsync(value, value.PartitionKey, options).ConfigureAwait(false);
+				await container.UpsertItemAsync(value, value.PartitionKey, options, cancellationToken).ConfigureAwait(false);
 
 			TryLogDebugDetails(_logger, () => Resources.UpdatedBlank.Format(JsonConvert.SerializeObject(value)));
 
 			return optimizeBandwidth ? value : response.Resource;
 		}
 
-		/// <inheritdoc/>
-		public ValueTask DeleteAsync(TItem value)
+		/// <inheritdoc />
+		public ValueTask DeleteAsync(TItem value, CancellationToken cancellationToken = default)
 		{
 			_ = value ?? throw new ArgumentNullException(nameof(value));
+			_ = value.Id ?? throw new ArgumentNullException(
+				nameof(value),
+				Resources.TheBlankIsRequired.Format(nameof(value.Id)));
 
-			return DeleteAsync(value.Id, value.PartitionKey);
+			return DeleteAsync(value.Id, value.PartitionKey, cancellationToken);
 		}
 
-		/// <inheritdoc/>
-		public ValueTask DeleteAsync(string id, string partitionKeyValue = null) =>
+		/// <inheritdoc />
+		public ValueTask DeleteAsync(
+			string id,
+			string partitionKeyValue,
+			CancellationToken cancellationToken = default) =>
 			DeleteAsync(
 				id ?? throw new ArgumentNullException(nameof(id)),
-				new PartitionKey(partitionKeyValue ?? id));
+				new PartitionKey(partitionKeyValue ?? id),
+				cancellationToken);
 
-		/// <inheritdoc/>
-		public async ValueTask DeleteAsync(string id, PartitionKey partitionKey)
+		/// <inheritdoc />
+		public async ValueTask DeleteAsync(
+			string id,
+			PartitionKey partitionKey = default,
+			CancellationToken cancellationToken = default)
 		{
 			_ = id ?? throw new ArgumentNullException(nameof(id));
 
@@ -188,12 +210,12 @@ namespace Microsoft.Azure.CosmosRepository
 			ItemRequestOptions options = RequestOptions.Options;
 			Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-			_ = await container.DeleteItemAsync<TItem>(id, partitionKey, options).ConfigureAwait(false);
+			_ = await container.DeleteItemAsync<TItem>(id, partitionKey, options, cancellationToken).ConfigureAwait(false);
 
 			TryLogDebugDetails(_logger, () => Resources.DeletedBlank.Format(id));
 		}
 
-		static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
+		private static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
 		{
 			if (logger?.IsEnabled(LogLevel.Debug) ?? false)
 			{
