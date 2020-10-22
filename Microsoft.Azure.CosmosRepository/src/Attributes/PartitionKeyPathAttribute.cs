@@ -17,7 +17,7 @@ namespace Microsoft.Azure.CosmosRepository.Attributes
     /// By default, "/id" is used.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class PartitionKeyPathAttribute : Attribute
+    public sealed class PartitionKeyPathAttribute : Attribute
     {
         /// <summary>
         /// Gets or sets the path of the parition key.

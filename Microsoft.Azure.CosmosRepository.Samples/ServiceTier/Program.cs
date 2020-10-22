@@ -19,10 +19,13 @@ namespace ServiceTier
         {
             using IHost host = CreateHostBuilder(args).Build();
             await host.StartAsync();
+            // Demonstrate using the factory...
+            IRepositoryFactory factory =
+                host.Services.GetService<IRepositoryFactory>();
 
             // Demonstrate raw repo usage...
             await Task.WhenAll(
-                RawRepositoryExampleAsync(host.Services.GetService<IRepository<Person>>()),
+                RawRepositoryExampleAsync(factory.RepositoryOf<Person>()),
                 RawRepositoryExampleAsync(host.Services.GetService<IRepository<Widget>>()));
 
             // Demonstrate service wrapper around repo usage...

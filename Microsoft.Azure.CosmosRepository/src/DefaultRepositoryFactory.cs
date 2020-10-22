@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    internal class DefaultRepositoryFactory : IRepositoryFactory
+    class DefaultRepositoryFactory : IRepositoryFactory
     {
         readonly IServiceProvider _serviceProvider;
 
@@ -25,6 +25,5 @@ namespace Microsoft.Azure.CosmosRepository
         public IRepository<TItem> RepositoryOf<TItem>()
             where TItem : Item =>
             _serviceProvider.GetRequiredService<IRepository<TItem>>();
-
     }
 }

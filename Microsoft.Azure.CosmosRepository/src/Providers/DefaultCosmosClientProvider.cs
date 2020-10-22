@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc/>
-    internal class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
+    class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
     {
         readonly Lazy<CosmosClient> _lazyCosmosClient;
         readonly CosmosClientOptions _cosmosClientOptions;
@@ -35,9 +35,15 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         /// <inheritdoc/>
         public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) =>
-            consume(_lazyCosmosClient.Value);
+            consume?.Invoke(_lazyCosmosClient.Value);
 
         /// <inheritdoc/>
-        public void Dispose() => _lazyCosmosClient.Value?.Dispose();
+        public void Dispose()
+        {
+            if (_lazyCosmosClient?.IsValueCreated ?? false)
+            {
+                _lazyCosmosClient?.Value?.Dispose();
+            }
+        }
     }
 }

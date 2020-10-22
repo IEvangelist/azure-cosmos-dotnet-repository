@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 
@@ -38,8 +39,9 @@ namespace Microsoft.Azure.CosmosRepository
         /// </remarks>
         /// <param name="id">The string identifier.</param>
         /// <param name="partitionKeyValue">The partition key value if different than the <see cref="Item.Id"/>.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
-        ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null);
+        ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
@@ -49,8 +51,9 @@ namespace Microsoft.Azure.CosmosRepository
         /// </remarks>
         /// <param name="id">The string identifier.</param>
         /// <param name="partitionKey">The <see cref="PartitionKey"/> value if different than the <see cref="Item.Id"/>.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
-        ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey);
+        ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets an <see cref="IEnumerable{TItem}"/> collection of <see cref="Item"/> 
@@ -60,51 +63,58 @@ namespace Microsoft.Azure.CosmosRepository
         /// If the typeof(<typeparamref name="TItem"/>).Name differs from the item.Type you're attempting to retrieve, the item is not returned.
         /// </remarks>
         /// <param name="predicate">The expression used for evaluating a matching item.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A collection of item instances who meet the <paramref name="predicate"/> condition.</returns>
-        ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate);
+        ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a cosmos item representing the given <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The item value to create.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
-        ValueTask<TItem> CreateAsync(TItem value);
+        ValueTask<TItem> CreateAsync(TItem value, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates one or more cosmos item(s) representing the given <paramref name="values"/>.
         /// </summary>
         /// <param name="values">The item values to create.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A collection of created item instances.</returns>
-        ValueTask<IEnumerable<TItem>> CreateAsync(IEnumerable<TItem> values);
+        ValueTask<IEnumerable<TItem>> CreateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Updates the cosmos object that corresponds to the given <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The item value to update.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="Item"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
-        ValueTask<TItem> UpdateAsync(TItem value);
+        ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The object to delete.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
-        ValueTask DeleteAsync(TItem value);
+        ValueTask DeleteAsync(TItem value, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The string identifier.</param>
         /// <param name="partitionKeyValue">The partition key value if different than the <see cref="Item.Id"/>.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
-        ValueTask DeleteAsync(string id, string partitionKeyValue = null);
+        ValueTask DeleteAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The string identifier.</param>
         /// <param name="partitionKey">The <see cref="PartitionKey"/> value if different than the <see cref="Item.Id"/>.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
-        ValueTask DeleteAsync(string id, PartitionKey partitionKey);
+        ValueTask DeleteAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default);
     }
 }
