@@ -11,7 +11,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     /// The cosmos container provider exposes a means of providing
     /// an instance to the configured <see cref="Container"/> object.
     /// </summary>
-    internal interface ICosmosContainerProvider<TItem> where TItem : Item
+    interface ICosmosContainerProvider<TItem> where TItem : Item
     {
         /// <summary>
         /// Asynchronously gets the configured <see cref="Container"/> instance that corresponds to the 

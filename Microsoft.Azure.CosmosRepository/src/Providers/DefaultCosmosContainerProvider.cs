@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc/>
-    internal class DefaultCosmosContainerProvider<TItem>
+    class DefaultCosmosContainerProvider<TItem>
         : ICosmosContainerProvider<TItem> where TItem : Item
     {
         readonly Lazy<Task<Container>> _lazyContainer;
