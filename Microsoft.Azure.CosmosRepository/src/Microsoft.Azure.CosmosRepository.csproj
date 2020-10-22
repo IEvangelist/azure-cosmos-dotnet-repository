@@ -5,7 +5,7 @@
     <Product>IEvangelist Azure Cosmos Repository</Product>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>This client library enables client applications to connect to Azure Cosmos via a repository pattern around the official Azure Cosmos .NET SDK. Azure Cosmos is a globally distributed, multi-model database service. For more information, refer to http://azure.microsoft.com/services/cosmos-db/. </Description>
-    <Copyright>© IEvangelist. All rights reserved.</Copyright>
+    <Copyright>Copyright © IEvangelist. All rights reserved. Licensed under the MIT License.</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd))</CurrentDate>
     <ClientVersion Condition=" '$(IsPreview)' != 'true' ">$(ClientOfficialVersion)</ClientVersion>
@@ -37,9 +37,9 @@
     <RootNamespace>Microsoft.Azure.CosmosRepository</RootNamespace>
     <NoWarn>NU5125</NoWarn>
     <Optimize Condition="'$(Configuration)'=='Release'">true</Optimize>
-    <Version>2.0.2</Version>
     <RepositoryUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</RepositoryUrl>
-    <PackageIcon></PackageIcon>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -51,6 +51,13 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
   
 </Project>
