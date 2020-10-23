@@ -22,7 +22,6 @@
     <PackageId>IEvangelist.Azure.CosmosRepository</PackageId>
     <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureofficial;dotnetcore;netcore;netstandard</PackageTags>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <PackageLicenseUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
     <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -47,6 +46,10 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.9" />
+    <PackageReference Include="MinVer" Version="2.3.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
