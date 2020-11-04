@@ -17,15 +17,17 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         [Fact]
         public void RepositoryFactoryCorrectlyGetsRepositoryTest()
         {
-            IServiceCollection services = new ServiceCollection();
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
                     .AddInMemoryCollection(new Dictionary<string, string>
-                    {
-                        ["RepositoryOptions:CosmosConnectionString"] = "Testing"
-                    })
+                                           {
+                                               ["RepositoryOptions:CosmosConnectionString"] = "Testing"
+                                           })
                     .Build();
-            services.AddCosmosRepository(configuration);
+            IServiceCollection services = new ServiceCollection();
+            services.AddSingleton<IConfiguration>(configuration);
+            
+            services.AddCosmosRepository();
 
             IServiceProvider provider = services.BuildServiceProvider();
             IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();
