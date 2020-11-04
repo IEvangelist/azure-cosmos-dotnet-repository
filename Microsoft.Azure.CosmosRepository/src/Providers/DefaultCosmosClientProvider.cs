@@ -13,24 +13,23 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
     {
         readonly Lazy<CosmosClient> _lazyCosmosClient;
-        readonly CosmosClientOptions _cosmosClientOptions;
+        readonly ICosmosClientOptionsProvider _cosmosClientOptions;
         readonly RepositoryOptions _options;
 
         /// <inheritdoc/>
         public DefaultCosmosClientProvider(
-            CosmosClientOptions cosmosClientOptions,
+            ICosmosClientOptionsProvider cosmosClientOptions,
             IOptions<RepositoryOptions> options)
         {
             _cosmosClientOptions = cosmosClientOptions
-                ?? throw new ArgumentNullException(
-                    nameof(cosmosClientOptions), "Cosmos Client options are required.");
+                                   ?? throw new ArgumentNullException(nameof(cosmosClientOptions),
+                                                                      "Cosmos Client options are required.");
 
             _options = options?.Value
                 ?? throw new ArgumentNullException(
                     nameof(options), "Repository options are required.");
 
-            _lazyCosmosClient = new Lazy<CosmosClient>(
-                () => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions));
+            _lazyCosmosClient = new Lazy<CosmosClient>(() => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions.GetClientOptions));
         }
 
         /// <inheritdoc/>
