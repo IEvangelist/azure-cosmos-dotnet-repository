@@ -34,7 +34,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     nameof(services), "A service collection is required.");
             }
 
-
             services.AddOptions<RepositoryOptions>()
                     .Configure<IConfiguration>((settings, configuration) =>
                                                {
@@ -42,15 +41,13 @@ namespace Microsoft.Extensions.DependencyInjection
                                                                 .Bind(settings);
                                                });
             services.AddLogging()
-                .AddHttpClient()
-                .AddSingleton(provider => provider.AddCosmosClientOptions(configuration))
-                .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
-                .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
-                .AddSingleton<ICosmosPartitionKeyPathProvider, DefaultCosmosPartitionKeyPathProvider>()
-                .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
-                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
-                .Configure<RepositoryOptions>(
-                    configuration.GetSection(nameof(RepositoryOptions)));
+                    .AddHttpClient()
+                    .AddSingleton<ICosmosClientOptionsProvider, DefaultCosmosClientOptionsProvider>()
+                    .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
+                    .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
+                    .AddSingleton<ICosmosPartitionKeyPathProvider, DefaultCosmosPartitionKeyPathProvider>()
+                    .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
+                    .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
 
             if (setupAction != default)
             {
