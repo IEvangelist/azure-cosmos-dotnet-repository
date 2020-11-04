@@ -6,6 +6,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers
@@ -28,7 +29,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         public void NewDefaultCosmosClientProviderThrowsWithNullRepositoryOptions() =>
            Assert.Throws<ArgumentNullException>(
                () => new DefaultCosmosClientProvider(
-                   new CosmosClientOptions(),
+                   new Mock<ICosmosClientOptionsProvider>().Object,
                    null));
 
         [Fact]
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         {
             DefaultCosmosClientProvider provider =
                 new DefaultCosmosClientProvider(
-                    new CosmosClientOptions(),
+                    new Mock<ICosmosClientOptionsProvider>().Object,
                     Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString =
