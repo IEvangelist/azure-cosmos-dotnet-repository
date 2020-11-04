@@ -42,6 +42,12 @@ namespace Microsoft.Extensions.DependencyInjection
                     nameof(configuration), "A configuration is required.");
             }
 
+            services.AddOptions<RepositoryOptions>()
+                    .Configure<IConfiguration>((settings, configuration) =>
+                                               {
+                                                   configuration.GetSection(nameof(RepositoryOptions))
+                                                                .Bind(settings);
+                                               });
             services.AddLogging()
                 .AddHttpClient()
                 .AddSingleton(provider => provider.AddCosmosClientOptions(configuration))
