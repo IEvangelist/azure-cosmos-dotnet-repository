@@ -56,36 +56,5 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services;
         }
-
-        static CosmosClientOptions AddCosmosClientOptions(
-            this IServiceProvider provider,
-            IConfiguration configuration)
-        {
-            IHttpClientFactory factory = provider.GetRequiredService<IHttpClientFactory>();
-
-            HttpClient clientFactory()
-            {
-                HttpClient client = factory.CreateClient();
-
-                string version =
-                    Assembly.GetExecutingAssembly()
-                        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-                        .InformationalVersion;
-
-                client.DefaultRequestHeaders
-                    .UserAgent
-                    .ParseAdd($"ievangelist-cosmos-repository-sdk/{version}");
-
-                return client;
-            }
-
-            return new CosmosClientOptions
-            {
-                HttpClientFactory = clientFactory,
-                AllowBulkExecution =
-                    configuration.GetSection(nameof(RepositoryOptions))
-                        .GetValue<bool>(nameof(RepositoryOptions.AllowBulkExecution))
-            };
-        }
     }
 }
