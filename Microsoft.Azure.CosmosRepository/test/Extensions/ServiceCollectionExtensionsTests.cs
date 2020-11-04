@@ -14,14 +14,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Extensions
         [Fact]
         public void AddCosmosRepositoryThrowsWithNullServiceCollection() =>
             Assert.Throws<ArgumentNullException>(
-                () => (null as IServiceCollection).AddCosmosRepository(
-                    new Mock<IConfiguration>().Object));
-
-        [Fact]
-        public void AddCosmosRepositoryThrowsWithNullConfiguration() =>
-            Assert.Throws<ArgumentNullException>(
-                () => new Mock<IServiceCollection>().Object.AddCosmosRepository(null));
-
-
+                () => (null as IServiceCollection).AddCosmosRepository());
     }
 }
