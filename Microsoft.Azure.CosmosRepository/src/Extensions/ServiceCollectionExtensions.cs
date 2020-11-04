@@ -22,12 +22,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// instances to interact with Cosmos DB.
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>
-        /// <param name="configuration">The configuration representing the applications settings.</param>
         /// <param name="setupAction">An action to configure the repository options</param>
         /// <returns>The same service collection that was provided, with the required cosmos services.</returns>
         public static IServiceCollection AddCosmosRepository(
             this IServiceCollection services,
-            IConfiguration configuration,
             Action<RepositoryOptions> setupAction = default)
         {
             if (services is null)
@@ -36,11 +34,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     nameof(services), "A service collection is required.");
             }
 
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(
-                    nameof(configuration), "A configuration is required.");
-            }
 
             services.AddOptions<RepositoryOptions>()
                     .Configure<IConfiguration>((settings, configuration) =>
