@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace AzureFunctionTier.Model
 {
-    public class Users : Item
+    public class User : Item
     {
         [JsonProperty("nickName")]
         public string Nickname { get; set; }
