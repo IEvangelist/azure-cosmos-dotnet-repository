@@ -19,15 +19,13 @@ namespace AzureFunctionTier.Model
         /// Create a <see cref="User"/> out of a <see cref="PostUserRequest"/>.
         /// </summary>
         /// <param name="postUserRequest">The <see cref="PostUserRequest"/> to start with.</param>
-        public static implicit operator User(PostUserRequest postUserRequest)
-        {
-            return new User()
-                   {
-                       FirstName = postUserRequest.FirstName,
-                       LastName = postUserRequest.LastName,
-                       EmailAddress = postUserRequest.EmailAddress,
-                   };
-        }
+        public static implicit operator User(PostUserRequest postUserRequest) =>
+            new User
+            {
+                FirstName = postUserRequest?.FirstName,
+                LastName = postUserRequest?.LastName,
+                EmailAddress = postUserRequest?.EmailAddress,
+            };
 
         #endregion
     }
