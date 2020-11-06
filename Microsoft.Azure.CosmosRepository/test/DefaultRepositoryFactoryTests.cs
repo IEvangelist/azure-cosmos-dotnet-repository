@@ -20,9 +20,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
                     .AddInMemoryCollection(new Dictionary<string, string>
-                                           {
-                                               ["RepositoryOptions:CosmosConnectionString"] = "Testing"
-                                           })
+                    {
+                        ["RepositoryOptions:CosmosConnectionString"] = "Testing"
+                    })
                     .Build();
             IServiceCollection services = new ServiceCollection();
             services.AddSingleton<IConfiguration>(configuration);
