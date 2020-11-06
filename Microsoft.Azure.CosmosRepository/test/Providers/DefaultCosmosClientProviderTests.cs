@@ -17,23 +17,60 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         public void NewDefaultCosmosClientProviderThrowsWithNullCosmosClientOptions() =>
            Assert.Throws<ArgumentNullException>(
                () => new DefaultCosmosClientProvider(
-                   null,
-                   Options.Create(new RepositoryOptions
-                   {
-                       CosmosConnectionString = "pickles",
-                       DatabaseId = "data",
-                       ContainerId = "container"
-                   })));
+                                                     cosmosClientOptions: null,
+                                                     Options.Create(new RepositoryOptions
+                                                     {
+                                                         CosmosConnectionString = "pickles",
+                                                         DatabaseId = "data",
+                                                         ContainerId = "container"
+                                                     })));
+
+        [Fact]
+        public void NewDefaultCosmosClientProviderThrowsWithNullCosmosClientOptionsProvider() =>
+           Assert.Throws<ArgumentNullException>(
+               () => new DefaultCosmosClientProvider(
+                                                     cosmosClientOptionsProvider: null,
+                                                     Options.Create(new RepositoryOptions
+                                                     {
+                                                         CosmosConnectionString = "pickles",
+                                                         DatabaseId = "data",
+                                                         ContainerId = "container"
+                                                     })));
 
         [Fact]
         public void NewDefaultCosmosClientProviderThrowsWithNullRepositoryOptions() =>
            Assert.Throws<ArgumentNullException>(
                () => new DefaultCosmosClientProvider(
-                   new Mock<ICosmosClientOptionsProvider>().Object,
-                   null));
+                                                     new CosmosClientOptions(),
+                                                     null));
+
+        [Fact]
+        public void NewDefaultCosmosClientProviderThrowsWithNullRepositoryOptionsOverload() =>
+           Assert.Throws<ArgumentNullException>(
+               () => new DefaultCosmosClientProvider(
+                                                     new Mock<ICosmosClientOptionsProvider>().Object,
+                                                     null));
 
         [Fact]
         public void DefaultCosmosClientProviderCorrectlyDisposes()
+        {
+            DefaultCosmosClientProvider provider =
+                new DefaultCosmosClientProvider(
+                                                new CosmosClientOptions(),
+                    Options.Create(new RepositoryOptions
+                    {
+                        CosmosConnectionString =
+                            "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
+                    }));
+
+            provider.Dispose();
+
+            Assert.ThrowsAsync<ObjectDisposedException>(
+                async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+        }
+
+        [Fact]
+        public void DefaultCosmosClientProviderCorrectlyDisposesOverload()
         {
             DefaultCosmosClientProvider provider =
                 new DefaultCosmosClientProvider(
