@@ -47,7 +47,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     nameof(options), "Repository options are required.");
 
             _lazyCosmosClient = new Lazy<CosmosClient>(
-                () => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptionsProvider.GetClientOptions));
+                () => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptionsProvider.ClientOptions));
         }
 
         /// <inheritdoc/>

@@ -16,7 +16,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         private readonly Lazy<CosmosClientOptions> _lazyClientOptions;
 
         /// <inheritdoc />
-        public CosmosClientOptions GetClientOptions => _lazyClientOptions.Value;
+        public CosmosClientOptions ClientOptions => _lazyClientOptions.Value;
 
         /// <summary>
         /// Default <see cref="ICosmosClientOptionsProvider"/> implementation.
