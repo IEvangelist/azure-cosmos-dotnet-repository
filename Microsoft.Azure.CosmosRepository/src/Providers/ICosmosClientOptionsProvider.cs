@@ -13,6 +13,6 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         /// Gets the configured <see cref="CosmosClientOptions"/> instance.
         /// </summary>
         /// <returns>A <see cref="CosmosClientOptions"/> instance.</returns>
-        CosmosClientOptions GetClientOptions { get; }
+        CosmosClientOptions ClientOptions { get; }
     }
 }
