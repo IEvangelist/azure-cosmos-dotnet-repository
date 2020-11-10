@@ -8,12 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class DefaultCosmosClientOptionsProvider : ICosmosClientOptionsProvider
+    /// <inheritdoc />
+    class DefaultCosmosClientOptionsProvider : ICosmosClientOptionsProvider
     {
-        private readonly Lazy<CosmosClientOptions> _lazyClientOptions;
+        readonly Lazy<CosmosClientOptions> _lazyClientOptions;
 
         /// <inheritdoc />
         public CosmosClientOptions ClientOptions => _lazyClientOptions.Value;
@@ -23,35 +21,38 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         /// </summary>
         /// <param name="serviceProvider">Service provider implementation.</param>
         /// <param name="configuration">Service configuration implementation.</param>
-        public DefaultCosmosClientOptionsProvider(IServiceProvider serviceProvider, IConfiguration configuration)
+        public DefaultCosmosClientOptionsProvider(
+            IServiceProvider serviceProvider,
+            IConfiguration configuration) =>
+            _lazyClientOptions = new Lazy<CosmosClientOptions>(
+                () => CreateCosmosClientOptions(serviceProvider, configuration));
+
+        CosmosClientOptions CreateCosmosClientOptions(
+            IServiceProvider serviceProvider,
+            IConfiguration configuration) =>
+            new CosmosClientOptions
+            {
+                HttpClientFactory = () => ClientFactory(serviceProvider),
+                AllowBulkExecution =
+                    configuration.GetSection(nameof(RepositoryOptions))
+                        .GetValue<bool>(nameof(RepositoryOptions.AllowBulkExecution))
+            };
+
+        static HttpClient ClientFactory(IServiceProvider serviceProvider)
         {
-            _lazyClientOptions = new Lazy<CosmosClientOptions>(() => CreateCosmosClientOptions(serviceProvider, configuration));
-        }
+            HttpClient client =
+                serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
 
-        private CosmosClientOptions CreateCosmosClientOptions(IServiceProvider serviceProvider, IConfiguration configuration)
-        {
-            IHttpClientFactory factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+            string version =
+                Assembly.GetExecutingAssembly()
+                        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                        .InformationalVersion;
 
-            return new CosmosClientOptions
-                   {
-                       HttpClientFactory = () =>
-                                           {
-                                               HttpClient client = factory.CreateClient();
+            client.DefaultRequestHeaders
+                  .UserAgent
+                  .ParseAdd($"ievangelist-cosmos-repository-sdk/{version}");
 
-                                               string version =
-                                                   Assembly.GetExecutingAssembly()
-                                                           .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-                                                           .InformationalVersion;
-
-                                               client.DefaultRequestHeaders
-                                                     .UserAgent
-                                                     .ParseAdd($"ievangelist-cosmos-repository-sdk/{version}");
-
-                                               return client;
-                                           },
-                       AllowBulkExecution = configuration.GetSection(nameof(RepositoryOptions))
-                                                         .GetValue<bool>(nameof(RepositoryOptions.AllowBulkExecution))
-                   };
+            return client;
         }
     }
 }

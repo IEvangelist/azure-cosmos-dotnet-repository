@@ -6,9 +6,7 @@ namespace AzureFunctionTier
 {
     class Startup : FunctionsStartup
     {
-        public override void Configure(IFunctionsHostBuilder builder)
-        {
+        public override void Configure(IFunctionsHostBuilder builder) =>
             builder.Services.AddCosmosRepository();
-        }
     }
 }

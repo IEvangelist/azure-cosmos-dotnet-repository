@@ -41,7 +41,7 @@ namespace ServiceTier
                 })
                 .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Debug))
                 .ConfigureServices((context, services) =>
-                    services.AddCosmosRepository(context.Configuration, options =>
+                    services.AddCosmosRepository(options =>
                             {
                                 options.ContainerId = "people-store";
                                 options.DatabaseId = "samples";

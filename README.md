@@ -113,6 +113,8 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
 | RepositoryOptions__ContainerPerItemType   | boolean   | `false`       |
 | RepositoryOptions__AllowBulkExecution     | boolean   | `false`       |
 
+<!-- https://rehansaeed.com/the-easiest-way-to-version-nuget-packages/ -->
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):

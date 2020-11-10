@@ -18,7 +18,7 @@ namespace WebTier
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCosmosRepository(_configuration);
+            services.AddCosmosRepository();
 
             services.AddControllers()
                 .AddJsonOptions(options =>
