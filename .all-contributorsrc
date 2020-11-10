@@ -6,6 +6,18 @@
   "commit": false,
   "contributors": [
     {
+      "login": "IEvangelist",
+      "name": "David Pine",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/7679720?v=4",
+      "profile": "https://www.microsoft.com",
+      "contributions": [
+        "code",
+        "test",
+        "example",
+        "review"
+      ]
+    },
+    {
       "login": "Invvard",
       "name": "Invvard",
       "avatar_url": "https://avatars0.githubusercontent.com/u/7305493?v=4",
@@ -31,18 +43,6 @@
       "profile": "http://www.planetgeek.ch",
       "contributions": [
         "code"
-      ]
-    },
-    {
-      "login": "IEvangelist",
-      "name": "David Pine",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/7679720?v=4",
-      "profile": "https://www.microsoft.com",
-      "contributions": [
-        "code",
-        "test",
-        "example",
-        "review"
       ]
     }
   ],
