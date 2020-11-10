@@ -14,6 +14,15 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "RichMercer",
+      "name": "Richard Mercer",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1423493?v=4",
+      "profile": "http://richmercer.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
