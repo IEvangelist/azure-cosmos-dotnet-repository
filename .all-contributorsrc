@@ -14,6 +14,15 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "danielmarbach",
+      "name": "Daniel Marbach",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/174258?v=4",
+      "profile": "http://www.planetgeek.ch",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
