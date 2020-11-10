@@ -13,6 +13,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
     {
         readonly Lazy<CosmosClient> _lazyCosmosClient;
+        readonly ICosmosClientOptionsProvider _cosmosClientOptionsProvider;
         readonly CosmosClientOptions _cosmosClientOptions;
         readonly RepositoryOptions _options;
 
@@ -22,15 +23,31 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             IOptions<RepositoryOptions> options)
         {
             _cosmosClientOptions = cosmosClientOptions
-                ?? throw new ArgumentNullException(
-                    nameof(cosmosClientOptions), "Cosmos Client options are required.");
+                                   ?? throw new ArgumentNullException(nameof(cosmosClientOptions),
+                                                                      "Cosmos Client options are required.");
+
+            _options = options?.Value
+                       ?? throw new ArgumentNullException(
+                                                          nameof(options), "Repository options are required.");
+
+            _lazyCosmosClient = new Lazy<CosmosClient>(() => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions));
+        }
+
+        /// <inheritdoc/>
+        public DefaultCosmosClientProvider(
+            ICosmosClientOptionsProvider cosmosClientOptionsProvider,
+            IOptions<RepositoryOptions> options)
+        {
+            _cosmosClientOptionsProvider = cosmosClientOptionsProvider
+                                           ?? throw new ArgumentNullException(nameof(cosmosClientOptionsProvider),
+                                                                              "Cosmos Client Options Provider is required.");
 
             _options = options?.Value
                 ?? throw new ArgumentNullException(
                     nameof(options), "Repository options are required.");
 
             _lazyCosmosClient = new Lazy<CosmosClient>(
-                () => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions));
+                () => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptionsProvider.ClientOptions));
         }
 
         /// <inheritdoc/>

@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+
+    "RepositoryOptions:CosmosConnectionString": "<CosmosDB-ConnectionString>",
+    "RepositoryOptions:DatabaseId": "<CosmosDB-DatabaseName>",
+    "RepositoryOptions:ContainerId": "<CosmosDB-ContainerName>"
+
+  }
+}

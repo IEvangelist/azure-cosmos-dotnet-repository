@@ -12,7 +12,7 @@ namespace Microsoft.Azure.CosmosRepository
         readonly IServiceProvider _serviceProvider;
 
         /// <summary>
-        /// Constructor for the default respositroy factory.
+        /// Constructor for the default repository factory.
         /// </summary>
         /// <param name="serviceProvider"></param>
         public DefaultRepositoryFactory(IServiceProvider serviceProvider) =>
