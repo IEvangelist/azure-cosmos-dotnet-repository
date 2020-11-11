@@ -33,12 +33,12 @@ Finally, a partition key property is used internally to manage partitioning on y
 
 1. Create an Azure Cosmos DB SQL resource.
 1. Obtain the resource connection string from the __Keys__ blade, be sure to get a connection string and not the key - these are different. The connection string is a compound key and endpoint URL.
-1. Call `AddCosmosRepository` and provide the apps configuration object:
+1. Call `AddCosmosRepository`:
 
     ```csharp
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddCosmosRepository(Configuration);
+        services.AddCosmosRepository();
     }
     ```
 
@@ -47,7 +47,7 @@ Finally, a partition key property is used internally to manage partitioning on y
     ```csharp
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddCosmosRepository(Configuration,
+        services.AddCosmosRepository(
             options =>
             {
                 options.CosmosConnectionString = "< connection string >";
@@ -112,6 +112,29 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
 | RepositoryOptions__OptimizeBandwidth      | boolean   | `true`        |
 | RepositoryOptions__ContainerPerItemType   | boolean   | `false`       |
 | RepositoryOptions__AllowBulkExecution     | boolean   | `false`       |
+
+#### Example `appsettings.json`
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "RepositoryOptions": {
+    "CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
+    "DatabaseId": "<Your-CosmosDB-DatabaseName>",
+    "ContainerId": "<Your-CosmosDB-ContainerName>",
+    "OptimizeBandwidth": true,
+    "ContainerPerItemType": true,
+    "AllowBulkExecution": true
+  }
+}
+```
 
 <!-- https://rehansaeed.com/the-easiest-way-to-version-nuget-packages/ -->
 
