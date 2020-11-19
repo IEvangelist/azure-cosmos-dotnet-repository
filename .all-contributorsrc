@@ -44,6 +44,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "manuelsidler",
+      "name": "Manuel Sidler",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/802015?v=4",
+      "profile": "https://manuel.sidler.io",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
