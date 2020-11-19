@@ -68,6 +68,15 @@ namespace Microsoft.Azure.CosmosRepository
         ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Gets an <see cref="IEnumerable{TItem}"/> collection of <see cref="Item" />
+        /// by the given Cosmos SQL query
+        /// </summary>
+        /// <param name="query">The Cosmos SQL query</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A collection of item instances returned by the given <paramref name="query"/> Cosmos SQL query.</returns>
+        ValueTask<IEnumerable<TItem>> GetByQueryAsync(string query, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Creates a cosmos item representing the given <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The item value to create.</param>
