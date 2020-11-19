@@ -100,6 +100,30 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
+        public async ValueTask<IEnumerable<TItem>> GetByQueryAsync(
+            string query,
+            CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            TryLogDebugDetails(_logger, () => $"Read {query}");
+
+            QueryDefinition queryDefinition = new QueryDefinition(query);
+            using (FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition))
+            {
+                List<TItem> results = new List<TItem>();
+                while (queryIterator.HasMoreResults)
+                {
+                    FeedResponse<TItem> response = await queryIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+                    results.AddRange(response.Resource);
+                }
+
+                return results;
+            }
+        }
+
+        /// <inheritdoc/>
         public async ValueTask<TItem> CreateAsync(
             TItem value,
             CancellationToken cancellationToken = default)

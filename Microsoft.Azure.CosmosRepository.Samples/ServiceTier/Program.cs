@@ -119,7 +119,7 @@ namespace ServiceTier
 
             // Reading...
             Widget contraption = await repository.GetAsync(widget1.Id);
-            Widget telescope = (await repository.GetAsync(p => p.Name.Contains("telescope"))).Single();
+            Widget telescope = (await repository.GetByQueryAsync("SELECT * FROM w WHERE CONTAINS(w.Name, 'telescope')")).Single();
 
             Console.WriteLine($"[Widget] Read: {contraption}");
             Console.WriteLine($"[Widget] Read: {telescope}");
