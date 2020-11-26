@@ -53,6 +53,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "daveabrock",
+      "name": "Dave Brock",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/275862?v=4",
+      "profile": "http://daveabrock.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
