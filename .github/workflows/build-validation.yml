@@ -2,8 +2,10 @@ name: build
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+    paths:
+    - '**.cs'
+    - '**.csproj'
 
 env:
   DOTNET_VERSION: '3.1.402' # set this to the dot net version to use
