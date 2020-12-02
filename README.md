@@ -141,7 +141,7 @@ Notes for tagging releases:
   https://rehansaeed.com/the-easiest-way-to-version-nuget-packages/#minver
 
 git tag -a 2.1.1 -m "Build v2.1.1"
-git push --tags
+git push upstream --tags
 dotnet build
 -->
 
