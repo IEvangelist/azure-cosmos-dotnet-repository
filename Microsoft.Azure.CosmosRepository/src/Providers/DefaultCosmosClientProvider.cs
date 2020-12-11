@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         readonly RepositoryOptions _options;
 
         /// <inheritdoc/>
-        public DefaultCosmosClientProvider(
+        private DefaultCosmosClientProvider(
             CosmosClientOptions cosmosClientOptions,
             IOptions<RepositoryOptions> options)
         {
@@ -37,19 +37,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         /// <inheritdoc/>
         public DefaultCosmosClientProvider(
             ICosmosClientOptionsProvider cosmosClientOptionsProvider,
-            IOptions<RepositoryOptions> options)
-        {
+            IOptions<RepositoryOptions> options) :
+            this(cosmosClientOptionsProvider.ClientOptions, options) =>
             _cosmosClientOptionsProvider = cosmosClientOptionsProvider
                 ?? throw new ArgumentNullException(
                     nameof(cosmosClientOptionsProvider), "Cosmos Client Options Provider is required.");
-
-            _options = options?.Value
-                ?? throw new ArgumentNullException(
-                    nameof(options), "Repository options are required.");
-
-            _lazyCosmosClient = new Lazy<CosmosClient>(
-                () => new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptionsProvider.ClientOptions));
-        }
 
         /// <inheritdoc/>
         public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) =>

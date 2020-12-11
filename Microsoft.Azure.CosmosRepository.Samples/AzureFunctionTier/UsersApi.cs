@@ -26,7 +26,6 @@ namespace AzureFunctionTier
             ILogger log,
             CancellationToken hostCancellationToken)
         {
-
             using CancellationTokenSource cancellationSource =
                 CancellationTokenSource.CreateLinkedTokenSource(hostCancellationToken, req.HttpContext.RequestAborted);
 
