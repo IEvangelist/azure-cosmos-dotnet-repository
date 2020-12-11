@@ -140,7 +140,7 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
 Notes for tagging releases:
   https://rehansaeed.com/the-easiest-way-to-version-nuget-packages/#minver
 
-git tag -a 2.1.1 -m "Build v2.1.1"
+git tag -a 2.1.3 -m "Build v2.1.3"
 git push upstream --tags
 dotnet build
 -->
