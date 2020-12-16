@@ -110,17 +110,20 @@ namespace Microsoft.Azure.CosmosRepository
             TryLogDebugDetails(_logger, () => $"Read {query}");
 
             QueryDefinition queryDefinition = new QueryDefinition(query);
-            using (FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition))
-            {
-                List<TItem> results = new List<TItem>();
-                while (queryIterator.HasMoreResults)
-                {
-                    FeedResponse<TItem> response = await queryIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
-                    results.AddRange(response.Resource);
-                }
+            return await IterateQueryInternalAsync(container, queryDefinition, cancellationToken);
+        }
 
-                return results;
-            }
+        /// <inheritdoc/>
+        public async ValueTask<IEnumerable<TItem>> GetByQueryAsync(
+            QueryDefinition queryDefinition,
+            CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            TryLogDebugDetails(_logger, () => $"Read {queryDefinition.QueryText}");
+
+            return await IterateQueryInternalAsync(container, queryDefinition, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -203,6 +206,25 @@ namespace Microsoft.Azure.CosmosRepository
 
             TryLogDebugDetails(_logger, () => $"Deleted: {id}");
         }
+
+        static async Task<IEnumerable<TItem>> IterateQueryInternalAsync(
+            Container container,
+            QueryDefinition queryDefinition,
+            CancellationToken cancellationToken)
+        {
+            using (FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition))
+            {
+                List<TItem> results = new List<TItem>();
+                while (queryIterator.HasMoreResults)
+                {
+                    FeedResponse<TItem> response = await queryIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+                    results.AddRange(response.Resource);
+                }
+
+                return results;
+            }
+        }
+
 
         static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
         {

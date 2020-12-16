@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,13 +44,13 @@ namespace ServiceTier
                 .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Debug))
                 .ConfigureServices((context, services) =>
                     services.AddCosmosRepository(options =>
-                            {
-                                options.ContainerId = "people-store";
-                                options.DatabaseId = "samples";
-                                options.OptimizeBandwidth = true;
-                                options.ContainerPerItemType = true;
-                            })
-                            .AddSingleton<IExampleService, ExampleService>());
+                        {
+                            options.ContainerId = "people-store";
+                            options.DatabaseId = "samples";
+                            options.OptimizeBandwidth = true;
+                            options.ContainerPerItemType = true;
+                        })
+                        .AddSingleton<IExampleService, ExampleService>());
 
         static async Task RawRepositoryExampleAsync(IRepository<Person> repository)
         {
@@ -68,7 +69,7 @@ namespace ServiceTier
 
             // Creating...
             Console.WriteLine("[Person] Repository creating...");
-            _ = await repository.CreateAsync(new[] { maryShaw, calvinWeatherfield });
+            _ = await repository.CreateAsync(new[] {maryShaw, calvinWeatherfield});
 
             // Reading...
             Person mary = await repository.GetAsync(maryShaw.Id, maryShaw.SyntheticPartitionKey);
@@ -103,6 +104,16 @@ namespace ServiceTier
 
         static async Task RawRepositoryExampleAsync(IRepository<Widget> repository)
         {
+            async Task VerifyUpdates()
+            {
+                // Read again / verify updates
+                IEnumerable<Widget> validWidgets = await repository.GetAsync(p => p.Name != null);
+                foreach (Widget widget in validWidgets)
+                {
+                    Console.WriteLine($"[Widget] Updated: {widget}");
+                }
+            }
+
             Widget widget1 = new Widget
             {
                 Name = "Some fancy contraption",
@@ -116,11 +127,12 @@ namespace ServiceTier
 
             // Creating...
             Console.WriteLine("[Widget] Repository creating...");
-            _ = await repository.CreateAsync(new[] { widget1, widget2 });
+            _ = await repository.CreateAsync(new[] {widget1, widget2});
 
             // Reading...
             Widget contraption = await repository.GetAsync(widget1.Id);
-            Widget telescope = (await repository.GetByQueryAsync("SELECT * FROM w WHERE CONTAINS(w.Name, 'telescope')")).Single();
+            Widget telescope = (await repository.GetByQueryAsync("SELECT * FROM w WHERE CONTAINS(w.Name, 'telescope')"))
+                .Single();
 
             Console.WriteLine($"[Widget] Read: {contraption}");
             Console.WriteLine($"[Widget] Read: {telescope}");
@@ -133,12 +145,26 @@ namespace ServiceTier
             _ = repository.UpdateAsync(contraption);
             _ = repository.UpdateAsync(telescope);
 
-            // Read again / verify updates
-            IEnumerable<Widget> validWidgets = await repository.GetAsync(p => p.Name != null);
-            foreach (Widget widget in validWidgets)
-            {
-                Console.WriteLine($"[Widget] Updated: {widget}");
-            }
+            await VerifyUpdates();
+
+            // Reading ...
+            QueryDefinition queryDefinition =
+                new QueryDefinition("SELECT * FROM w WHERE CONTAINS(w.Name, @Name)").WithParameter("@Name", "telescope");
+            telescope = (await repository.GetByQueryAsync(queryDefinition)).Single();
+
+
+            Console.WriteLine($"[Widget] Read: {contraption}");
+            Console.WriteLine($"[Widget] Read: {telescope}");
+
+            // Updating...
+            Console.WriteLine("[Widget] Repository updating...");
+            contraption.CreatedOrUpdatedOn = contraption.CreatedOrUpdatedOn.AddDays(1);
+            telescope.CreatedOrUpdatedOn = telescope.CreatedOrUpdatedOn.AddDays(1);
+
+            _ = repository.UpdateAsync(contraption);
+            _ = repository.UpdateAsync(telescope);
+
+            await VerifyUpdates();
 
             // Deleting...
             Console.WriteLine("[Widget] Repository deleting...");
@@ -166,7 +192,7 @@ namespace ServiceTier
 
             // Creating...
             Console.WriteLine("[Person] Service creating...");
-            _ = await service.AddPeopleAsync(new[] { jamesBond, adeleGoldberg });
+            _ = await service.AddPeopleAsync(new[] {jamesBond, adeleGoldberg});
 
             // Reading...
             Person james = await service.ReadPersonByIdAsync(jamesBond.Id, jamesBond.SyntheticPartitionKey);
