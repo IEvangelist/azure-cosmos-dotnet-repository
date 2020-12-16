@@ -125,13 +125,13 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
     }
   },
   "AllowedHosts": "*",
-  "RepositoryOptions": {
-    "CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
-    "DatabaseId": "<Your-CosmosDB-DatabaseName>",
-    "ContainerId": "<Your-CosmosDB-ContainerName>",
-    "OptimizeBandwidth": true,
-    "ContainerPerItemType": true,
-    "AllowBulkExecution": true
+  "Values": {
+    "RepositoryOptions:CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
+    "RepositoryOptions:DatabaseId": "<Your-CosmosDB-DatabaseName>",
+    "RepositoryOptions:ContainerId": "<Your-CosmosDB-ContainerName>",
+    "RepositoryOptions:OptimizeBandwidth": true,
+    "RepositoryOptions:ContainerPerItemType": true,
+    "RepositoryOptions:AllowBulkExecution": true
   }
 }
 ```
