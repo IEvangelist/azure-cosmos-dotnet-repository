@@ -11,7 +11,7 @@ using Microsoft.Azure.Cosmos;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <summary>
-    /// This is the repository interface for any implementation of 
+    /// This is the repository interface for any implementation of
     /// <typeparamref name="TItem"/>, exposing asynchronous C.R.U.D. functionality.
     /// </summary>
     /// <typeparam name="TItem">The <see cref="Item"/> subclass type.</typeparam>
@@ -22,7 +22,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// public class ConsumingService
     /// {
     ///     readonly IRepository<SomePoco> _pocoRepository;
-    ///     
+    ///
     ///     public ConsumingService(IRepository<SomePoco> pocoRepository) =>
     ///         _pocoRepository = pocoRepository;
     /// }
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.CosmosRepository
         ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets an <see cref="IEnumerable{TItem}"/> collection of <see cref="Item"/> 
+        /// Gets an <see cref="IEnumerable{TItem}"/> collection of <see cref="Item"/>
         /// subclasses that match the given <paramref name="predicate"/>.
         /// </summary>
         /// <remarks>
@@ -75,6 +75,15 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A collection of item instances returned by the given <paramref name="query"/> Cosmos SQL query.</returns>
         ValueTask<IEnumerable<TItem>> GetByQueryAsync(string query, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets an <see cref="IEnumerable{TItem}"/> collection of <see cref="Item" />
+        /// by the given Cosmos QueryDefinition
+        /// </summary>
+        /// <param name="queryDefinition"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A collection of item instances returned by the given <paramref name="queryDefinition"/> Cosmos SQL query.</returns>
+        ValueTask<IEnumerable<TItem>> GetByQueryAsync(QueryDefinition queryDefinition, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a cosmos item representing the given <paramref name="value"/>.

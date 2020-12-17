@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -103,6 +104,16 @@ namespace ServiceTier
 
         static async Task RawRepositoryExampleAsync(IRepository<Widget> repository)
         {
+            static async Task VerifyUpdates(IRepository<Widget> repo)
+            {
+                // Read again / verify updates
+                IEnumerable<Widget> validWidgets = await repo.GetAsync(p => p.Name != null);
+                foreach (Widget widget in validWidgets)
+                {
+                    Console.WriteLine($"[Widget] Updated: {widget}");
+                }
+            }
+
             Widget widget1 = new Widget
             {
                 Name = "Some fancy contraption",
@@ -120,7 +131,8 @@ namespace ServiceTier
 
             // Reading...
             Widget contraption = await repository.GetAsync(widget1.Id);
-            Widget telescope = (await repository.GetByQueryAsync("SELECT * FROM w WHERE CONTAINS(w.Name, 'telescope')")).Single();
+            Widget telescope = (await repository.GetByQueryAsync("SELECT * FROM w WHERE CONTAINS(w.Name, 'telescope')"))
+                .Single();
 
             Console.WriteLine($"[Widget] Read: {contraption}");
             Console.WriteLine($"[Widget] Read: {telescope}");
@@ -133,12 +145,26 @@ namespace ServiceTier
             _ = repository.UpdateAsync(contraption);
             _ = repository.UpdateAsync(telescope);
 
-            // Read again / verify updates
-            IEnumerable<Widget> validWidgets = await repository.GetAsync(p => p.Name != null);
-            foreach (Widget widget in validWidgets)
-            {
-                Console.WriteLine($"[Widget] Updated: {widget}");
-            }
+            await VerifyUpdates(repository);
+
+            // Reading ...
+            QueryDefinition queryDefinition =
+                new QueryDefinition("SELECT * FROM w WHERE CONTAINS(w.Name, @Name)").WithParameter("@Name", "telescope");
+            telescope = (await repository.GetByQueryAsync(queryDefinition)).Single();
+
+
+            Console.WriteLine($"[Widget] Read: {contraption}");
+            Console.WriteLine($"[Widget] Read: {telescope}");
+
+            // Updating...
+            Console.WriteLine("[Widget] Repository updating...");
+            contraption.CreatedOrUpdatedOn = contraption.CreatedOrUpdatedOn.AddDays(1);
+            telescope.CreatedOrUpdatedOn = telescope.CreatedOrUpdatedOn.AddDays(1);
+
+            _ = repository.UpdateAsync(contraption);
+            _ = repository.UpdateAsync(telescope);
+
+            await VerifyUpdates(repository);
 
             // Deleting...
             Console.WriteLine("[Widget] Repository deleting...");
