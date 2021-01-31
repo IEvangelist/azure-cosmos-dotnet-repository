@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
             string path = provider.GetPartitionKeyPath<PickleChipsItem>();
             Assert.Equal("/pickles", path);
-            Assert.Equal("[\"Hey, where's the chips?!\"]", new PickleChipsItem().PartitionKey.ToString());
+            Assert.Equal("[\"Hey, where's the chips?!\"]", ((IItem)new PickleChipsItem()).PartitionKey.ToString());
         }
     }
 

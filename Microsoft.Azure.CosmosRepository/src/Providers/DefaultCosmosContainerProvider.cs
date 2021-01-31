@@ -12,7 +12,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc/>
     class DefaultCosmosContainerProvider<TItem>
-        : ICosmosContainerProvider<TItem> where TItem : Item
+        : ICosmosContainerProvider<TItem> where TItem : IItem
     {
         readonly Lazy<Task<Container>> _lazyContainer;
         readonly RepositoryOptions _options;

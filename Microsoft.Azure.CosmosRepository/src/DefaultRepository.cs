@@ -19,7 +19,7 @@ using Newtonsoft.Json;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : Item
+    internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : IItem
     {
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
@@ -66,7 +66,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             TryLogDebugDetails(_logger, () => $"Read: {JsonConvert.SerializeObject(item)}");
 
-            return string.IsNullOrEmpty(item.Type) || item.Type == typeof(TItem).Name ? item : null;
+            return string.IsNullOrEmpty(item.Type) || item.Type == typeof(TItem).Name ? item : default;
         }
 
         /// <inheritdoc/>
