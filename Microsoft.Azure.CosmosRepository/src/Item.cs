@@ -68,5 +68,4 @@ namespace Microsoft.Azure.CosmosRepository
         /// <returns>The <see cref="Item.Id"/> unless overridden by the subclass.</returns>
         protected virtual string GetPartitionKeyValue() => Id;
     }
-
 }
