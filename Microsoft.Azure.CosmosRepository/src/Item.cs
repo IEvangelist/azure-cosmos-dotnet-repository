@@ -9,24 +9,6 @@ using System;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <summary>
-    /// The base interface used for all repository object or object graphs.
-    /// </summary>
-    public interface IItem
-    {
-        /// <summary>
-        /// Gets or sets the item's globally unique identifier.
-        /// </summary>
-        string Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the item's type name.
-        /// </summary>
-        string Type { get; set; }
-
-        internal PartitionKey PartitionKey { get; }
-    }
-
-    /// <summary>
     /// A base helper class that implements IItem
     /// </summary>
     /// <example>
@@ -66,6 +48,10 @@ namespace Microsoft.Azure.CosmosRepository
         [JsonProperty("type")]
         public string Type { get; set; }
 
+        /// <summary>
+        /// Gets the PartitionKey based on <see cref="GetPartitionKeyValue"/>.
+        /// Implemented explicitly to keep out of Item API
+        /// </summary>
         PartitionKey IItem.PartitionKey => new PartitionKey(GetPartitionKeyValue());
 
         /// <summary>

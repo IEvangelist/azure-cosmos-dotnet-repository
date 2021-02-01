@@ -14,9 +14,9 @@ namespace Microsoft.Azure.CosmosRepository
     /// This is the repository interface for any implementation of
     /// <typeparamref name="TItem"/>, exposing asynchronous C.R.U.D. functionality.
     /// </summary>
-    /// <typeparam name="TItem">The <see cref="IItem"/> subclass type.</typeparam>
+    /// <typeparam name="TItem">The <see cref="IItem"/> implementation class type.</typeparam>
     /// <example>
-    /// With DI, use .ctor injection to require any subclass of <see cref="IItem"/>:
+    /// With DI, use .ctor injection to require any implementation of <see cref="IItem"/>:
     /// <code language="c#">
     /// <![CDATA[
     /// public class ConsumingService
@@ -32,7 +32,7 @@ namespace Microsoft.Azure.CosmosRepository
     public interface IRepository<TItem> where TItem : IItem
     {
         /// <summary>
-        /// Gets the <see cref="IItem"/> subclass instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
+        /// Gets the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
         /// </summary>
         /// <remarks>
         /// If the typeof(<typeparamref name="TItem"/>).Name differs from the item.Type you're attempting to retrieve, null is returned.
@@ -40,11 +40,11 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="id">The string identifier.</param>
         /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
+        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets the <see cref="IItem"/> subclass instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
+        /// Gets the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
         /// </summary>
         /// <remarks>
         /// If the typeof(<typeparamref name="TItem"/>).Name differs from the item.Type you're attempting to retrieve, null is returned.
@@ -52,12 +52,12 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="id">The string identifier.</param>
         /// <param name="partitionKey">The <see cref="PartitionKey"/> value if different than the <see cref="IItem.Id"/>.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
+        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets an <see cref="IEnumerable{TItem}"/> collection of <see cref="IItem"/>
-        /// subclasses that match the given <paramref name="predicate"/>.
+        /// implementation classes that match the given <paramref name="predicate"/>.
         /// </summary>
         /// <remarks>
         /// If the typeof(<typeparamref name="TItem"/>).Name differs from the item.Type you're attempting to retrieve, the item is not returned.
@@ -90,7 +90,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="value">The item value to create.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
+        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> CreateAsync(TItem value, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="value">The item value to update.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> subclass instance as a <typeparamref name="TItem"/>.</returns>
+        /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default);
 
         /// <summary>
