@@ -16,7 +16,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             new ConcurrentDictionary<Type, string>();
 
         /// <inheritdoc />
-        public string GetPartitionKeyPath<TItem>() where TItem : Item =>
+        public string GetPartitionKeyPath<TItem>() where TItem : IItem =>
             _partionKeyNameMap.GetOrAdd(typeof(TItem), GetPartitionKeyNameFactory);
 
         static string GetPartitionKeyNameFactory(Type type)

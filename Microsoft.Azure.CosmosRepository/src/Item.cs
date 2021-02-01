@@ -9,7 +9,7 @@ using System;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <summary>
-    /// The base item used for all repository object or object graphs.
+    /// A base helper class that implements IItem
     /// </summary>
     /// <example>
     /// Here is an example subclass item, which adds several properties:
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// ]]>
     /// </code>
     /// </example>
-    public abstract class Item
+    public abstract class Item : IItem
     {
         /// <summary>
         /// Gets or sets the item's globally unique identifier.
@@ -48,7 +48,11 @@ namespace Microsoft.Azure.CosmosRepository
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        internal PartitionKey PartitionKey => new PartitionKey(GetPartitionKeyValue());
+        /// <summary>
+        /// Gets the PartitionKey based on <see cref="GetPartitionKeyValue"/>.
+        /// Implemented explicitly to keep out of Item API
+        /// </summary>
+        PartitionKey IItem.PartitionKey => new PartitionKey(GetPartitionKeyValue());
 
         /// <summary>
         /// Default constructor, assigns type name to <see cref="Type"/> property.
