@@ -24,7 +24,7 @@ jobs:
         echo 'Reason: ${{ github.event.inputs.reason }}'
     - name: .NET code metrics
       id: dotnet-code-metrics
-      uses: dotnet/samples/github-actions/DotNet.GitHubAction@main
+      uses: dotnet/samples/github-actions/DotNet.GitHubAction@a4b4bf0e1a25510f3aea1f7573d26926f6214eb0
       env:
         GREETINGS: 'Hello, .NET developers!' # ${{ secrets.GITHUB_TOKEN }}
       with:
