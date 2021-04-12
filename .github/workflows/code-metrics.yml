@@ -31,7 +31,7 @@ jobs:
         owner: ${{ github.repository_owner }}
         name: ${{ github.repository }}
         branch: ${{ github.ref }}
-        dir: ${{ github.workspace }}
+        dir: ${{ './' }}
       
     - name: Create pull request
       uses: peter-evans/create-pull-request@v3.4.1
