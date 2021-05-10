@@ -8,8 +8,7 @@ using Microsoft.Azure.CosmosRepository.Attributes;
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc />
-    class DefaultCosmosPartitionKeyPathProvider
-        : ICosmosPartitionKeyPathProvider
+    class DefaultCosmosPartitionKeyPathProvider : ICosmosPartitionKeyPathProvider
     {
         static readonly Type _partitionKeyNameAttributeType = typeof(PartitionKeyPathAttribute);
         static readonly ConcurrentDictionary<Type, string> _partionKeyNameMap =
@@ -21,11 +20,12 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         static string GetPartitionKeyNameFactory(Type type)
         {
-            PartitionKeyPathAttribute attribute =
-                Attribute.GetCustomAttribute(type, _partitionKeyNameAttributeType)
-                as PartitionKeyPathAttribute;
+            Attribute attribute =
+                Attribute.GetCustomAttribute(type, _partitionKeyNameAttributeType);
 
-            return attribute?.Path ?? "/id";
+            return attribute is PartitionKeyPathAttribute partitionKeyPathAttribute
+                ? partitionKeyPathAttribute.Path
+                : "/id";
         }
     }
 }

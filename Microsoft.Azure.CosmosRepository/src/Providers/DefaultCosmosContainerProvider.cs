@@ -18,11 +18,13 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         readonly RepositoryOptions _options;
         readonly ICosmosClientProvider _cosmosClientProvider;
         readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
+        readonly ICosmosContainerNameProvider _cosmosContainerNameProvider;
         readonly ILogger<DefaultCosmosContainerProvider<TItem>> _logger;
 
         public DefaultCosmosContainerProvider(
             ICosmosClientProvider cosmosClientProvider,
             ICosmosPartitionKeyPathProvider cosmosPartitionKeyPathProvider,
+            ICosmosContainerNameProvider cosmosContainerNameProvider,
             IOptions<RepositoryOptions> options,
             ILogger<DefaultCosmosContainerProvider<TItem>> logger)
         {
@@ -34,9 +36,16 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                 ?? throw new ArgumentNullException(
                     nameof(cosmosPartitionKeyPathProvider), "Cosmos partition key name provider is required.");
 
+            _cosmosContainerNameProvider = cosmosContainerNameProvider
+                ?? throw new ArgumentNullException(
+                    nameof(cosmosContainerNameProvider), "Cosmos container name provider is required.");
+
             _options = options?.Value
                 ?? throw new ArgumentNullException(
                     nameof(options), "Repository options are required.");
+
+            _logger = logger
+                ?? throw new ArgumentNullException($"The {nameof(logger)} is required.");
 
             if (_options.CosmosConnectionString is null)
             {
@@ -55,42 +64,42 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                         $"The {nameof(_options.ContainerId)} is required when container per item type is false.");
                 }
             }
-            if (logger is null)
-            {
-                throw new ArgumentNullException($"The {nameof(logger)} is required.");
-            }
 
-            _logger = logger;
-            _lazyContainer = new Lazy<Task<Container>>(async () =>
-            {
-                try
-                {
-                    Database database =
-                        await _cosmosClientProvider.UseClientAsync(
-                            client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId)).ConfigureAwait(false);
-
-                    ContainerProperties containerProperties = new ContainerProperties
-                    {
-                        Id = _options.ContainerPerItemType ? typeof(TItem).Name : _options.ContainerId,
-                        PartitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>()
-                    };
-
-                    Container container =
-                        await database.CreateContainerIfNotExistsAsync(
-                            containerProperties).ConfigureAwait(false);
-
-                    return container;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.Message, ex);
-
-                    throw;
-                }
-            });
+            _lazyContainer = new Lazy<Task<Container>>(async () => await GetContainerValueFactoryAsync());
+            _cosmosContainerNameProvider = cosmosContainerNameProvider;
         }
 
         /// <inheritdoc/>
         public Task<Container> GetContainerAsync() => _lazyContainer.Value;
+
+        async Task<Container> GetContainerValueFactoryAsync()
+        {
+            try
+            {
+                Database database =
+                    await _cosmosClientProvider.UseClientAsync(
+                        client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId)).ConfigureAwait(false);
+
+                ContainerProperties containerProperties = new ContainerProperties
+                {
+                    Id = _options.ContainerPerItemType
+                        ? _cosmosContainerNameProvider.GetContainerName<TItem>()
+                        : _options.ContainerId,
+                    PartitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>()
+                };
+
+                Container container =
+                    await database.CreateContainerIfNotExistsAsync(
+                        containerProperties).ConfigureAwait(false);
+
+                return container;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+
+                throw;
+            }
+        }
     }
 }

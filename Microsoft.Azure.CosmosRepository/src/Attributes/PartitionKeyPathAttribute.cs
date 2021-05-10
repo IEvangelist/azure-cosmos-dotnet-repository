@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepository.Attributes
     public sealed class PartitionKeyPathAttribute : Attribute
     {
         /// <summary>
-        /// Gets or sets the path of the parition key.
+        /// Gets the path of the parition key.
         /// </summary>
         public string Path { get; } = "/id";
 
