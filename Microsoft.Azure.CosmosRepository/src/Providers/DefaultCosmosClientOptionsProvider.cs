@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         CosmosClientOptions CreateCosmosClientOptions(
             IServiceProvider serviceProvider,
             IConfiguration configuration) =>
-            new CosmosClientOptions
+            new()
             {
                 HttpClientFactory = () => ClientFactory(serviceProvider),
                 AllowBulkExecution =

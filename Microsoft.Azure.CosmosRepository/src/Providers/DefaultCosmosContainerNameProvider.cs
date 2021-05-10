@@ -7,15 +7,15 @@ using Microsoft.Azure.CosmosRepository.Attributes;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
+    /// <inheritdoc />
     class DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
     {
         static readonly Type _containerAttributeType = typeof(ContainerAttribute);
-        static readonly ConcurrentDictionary<Type, string> _partionKeyNameMap =
-            new ConcurrentDictionary<Type, string>();
+        static readonly ConcurrentDictionary<Type, string> _containerNameMap = new();
 
         /// <inheritdoc />
         public string GetContainerName<TItem>() where TItem : IItem =>
-            _partionKeyNameMap.GetOrAdd(typeof(TItem), GetContainerNameFactory);
+            _containerNameMap.GetOrAdd(typeof(TItem), GetContainerNameFactory);
 
         static string GetContainerNameFactory(Type type)
         {

@@ -11,8 +11,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     class DefaultCosmosPartitionKeyPathProvider : ICosmosPartitionKeyPathProvider
     {
         static readonly Type _partitionKeyNameAttributeType = typeof(PartitionKeyPathAttribute);
-        static readonly ConcurrentDictionary<Type, string> _partionKeyNameMap =
-            new ConcurrentDictionary<Type, string>();
+        static readonly ConcurrentDictionary<Type, string> _partionKeyNameMap = new();
 
         /// <inheritdoc />
         public string GetPartitionKeyPath<TItem>() where TItem : IItem =>

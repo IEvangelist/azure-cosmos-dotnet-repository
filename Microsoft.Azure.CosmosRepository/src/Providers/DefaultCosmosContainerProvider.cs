@@ -80,7 +80,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     await _cosmosClientProvider.UseClientAsync(
                         client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId)).ConfigureAwait(false);
 
-                ContainerProperties containerProperties = new ContainerProperties
+                ContainerProperties containerProperties = new()
                 {
                     Id = _options.ContainerPerItemType
                         ? _cosmosContainerNameProvider.GetContainerName<TItem>()
