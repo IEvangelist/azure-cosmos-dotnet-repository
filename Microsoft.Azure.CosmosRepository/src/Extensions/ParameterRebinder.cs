@@ -8,13 +8,13 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
 {
     internal class ParameterRebinder : ExpressionVisitor
     {
-        readonly IDictionary<ParameterExpression, ParameterExpression> _map;
+        readonly Dictionary<ParameterExpression, ParameterExpression> _map;
 
-        internal ParameterRebinder(IDictionary<ParameterExpression, ParameterExpression> map) =>
-            _map = map ?? new Dictionary<ParameterExpression, ParameterExpression>();
+        internal ParameterRebinder(Dictionary<ParameterExpression, ParameterExpression> map) =>
+            _map = map ?? new();
 
         internal static Expression ReplaceParameters(
-            IDictionary<ParameterExpression, ParameterExpression> map, Expression exp) =>
+            Dictionary<ParameterExpression, ParameterExpression> map, Expression exp) =>
             new ParameterRebinder(map).Visit(exp);
 
         /// <inheritdoc />
@@ -27,6 +27,5 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
 
             return base.VisitParameter(parameter);
         }
-
     }
 }

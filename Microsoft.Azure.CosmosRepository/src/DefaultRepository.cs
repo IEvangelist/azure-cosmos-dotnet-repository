@@ -66,7 +66,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             TryLogDebugDetails(_logger, () => $"Read: {JsonConvert.SerializeObject(item)}");
 
-            return string.IsNullOrEmpty(item.Type) || item.Type == typeof(TItem).Name ? item : default;
+            return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name ? item : default;
         }
 
         /// <inheritdoc/>
@@ -84,19 +84,18 @@ namespace Microsoft.Azure.CosmosRepository
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 
-            using (FeedIterator<TItem> iterator = query.ToFeedIterator())
-            {
-                List<TItem> results = new List<TItem>();
-                while (iterator.HasMoreResults)
-                {
-                    foreach (TItem result in await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false))
-                    {
-                        results.Add(result);
-                    }
-                }
+            using FeedIterator<TItem> iterator = query.ToFeedIterator();
 
-                return results;
+            List<TItem> results = new();
+            while (iterator.HasMoreResults)
+            {
+                foreach (TItem result in await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    results.Add(result);
+                }
             }
+
+            return results;
         }
 
         /// <inheritdoc/>
@@ -109,7 +108,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             TryLogDebugDetails(_logger, () => $"Read {query}");
 
-            QueryDefinition queryDefinition = new QueryDefinition(query);
+            QueryDefinition queryDefinition = new(query);
             return await IterateQueryInternalAsync(container, queryDefinition, cancellationToken);
         }
 
@@ -212,17 +211,16 @@ namespace Microsoft.Azure.CosmosRepository
             QueryDefinition queryDefinition,
             CancellationToken cancellationToken)
         {
-            using (FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition))
-            {
-                List<TItem> results = new List<TItem>();
-                while (queryIterator.HasMoreResults)
-                {
-                    FeedResponse<TItem> response = await queryIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
-                    results.AddRange(response.Resource);
-                }
+            using FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition);
 
-                return results;
+            List<TItem> results = new();
+            while (queryIterator.HasMoreResults)
+            {
+                FeedResponse<TItem> response = await queryIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+                results.AddRange(response.Resource);
             }
+
+            return results;
         }
 
 

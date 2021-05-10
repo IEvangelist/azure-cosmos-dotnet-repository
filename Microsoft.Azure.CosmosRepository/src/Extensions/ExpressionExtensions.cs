@@ -19,7 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
             Expression<T> second,
             Func<Expression, Expression, Expression> merge)
         {
-            IDictionary<ParameterExpression, ParameterExpression> map =
+            Dictionary<ParameterExpression, ParameterExpression> map =
                 first.Parameters
                     .Select((parameter, index) => (parameter, second: second.Parameters[index]))
                     .ToDictionary(p => p.second, p => p.parameter);
