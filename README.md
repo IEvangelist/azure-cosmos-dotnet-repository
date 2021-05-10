@@ -9,8 +9,7 @@ exposing a simple dependency-injection enabled `IRepository<T>` interface.
 
 ![Cosmos Repository](CosmosRepository.png)
 
-The repository is responsible for all 
-of the create, read, update, and delete (CRUD) operations on objects `where T : Item`. The `Item` type adds 
+The repository is responsible for all of the create, read, update, and delete (CRUD) operations on objects `where T : Item`. The `Item` type adds 
 several properties, one which is a globally unique identifier defined as:
 
 ```csharp
@@ -215,6 +214,9 @@ Visit the `Microsoft.Azure.CosmosRepository.Samples` [directory](https://github.
 - [Services](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/ServiceTier)
 - [Controllers (web apps)](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/WebTier)
 
+## Deep-dive video
+
+[![A deep dive into the Azure Cosmos DB repository pattern NET SDK](images/deep-dive-talk.png)](https://www.youtube.com/watch?v=izdnmBrTweA)
 
 ## Contributors ✨
 
