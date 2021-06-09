@@ -19,12 +19,14 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         readonly ICosmosClientProvider _cosmosClientProvider;
         readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
         readonly ICosmosContainerNameProvider _cosmosContainerNameProvider;
+        readonly ICosmosUniqueKeyPolicyProvider _cosmosUniqueKeyPolicyProvider;
         readonly ILogger<DefaultCosmosContainerProvider<TItem>> _logger;
 
         public DefaultCosmosContainerProvider(
             ICosmosClientProvider cosmosClientProvider,
             ICosmosPartitionKeyPathProvider cosmosPartitionKeyPathProvider,
             ICosmosContainerNameProvider cosmosContainerNameProvider,
+            ICosmosUniqueKeyPolicyProvider cosmosUniqueKeyPolicyProvider,
             IOptions<RepositoryOptions> options,
             ILogger<DefaultCosmosContainerProvider<TItem>> logger)
         {
@@ -39,6 +41,10 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             _cosmosContainerNameProvider = cosmosContainerNameProvider
                 ?? throw new ArgumentNullException(
                     nameof(cosmosContainerNameProvider), "Cosmos container name provider is required.");
+
+            _cosmosUniqueKeyPolicyProvider = cosmosUniqueKeyPolicyProvider
+                ?? throw new ArgumentNullException(
+                    nameof(cosmosContainerNameProvider), "Cosmos unique key policy provider is required.");
 
             _options = options?.Value
                 ?? throw new ArgumentNullException(
@@ -85,7 +91,8 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     Id = _options.ContainerPerItemType
                         ? _cosmosContainerNameProvider.GetContainerName<TItem>()
                         : _options.ContainerId,
-                    PartitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>()
+                    PartitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>(),
+                    UniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy<TItem>()
                 };
 
                 Container container =
