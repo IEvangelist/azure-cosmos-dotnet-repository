@@ -24,7 +24,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         static UniqueKeyPolicy GetUniqueKeyPolicyFactory(Type type)
         {
-            Dictionary<string, List<PropertyInfo>> dict = new Dictionary<string, List<PropertyInfo>>();
+            Dictionary<string, List<PropertyInfo>> dict = new();
             IEnumerable<PropertyInfo> uniqueKeyed = type.GetProperties().Where((p) => Attribute.IsDefined(p, _uniqueKeyAttributeType));
 
             foreach (PropertyInfo property in uniqueKeyed)
@@ -37,19 +37,18 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                 dict[keyName].Add(property);
             }
 
-            UniqueKeyPolicy policy = new UniqueKeyPolicy();
+            UniqueKeyPolicy policy = new();
             foreach (KeyValuePair<string, List<PropertyInfo>> kv in dict)
             {
-                UniqueKey uniqueKey = new UniqueKey();
+                UniqueKey uniqueKey = new();
                 foreach (PropertyInfo property in kv.Value)
                 {
-                    uniqueKey.Paths.Add("/" + property.Name);
+                    uniqueKey.Paths.Add($"/{property.Name}");
                 }
                 policy.UniqueKeys.Add(uniqueKey);
             }
 
             return policy;
         }
-
     }
 }
