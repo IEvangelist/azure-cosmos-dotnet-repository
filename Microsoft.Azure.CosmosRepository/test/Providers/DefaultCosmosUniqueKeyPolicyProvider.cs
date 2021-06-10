@@ -61,8 +61,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
         [UniqueKey("nameKey")]
         public string Name { get; set; } = "John";
-
-        protected override string GetPartitionKeyValue() => Name;
     }
 
     public class SomeInterestingClass2 : Item
