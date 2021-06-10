@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         /// <inheritdoc />
         public UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
-            _uniqueKeyPolicyMap.GetOrAdd(typeof(TItem), GetPartitionKeyNameFactory);
+            _uniqueKeyPolicyMap.GetOrAdd(typeof(TItem), GetUniqueKeyPolicyFactory);
 
         static UniqueKeyPolicy GetPartitionKeyNameFactory(Type type)
         {
