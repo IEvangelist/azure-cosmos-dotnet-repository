@@ -22,7 +22,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         public UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
             _uniqueKeyPolicyMap.GetOrAdd(typeof(TItem), GetUniqueKeyPolicyFactory);
 
-        static UniqueKeyPolicy GetPartitionKeyNameFactory(Type type)
+        static UniqueKeyPolicy GetUniqueKeyPolicyFactory(Type type)
         {
             Dictionary<string, List<PropertyInfo>> dict = new Dictionary<string, List<PropertyInfo>>();
             IEnumerable<PropertyInfo> uniqueKeyed = type.GetProperties().Where((p) => Attribute.IsDefined(p, _uniqueKeyAttributeType));
