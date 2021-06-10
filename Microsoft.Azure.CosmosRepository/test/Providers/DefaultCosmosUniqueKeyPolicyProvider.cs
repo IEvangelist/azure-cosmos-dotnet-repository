@@ -22,7 +22,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
             UniqueKeyPolicy policy  = provider.GetUniqueKeyPolicy<SomeInterestingClass>();
             Assert.Equal("/Name", policy.UniqueKeys.Single().Paths.Single());
-            
         }
 
         [Fact]
