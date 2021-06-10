@@ -6,12 +6,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Attributes;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
+    /// <inheritdoc />
     class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
     {
         static readonly Type _uniqueKeyAttributeType = typeof(UniqueKeyAttribute);
@@ -23,24 +23,30 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         static UniqueKeyPolicy GetUniqueKeyPolicyFactory(Type type)
         {
-            Dictionary<string, List<PropertyInfo>> dict = new();
-            IEnumerable<PropertyInfo> uniqueKeyed = type.GetProperties().Where((p) => Attribute.IsDefined(p, _uniqueKeyAttributeType));
-
-            foreach (PropertyInfo property in uniqueKeyed)
+            Dictionary<string, HashSet<PropertyInfo>> keyNamesToPropertyMap = new();
+            foreach ((PropertyInfo property, string keyName) in
+                type.GetProperties()
+                    .Where(p => Attribute.IsDefined(p, _uniqueKeyAttributeType))
+                    .Select(p => (Property: p, p.GetCustomAttribute<UniqueKeyAttribute>().KeyName)))
             {
-                string keyName = property.GetCustomAttribute<UniqueKeyAttribute>().KeyName;
-                if (!dict.ContainsKey(keyName))
+                if (!keyNamesToPropertyMap.ContainsKey(keyName))
                 {
-                    dict.Add(keyName, new List<PropertyInfo>());
+                    keyNamesToPropertyMap.Add(keyName, new HashSet<PropertyInfo>());
                 }
-                dict[keyName].Add(property);
+                keyNamesToPropertyMap[keyName].Add(property);
+            }
+
+            if (keyNamesToPropertyMap.Count == 0)
+            {
+                return null;
             }
 
             UniqueKeyPolicy policy = new();
-            foreach (KeyValuePair<string, List<PropertyInfo>> kv in dict)
+            foreach ((string keyName, HashSet<PropertyInfo> properties) in
+                keyNamesToPropertyMap.Select(kvp => (kvp.Key, kvp.Value)))
             {
                 UniqueKey uniqueKey = new();
-                foreach (PropertyInfo property in kv.Value)
+                foreach (PropertyInfo property in properties)
                 {
                     uniqueKey.Paths.Add($"/{property.Name}");
                 }

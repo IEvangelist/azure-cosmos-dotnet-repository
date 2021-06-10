@@ -1,10 +1,7 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Attributes;
@@ -20,7 +17,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         {
             ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
 
-            UniqueKeyPolicy policy  = provider.GetUniqueKeyPolicy<SomeInterestingClass>();
+            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass>();
             Assert.Equal("/Name", policy.UniqueKeys.Single().Paths.Single());
         }
 
@@ -53,13 +50,13 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         }
 
         [Fact]
-        public void CosmosUniqueKeyPolicyProviderCorrectlyGetsNoUniqueKeys() {
+        public void CosmosUniqueKeyPolicyProviderCorrectlyGetsNullWhenNoAttributesAreApplied()
+        {
             ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
             UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass4>();
 
-            Assert.Empty(policy.UniqueKeys);
+            Assert.Null(policy);
         }
-
     }
 
     public class SomeInterestingClass : Item
@@ -96,13 +93,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
     public class SomeInterestingClass4 : Item
     {
-
         public string Street { get; set; } = "Street1";
 
         public string HouseNumber { get; set; } = "1";
 
         public string Name { get; set; } = "John";
-
-        protected override string GetPartitionKeyValue() => Name;
     }
 }
