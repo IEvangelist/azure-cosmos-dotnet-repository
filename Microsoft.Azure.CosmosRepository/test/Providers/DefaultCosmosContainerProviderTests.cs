@@ -64,6 +64,21 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
 
         [Fact]
+        public void NewDefaultCosmosContainerProviderThrowsWithNullUniqueKeyPolicyProvider() =>
+            Assert.Throws<ArgumentNullException>(
+                () => new DefaultCosmosContainerProvider<TestItem>(
+                    new TestCosmosClientProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosContainerNameProvider(),
+                    null,
+                    Options.Create(new RepositoryOptions
+                    {
+                        DatabaseId = "data",
+                        ContainerId = "container"
+                    }),
+                    _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
+
+        [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullOptions() =>
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(

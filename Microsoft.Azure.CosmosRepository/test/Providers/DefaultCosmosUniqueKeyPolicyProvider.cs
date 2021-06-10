@@ -51,6 +51,15 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Contains("/Name", key2.Paths);
             Assert.Single(key2.Paths);
         }
+
+        [Fact]
+        public void CosmosUniqueKeyPolicyProviderCorrectlyGetsNoUniqueKeys() {
+            ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
+            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass4>();
+
+            Assert.Empty(policy.UniqueKeys);
+        }
+
     }
 
     public class SomeInterestingClass : Item
@@ -66,6 +75,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
     {
         [UniqueKey("addressKey")]
         public string Street { get; set; } = "Street1";
+
         [UniqueKey("addressKey")]
         public string HouseNumber { get; set; } = "1";
 
@@ -78,10 +88,23 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
     {
         [UniqueKey("addressKey")]
         public string Street { get; set; } = "Street1";
+
         [UniqueKey("addressKey")]
         public string HouseNumber { get; set; } = "1";
 
         [UniqueKey("nameKey")]
+        public string Name { get; set; } = "John";
+
+        protected override string GetPartitionKeyValue() => Name;
+    }
+
+    public class SomeInterestingClass4 : Item
+    {
+
+        public string Street { get; set; } = "Street1";
+
+        public string HouseNumber { get; set; } = "1";
+
         public string Name { get; set; } = "John";
 
         protected override string GetPartitionKeyValue() => Name;
