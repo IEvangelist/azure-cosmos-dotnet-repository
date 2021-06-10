@@ -12,7 +12,5 @@ namespace Microsoft.Azure.CosmosRepository.Attributes
 
         public UniqueKeyAttribute(string keyName) =>
             KeyName = keyName ?? throw new ArgumentNullException(nameof(keyName), "A keyname is required.");
-
     }
-
 }
