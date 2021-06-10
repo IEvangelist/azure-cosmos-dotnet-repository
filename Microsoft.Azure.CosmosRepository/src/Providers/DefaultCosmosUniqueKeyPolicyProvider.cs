@@ -16,8 +16,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     {
         static readonly Type _uniqueKeyAttributeType = typeof(UniqueKeyAttribute);
 
-        static readonly ConcurrentDictionary<Type, UniqueKeyPolicy> _uniqueKeyPolicyMap =
-            new ConcurrentDictionary<Type, UniqueKeyPolicy>();
+        static readonly ConcurrentDictionary<Type, UniqueKeyPolicy> _uniqueKeyPolicyMap = new();
 
         /// <inheritdoc />
         public UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
