@@ -80,8 +80,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         public string HouseNumber { get; set; } = "1";
 
         public string Name { get; set; } = "John";
-
-        protected override string GetPartitionKeyValue() => Name;
     }
 
     public class SomeInterestingClass3 : Item
