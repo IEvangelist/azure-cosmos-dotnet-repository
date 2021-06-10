@@ -82,6 +82,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "VeryCautious",
+      "name": "VeryCautious",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38176872?v=4",
+      "profile": "https://github.com/VeryCautious",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
