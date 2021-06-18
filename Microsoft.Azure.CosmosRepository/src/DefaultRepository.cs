@@ -59,7 +59,7 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            ItemResponse<TItem> response;
+            ItemResponse<TItem> response = null;
 
             try
             {
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.CosmosRepository
             }
             catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
             {
-                throw;
+
             }
 
             if (response is null)
