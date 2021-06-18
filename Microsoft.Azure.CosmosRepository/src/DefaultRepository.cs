@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -19,7 +20,7 @@ using Newtonsoft.Json;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : IItem
+    internal class DefaultRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
@@ -58,9 +59,20 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            ItemResponse<TItem> response =
-                await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
+            ItemResponse<TItem> response;
+
+            try
+            {
+                response = await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
+            }
+            catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw;
+            }
+
+            if (response is null)
+                return null;
 
             TItem item = response.Resource;
 
