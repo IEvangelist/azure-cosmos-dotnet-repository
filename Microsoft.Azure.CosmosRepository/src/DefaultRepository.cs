@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Azure.CosmosRepository.Dtos;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
@@ -96,6 +97,56 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             return results;
+        }
+
+        /// <inheritdoc/>
+        public async Task<PagedResult<TItem>> GetListAsync<TPagedRequest>(
+            Expression<Func<TItem, bool>> predicate, TPagedRequest pagedResultRequest,
+            CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query =
+                container.GetItemLinqQueryable<TItem>()
+                    .Where(predicate.Compose(
+                        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso));
+
+            Response<int> response = await query.CountAsync(cancellationToken);
+            int totalCount = response.Resource;
+
+            query = ApplyPaging(query, pagedResultRequest);
+
+            TryLogDebugDetails(_logger, () => $"Read: {query}");
+
+            using FeedIterator<TItem> iterator = query.ToFeedIterator();
+            List<TItem> results = new();
+            while (iterator.HasMoreResults)
+            {
+                foreach (TItem result in await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    results.Add(result);
+                }
+            }
+            return new PagedResult<TItem>(totalCount, results);
+        }
+
+        protected virtual IQueryable<TItem> ApplyPaging<TPagedRequest>(IQueryable<TItem> query, TPagedRequest pagedResultRequest)
+        {
+            //Try to use paging if available
+            if (pagedResultRequest is IPagedResultRequest pagedInput)
+            {
+                return query.Skip(pagedInput.SkipCount).Take(pagedInput.MaxResultCount);
+            }
+
+            //Try to limit query result if available
+            if (pagedResultRequest is ILimitedResultRequest limitedInput)
+            {
+                return query.Take(limitedInput.MaxResultCount);
+            }
+
+            //No paging
+            return query;
         }
 
         /// <inheritdoc/>

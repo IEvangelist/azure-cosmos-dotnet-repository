@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Dtos;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -59,6 +60,17 @@ namespace Microsoft.Azure.CosmosRepository
         ValueTask<TItem> GetAsync(
             string id,
             PartitionKey partitionKey,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets an <see cref="PagedResult{TItem}"/> of <see cref="IItem"/>
+        /// </summary>
+        /// <param name="predicate">The expression used for evaluating a matching item.</param>
+        /// <param name="pagedResultRequest">The paging object.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A paged result of item instances who meet the <paramref name="predicate"/> and <paramref name="pagedResultRequest"/> condition.</returns>
+        Task<PagedResult<TItem>> GetListAsync<TPagedRequest>(
+            Expression<Func<TItem, bool>> predicate, TPagedRequest pagedResultRequest,
             CancellationToken cancellationToken = default);
 
         /// <summary>
