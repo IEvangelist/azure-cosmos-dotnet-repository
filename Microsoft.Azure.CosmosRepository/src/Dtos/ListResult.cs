@@ -10,10 +10,7 @@ namespace Microsoft.Azure.CosmosRepository.Pagination
         /// <summary>
         /// Creates a new <see cref="ListResult{T}"/> object.
         /// </summary>
-        public ListResult()
-        {
-
-        }
+        public ListResult() { }
 
         /// <summary>
         /// Creates a new <see cref="ListResult{T}"/> object.
