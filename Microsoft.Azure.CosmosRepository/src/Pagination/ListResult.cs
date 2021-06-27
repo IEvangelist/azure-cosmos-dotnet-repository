@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) IEvangelist. All rights reserved.
+// Licensed under the MIT License.
+
+using System.Collections.Generic;
 
 namespace Microsoft.Azure.CosmosRepository.Pagination
 {
@@ -16,7 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Pagination
         /// Creates a new <see cref="ListResult{T}"/> object.
         /// </summary>
         /// <param name="items">List of items</param>
-        public ListResult(IReadOnlyList<T> items) =>Items = items;
+        public ListResult(IReadOnlyList<T> items) => Items = items;
 
         /// <inheritdoc />
         public IReadOnlyList<T> Items { get; internal set; } = new List<T>();

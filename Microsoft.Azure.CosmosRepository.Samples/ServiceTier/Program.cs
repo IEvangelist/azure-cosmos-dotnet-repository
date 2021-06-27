@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Pagination;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -91,6 +92,15 @@ namespace ServiceTier
             foreach (Person person in peopleWithoutMiddleNames)
             {
                 Console.WriteLine($"[Person] Updated: {person}");
+            }
+
+            // Pagination read / verify pagination read
+            PagedResultRequest pagedResultRequest = new PagedResultRequest { SkipCount = 0, MaxResultCount = 2 };
+            PagedResult<Person> peopleWithPagedResult = await repository.GetListAsync(p => p.BirthDate > new DateTime(1970, 7, 21), pagedResultRequest);
+            Console.WriteLine($"[Person] Total Count: {peopleWithPagedResult.TotalCount}");
+            foreach (Person person in peopleWithPagedResult.Items)
+            {
+                Console.WriteLine($"[Person] Pagination Read: {person}");
             }
 
             // Deleting...
