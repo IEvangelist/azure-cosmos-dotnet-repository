@@ -101,7 +101,8 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <inheritdoc/>
         public async Task<PagedResult<TItem>> GetListAsync<TPagedRequest>(
-            Expression<Func<TItem, bool>> predicate, TPagedRequest pagedResultRequest,
+            Expression<Func<TItem, bool>> predicate,
+            TPagedRequest pagedResultRequest,
             CancellationToken cancellationToken = default)
         {
             Container container =
