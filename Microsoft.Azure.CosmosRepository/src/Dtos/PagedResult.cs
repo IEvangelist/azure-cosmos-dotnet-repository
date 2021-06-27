@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Microsoft.Azure.CosmosRepository.Dtos
+namespace Microsoft.Azure.CosmosRepository.Pagination
 {
     /// <inheritdoc />
     public class PagedResult<T> : ListResult<T>
