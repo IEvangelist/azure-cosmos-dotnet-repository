@@ -11,10 +11,7 @@ namespace Microsoft.Azure.CosmosRepository.Dtos
         /// <summary>
         /// Creates a new <see cref="PagedResult{T}"/> object.
         /// </summary>
-        public PagedResult()
-        {
-
-        }
+        public PagedResult() { }
 
         /// <summary>
         /// Creates a new <see cref="PagedResult{T}"/> object.
