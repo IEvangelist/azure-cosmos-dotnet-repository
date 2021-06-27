@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Azure.CosmosRepository.Dtos
+namespace Microsoft.Azure.CosmosRepository.Pagination
 {
     /// <summary>
     /// This interface is defined to standardize to request a limited result.
