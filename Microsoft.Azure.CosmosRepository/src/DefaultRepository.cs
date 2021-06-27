@@ -131,7 +131,9 @@ namespace Microsoft.Azure.CosmosRepository
             return new PagedResult<TItem>(totalCount, results);
         }
 
-        protected virtual IQueryable<TItem> ApplyPaging<TPagedRequest>(IQueryable<TItem> query, TPagedRequest pagedResultRequest)
+        protected virtual IQueryable<TItem> ApplyPaging<TPagedRequest>(
+            IQueryable<TItem> query,
+            TPagedRequest pagedResultRequest)
         {
             //Try to use paging if available
             if (pagedResultRequest is IPagedResultRequest pagedInput)
