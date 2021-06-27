@@ -6,7 +6,7 @@ namespace Microsoft.Azure.CosmosRepository.Dtos
     public class PagedResult<T> : ListResult<T>
     {
         /// <inheritdoc />
-        public long TotalCount { get; set; }
+        public long TotalCount { get; internal set; }
 
         /// <summary>
         /// Creates a new <see cref="PagedResult{T}"/> object.
