@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Azure.CosmosRepository.Dtos
+namespace Microsoft.Azure.CosmosRepository.Pagination
 {
     /// <inheritdoc />
     public class LimitedResultRequest : ILimitedResultRequest
