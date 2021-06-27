@@ -71,7 +71,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A paged result of item instances who meet the <paramref name="predicate"/> and <paramref name="pagedResultRequest"/> condition.</returns>
         Task<PagedResult<TItem>> GetListAsync<TPagedRequest>(
-            Expression<Func<TItem, bool>> predicate, TPagedRequest pagedResultRequest,
+            Expression<Func<TItem, bool>> predicate,
+            TPagedRequest pagedResultRequest,
             CancellationToken cancellationToken = default);
 
         /// <summary>
