@@ -22,12 +22,6 @@ namespace Microsoft.Azure.CosmosRepository.Pagination
         }
 
         /// <inheritdoc />
-        public IReadOnlyList<T> Items
-        {
-            get { return _items ??= new List<T>(); }
-            set { _items = value; }
-        }
-
-        private IReadOnlyList<T> _items;
+        public IReadOnlyList<T> Items { get; internal set; } = new List<T>();
     }
 }
