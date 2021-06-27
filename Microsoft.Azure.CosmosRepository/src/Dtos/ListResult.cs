@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Microsoft.Azure.CosmosRepository.Dtos
+namespace Microsoft.Azure.CosmosRepository.Pagination
 {
     /// <summary>
     /// List of items
