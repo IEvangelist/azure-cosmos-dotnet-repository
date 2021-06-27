@@ -19,9 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Dtos
         /// <param name="totalCount">Total count of Items</param>
         /// <param name="items">List of items in current page</param>
         public PagedResult(long totalCount, IReadOnlyList<T> items)
-            : base(items)
-        {
+            : base(items) =>
             TotalCount = totalCount;
-        }
     }
 }
