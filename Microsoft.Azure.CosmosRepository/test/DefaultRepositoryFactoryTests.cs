@@ -13,8 +13,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
     {
         [Fact]
         public void NewRepositoryFactoryThrowsWithNullServiceProvider() =>
-            Assert.Throws<ArgumentNullException>(() =>
-                new DefaultRepositoryFactory(null));
+            
 
         [Fact]
         public void RepositoryFactoryCorrectlyGetsRepositoryTest()
