@@ -148,6 +148,12 @@ namespace Microsoft.Azure.CosmosRepository
                 return query.Take(limitedInput.MaxResultCount);
             }
 
+            //Try to skip if available
+            if (pagedResultRequest is ISkippedResultRequest skippedInput)
+            {
+                return query.Skip(skippedInput.SkipCount);
+            }
+
             //No paging
             return query;
         }
