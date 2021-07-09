@@ -206,6 +206,11 @@ git push upstream --tags
 dotnet build
 -->
 
+## In Memory Repository
+This library also includes an in memory version of `IRepository<T>` simply swap out the normal
+`services.AddCosmosRepository()` for
+`services.AddInMemoryCosmosRepository()` and have all of your items stored in memory. Will be a great tool for running integration tests using a package such as `Microsoft.AspNetCore.Mvc.Testing`.
+
 ## Samples
 
 Visit the `Microsoft.Azure.CosmosRepository.Samples` [directory](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples) for samples on how to use the library with:
