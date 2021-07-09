@@ -9,6 +9,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Azure.CosmosRepository.Extensions;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -40,9 +42,11 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
+        public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await Task.CompletedTask;
+            return Items.Where(predicate.Compose(
+                item =>  item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
         /// <inheritdoc/>

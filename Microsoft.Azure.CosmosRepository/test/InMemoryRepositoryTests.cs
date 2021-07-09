@@ -129,6 +129,39 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
+        public async Task GetAsync_PredicateThatDoesNotMatch_ReturnsEmptyList()
+        {
+            //Arrange
+            Person person = new Person("joe");
+            _personRepository.Items.Add(person);
+
+            //Act
+            IEnumerable<Person> people = await _personRepository.GetAsync(p => p.Name == "fred");
+
+            //Assert
+            Assert.False(people.Any());
+        }
+
+        [Fact]
+        public async Task GetAsync_PredicateThatDoesMatch_ReturnsItemInList()
+        {
+            //Arrange
+            Person person = new Person("joe");
+            _personRepository.Items.Add(person);
+
+            //Act
+            IEnumerable<Person> people = await _personRepository.GetAsync(p => p.Name == "joe");
+
+            //Assert
+            List<Person> enumerable = people.ToList();
+            Assert.True(enumerable.Any());
+            Person item = enumerable.First();
+            Assert.Equal(person.Name, item.Name);
+            Assert.Equal(person.Id, item.Id);
+            Assert.Equal(person.Type, item.Type);
+        }
+
+        [Fact]
         public async Task CreateAsync_ItemWhereIdAlreadyExists_ThrowsCosmosException()
         {
             //Arrange
