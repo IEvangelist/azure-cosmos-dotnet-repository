@@ -271,6 +271,49 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.False(_dogRepository.Items.Any());
         }
 
+        [Fact]
+        public async Task UpdateAsync_ItemThatDoesNotExist_AddsItem()
+        {
+            //Arrange
+            Person item = new Person("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+
+            //Act
+            Person person = await _personRepository.UpdateAsync(item);
+
+            Person addedPerson = _personRepository.Items.First();
+
+            Assert.Equal(item.Name, person.Name);
+            Assert.Equal(item.Id, person.Id);
+            Assert.Equal(item.Type, person.Type);
+
+            Assert.Equal(item.Name, addedPerson.Name);
+            Assert.Equal(item.Id, addedPerson.Id);
+            Assert.Equal(item.Type, addedPerson.Type);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ItemThatExists_UpdatesItem()
+        {
+            //Arrange
+            Person originalPerson = new Person("phil");
+            _personRepository.Items.Add(originalPerson);
+
+            Person item = new Person("joe"){Id = originalPerson.Id};
+
+            //Act
+            Person person = await _personRepository.UpdateAsync(item);
+
+            Person addedPerson = _personRepository.Items.First();
+
+            Assert.Equal(item.Name, person.Name);
+            Assert.Equal(originalPerson.Id, person.Id);
+            Assert.Equal(item.Type, person.Type);
+
+            Assert.Equal(item.Name, addedPerson.Name);
+            Assert.Equal(originalPerson.Id, addedPerson.Id);
+            Assert.Equal(item.Type, addedPerson.Type);
+        }
+
 
     }
 }

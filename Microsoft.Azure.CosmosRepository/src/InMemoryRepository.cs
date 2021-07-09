@@ -86,9 +86,22 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default)
+        public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await Task.CompletedTask;
+
+            TItem item = Items.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
+
+            if (item is not null)
+            {
+                Items.Remove(item);
+                Items.Add(value);
+                return value;
+            }
+
+            Items.Add(value);
+
+            return value;
         }
 
         /// <inheritdoc/>
