@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -82,7 +84,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Person item = new Person("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
-            _personRepository.Documents.Add(item);
+            _personRepository.Items.Add(item);
 
             //Act
             Person person = await _personRepository.GetAsync(item.Id);
@@ -99,7 +101,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Dog item = new Dog("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
-            _dogRepository.Documents.Add(item);
+            _dogRepository.Items.Add(item);
 
             //Act
             Dog dog = await _dogRepository.GetAsync(item.Id, item.Breed);
@@ -115,7 +117,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task GetAsync_IdAndPartitionKeyObjectExists_GetsItem()
         {
             Dog item = new Dog("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
-            _dogRepository.Documents.Add(item);
+            _dogRepository.Items.Add(item);
 
             //Act
             Dog dog = await _dogRepository.GetAsync(item.Id, new PartitionKey(item.Breed));
@@ -124,6 +126,97 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(item.Id, dog.Id);
             Assert.Equal(item.Type, dog.Type);
             Assert.Equal(item.Breed, dog.Breed);
+        }
+
+        [Fact]
+        public async Task CreateAsync_ItemWhereIdAlreadyExists_ThrowsCosmosException()
+        {
+            //Arrange
+            Person item = new Person("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            _personRepository.Items.Add(item);
+
+            //Act
+            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.CreateAsync(new Person("joe") {Id = item.Id, Type = nameof(Person)}).AsTask());
+
+            Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateAsync_Item_CreatesItem()
+        {
+            //Arrange
+            Person item = new Person("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+
+            //Act
+            Person person = await _personRepository.CreateAsync(item);
+
+            Person addedPerson = _personRepository.Items.First();
+
+            Assert.Equal(item.Name, person.Name);
+            Assert.Equal(item.Id, person.Id);
+            Assert.Equal(item.Type, person.Type);
+
+            Assert.Equal(item.Name, addedPerson.Name);
+            Assert.Equal(item.Id, addedPerson.Id);
+            Assert.Equal(item.Type, addedPerson.Type);
+        }
+
+        [Fact]
+        public async Task CreateAsync_ManyItems_CreatesAllItems()
+        {
+            //Arrange
+            List<Person> items = new List<Person>()
+            {
+                new Person("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new Person("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new Person("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+            };
+
+            //Act
+            IEnumerable<Person> people = (await _personRepository.CreateAsync(items)).ToList();
+
+            foreach (Person item in items)
+            {
+                Person addedPerson = _personRepository.Items.First(i => i.Id == item.Id);
+                Person person = people.First(i => i.Id == item.Id);
+
+                Assert.Equal(item.Name, person.Name);
+                Assert.Equal(item.Id, person.Id);
+                Assert.Equal(item.Type, person.Type);
+
+                Assert.Equal(item.Name, addedPerson.Name);
+                Assert.Equal(item.Id, addedPerson.Id);
+                Assert.Equal(item.Type, addedPerson.Type);
+            }
+        }
+
+        [Fact]
+        public async Task CreateAsync_ManyItemsWhereOneHasIdThatAlreadyExists_CreatesInitalItemsThenThrowsCosmosException()
+        {
+            //Arrange
+            List<Person> items = new List<Person>()
+            {
+                new Person("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new Person("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new Person("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+            };
+
+            Person badPerson = new Person("copy") {Id = items.First().Id, Type = nameof(Person)};
+            items.Add(badPerson);
+
+            //Act
+            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.CreateAsync(items).AsTask());
+
+            Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
+
+            foreach (Person item in items.Where(i => i.Name != badPerson.Name))
+            {
+                Person person = items.First(i => i.Id == item.Id);
+
+                Assert.Equal(item.Name, person.Name);
+                Assert.Equal(item.Id, person.Id);
+                Assert.Equal(item.Type, person.Type);
+            }
         }
 
 

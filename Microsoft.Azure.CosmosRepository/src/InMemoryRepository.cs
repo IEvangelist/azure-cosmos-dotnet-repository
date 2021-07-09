@@ -15,12 +15,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// <inheritdoc/>
     public class InMemoryRepository<TItem> : IRepository<TItem> where TItem : IItem
     {
-        internal List<TItem> Documents { get; }
-
-        internal InMemoryRepository()
-        {
-            Documents = new List<TItem>();
-        }
+        internal List<TItem> Items { get; } = new();
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)
@@ -36,10 +31,10 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Documents.FirstOrDefault(i => i.Id == id && i.PartitionKey == partitionKey);
+            TItem item = Items.FirstOrDefault(i => i.Id == id && i.PartitionKey == partitionKey);
 
             if (item is null)
-                throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
+                NotFound();
 
             return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name ? item : default;
         }
@@ -63,15 +58,31 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public ValueTask<TItem> CreateAsync(TItem value, CancellationToken cancellationToken = default)
+        public async ValueTask<TItem> CreateAsync(TItem value, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await Task.CompletedTask;
+
+            TItem item = Items.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
+
+            if(item is not null)
+                Conflict();
+
+            Items.Add(value);
+
+            return value;
         }
 
         /// <inheritdoc/>
-        public ValueTask<IEnumerable<TItem>> CreateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default)
+        public async ValueTask<IEnumerable<TItem>> CreateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            IEnumerable<TItem> enumerable = values.ToList();
+
+            foreach (TItem value in enumerable)
+            {
+                await CreateAsync(value, cancellationToken);
+            }
+
+            return enumerable;
         }
 
         /// <inheritdoc/>
@@ -97,5 +108,8 @@ namespace Microsoft.Azure.CosmosRepository
         {
             throw new NotImplementedException();
         }
+
+        private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
+        private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);
     }
 }

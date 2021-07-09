@@ -69,7 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     nameof(services), "A service collection is required.");
             }
 
-            services.AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
+            services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
                 .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
 
             return services;
