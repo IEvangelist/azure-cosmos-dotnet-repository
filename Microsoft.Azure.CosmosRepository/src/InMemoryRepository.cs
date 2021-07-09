@@ -93,20 +93,29 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <inheritdoc/>
         public ValueTask DeleteAsync(TItem value, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+            => DeleteAsync(value.Id, value.PartitionKey, cancellationToken);
 
         /// <inheritdoc/>
-        public ValueTask DeleteAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask DeleteAsync(string id, string partitionKeyValue = null,
+            CancellationToken cancellationToken = default)
+            => DeleteAsync(id, new PartitionKey(partitionKeyValue), cancellationToken);
 
         /// <inheritdoc/>
-        public ValueTask DeleteAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default)
+        public async ValueTask DeleteAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await Task.CompletedTask;
+
+            if (partitionKey == default)
+            {
+                partitionKey = new PartitionKey(id);
+            }
+
+            TItem item = Items.FirstOrDefault(i => i.Id == id && i.PartitionKey == partitionKey);
+
+            if(item is null)
+                NotFound();
+
+            Items.Remove(item);
         }
 
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);

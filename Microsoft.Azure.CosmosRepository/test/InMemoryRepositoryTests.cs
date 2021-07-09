@@ -220,5 +220,57 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
 
+        [Fact]
+        public async Task DeleteAsync_IdThatDoesNotExist_ThrowsCosmosException()
+        {
+            //Arrange
+            //Act
+            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.DeleteAsync("does-not-exist").AsTask());
+
+            //Assert
+            Assert.Equal(HttpStatusCode.NotFound, ex.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_IdPartitionKeyThatDoesNotExist_ThrowsCosmosException()
+        {
+            //Arrange
+            //Act
+            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(
+                () => _personRepository.DeleteAsync("does-not-exist", new PartitionKey("does-not-exist")).AsTask());
+
+            //Assert
+            Assert.Equal(HttpStatusCode.NotFound, ex.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ItemWithIdThatExists_DeletesItem()
+        {
+            //Arrange
+            Person person = new Person("joe");
+            _personRepository.Items.Add(person);
+
+            //Act
+            await _personRepository.DeleteAsync(person.Id);
+
+            //Assert
+            Assert.False(_personRepository.Items.Any());
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ItemWithIdAndPartitionKeyThatExists_DeletesItem()
+        {
+            //Arrange
+            Dog dog = new Dog("cocker spaniel");
+            _dogRepository.Items.Add(dog);
+
+            //Act
+            await _dogRepository.DeleteAsync(dog.Id, dog.Breed);
+
+            //Assert
+            Assert.False(_dogRepository.Items.Any());
+        }
+
+
     }
 }
