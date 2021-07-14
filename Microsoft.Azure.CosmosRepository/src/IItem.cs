@@ -23,6 +23,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// <summary>
         /// Gets the item's PartitionKey.
         /// </summary>
-        PartitionKey PartitionKey { get; }
+        string PartitionKey { get; }
     }
 }
