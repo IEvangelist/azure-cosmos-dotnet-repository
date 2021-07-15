@@ -19,7 +19,7 @@ namespace Microsoft.Azure.CosmosRepository
         string Type { get; set; }
 
         /// <summary>
-        /// Gets the item's PartitionKey.
+        /// Gets the item's PartitionKey. This string is used to instantiate the <c>Cosmos.PartitionKey</c> struct.
         /// </summary>
         string PartitionKey { get; }
     }
