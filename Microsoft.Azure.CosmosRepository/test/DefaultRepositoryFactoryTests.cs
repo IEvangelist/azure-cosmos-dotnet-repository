@@ -64,7 +64,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         [JsonProperty("favoritecolor")]
         public string FavoriteColor { get; set; }
 
-        PartitionKey IItem.PartitionKey => new PartitionKey(GetPartitionKeyValue());
+        string IItem.PartitionKey => GetPartitionKeyValue();
 
         public CustomEntityBase() => Type = GetType().Name;
 

@@ -134,7 +134,7 @@ namespace Microsoft.Azure.CosmosRepository
                 await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
             ItemResponse<TItem> response =
-                await container.CreateItemAsync(value, value.PartitionKey, cancellationToken: cancellationToken)
+                await container.CreateItemAsync(value, new PartitionKey(value.PartitionKey), cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
 
             TryLogDebugDetails(_logger, () => $"Created: {JsonConvert.SerializeObject(value)}");
@@ -165,7 +165,7 @@ namespace Microsoft.Azure.CosmosRepository
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
             ItemResponse<TItem> response =
-                await container.UpsertItemAsync<TItem>(value, value.PartitionKey, options, cancellationToken)
+                await container.UpsertItemAsync<TItem>(value, new PartitionKey(value.PartitionKey), options, cancellationToken)
                     .ConfigureAwait(false);
 
             TryLogDebugDetails(_logger, () => $"Updated: {JsonConvert.SerializeObject(value)}");

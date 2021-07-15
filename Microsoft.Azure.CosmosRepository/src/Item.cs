@@ -52,7 +52,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// Gets the PartitionKey based on <see cref="GetPartitionKeyValue"/>.
         /// Implemented explicitly to keep out of Item API
         /// </summary>
-        PartitionKey IItem.PartitionKey => new(GetPartitionKeyValue());
+        string IItem.PartitionKey => GetPartitionKeyValue();
 
         /// <summary>
         /// Default constructor, assigns type name to <see cref="Type"/> property.
