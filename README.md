@@ -238,6 +238,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/dcuccia"><img src="https://avatars.githubusercontent.com/u/479617?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dcuccia</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=dcuccia" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/VeryCautious"><img src="https://avatars.githubusercontent.com/u/38176872?v=4?s=100" width="100px;" alt=""/><br /><sub><b>VeryCautious</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=VeryCautious" title="Code">💻</a> <a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=VeryCautious" title="Tests">⚠️</a></td>
+	<td align="center"><a href="https://github.com/jrwmacedo"><img src="https://avatars.githubusercontent.com/u/12876899?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jrwmacedo</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=jrwmacedo" title="Code">💻</a><a href="#example-afacanerman" title="Examples">💡</a></td>
   </tr>
 </table>
 

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Newtonsoft.Json;
+
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <summary>
@@ -16,6 +18,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <summary>
         /// Gets or sets the item's type name.
         /// </summary>
+		[JsonProperty("type")]
         string Type { get; set; }
 
         /// <summary>
