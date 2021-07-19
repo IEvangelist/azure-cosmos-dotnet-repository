@@ -5,6 +5,7 @@ using System;
 using System.Net.Http;
 using System.Reflection;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,22 +35,32 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             IServiceProvider serviceProvider,
             IConfiguration configuration)
         {
-            RepositoryOptions options = new();
-
+            RepositoryOptions ro = new();
             configuration.GetSection(nameof(RepositoryOptions))
-                .Bind(options);
+                .Bind(ro);
 
-            return new()
+            CosmosClientOptions cosmosClientOptions = new()
             {
-                SerializerOptions =
+                SerializerOptions = new()
                 {
-                    IgnoreNullValues = options.SerializationOptions.IgnoreNullValues,
-                    Indented = options.SerializationOptions.Indented,
-                    PropertyNamingPolicy = options.SerializationOptions.PropertyNamingPolicy
+                    IgnoreNullValues = ro.SerializationOptions?.IgnoreNullValues ?? false,
+                    Indented = ro.SerializationOptions?.Indented ?? false,
+                    PropertyNamingPolicy = ro.SerializationOptions?.PropertyNamingPolicy
+                        ?? CosmosPropertyNamingPolicy.CamelCase
                 },
                 HttpClientFactory = () => ClientFactory(serviceProvider),
-                AllowBulkExecution = options.AllowBulkExecution
+                AllowBulkExecution = ro.AllowBulkExecution
             };
+
+            CosmosClientOptionsManipulator manipulator =
+                serviceProvider.GetRequiredService<CosmosClientOptionsManipulator>();
+
+            // Allow consumers to control the CosmosClientOptions.
+            manipulator.Configure(cosmosClientOptions);
+
+            // TODO: consider throwing an exception if the HttpClientFactory is overridden.
+
+            return cosmosClientOptions;
         }
 
         static HttpClient ClientFactory(IServiceProvider serviceProvider)

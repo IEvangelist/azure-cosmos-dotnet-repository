@@ -49,6 +49,10 @@ namespace ServiceTier
                                 options.DatabaseId = "samples";
                                 options.OptimizeBandwidth = true;
                                 options.ContainerPerItemType = true;
+                            },
+                            clientOptions =>
+                            {
+                                clientOptions.AllowBulkExecution = true;
                             })
                             .AddSingleton<IExampleService, ExampleService>());
 
