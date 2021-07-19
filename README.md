@@ -133,7 +133,11 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
     "ContainerId": "<Your-CosmosDB-ContainerName>",
     "OptimizeBandwidth": true,
     "ContainerPerItemType": true,
-    "AllowBulkExecution": true
+    "AllowBulkExecution": true,
+    "SerializationOptions": {
+      "IgnoreNullValues": true,
+     "PropertyNamingPolicy": "CamelCase"
+    }
   }
 }
 ```
@@ -158,7 +162,9 @@ For more information, see [JSON configuration provider](https://docs.microsoft.c
     "RepositoryOptions:ContainerId": "<Your-CosmosDB-ContainerName>",
     "RepositoryOptions:OptimizeBandwidth": true,
     "RepositoryOptions:ContainerPerItemType": true,
-    "RepositoryOptions:AllowBulkExecution": true
+    "RepositoryOptions:AllowBulkExecution": true,
+    "RepositoryOptions:SerializationOptions:IgnoreNullValues": true,
+    "RepositoryOptions:SerializationOptions:PropertyNamingPolicy": "CamelCase"
   }
 }
 ```
