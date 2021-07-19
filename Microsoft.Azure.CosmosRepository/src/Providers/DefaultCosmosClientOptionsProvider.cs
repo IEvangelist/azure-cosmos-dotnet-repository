@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) IEvangelist. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
 using System.Net.Http;
 using System.Reflection;
 using Microsoft.Azure.Cosmos;

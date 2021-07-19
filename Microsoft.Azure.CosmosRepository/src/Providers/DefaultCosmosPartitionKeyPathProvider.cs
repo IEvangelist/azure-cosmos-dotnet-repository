@@ -2,29 +2,22 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Concurrent;
 using Microsoft.Azure.CosmosRepository.Attributes;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc />
-    class DefaultCosmosPartitionKeyPathProvider : ICosmosPartitionKeyPathProvider
+    class DefaultCosmosPartitionKeyPathProvider :
+        BaseCosmosAttributeConstraintProvider<string, PartitionKeyPathAttribute>,
+        ICosmosPartitionKeyPathProvider
     {
-        static readonly Type _partitionKeyNameAttributeType = typeof(PartitionKeyPathAttribute);
-        static readonly ConcurrentDictionary<Type, string> _partionKeyNameMap = new();
-
         /// <inheritdoc />
-        public string GetPartitionKeyPath<TItem>() where TItem : IItem =>
-            _partionKeyNameMap.GetOrAdd(typeof(TItem), GetPartitionKeyNameFactory);
+        public string GetPartitionKeyPath<TItem>() where TItem : IItem => GetConstraint<TItem>();
 
-        static string GetPartitionKeyNameFactory(Type type)
-        {
-            Attribute attribute =
-                Attribute.GetCustomAttribute(type, _partitionKeyNameAttributeType);
-
-            return attribute is PartitionKeyPathAttribute partitionKeyPathAttribute
+        protected override string GetConstraintFactory((Type ConstraintAttributeType, Type Type) key) =>
+            Attribute.GetCustomAttribute(
+                key.Type, key.ConstraintAttributeType) is PartitionKeyPathAttribute partitionKeyPathAttribute
                 ? partitionKeyPathAttribute.Path
                 : "/id";
-        }
     }
 }

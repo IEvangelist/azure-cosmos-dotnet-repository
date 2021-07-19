@@ -43,7 +43,7 @@ namespace Microsoft.Azure.CosmosRepository
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
-        /// Gets or sets the item's type name.
+        /// Gets or sets the item's type name. This is used as a discriminator.
         /// </summary>
         [JsonProperty("type")]
         public string Type { get; set; }
