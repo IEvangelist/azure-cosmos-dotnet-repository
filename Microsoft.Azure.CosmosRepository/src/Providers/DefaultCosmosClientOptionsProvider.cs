@@ -32,14 +32,25 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         CosmosClientOptions CreateCosmosClientOptions(
             IServiceProvider serviceProvider,
-            IConfiguration configuration) =>
-            new()
+            IConfiguration configuration)
+        {
+            RepositoryOptions options = new();
+
+            configuration.GetSection(nameof(RepositoryOptions))
+                .Bind(options);
+
+            return new()
             {
+                SerializerOptions =
+                {
+                    IgnoreNullValues = options.SerializationOptions.IgnoreNullValues,
+                    Indented = options.SerializationOptions.Indented,
+                    PropertyNamingPolicy = options.SerializationOptions.PropertyNamingPolicy
+                },
                 HttpClientFactory = () => ClientFactory(serviceProvider),
-                AllowBulkExecution =
-                    configuration.GetSection(nameof(RepositoryOptions))
-                        .GetValue<bool>(nameof(RepositoryOptions.AllowBulkExecution))
+                AllowBulkExecution = options.AllowBulkExecution
             };
+        }
 
         static HttpClient ClientFactory(IServiceProvider serviceProvider)
         {

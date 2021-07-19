@@ -103,14 +103,17 @@ all items are persisted into the same container. However, when it is `true`, eac
 
 Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet/core/extensions/configuration-providers?WC.m_id=dapine) your app is using, there are several well-known keys that map to the repository options that configure your usage of the repository SDK. When using environment variables, such as those in Azure App Service configuration or Azure Key Vault secrets, the following keys map to the `RepositoryOptions` instance:
 
-| Key                                       | Data type | Default value |
-|-------------------------------------------|-----------|---------------|
-| RepositoryOptions__CosmosConnectionString | string    | `null`        |
-| RepositoryOptions__DatabaseId             | string    | `"database"`  |
-| RepositoryOptions__ContainerId            | string    | `"container"` |
-| RepositoryOptions__OptimizeBandwidth      | boolean   | `true`        |
-| RepositoryOptions__ContainerPerItemType   | boolean   | `false`       |
-| RepositoryOptions__AllowBulkExecution     | boolean   | `false`       |
+| Key                                                           | Data type                  | Default value                          |
+|---------------------------------------------------------------|----------------------------|----------------------------------------|
+| RepositoryOptions__CosmosConnectionString                     | string                     | `null`                                 |
+| RepositoryOptions__DatabaseId                                 | string                     | `"database"`                           |
+| RepositoryOptions__ContainerId                                | string                     | `"container"`                          |
+| RepositoryOptions__OptimizeBandwidth                          | boolean                    | `true`                                 |
+| RepositoryOptions__ContainerPerItemType                       | boolean                    | `false`                                |
+| RepositoryOptions__AllowBulkExecution                         | boolean                    | `false`                                |
+| RepositoryOptions__SerializationOptions__IgnoreNullValues     | boolean                    | `false`                                |
+| RepositoryOptions__SerializationOptions__Indented             | boolean                    | `false`                                |
+| RepositoryOptions__SerializationOptions__PropertyNamingPolicy | CosmosPropertyNamingPolicy | `CosmosPropertyNamingPolicy.CamelCase` |
 
 #### Example `appsettings.json`
 
