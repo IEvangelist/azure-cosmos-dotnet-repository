@@ -92,6 +92,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "mumby0168",
+      "name": "Billy Mumby",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23740684?v=4",
+      "profile": "https://github.com/mumby0168",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
