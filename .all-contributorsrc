@@ -101,6 +101,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "zhangzunke",
+      "name": "Michael Zhang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16775338?v=4",
+      "profile": "https://github.com/zhangzunke",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
