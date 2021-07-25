@@ -6,6 +6,8 @@ using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -72,6 +74,18 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
                 .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
 
+            return services;
+        }
+
+        /// <summary>
+        /// Remove all of <see cref="IRepository{TItem}"/> from the container.
+        /// </summary>
+        /// <param name="services">The service collection to add services to.</param>
+        /// <returns></returns>
+        public static IServiceCollection RemoveCosmosRepositories(this IServiceCollection services)
+        {
+            List<ServiceDescriptor> repositories = services.Where(i => i.ServiceType == typeof(IRepository<>)).ToList();
+            repositories.ForEach(r => services.Remove(r));
             return services;
         }
 

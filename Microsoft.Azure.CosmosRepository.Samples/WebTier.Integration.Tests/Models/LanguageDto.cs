@@ -1,14 +1,15 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
-using Microsoft.Azure.CosmosRepository;
-using Newtonsoft.Json;
+using WebTier.Models;
 
-namespace WebTier.Models
+namespace WebTier.Integration.Tests
 {
-    public class Language : Item
+    public class LanguageDto
     {
+        public string Id { get; set; }
+
         public string Name { get; set; }
 
         public string[] Aliases { get; set; }
