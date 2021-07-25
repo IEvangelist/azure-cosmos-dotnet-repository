@@ -25,9 +25,9 @@ namespace InMemoryWebTier.Controllers
         public ValueTask<IEnumerable<Parcel>> GetParcels() =>
             _repository.GetAsync(p => p.Id != null);
 
-        [HttpGet("{id}/{barcode}", Name = nameof(GetParcel))]
-        public ValueTask<Parcel> GetParcel(string id, string barcode) =>
-            _repository.GetAsync(id, barcode);
+        [HttpGet("{id}", Name = nameof(GetParcel))]
+        public ValueTask<Parcel> GetParcel(string id) =>
+            _repository.GetAsync(id);
 
         [HttpPost(Name = nameof(CreateParcels))]
         public ValueTask<IEnumerable<Parcel>> CreateParcels([FromBody] params Parcel[] parcels) =>
