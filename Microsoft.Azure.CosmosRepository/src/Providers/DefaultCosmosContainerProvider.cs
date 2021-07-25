@@ -91,9 +91,15 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     Id = _options.ContainerPerItemType
                         ? _cosmosContainerNameProvider.GetContainerName<TItem>()
                         : _options.ContainerId,
-                    PartitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>(),
-                    UniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy<TItem>()
+                    PartitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>()
                 };
+
+                // Setting containerProperties.UniqueKeyPolicy to null throws, prevent that issue.
+                UniqueKeyPolicy uniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy<TItem>();
+                if (uniqueKeyPolicy is not null)
+                {
+                    containerProperties.UniqueKeyPolicy = uniqueKeyPolicy;
+                }
 
                 Container container =
                     await database.CreateContainerIfNotExistsAsync(
@@ -103,7 +109,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
 
                 throw;
             }

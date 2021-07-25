@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Attributes;
 using Newtonsoft.Json;
 using System;
@@ -43,7 +42,7 @@ namespace Microsoft.Azure.CosmosRepository
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
-        /// Gets or sets the item's type name.
+        /// Gets or sets the item's type name. This is used as a discriminator.
         /// </summary>
         [JsonProperty("type")]
         public string Type { get; set; }
@@ -52,7 +51,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// Gets the PartitionKey based on <see cref="GetPartitionKeyValue"/>.
         /// Implemented explicitly to keep out of Item API
         /// </summary>
-        PartitionKey IItem.PartitionKey => new(GetPartitionKeyValue());
+        string IItem.PartitionKey => GetPartitionKeyValue();
 
         /// <summary>
         /// Default constructor, assigns type name to <see cref="Type"/> property.

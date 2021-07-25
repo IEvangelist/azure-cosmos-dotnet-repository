@@ -1,5 +1,6 @@
-﻿![build](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/build/badge.svg) ![CodeQL](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/CodeQL/badge.svg) [![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository) [![.NET code metrics](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml/badge.svg)](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
+﻿![build](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/build/badge.svg) ![CodeQL](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/CodeQL/badge.svg) [![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository) [![.NET code metrics](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml/badge.svg)](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml) [![Discord](https://img.shields.io/discord/868239483529723914.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/pRsUTJM9)
+ <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Azure Cosmos DB Repository .NET SDK
@@ -103,14 +104,17 @@ all items are persisted into the same container. However, when it is `true`, eac
 
 Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet/core/extensions/configuration-providers?WC.m_id=dapine) your app is using, there are several well-known keys that map to the repository options that configure your usage of the repository SDK. When using environment variables, such as those in Azure App Service configuration or Azure Key Vault secrets, the following keys map to the `RepositoryOptions` instance:
 
-| Key                                       | Data type | Default value |
-|-------------------------------------------|-----------|---------------|
-| RepositoryOptions__CosmosConnectionString | string    | `null`        |
-| RepositoryOptions__DatabaseId             | string    | `"database"`  |
-| RepositoryOptions__ContainerId            | string    | `"container"` |
-| RepositoryOptions__OptimizeBandwidth      | boolean   | `true`        |
-| RepositoryOptions__ContainerPerItemType   | boolean   | `false`       |
-| RepositoryOptions__AllowBulkExecution     | boolean   | `false`       |
+| Key                                                           | Data type                  | Default value                          |
+|---------------------------------------------------------------|----------------------------|----------------------------------------|
+| RepositoryOptions__CosmosConnectionString                     | string                     | `null`                                 |
+| RepositoryOptions__DatabaseId                                 | string                     | `"database"`                           |
+| RepositoryOptions__ContainerId                                | string                     | `"container"`                          |
+| RepositoryOptions__OptimizeBandwidth                          | boolean                    | `true`                                 |
+| RepositoryOptions__ContainerPerItemType                       | boolean                    | `false`                                |
+| RepositoryOptions__AllowBulkExecution                         | boolean                    | `false`                                |
+| RepositoryOptions__SerializationOptions__IgnoreNullValues     | boolean                    | `false`                                |
+| RepositoryOptions__SerializationOptions__Indented             | boolean                    | `false`                                |
+| RepositoryOptions__SerializationOptions__PropertyNamingPolicy | CosmosPropertyNamingPolicy | `CosmosPropertyNamingPolicy.CamelCase` |
 
 #### Example `appsettings.json`
 
@@ -130,7 +134,11 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
     "ContainerId": "<Your-CosmosDB-ContainerName>",
     "OptimizeBandwidth": true,
     "ContainerPerItemType": true,
-    "AllowBulkExecution": true
+    "AllowBulkExecution": true,
+    "SerializationOptions": {
+      "IgnoreNullValues": true,
+     "PropertyNamingPolicy": "CamelCase"
+    }
   }
 }
 ```
@@ -155,7 +163,9 @@ For more information, see [JSON configuration provider](https://docs.microsoft.c
     "RepositoryOptions:ContainerId": "<Your-CosmosDB-ContainerName>",
     "RepositoryOptions:OptimizeBandwidth": true,
     "RepositoryOptions:ContainerPerItemType": true,
-    "RepositoryOptions:AllowBulkExecution": true
+    "RepositoryOptions:AllowBulkExecution": true,
+    "RepositoryOptions:SerializationOptions:IgnoreNullValues": true,
+    "RepositoryOptions:SerializationOptions:PropertyNamingPolicy": "CamelCase"
   }
 }
 ```
@@ -223,6 +233,11 @@ Visit the `Microsoft.Azure.CosmosRepository.Samples` [directory](https://github.
 
 [![A deep dive into the Azure Cosmos DB repository pattern NET SDK](images/deep-dive-talk.png)](https://www.youtube.com/watch?v=izdnmBrTweA)
 
+## Discord
+Get extra support on our dedicated Discord channel.
+
+[![alt Join the conversation](https://img.shields.io/discord/868239483529723914.svg "Discord")](https://discord.gg/pRsUTJM9)
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -243,6 +258,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/dcuccia"><img src="https://avatars.githubusercontent.com/u/479617?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dcuccia</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=dcuccia" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/VeryCautious"><img src="https://avatars.githubusercontent.com/u/38176872?v=4?s=100" width="100px;" alt=""/><br /><sub><b>VeryCautious</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=VeryCautious" title="Code">💻</a> <a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=VeryCautious" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/mumby0168"><img src="https://avatars.githubusercontent.com/u/23740684?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Billy Mumby</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=mumby0168" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/zhangzunke"><img src="https://avatars.githubusercontent.com/u/16775338?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael Zhang</b></sub></a><br /><a href="#ideas-zhangzunke" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=zhangzunke" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.roji.org"><img src="https://avatars.githubusercontent.com/u/1862641?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Shay Rojansky</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/pulls?q=is%3Apr+reviewed-by%3Aroji" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/junior-wellemen-de-macedo-mba-mcp-ms-49282643/?locale=en_US"><img src="https://avatars.githubusercontent.com/u/12876899?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Junior Macedo</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=jrwmacedo" title="Code">💻</a> <a href="#ideas-jrwmacedo" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 

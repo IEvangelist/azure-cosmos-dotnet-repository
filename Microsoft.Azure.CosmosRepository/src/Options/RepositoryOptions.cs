@@ -64,5 +64,10 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// Defaults to false, see: https://devblogs.microsoft.com/cosmosdb/introducing-bulk-support-in-the-net-sdk
         /// </remarks>
         public bool AllowBulkExecution { get; set; }
+
+        /// <summary>
+        /// Gets or sets the repository serialization options.
+        /// </summary>
+        public RepositorySerializationOptions SerializationOptions { get; set; }
     }
 }

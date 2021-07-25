@@ -1,7 +1,9 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
@@ -22,10 +24,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>
         /// <param name="setupAction">An action to configure the repository options</param>
+        /// <param name="additionSetupAction">An action to configure the <see cref="CosmosClientOptions"/></param>
         /// <returns>The same service collection that was provided, with the required cosmos services.</returns>
         public static IServiceCollection AddCosmosRepository(
             this IServiceCollection services,
-            Action<RepositoryOptions> setupAction = default)
+            Action<RepositoryOptions> setupAction = default,
+            Action<CosmosClientOptions> additionSetupAction = default)
         {
             if (services is null)
             {
@@ -40,13 +44,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddLogging()
                     .AddHttpClient()
+                    .AddSingleton(new CosmosClientOptionsManipulator(additionSetupAction))
                     .AddSingleton<ICosmosClientOptionsProvider, DefaultCosmosClientOptionsProvider>()
                     .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
                     .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
                     .AddSingleton<ICosmosPartitionKeyPathProvider, DefaultCosmosPartitionKeyPathProvider>()
                     .AddSingleton<ICosmosContainerNameProvider, DefaultCosmosContainerNameProvider>()
                     .AddSingleton<ICosmosUniqueKeyPolicyProvider, DefaultCosmosUniqueKeyPolicyProvider>()
-
                     .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
                     .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
 

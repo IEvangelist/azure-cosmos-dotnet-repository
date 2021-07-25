@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,21 +11,19 @@ using Microsoft.Azure.CosmosRepository.Attributes;
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc />
-    class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
+    class DefaultCosmosUniqueKeyPolicyProvider :
+        BaseCosmosAttributeConstraintProvider<UniqueKeyPolicy, UniqueKeyAttribute>,
+        ICosmosUniqueKeyPolicyProvider
     {
-        static readonly Type _uniqueKeyAttributeType = typeof(UniqueKeyAttribute);
-        static readonly ConcurrentDictionary<Type, UniqueKeyPolicy> _uniqueKeyPolicyMap = new();
-
         /// <inheritdoc />
-        public UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
-            _uniqueKeyPolicyMap.GetOrAdd(typeof(TItem), GetUniqueKeyPolicyFactory);
+        public UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem => GetConstraint<TItem>();
 
-        static UniqueKeyPolicy GetUniqueKeyPolicyFactory(Type type)
+        protected override UniqueKeyPolicy GetConstraintFactory((Type ConstraintAttributeType, Type Type) key)
         {
             Dictionary<string, HashSet<PropertyInfo>> keyNamesToPropertyMap = new();
             foreach ((PropertyInfo property, string keyName) in
-                type.GetProperties()
-                    .Where(p => Attribute.IsDefined(p, _uniqueKeyAttributeType))
+                key.Type.GetProperties()
+                    .Where(p => Attribute.IsDefined(p, key.ConstraintAttributeType))
                     .Select(p => (Property: p, p.GetCustomAttribute<UniqueKeyAttribute>().KeyName)))
             {
                 if (!keyNamesToPropertyMap.ContainsKey(keyName))

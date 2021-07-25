@@ -92,6 +92,44 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "mumby0168",
+      "name": "Billy Mumby",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23740684?v=4",
+      "profile": "https://github.com/mumby0168",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "zhangzunke",
+      "name": "Michael Zhang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16775338?v=4",
+      "profile": "https://github.com/zhangzunke",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
+    },
+    {
+      "login": "roji",
+      "name": "Shay Rojansky",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1862641?v=4",
+      "profile": "http://www.roji.org",
+      "contributions": [
+        "review"
+      ]
+    },
+    {
+      "login": "jrwmacedo",
+      "name": "Junior Macedo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12876899?v=4",
+      "profile": "https://www.linkedin.com/in/junior-wellemen-de-macedo-mba-mcp-ms-49282643/?locale=en_US",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
