@@ -33,7 +33,7 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Items.FirstOrDefault(i => i.Id == id && i.PartitionKey == partitionKey);
+            TItem item = Items.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if (item is null)
                 NotFound();
@@ -127,7 +127,7 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Items.FirstOrDefault(i => i.Id == id && i.PartitionKey == partitionKey);
+            TItem item = Items.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if(item is null)
                 NotFound();
