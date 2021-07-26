@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -15,9 +16,9 @@ using Microsoft.Azure.CosmosRepository.Extensions;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    public class InMemoryRepository<TItem> : IRepository<TItem> where TItem : IItem
+    public class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
-        internal List<TItem> Items { get; } = new();
+        internal ConcurrentDictionary<string,TItem> Items { get; } = new();
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)
@@ -33,7 +34,7 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Items.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
+            TItem item = Items.Values.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if (item is null)
                 NotFound();
@@ -45,7 +46,7 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            return Items.Where(predicate.Compose(
+            return Items.Values.Where(predicate.Compose(
                 item =>  item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
@@ -64,14 +65,16 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<TItem> CreateAsync(TItem value, CancellationToken cancellationToken = default)
         {
+            value.Id ??= Guid.NewGuid().ToString();
+
             await Task.CompletedTask;
 
-            TItem item = Items.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
+            TItem item = Items.Values.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
 
             if(item is not null)
                 Conflict();
 
-            Items.Add(value);
+            Items.TryAdd(value.Id, value);
 
             return value;
         }
@@ -94,16 +97,16 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
 
-            TItem item = Items.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
+            TItem item = Items.Values.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
 
             if (item is not null)
             {
-                Items.Remove(item);
-                Items.Add(value);
+                Items.TryRemove(value.Id, out TItem _);
+                Items.TryAdd(value.Id, value);
                 return value;
             }
 
-            Items.Add(value);
+            Items.TryAdd(value.Id, value);
 
             return value;
         }
@@ -127,12 +130,12 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Items.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
+            TItem item = Items.Values.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if(item is null)
                 NotFound();
 
-            Items.Remove(item);
+            Items.TryRemove(item!.Id, out _);
         }
 
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
