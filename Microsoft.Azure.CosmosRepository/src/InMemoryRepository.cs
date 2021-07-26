@@ -102,14 +102,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             TItem item = Items.Values.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
 
-            if (item is not null)
-            {
-                Items.TryRemove(value.Id, out TItem _);
-            }
-
-            Items.TryAdd(value.Id, value);
-
-            return value;
+            return Items[value.Id] = value;
         }
 
         /// <inheritdoc/>
