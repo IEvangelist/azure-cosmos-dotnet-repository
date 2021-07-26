@@ -220,7 +220,7 @@ dotnet build
 
 This library also includes an in-memory version of `IRepository<T>`. To use it swap out the normal
 `services.AddCosmosRepository()` for
-`services.AddInMemoryCosmosRepository()` and have all of your items stored in memory. Will be a great tool for running integration tests using a package such as `Microsoft.AspNetCore.Mvc.Testing`.
+`services.AddInMemoryCosmosRepository()` and have all of your items stored in memory. This is a great tool for running integration tests using a package such as `Microsoft.AspNetCore.Mvc.Testing`, and not having to incur the cost of data stored in an Azure Cosmos DB resource.
 
 ## Samples
 
