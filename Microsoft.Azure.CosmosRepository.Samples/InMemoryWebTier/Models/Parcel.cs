@@ -9,7 +9,6 @@ namespace InMemoryWebTier.Models
 {
     public class Parcel : Item
     {
-
         public Guid CustomerId { get; set; }
 
         public DateTime PromisedBy { get; set; }
