@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.Azure.CosmosRepository;
-using Newtonsoft.Json;
 
 namespace WebTier.Models
 {

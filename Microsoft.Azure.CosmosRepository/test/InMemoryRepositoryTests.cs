@@ -83,7 +83,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task GetAsync_IdThatExists_GetsItem()
         {
             //Arrange
-            Person item = new Person("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
             _personRepository.Items.Add(item);
 
             //Act
@@ -100,7 +100,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task GetAsync_IdAndPartitionKeyStringExists_GetsItem()
         {
             //Arrange
-            Dog item = new Dog("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
+            Dog item = new("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
             _dogRepository.Items.Add(item);
 
             //Act
@@ -116,7 +116,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         [Fact]
         public async Task GetAsync_IdAndPartitionKeyObjectExists_GetsItem()
         {
-            Dog item = new Dog("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
+            Dog item = new("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
             _dogRepository.Items.Add(item);
 
             //Act
@@ -132,7 +132,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task GetAsync_PredicateThatDoesNotMatch_ReturnsEmptyList()
         {
             //Arrange
-            Person person = new Person("joe");
+            Person person = new("joe");
             _personRepository.Items.Add(person);
 
             //Act
@@ -146,7 +146,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task GetAsync_PredicateThatDoesMatch_ReturnsItemInList()
         {
             //Arrange
-            Person person = new Person("joe");
+            Person person = new("joe");
             _personRepository.Items.Add(person);
 
             //Act
@@ -165,7 +165,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task CreateAsync_ItemWhereIdAlreadyExists_ThrowsCosmosException()
         {
             //Arrange
-            Person item = new Person("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
             _personRepository.Items.Add(item);
 
             //Act
@@ -178,7 +178,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task CreateAsync_Item_CreatesItem()
         {
             //Arrange
-            Person item = new Person("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
 
             //Act
             Person person = await _personRepository.CreateAsync(item);
@@ -198,11 +198,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task CreateAsync_ManyItems_CreatesAllItems()
         {
             //Arrange
-            List<Person> items = new List<Person>()
+            List<Person> items = new()
             {
-                new Person("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
-                new Person("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
-                new Person("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
             };
 
             //Act
@@ -227,14 +227,14 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task CreateAsync_ManyItemsWhereOneHasIdThatAlreadyExists_CreatesInitalItemsThenThrowsCosmosException()
         {
             //Arrange
-            List<Person> items = new List<Person>()
+            List<Person> items = new()
             {
-                new Person("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
-                new Person("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
-                new Person("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
             };
 
-            Person badPerson = new Person("copy") {Id = items.First().Id, Type = nameof(Person)};
+            Person badPerson = new("copy") {Id = items.First().Id, Type = nameof(Person)};
             items.Add(badPerson);
 
             //Act
@@ -280,7 +280,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task DeleteAsync_ItemWithIdThatExists_DeletesItem()
         {
             //Arrange
-            Person person = new Person("joe");
+            Person person = new("joe");
             _personRepository.Items.Add(person);
 
             //Act
@@ -294,7 +294,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task DeleteAsync_ItemWithIdAndPartitionKeyThatExists_DeletesItem()
         {
             //Arrange
-            Dog dog = new Dog("cocker spaniel");
+            Dog dog = new("cocker spaniel");
             _dogRepository.Items.Add(dog);
 
             //Act
@@ -308,7 +308,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task UpdateAsync_ItemThatDoesNotExist_AddsItem()
         {
             //Arrange
-            Person item = new Person("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
 
             //Act
             Person person = await _personRepository.UpdateAsync(item);
@@ -328,10 +328,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task UpdateAsync_ItemThatExists_UpdatesItem()
         {
             //Arrange
-            Person originalPerson = new Person("phil");
+            Person originalPerson = new("phil");
             _personRepository.Items.Add(originalPerson);
 
-            Person item = new Person("joe"){Id = originalPerson.Id};
+            Person item = new("joe"){Id = originalPerson.Id};
 
             //Act
             Person person = await _personRepository.UpdateAsync(item);

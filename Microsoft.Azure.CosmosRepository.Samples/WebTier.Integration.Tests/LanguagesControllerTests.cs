@@ -33,7 +33,7 @@ namespace WebTier.Integration.Tests
         public async Task Post_Always_Creates_A_Language()
         {
             //Arrange
-            LanguageDto language = new LanguageDto()
+            LanguageDto language = new()
             {
                 Name = "C#",
                 Description = "A language created by Microsoft.",
@@ -42,7 +42,7 @@ namespace WebTier.Integration.Tests
                 InitialReleaseDate = new DateTime(2001, 10, 25)
             };
 
-            List<LanguageDto> languages = new List<LanguageDto>
+            List<LanguageDto> languages = new()
             {
                 language
             };
