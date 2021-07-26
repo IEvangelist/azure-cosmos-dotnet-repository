@@ -10,7 +10,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Extensions;
 
 namespace Microsoft.Azure.CosmosRepository
@@ -37,7 +36,9 @@ namespace Microsoft.Azure.CosmosRepository
             TItem item = Items.Values.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if (item is null)
+            {
                 NotFound();
+            }
 
             return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name ? item : default;
         }
@@ -71,8 +72,10 @@ namespace Microsoft.Azure.CosmosRepository
 
             TItem item = Items.Values.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
 
-            if(item is not null)
+            if (item is not null)
+            {
                 Conflict();
+            }
 
             Items.TryAdd(value.Id, value);
 
@@ -102,8 +105,6 @@ namespace Microsoft.Azure.CosmosRepository
             if (item is not null)
             {
                 Items.TryRemove(value.Id, out TItem _);
-                Items.TryAdd(value.Id, value);
-                return value;
             }
 
             Items.TryAdd(value.Id, value);
@@ -132,8 +133,10 @@ namespace Microsoft.Azure.CosmosRepository
 
             TItem item = Items.Values.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
-            if(item is null)
+            if (item is null)
+            {
                 NotFound();
+            }
 
             Items.TryRemove(item!.Id, out _);
         }
