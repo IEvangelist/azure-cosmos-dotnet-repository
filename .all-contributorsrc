@@ -130,6 +130,15 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "emrekara37",
+      "name": "Emre KARA",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17519791?v=4",
+      "profile": "http://emrekara.me",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
