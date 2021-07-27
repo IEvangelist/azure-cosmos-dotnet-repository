@@ -141,6 +141,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bradwestness",
+      "name": "Brad Westness",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1802434?v=4",
+      "profile": "http://www.bradwestness.com",
+      "contributions": [
+        "review"
+      ]
     }
   ],
   "contributorsPerLine": 7,
