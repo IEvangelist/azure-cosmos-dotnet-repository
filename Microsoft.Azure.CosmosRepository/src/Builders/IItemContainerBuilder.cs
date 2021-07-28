@@ -16,13 +16,13 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// <summary>
         ///
         /// </summary>
-        ConcurrentDictionary<Type, ContainerOptions> Options { get; }
+        IReadOnlyList<ContainerOptions> Options { get; }
 
         /// <summary>
         /// Provides a <see cref="ContainerOptions"/> instance to configure a container for an item
         /// </summary>
         /// <typeparam name="TItem">The type of <see cref="IItem"/> to configure.</typeparam>
         /// <returns>Instance of <see cref="IItemContainerBuilder"/></returns>
-        IItemContainerBuilder Configure<TItem>(Action<ContainerOptions> configure) where TItem : IItem;
+        IItemContainerBuilder Configure<TItem>(Action<ContainerOptions> containerOptions) where TItem : IItem;
     }
 }

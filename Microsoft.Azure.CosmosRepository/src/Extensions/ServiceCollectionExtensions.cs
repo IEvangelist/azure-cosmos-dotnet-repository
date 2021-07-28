@@ -64,19 +64,6 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Configures each <see cref="IItem"/> through the use of a builder
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        public static IServiceCollection ConfigureCosmosRepositoryItems(this IServiceCollection services, Action<IItemContainerBuilder> builder)
-        {
-            DefaultItemContainerBuilder containerBuilder = new();
-            builder(containerBuilder);
-            return services.AddSingleton<IItemContainerBuilder>(containerBuilder);
-        }
-
-        /// <summary>
         /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/>
         /// instances to interact with Cosmos DB.
         /// </summary>

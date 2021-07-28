@@ -3,44 +3,45 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.Azure.CosmosRepository.Attributes;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-    /// <inheritdoc />
-    class  DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
+    /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosContainerNameProvider" />
+    class  DefaultCosmosContainerNameProvider : BaseCosmosAttributeConstraintProvider<string, ContainerAttribute>, ICosmosContainerNameProvider
     {
-        private readonly IServiceProvider _serviceProvider;
-        static readonly Type ContainerAttributeType = typeof(ContainerAttribute);
+        private readonly IOptions<RepositoryOptions> _options;
         static readonly ConcurrentDictionary<Type, string> ContainerNameMap = new();
-        private static IItemContainerBuilder _container;
 
-        public DefaultCosmosContainerNameProvider(IServiceProvider serviceProvider)
+        public DefaultCosmosContainerNameProvider(IOptions<RepositoryOptions> options)
         {
-            _serviceProvider = serviceProvider;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <inheritdoc />
-        public string GetContainerName<TItem>() where TItem : IItem =>
-            ContainerNameMap.GetOrAdd(typeof(TItem), GetContainerNameFactory);
+        public string GetContainerName<TItem>() where TItem : IItem => GetConstraint<TItem>();
 
-        private string GetContainerNameFactory(Type type)
+        protected override string GetConstraintFactory((Type ConstraintAttributeType, Type Type) key)
         {
             Attribute attribute =
-                Attribute.GetCustomAttribute(type, ContainerAttributeType);
+                Attribute.GetCustomAttribute(key.Type, key.ConstraintAttributeType);
 
-            _container ??= _serviceProvider.GetService<IItemContainerBuilder>();
+            ContainerOptions options = _options.Value.ContainerOptions.FirstOrDefault(opts => opts.Type == key.Type);
 
-            if (_container is { } && _container.Options.ContainsKey(type))
+            if (options is { })
             {
-                return _container.Options[type].Name;
+                return options.Name;
             }
 
             return attribute is ContainerAttribute containerAttribute
                 ? containerAttribute.Name
-                : type.Name;
+                : key.Type.Name;
         }
     }
 }

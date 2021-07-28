@@ -13,7 +13,7 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <summary>
         /// The <see cref="IItem"/> type the container options are for
         /// </summary>
-        public Type Type { get; }
+        internal Type Type { get; }
 
 
         /// <summary>
@@ -28,12 +28,12 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <summary>
         /// Name of the container
         /// </summary>
-        public string Name { get; internal set; }
+        internal string Name { get; private set; }
 
         /// <summary>
         /// The partition key for the container
         /// </summary>
-        public string PartitionKey { get; internal set; }
+        internal string PartitionKey { get; private set; }
 
         /// <summary>
         /// Sets the name of the container

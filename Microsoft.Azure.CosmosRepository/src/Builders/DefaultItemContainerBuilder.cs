@@ -11,18 +11,19 @@ namespace Microsoft.Azure.CosmosRepository.Builders
     /// <inheritdoc/>
     internal class DefaultItemContainerBuilder : IItemContainerBuilder
     {
-        public ConcurrentDictionary<Type, ContainerOptions> Options { get; } = new();
+        private readonly List<ContainerOptions> _options = new();
 
+        public IReadOnlyList<ContainerOptions> Options => _options;
 
-        public IItemContainerBuilder Configure<TItem>(Action<ContainerOptions> configure) where TItem : IItem
+        public IItemContainerBuilder Configure<TItem>(Action<ContainerOptions> containerOptions) where TItem : IItem
         {
-            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            if (containerOptions is null) throw new ArgumentNullException(nameof(containerOptions));
 
             ContainerOptions options = new(typeof(TItem));
 
-            configure(options);
+            containerOptions(options);
 
-            Options.TryAdd(typeof(TItem), options);
+            _options.Add(options);
 
             return this;
         }

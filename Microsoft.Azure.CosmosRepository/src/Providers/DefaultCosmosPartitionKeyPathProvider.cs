@@ -6,7 +6,7 @@ using Microsoft.Azure.CosmosRepository.Attributes;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosPartitionKeyPathProvider" />
     class DefaultCosmosPartitionKeyPathProvider :
         BaseCosmosAttributeConstraintProvider<string, PartitionKeyPathAttribute>,
         ICosmosPartitionKeyPathProvider

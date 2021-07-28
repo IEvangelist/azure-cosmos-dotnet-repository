@@ -9,6 +9,7 @@ using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers
@@ -16,6 +17,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
     public class DefaultCosmosContainerProviderTests
     {
         readonly ILoggerFactory _loggerFactory = new LoggerFactory();
+        readonly Mock<IOptions<RepositoryOptions>> _options = new ();
 
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullCosmosClient() =>
@@ -23,7 +25,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     null,
                     new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
                     {
@@ -39,7 +41,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
                     null,
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
                     {
@@ -69,7 +71,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
                     new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     null,
                     Options.Create(new RepositoryOptions
                     {
@@ -84,7 +86,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
                     new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     null,
                     _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
@@ -95,7 +97,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
                     new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
                     {
@@ -108,7 +110,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
                     new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
                     {
@@ -122,7 +124,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
                     new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
                     {
@@ -136,7 +138,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
                     new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
                     {
