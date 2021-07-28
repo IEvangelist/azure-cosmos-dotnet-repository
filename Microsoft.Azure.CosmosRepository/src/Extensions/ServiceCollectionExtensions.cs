@@ -8,6 +8,9 @@ using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Linq;
+using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -17,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/> 
+        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/>
         /// instances to interact with Cosmos DB.
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>
@@ -61,7 +64,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/> 
+        /// Configures each <see cref="IItem"/> through the use of a builder
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureCosmosRepositoryItems(this IServiceCollection services, Action<IItemContainerBuilder> builder)
+        {
+            DefaultItemContainerBuilder containerBuilder = new();
+            builder(containerBuilder);
+            return services.AddSingleton<IItemContainerBuilder>(containerBuilder);
+        }
+
+        /// <summary>
+        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/>
         /// instances to interact with Cosmos DB.
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>

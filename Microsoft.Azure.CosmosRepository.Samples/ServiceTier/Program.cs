@@ -54,7 +54,7 @@ namespace ServiceTier
                             {
                                 clientOptions.AllowBulkExecution = true;
                             })
-                            .AddSingleton<IExampleService, ExampleService>());
+                        .AddSingleton<IExampleService, ExampleService>());
 
         static async Task RawRepositoryExampleAsync(IRepository<Person> repository)
         {

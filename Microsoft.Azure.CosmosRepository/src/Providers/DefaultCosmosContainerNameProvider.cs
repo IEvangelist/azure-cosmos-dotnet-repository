@@ -4,23 +4,39 @@
 using System;
 using System.Collections.Concurrent;
 using Microsoft.Azure.CosmosRepository.Attributes;
+using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc />
-    class DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
+    class  DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
     {
-        static readonly Type _containerAttributeType = typeof(ContainerAttribute);
-        static readonly ConcurrentDictionary<Type, string> _containerNameMap = new();
+        private readonly IServiceProvider _serviceProvider;
+        static readonly Type ContainerAttributeType = typeof(ContainerAttribute);
+        static readonly ConcurrentDictionary<Type, string> ContainerNameMap = new();
+        private static IItemContainerBuilder _container;
+
+        public DefaultCosmosContainerNameProvider(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
 
         /// <inheritdoc />
         public string GetContainerName<TItem>() where TItem : IItem =>
-            _containerNameMap.GetOrAdd(typeof(TItem), GetContainerNameFactory);
+            ContainerNameMap.GetOrAdd(typeof(TItem), GetContainerNameFactory);
 
-        static string GetContainerNameFactory(Type type)
+        private string GetContainerNameFactory(Type type)
         {
             Attribute attribute =
-                Attribute.GetCustomAttribute(type, _containerAttributeType);
+                Attribute.GetCustomAttribute(type, ContainerAttributeType);
+
+            _container ??= _serviceProvider.GetService<IItemContainerBuilder>();
+
+            if (_container is { } && _container.Options.ContainsKey(type))
+            {
+                return _container.Options[type].Name;
+            }
 
             return attribute is ContainerAttribute containerAttribute
                 ? containerAttribute.Name
