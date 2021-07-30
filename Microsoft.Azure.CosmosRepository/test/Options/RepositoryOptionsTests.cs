@@ -33,6 +33,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Options
         [Fact]
         public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenPartionKeyIsNull()
             => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithPartitionKey(null)));
+
+        [Fact]
+        public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenContainerBuilderActionIsNull()
+            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(null));
     }
 
     public class Product : Item
