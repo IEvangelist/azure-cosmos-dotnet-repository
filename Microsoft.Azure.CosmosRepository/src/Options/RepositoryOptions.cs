@@ -74,6 +74,7 @@ namespace Microsoft.Azure.CosmosRepository.Options
 
         /// <summary>
         /// A builder to configure containers.
+        /// Ensure that ContainerPerItemType is set to true for the container name configured here to take affect.
         /// </summary>
         public IItemContainerBuilder ContainerBuilder { get; } = new DefaultItemContainerBuilder();
 

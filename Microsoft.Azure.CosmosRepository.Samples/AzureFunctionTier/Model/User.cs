@@ -19,5 +19,10 @@ namespace AzureFunctionTier.Model
 
         [JsonProperty("emailAddress")]
         public string EmailAddress { get; set; }
+
+        protected override string GetPartitionKeyValue()
+        {
+            return EmailAddress;
+        }
     }
 }

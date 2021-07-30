@@ -6,7 +6,5 @@
 
     "RepositoryOptions:CosmosConnectionString": "<CosmosDB-ConnectionString>",
     "RepositoryOptions:DatabaseId": "<CosmosDB-DatabaseName>",
-    "RepositoryOptions:ContainerId": "<CosmosDB-ContainerName>"
-
   }
 }
