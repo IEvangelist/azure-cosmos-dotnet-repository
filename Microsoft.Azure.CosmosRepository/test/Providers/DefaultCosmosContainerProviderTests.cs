@@ -24,7 +24,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     null,
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     null,
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     null,
                     Options.Create(new RepositoryOptions
@@ -85,7 +85,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     null,
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
@@ -123,7 +123,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions
@@ -137,7 +137,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     Options.Create(new RepositoryOptions

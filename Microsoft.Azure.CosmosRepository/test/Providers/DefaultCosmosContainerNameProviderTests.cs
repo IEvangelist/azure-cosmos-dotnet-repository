@@ -52,6 +52,17 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             string name = provider.GetContainerName<CustomTypeOverridenByOptions>();
             Assert.Equal("SomethingDefinedByOptions", name);
         }
+
+        [Fact]
+        public void CosmosContainerNameProviderGetsNameForTypeWhenEmptyStringProvidedByOptions()
+        {
+            _repositoryOptions.ContainerBuilder.Configure<SomeOtherItem>(options => options.WithContainer(""));
+
+            ICosmosContainerNameProvider provider = new DefaultCosmosContainerNameProvider(_options.Object);
+
+            string name = provider.GetContainerName<SomeOtherItem>();
+            Assert.Equal("SomeOtherItem", name);
+        }
     }
 
     [Container("SomethingCustom")]
@@ -66,5 +77,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
     public class SomethingItem : Item
     {
+    }
+
+    public class SomeOtherItem : Item
+    {
+
     }
 }

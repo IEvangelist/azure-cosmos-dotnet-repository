@@ -34,7 +34,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
             ContainerOptions options = _options.Value.ContainerOptions.FirstOrDefault(opts => opts.Type == key.Type);
 
-            if (options is { })
+            if (options is { } && string.IsNullOrWhiteSpace(options.Name) is false)
             {
                 return options.Name;
             }
