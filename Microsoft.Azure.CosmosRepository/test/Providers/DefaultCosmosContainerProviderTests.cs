@@ -27,7 +27,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data",
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     null,
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     null,
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
@@ -73,7 +73,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     null,
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
@@ -99,7 +99,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
@@ -112,7 +112,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         ContainerId = "container"
@@ -126,7 +126,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data"
@@ -140,7 +140,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data",

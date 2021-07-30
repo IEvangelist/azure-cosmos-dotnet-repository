@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
            Assert.Throws<ArgumentNullException>(
                () => new DefaultCosmosClientProvider(
                    cosmosClientOptionsProvider: null,
-                   Options.Create(new RepositoryOptions
+                   Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                    {
                        CosmosConnectionString = "pickles",
                        DatabaseId = "data",
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             DefaultCosmosClientProvider provider =
                 new DefaultCosmosClientProvider(
                     mock.Object,
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString =
                             "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
