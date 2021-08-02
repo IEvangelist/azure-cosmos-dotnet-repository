@@ -15,7 +15,6 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// </summary>
         internal Type Type { get; }
 
-
         /// <summary>
         /// Creates an instance of <see cref="ContainerOptions"/>
         /// </summary>
