@@ -19,10 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// Creates an instance of <see cref="ContainerOptions"/>
         /// </summary>
         /// <param name="type">The type of <see cref="IItem"/> the options are for</param>
-        public ContainerOptions(Type type)
-        {
-            Type = type;
-        }
+        public ContainerOptions(Type type) => Type = type;
 
         /// <summary>
         /// Name of the container
