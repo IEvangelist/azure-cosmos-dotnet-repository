@@ -46,7 +46,6 @@ namespace Microsoft.Azure.CosmosRepository.Options
             return this;
         }
 
-
         /// <summary>
         /// Sets the partition key for the container
         /// </summary>
