@@ -8,6 +8,8 @@ using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -17,7 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/> 
+        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/>
         /// instances to interact with Cosmos DB.
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>
@@ -61,7 +63,38 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/> 
+        /// Adds the services required to run the in memory implementation of the cosmos repository.
+        /// </summary>
+        /// <param name="services">The service collection to add services to.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddInMemoryCosmosRepository(this IServiceCollection services)
+        {
+            if (services is null)
+            {
+                throw new ArgumentNullException(
+                    nameof(services), "A service collection is required.");
+            }
+
+            services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
+                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Remove all of <see cref="IRepository{TItem}"/> from the container.
+        /// </summary>
+        /// <param name="services">The service collection to add services to.</param>
+        /// <returns></returns>
+        public static IServiceCollection RemoveCosmosRepositories(this IServiceCollection services)
+        {
+            List<ServiceDescriptor> repositories = services.Where(i => i.ServiceType == typeof(IRepository<>)).ToList();
+            repositories.ForEach(r => services.Remove(r));
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/>
         /// instances to interact with Cosmos DB.
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>
