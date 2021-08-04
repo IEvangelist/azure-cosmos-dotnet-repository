@@ -42,7 +42,7 @@ namespace Microsoft.Azure.CosmosRepository
             string id,
             string partitionKeyValue = null,
             CancellationToken cancellationToken = default) =>
-            GetAsync(id, new PartitionKey(partitionKeyValue ?? id));
+            GetAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
         /// <inheritdoc/>
         public async ValueTask<TItem> GetAsync(
@@ -184,7 +184,7 @@ namespace Microsoft.Azure.CosmosRepository
             string id,
             string partitionKeyValue = null,
             CancellationToken cancellationToken = default) =>
-            DeleteAsync(id, new PartitionKey(partitionKeyValue ?? id));
+            DeleteAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
         /// <inheritdoc/>
         public async ValueTask DeleteAsync(

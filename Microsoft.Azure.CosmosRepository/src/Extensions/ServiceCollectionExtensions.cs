@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.Generic;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -60,6 +61,37 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.PostConfigure(setupAction);
             }
 
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the services required to run the in memory implementation of the cosmos repository.
+        /// </summary>
+        /// <param name="services">The service collection to add services to.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddInMemoryCosmosRepository(this IServiceCollection services)
+        {
+            if (services is null)
+            {
+                throw new ArgumentNullException(
+                    nameof(services), "A service collection is required.");
+            }
+
+            services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
+                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Remove all of <see cref="IRepository{TItem}"/> from the container.
+        /// </summary>
+        /// <param name="services">The service collection to add services to.</param>
+        /// <returns></returns>
+        public static IServiceCollection RemoveCosmosRepositories(this IServiceCollection services)
+        {
+            List<ServiceDescriptor> repositories = services.Where(i => i.ServiceType == typeof(IRepository<>)).ToList();
+            repositories.ForEach(r => services.Remove(r));
             return services;
         }
 
