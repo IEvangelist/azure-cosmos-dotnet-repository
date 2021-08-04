@@ -14,7 +14,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
     public interface IItemContainerBuilder
     {
         /// <summary>
-        ///
+        /// The list of already configured options for a <see cref="IItem"/>
         /// </summary>
         IReadOnlyList<ContainerOptions> Options { get; }
 
