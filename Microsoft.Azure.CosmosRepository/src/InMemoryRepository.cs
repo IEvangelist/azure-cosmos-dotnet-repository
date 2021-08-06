@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Extensions;
+using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -18,6 +19,25 @@ namespace Microsoft.Azure.CosmosRepository
     public class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
         internal ConcurrentDictionary<string,TItem> Items { get; } = new();
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="page"></param>
+        /// <param name="continuationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default, int pageSize = 25,
+            int page = 1, string continuationToken = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)

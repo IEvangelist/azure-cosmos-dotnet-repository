@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -31,6 +32,21 @@ namespace Microsoft.Azure.CosmosRepository
     /// </example>
     public interface IRepository<TItem> where TItem : IItem
     {
+
+        /// <summary>
+        /// Pages results of a given item.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="page"></param>
+        /// <param name="continuationToken"></param>
+        /// <returns></returns>
+        ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default, int pageSize = 25, int page = 1,
+            string continuationToken = null);
+
+
         /// <summary>
         /// Gets the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
         /// </summary>

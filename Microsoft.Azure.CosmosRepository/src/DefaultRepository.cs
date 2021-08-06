@@ -11,6 +11,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -36,6 +37,39 @@ namespace Microsoft.Azure.CosmosRepository
             ICosmosContainerProvider<TItem> containerProvider,
             ILogger<DefaultRepository<TItem>> logger) =>
             (_optionsMonitor, _containerProvider, _logger) = (optionsMonitor, containerProvider, logger);
+
+        public async ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default, int pageSize = 25,
+            int page = 1, string continuationToken = null)
+        {
+            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            Expression<Func<TItem, bool>> queryPredicate = predicate.Compose(item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso);
+            IQueryable<TItem> query = null;
+            QueryRequestOptions queryOptions = new() { MaxItemCount = pageSize };
+
+            if (continuationToken is null)
+            {
+                //TODO: .Skip().Take() approach
+            }
+            else
+            {
+                query = container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions);
+            }
+
+            int total = await query.CountAsync(cancellationToken);
+            using FeedIterator<TItem> iterator = query.ToFeedIterator();
+            List<TItem> items = new();
+            double charge = 0;
+            string nextContinuationToken = null;
+            while (iterator.HasMoreResults)
+            {
+                FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken);
+                items.AddRange(next.Resource);
+                charge += next.RequestCharge;
+                nextContinuationToken = next.ContinuationToken;
+            }
+
+            return new Page<TItem>(total, page, pageSize, items, charge, nextContinuationToken);
+        }
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
