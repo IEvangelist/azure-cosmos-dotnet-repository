@@ -41,6 +41,10 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default, int pageSize = 25,
             int page = 1, string continuationToken = null)
         {
+            if (page < 1) throw new ArgumentOutOfRangeException(nameof(page));
+            if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize));
+
+
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
             Expression<Func<TItem, bool>> queryPredicate = predicate.Compose(item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso);
             IQueryable<TItem> query = null;
@@ -48,7 +52,9 @@ namespace Microsoft.Azure.CosmosRepository
 
             if (continuationToken is null)
             {
-                //TODO: .Skip().Take() approach
+                query = page is 1 ?
+                    container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions)
+                    : container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions).Skip((page * pageSize) - pageSize);
             }
             else
             {
