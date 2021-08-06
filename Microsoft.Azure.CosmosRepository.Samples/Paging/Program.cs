@@ -24,14 +24,14 @@ IRepository<Person> repository = provider.GetRequiredService<IRepository<Person>
 
 await PageWithContinuationTokens();
 await JumpStraightToPage();
-// await JumpToStraightThenUseContinuationToken();
+// await JumpToStraightToPage4ThenUseContinuationToken();
 
 
 
 
 
 
-async Task JumpToStraightThenUseContinuationToken()
+async Task JumpToStraightToPage4ThenUseContinuationToken()
 {
     int pageNumber = 4;
     int pageSize = 10;
