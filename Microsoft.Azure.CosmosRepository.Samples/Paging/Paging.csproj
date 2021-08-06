@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Bogus" Version="33.0.2" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Microsoft.Azure.CosmosRepository\src\Microsoft.Azure.CosmosRepository.csproj" />
+    </ItemGroup>
+
+</Project>

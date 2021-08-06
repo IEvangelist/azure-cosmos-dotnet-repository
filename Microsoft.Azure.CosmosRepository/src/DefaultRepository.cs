@@ -53,29 +53,30 @@ namespace Microsoft.Azure.CosmosRepository
             if (continuationToken is null)
             {
                 query = page is 1 ?
-                    container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions)
-                    : container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions).Skip((page * pageSize) - pageSize);
+                    container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions).Where(queryPredicate)
+                    : container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions).Where(queryPredicate).Skip((page * pageSize) - pageSize);
             }
             else
             {
-                query = container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions);
+                query = container.GetItemLinqQueryable<TItem>(false, continuationToken, queryOptions).Where(queryPredicate);
             }
 
-            int total = await query.CountAsync(cancellationToken);
+            int total = await container.GetItemLinqQueryable<TItem>().Where(queryPredicate).CountAsync(cancellationToken);
             using FeedIterator<TItem> iterator = query.ToFeedIterator();
             List<TItem> items = new();
             double charge = 0;
-            string nextContinuationToken = null;
-            while (iterator.HasMoreResults)
+            while (iterator.HasMoreResults && items.Count() < pageSize)
             {
                 FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken);
                 items.AddRange(next.Resource);
                 charge += next.RequestCharge;
-                nextContinuationToken = next.ContinuationToken;
+                continuationToken = next.ContinuationToken;
             }
 
-            return new Page<TItem>(total, page, pageSize, items, charge, nextContinuationToken);
+            return new Page<TItem>(total, page, pageSize, items, charge, continuationToken);
         }
+
+
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
