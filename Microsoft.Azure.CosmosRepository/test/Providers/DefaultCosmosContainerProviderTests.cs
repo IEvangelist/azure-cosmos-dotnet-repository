@@ -9,6 +9,7 @@ using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers
@@ -16,16 +17,17 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
     public class DefaultCosmosContainerProviderTests
     {
         readonly ILoggerFactory _loggerFactory = new LoggerFactory();
+        readonly Mock<IOptions<RepositoryOptions>> _options = new ();
 
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullCosmosClient() =>
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     null,
-                    new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data",
@@ -39,9 +41,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
                     null,
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
@@ -53,10 +55,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
                     null,
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
@@ -68,10 +70,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     null,
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
@@ -83,8 +85,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
                     null,
                     _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
@@ -94,10 +96,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
@@ -107,10 +109,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         ContainerId = "container"
@@ -121,10 +123,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data"
@@ -135,10 +137,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(),
-                    new DefaultCosmosContainerNameProvider(),
+                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
+                    new DefaultCosmosContainerNameProvider(_options.Object),
                     new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Options.Create(new RepositoryOptions
+                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data",

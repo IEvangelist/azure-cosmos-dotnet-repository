@@ -8,8 +8,10 @@ using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.Generic;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

@@ -1,12 +1,14 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Builders;
 
 namespace Microsoft.Azure.CosmosRepository.Options
 {
     /// <summary>
-    /// A repository options class, representing 
+    /// A repository options class, representing
     /// various Azure Cosmos DB configuration settings.
     /// </summary>
     public class RepositoryOptions
@@ -69,5 +71,16 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// Gets or sets the repository serialization options.
         /// </summary>
         public RepositorySerializationOptions SerializationOptions { get; set; }
+
+        /// <summary>
+        /// A builder to configure containers.
+        /// Ensure that ContainerPerItemType is set to true for the container name configured here to take affect.
+        /// </summary>
+        public IItemContainerBuilder ContainerBuilder { get; } = new DefaultItemContainerBuilder();
+
+        /// <summary>
+        /// Container options provided by the <see cref="Builders.IItemContainerBuilder"/>
+        /// </summary>
+        internal IReadOnlyList<ContainerOptions> ContainerOptions => ContainerBuilder.Options;
     }
 }
