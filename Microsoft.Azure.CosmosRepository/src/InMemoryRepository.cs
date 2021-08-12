@@ -134,6 +134,14 @@ namespace Microsoft.Azure.CosmosRepository
             Items.TryRemove(item!.Id, out _);
         }
 
+        /// <inheritdoc/>
+        public async ValueTask<int> CountAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            return Items.Values.Where(predicate.Compose(
+                item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile()).Count();
+        }
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
         private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);
     }

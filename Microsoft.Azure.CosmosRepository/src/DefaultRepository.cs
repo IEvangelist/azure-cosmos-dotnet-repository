@@ -223,6 +223,20 @@ namespace Microsoft.Azure.CosmosRepository
             return results;
         }
 
+        public async ValueTask<int> CountAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default)
+        {
+            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query =
+                container.GetItemLinqQueryable<TItem>()
+                    .Where(predicate.Compose(
+                        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso));
+
+            int count = await query.CountAsync(cancellationToken);
+            return count;
+        }
+
 
         static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
         {

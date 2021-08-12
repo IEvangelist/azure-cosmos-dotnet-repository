@@ -160,5 +160,14 @@ namespace Microsoft.Azure.CosmosRepository
             string id,
             PartitionKey partitionKey,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Returns the number of elements in a sequence.
+        /// </summary>
+        /// <param name="predicate">The expression used for evaluating a matching item.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>The number of elements in a sequence.</returns>
+        ValueTask<int> CountAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default);
     }
 }
