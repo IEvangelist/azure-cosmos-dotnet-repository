@@ -167,7 +167,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="predicate">The expression used for evaluating a matching item.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>The number of elements in a sequence.</returns>
-        ValueTask<int> CountAsync(Expression<Func<TItem, bool>> predicate,
+        ValueTask<int> CountAsync(
+            Expression<Func<TItem, bool>> predicate,
             CancellationToken cancellationToken = default);
     }
 }
