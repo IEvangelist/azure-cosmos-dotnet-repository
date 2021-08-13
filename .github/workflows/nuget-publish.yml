@@ -41,7 +41,7 @@ jobs:
       
     - name: Pack
       run: |
-        dotnet pack ./Microsoft.Azure.CosmosRepository/src/Microsoft.Azure.CosmosRepository.csproj -p:PackageVersion='${{ steps.regex-match.outputs.match }}' --output packages
+        dotnet pack ./Microsoft.Azure.CosmosRepository/src/Microsoft.Azure.CosmosRepository.csproj --output packages
       
     - name: Publish Package
       run: |
