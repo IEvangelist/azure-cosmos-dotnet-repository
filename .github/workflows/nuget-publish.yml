@@ -2,7 +2,7 @@ name: Release Package Version
 on:
   push:
     tags:
-     - v*     
+     - 2.*     
 jobs: 
   build:
     if: github.event.base_ref == 'refs/heads/main'
