@@ -378,7 +378,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
-        public async Task ExistsAsync_PointReadWhenDoesNotItemsExists_ReturnsTrue()
+        public async Task ExistsAsync_PointReadWhenDoesNotItemsExists_ReturnsFalse()
         {
             //Arrange
             Person person = new("joe");
