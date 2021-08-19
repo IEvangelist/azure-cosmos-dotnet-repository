@@ -172,7 +172,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
         ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default);
 
-
         /// <summary>
         /// Queries cosmos DB to see if an item exists.
         /// </summary>
