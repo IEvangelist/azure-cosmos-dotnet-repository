@@ -134,6 +134,25 @@ namespace Microsoft.Azure.CosmosRepository
             Items.TryRemove(item!.Id, out _);
         }
 
+        /// <inheritdoc/>
+        public ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)
+            => ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
+
+        /// <inheritdoc/>
+        public async ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            return Items.Values.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey) is not null;
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            return Items.Values.Any(predicate.Compose(
+                item =>  item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
+        }
+
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
         private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);
     }

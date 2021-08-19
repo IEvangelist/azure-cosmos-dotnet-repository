@@ -347,6 +347,70 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(item.Type, addedPerson.Type);
         }
 
+        [Fact]
+        public async Task ExistsAsync_PointReadWhenItemsExists_ReturnsTrue()
+        {
+            //Arrange
+            Person person = new("joe");
+
+            _personRepository.Items.TryAdd(person.Id, person);
+
+            //Act
+            bool exists = await _personRepository.ExistsAsync(person.Id);
+
+            //Assert
+            Assert.True(exists);
+        }
+
+        [Fact]
+        public async Task ExistsAsync_PointReadWithPartitionKeyItemsExists_ReturnsTrue()
+        {
+            //Arrange
+            Dog dog = new("cocker spaniel");
+            _dogRepository.Items.TryAdd(dog.Id, dog);
+
+            //Act
+            bool exists = await _dogRepository.ExistsAsync(dog.Id, dog.Breed);
+
+            //Assert
+            Assert.True(exists);
+        }
+
+        [Fact]
+        public async Task ExistsAsync_PointReadWhenDoesNotItemsExists_ReturnsFalse()
+        {
+            //Arrange
+            Person person = new("joe");
+
+            _personRepository.Items.TryAdd(person.Id, person);
+
+            //Act
+            bool exists = await _personRepository.ExistsAsync("fred");
+
+            //Assert
+            Assert.False(exists);
+        }
+
+
+        [Fact]
+        public async Task ExistsAsync_CountQueryWithItemsThatMatch_ReturnsTrue()
+        {
+            //Arrange
+            Dog dog1 = new("cocker spaniel");
+            Dog dog2 = new("cocker spaniel");
+            Dog dog3 = new("golden retriever");
+
+            _dogRepository.Items.TryAdd(dog1.Id, dog1);
+            _dogRepository.Items.TryAdd(dog2.Id, dog2);
+            _dogRepository.Items.TryAdd(dog3.Id, dog3);
+
+            //Act
+            bool exists = await _dogRepository.ExistsAsync(d => d.Breed == "cocker spaniel" || d.Id == dog3.Id);
+
+            //Assert
+            Assert.True(exists);
+        }
+
 
     }
 }

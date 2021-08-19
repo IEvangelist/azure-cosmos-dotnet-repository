@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -204,6 +205,54 @@ namespace Microsoft.Azure.CosmosRepository
                 .ConfigureAwait(false);
 
             TryLogDebugDetails(_logger, () => $"Deleted: {id}");
+        }
+
+        /// <inheritdoc/>
+        public ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)
+            => ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
+
+        /// <inheritdoc/>
+        public async ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            if (partitionKey == default)
+            {
+                partitionKey = new PartitionKey(id);
+            }
+
+            try
+            {
+                ItemResponse<TItem> response =
+                    await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
+                        .ConfigureAwait(false);
+            }
+            catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
+
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query =
+                container.GetItemLinqQueryable<TItem>()
+                    .Where(predicate.Compose(
+                        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso));
+
+            TryLogDebugDetails(_logger, () => $"Read: {query}");
+
+            int count = await query.CountAsync(cancellationToken);
+
+            return count > 0;
         }
 
         static async Task<IEnumerable<TItem>> IterateQueryInternalAsync(
