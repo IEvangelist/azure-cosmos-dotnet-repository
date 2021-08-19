@@ -251,7 +251,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             int count = await query.CountAsync(cancellationToken);
 
-            return count > 1;
+            return count > 0;
         }
 
         static async Task<IEnumerable<TItem>> IterateQueryInternalAsync(
