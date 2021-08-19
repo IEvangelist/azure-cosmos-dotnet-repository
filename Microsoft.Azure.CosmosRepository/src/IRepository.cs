@@ -160,5 +160,37 @@ namespace Microsoft.Azure.CosmosRepository
             string id,
             PartitionKey partitionKey,
             CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// Queries cosmos DB to see if an item exists.
+        /// </summary>
+        /// <remarks>This method performs a point read to decide whether or not an item exists.</remarks>
+        /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
+        ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// Queries cosmos DB to see if an item exists.
+        /// </summary>
+        /// <remarks>This method performs a point read to decide whether or not an item exists.</remarks>
+        /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKey">The <see cref="PartitionKey"/> value if different than the <see cref="IItem.Id"/>.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
+        ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Queries cosmos DB to see if an item exists.
+        /// </summary>
+        /// <remarks>This checks the count of the resulting query any count greater than 1 will return true.</remarks>
+        /// <param name="predicate">The expression used for evaluating any matching items.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
+        ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default);
     }
 }
