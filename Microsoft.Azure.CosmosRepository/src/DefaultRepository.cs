@@ -228,7 +228,8 @@ namespace Microsoft.Azure.CosmosRepository
                     await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
                         .ConfigureAwait(false);
             }
-            catch (CosmosException e) when(e.StatusCode == HttpStatusCode.NotFound)
+            catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
+
             {
                 return false;
             }
