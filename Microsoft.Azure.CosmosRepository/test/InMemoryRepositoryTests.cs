@@ -369,7 +369,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Dog dog = new("cocker spaniel");
             _dogRepository.Items.TryAdd(dog.Id, dog);
 
-
             //Act
             bool exists = await _dogRepository.ExistsAsync(dog.Id, dog.Breed);
 
