@@ -81,6 +81,6 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <summary>
         /// Container options provided by the <see cref="Builders.IItemContainerBuilder"/>
         /// </summary>
-        internal IReadOnlyList<ContainerOptions> ContainerOptions => ContainerBuilder.Options;
+        internal IReadOnlyList<ContainerOptionsBuilder> ContainerOptions => ContainerBuilder.Options;
     }
 }

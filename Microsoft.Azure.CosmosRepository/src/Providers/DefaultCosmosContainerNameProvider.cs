@@ -3,18 +3,16 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.Azure.CosmosRepository.Attributes;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosContainerNameProvider" />
-    class  DefaultCosmosContainerNameProvider : BaseCosmosAttributeConstraintProvider<string, ContainerAttribute>, ICosmosContainerNameProvider
+    class  DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
     {
         private readonly IOptions<RepositoryOptions> _options;
         static readonly ConcurrentDictionary<Type, string> ContainerNameMap = new();
@@ -25,23 +23,24 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         }
 
         /// <inheritdoc />
-        public string GetContainerName<TItem>() where TItem : IItem => GetConstraint<TItem>();
-
-        protected override string GetConstraintFactory((Type ConstraintAttributeType, Type Type) key)
+        public string GetContainerName<TItem>() where TItem : IItem
         {
+            Type itemType = typeof(TItem);
+            Type attributeType = typeof(ContainerAttribute);
+
             Attribute attribute =
-                Attribute.GetCustomAttribute(key.Type, key.ConstraintAttributeType);
+                Attribute.GetCustomAttribute(itemType, attributeType);
 
-            ContainerOptions options = _options.Value.ContainerOptions.FirstOrDefault(opts => opts.Type == key.Type);
+            ContainerOptionsBuilder optionsBuilder = _options.Value.ContainerOptions.FirstOrDefault(opts => opts.Type == itemType);
 
-            if (options is { } && string.IsNullOrWhiteSpace(options.Name) is false)
+            if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.Name) is false)
             {
-                return options.Name;
+                return optionsBuilder.Name;
             }
 
             return attribute is ContainerAttribute containerAttribute
                 ? containerAttribute.Name
-                : key.Type.Name;
+                : itemType.Name;
         }
     }
 }
