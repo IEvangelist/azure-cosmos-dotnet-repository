@@ -10,7 +10,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 {
     class DefaultCosmosItemConfigurationProvider : ICosmosItemConfigurationProvider
     {
-        private static readonly ConcurrentDictionary<Type, ItemOptions> ItemOptionsMap = new();
+        private static readonly ConcurrentDictionary<Type, ItemOptions> s_itemOptionsMap = new();
 
         private readonly ICosmosContainerNameProvider _containerNameProvider;
         private readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
