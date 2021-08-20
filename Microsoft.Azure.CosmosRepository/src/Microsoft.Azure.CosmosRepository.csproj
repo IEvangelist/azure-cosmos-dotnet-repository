@@ -55,6 +55,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>
