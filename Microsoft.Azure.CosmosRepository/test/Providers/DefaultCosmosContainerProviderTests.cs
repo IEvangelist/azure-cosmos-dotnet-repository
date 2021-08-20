@@ -18,77 +18,31 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
     {
         readonly ILoggerFactory _loggerFactory = new LoggerFactory();
         readonly Mock<IOptions<RepositoryOptions>> _options = new ();
+        private readonly Mock<ICosmosItemConfigurationProvider> _itemConfigurationProvider = new();
 
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullCosmosClient() =>
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     null,
-                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
-                    new DefaultCosmosContainerNameProvider(_options.Object),
-                    new DefaultCosmosUniqueKeyPolicyProvider(),
                     Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data",
                         ContainerId = "container"
                     }),
+                    _itemConfigurationProvider.Object,
                     _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
 
-        [Fact]
-        public void NewDefaultCosmosContainerProviderThrowsWithNullCosmosPartitionKeyNameProvider() =>
-            Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider<TestItem>(
-                    new TestCosmosClientProvider(),
-                    null,
-                    new DefaultCosmosContainerNameProvider(_options.Object),
-                    new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
-                    {
-                        DatabaseId = "data",
-                        ContainerId = "container"
-                    }),
-                    _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
 
-        [Fact]
-        public void NewDefaultCosmosContainerProviderThrowsWithNullCosmosContainerNameProvider() =>
-            Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider<TestItem>(
-                    new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
-                    null,
-                    new DefaultCosmosUniqueKeyPolicyProvider(),
-                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
-                    {
-                        DatabaseId = "data",
-                        ContainerId = "container"
-                    }),
-                    _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
-
-        [Fact]
-        public void NewDefaultCosmosContainerProviderThrowsWithNullUniqueKeyPolicyProvider() =>
-            Assert.Throws<ArgumentNullException>(
-                () => new DefaultCosmosContainerProvider<TestItem>(
-                    new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
-                    new DefaultCosmosContainerNameProvider(_options.Object),
-                    null,
-                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
-                    {
-                        DatabaseId = "data",
-                        ContainerId = "container"
-                    }),
-                    _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
 
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullOptions() =>
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
-                    new DefaultCosmosContainerNameProvider(_options.Object),
-                    new DefaultCosmosUniqueKeyPolicyProvider(),
                     null,
+                    _itemConfigurationProvider.Object,
                     _loggerFactory.CreateLogger<DefaultCosmosContainerProvider<TestItem>>()));
 
         [Fact]
@@ -96,56 +50,53 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
-                    new DefaultCosmosContainerNameProvider(_options.Object),
-                    new DefaultCosmosUniqueKeyPolicyProvider(),
                     Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         DatabaseId = "data",
                         ContainerId = "container"
-                    }), null));
+                    }),
+                    _itemConfigurationProvider.Object,
+                    null));
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullDatabaseId() =>
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
-                    new DefaultCosmosContainerNameProvider(_options.Object),
-                    new DefaultCosmosUniqueKeyPolicyProvider(),
                     Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         ContainerId = "container"
-                    }), null));
+                    }),
+                    _itemConfigurationProvider.Object,
+                    null));
 
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullContainerId() =>
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
-                    new DefaultCosmosContainerNameProvider(_options.Object),
-                    new DefaultCosmosUniqueKeyPolicyProvider(),
+
                     Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data"
-                    }), null));
+                    }),
+                    _itemConfigurationProvider.Object,
+                    null));
 
         [Fact]
         public void NewDefaultCosmosContainerProviderThrowsWithNullLogger() =>
             Assert.Throws<ArgumentNullException>(
                 () => new DefaultCosmosContainerProvider<TestItem>(
                     new TestCosmosClientProvider(),
-                    new DefaultCosmosPartitionKeyPathProvider(_options.Object),
-                    new DefaultCosmosContainerNameProvider(_options.Object),
-                    new DefaultCosmosUniqueKeyPolicyProvider(),
                     Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                     {
                         CosmosConnectionString = "pickles",
                         DatabaseId = "data",
                         ContainerId = "container"
-                    }), null));
+                    }),
+                    _itemConfigurationProvider.Object,
+                    null));
     }
 
     public class TestItem : Item { }

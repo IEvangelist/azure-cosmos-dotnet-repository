@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Microsoft.Azure.CosmosRepository.Attributes;
+using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Options;
 
@@ -11,7 +12,6 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosPartitionKeyPathProvider" />
     class DefaultCosmosPartitionKeyPathProvider :
-        BaseCosmosAttributeConstraintProvider<string, PartitionKeyPathAttribute>,
         ICosmosPartitionKeyPathProvider
     {
         private readonly IOptions<RepositoryOptions> _options;
@@ -22,19 +22,20 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         }
 
         /// <inheritdoc />
-        public string GetPartitionKeyPath<TItem>() where TItem : IItem => GetConstraint<TItem>();
-
-        protected override string GetConstraintFactory((Type ConstraintAttributeType, Type Type) key)
+        public string GetPartitionKeyPath<TItem>() where TItem : IItem
         {
-            ContainerOptions options = _options.Value.ContainerOptions.FirstOrDefault(opts => opts.Type == key.Type);
+            Type itemType = typeof(TItem);
+            Type attributeType = typeof(PartitionKeyPathAttribute);
 
-            if (options is { } && string.IsNullOrWhiteSpace(options.PartitionKey) is false)
+            ContainerOptionsBuilder optionsBuilder = _options.Value.ContainerOptions.FirstOrDefault(opts => opts.Type == itemType);
+
+            if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
             {
-                return options.PartitionKey;
+                return optionsBuilder.PartitionKey;
             }
 
             return Attribute.GetCustomAttribute(
-                key.Type, key.ConstraintAttributeType) is PartitionKeyPathAttribute partitionKeyPathAttribute
+                itemType, attributeType) is PartitionKeyPathAttribute partitionKeyPathAttribute
                 ? partitionKeyPathAttribute.Path
                 : "/id";
         }

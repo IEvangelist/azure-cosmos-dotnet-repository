@@ -54,7 +54,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<ICosmosContainerNameProvider, DefaultCosmosContainerNameProvider>()
                     .AddSingleton<ICosmosUniqueKeyPolicyProvider, DefaultCosmosUniqueKeyPolicyProvider>()
                     .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
-                    .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
+                    .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
+                    .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>();
 
             if (setupAction != default)
             {
