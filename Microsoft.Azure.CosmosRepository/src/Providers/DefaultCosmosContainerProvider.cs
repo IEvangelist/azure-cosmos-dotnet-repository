@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Attributes;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Validators;
 using Microsoft.Extensions.Logging;
@@ -56,15 +57,9 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     Id = _options.ContainerPerItemType
                         ? itemOptions.ContainerName
                         : _options.ContainerId,
-                    PartitionKeyPath = itemOptions.PartitionKeyPath
+                    PartitionKeyPath = itemOptions.PartitionKeyPath,
+                    UniqueKeyPolicy = itemOptions.UniqueKeyPolicy ?? new()
                 };
-
-                // Setting containerProperties.UniqueKeyPolicy to null throws, prevent that issue.
-                UniqueKeyPolicy uniqueKeyPolicy = itemOptions.UniqueKeyPolicy;
-                if (uniqueKeyPolicy is not null)
-                {
-                    containerProperties.UniqueKeyPolicy = uniqueKeyPolicy;
-                }
 
                 Container container =
                     await database.CreateContainerIfNotExistsAsync(
