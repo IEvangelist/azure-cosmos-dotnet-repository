@@ -19,8 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         public DefaultCosmosItemConfigurationProvider(
             ICosmosContainerNameProvider containerNameProvider,
             ICosmosPartitionKeyPathProvider cosmosPartitionKeyPathProvider,
-            ICosmosUniqueKeyPolicyProvider cosmosUniqueKeyPolicyProvider
-        )
+            ICosmosUniqueKeyPolicyProvider cosmosUniqueKeyPolicyProvider)
         {
             _containerNameProvider = containerNameProvider;
             _cosmosPartitionKeyPathProvider = cosmosPartitionKeyPathProvider;
