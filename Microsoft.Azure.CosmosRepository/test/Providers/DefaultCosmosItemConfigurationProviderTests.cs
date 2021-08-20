@@ -16,15 +16,13 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         private readonly Mock<ICosmosPartitionKeyPathProvider> _partitionKeyPathProvider = new();
         private readonly Mock<ICosmosUniqueKeyPolicyProvider> _uniqueKeyPolicyProvider = new();
 
-
         [Fact]
         public void GetOptionsAlwaysGetOptionsForItem()
         {
             ICosmosItemConfigurationProvider provider = new DefaultCosmosItemConfigurationProvider(
                 _containerNameProvider.Object,
                 _partitionKeyPathProvider.Object,
-                _uniqueKeyPolicyProvider.Object
-            );
+                _uniqueKeyPolicyProvider.Object);
 
             UniqueKeyPolicy uniqueKeyPolicy = new();
 

@@ -10,7 +10,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 {
     class DefaultCosmosItemConfigurationProvider : ICosmosItemConfigurationProvider
     {
-        private static readonly ConcurrentDictionary<Type, ItemOptions> s_itemOptionsMap = new();
+        private static readonly ConcurrentDictionary<Type, ItemOptions> _itemOptionsMap = new();
 
         private readonly ICosmosContainerNameProvider _containerNameProvider;
         private readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
@@ -26,15 +26,14 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             _cosmosUniqueKeyPolicyProvider = cosmosUniqueKeyPolicyProvider;
         }
 
-        public ItemOptions GetOptions<TItem>() where TItem : IItem
-            => ItemOptionsMap.GetOrAdd(typeof(TItem), AddOptions<TItem>);
+        public ItemOptions GetOptions<TItem>() where TItem : IItem =>
+            _itemOptionsMap.GetOrAdd(typeof(TItem), AddOptions<TItem>);
 
         private ItemOptions AddOptions<TItem>(Type optionType) where TItem : IItem
         {
             string containerName = _containerNameProvider.GetContainerName<TItem>();
             string partitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>();
             UniqueKeyPolicy uniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy<TItem>();
-
 
             return new(optionType, containerName, partitionKeyPath, uniqueKeyPolicy);
         }
