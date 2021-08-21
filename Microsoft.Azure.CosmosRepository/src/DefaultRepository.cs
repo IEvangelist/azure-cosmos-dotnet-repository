@@ -26,7 +26,8 @@ namespace Microsoft.Azure.CosmosRepository
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
         readonly ILogger<DefaultRepository<TItem>> _logger;
-        private readonly ICosmosQueryableProcessor _cosmosQueryableProcessor;
+        readonly ICosmosQueryableProcessor _cosmosQueryableProcessor;
+        readonly IRepositoryExpressionProvider _repositoryExpressionProvider;
 
         (bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
             (_optionsMonitor.CurrentValue.OptimizeBandwidth, new ItemRequestOptions
@@ -38,8 +39,10 @@ namespace Microsoft.Azure.CosmosRepository
             IOptionsMonitor<RepositoryOptions> optionsMonitor,
             ICosmosContainerProvider<TItem> containerProvider,
             ILogger<DefaultRepository<TItem>> logger,
-            ICosmosQueryableProcessor cosmosQueryableProcessor) =>
-            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor) = (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor);
+            ICosmosQueryableProcessor cosmosQueryableProcessor,
+            IRepositoryExpressionProvider repositoryExpressionProvider) =>
+            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider) =
+            (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider);
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
@@ -83,8 +86,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(predicate.Compose(
-                        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso));
+                    .Where(_repositoryExpressionProvider.Build(predicate));
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 
@@ -237,8 +239,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(predicate.Compose(
-                        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso));
+                    .Where(_repositoryExpressionProvider.Build(predicate));
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 

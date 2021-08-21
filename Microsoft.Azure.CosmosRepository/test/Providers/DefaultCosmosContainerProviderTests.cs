@@ -4,9 +4,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
+using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -98,8 +98,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                     _itemConfigurationProvider.Object,
                     null));
     }
-
-    public class TestItem : Item { }
 
     internal class TestCosmosClientProvider : ICosmosClientProvider
     {

@@ -12,6 +12,7 @@ using System.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
+using Microsoft.Azure.CosmosRepository.Processors;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -55,7 +56,9 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<ICosmosUniqueKeyPolicyProvider, DefaultCosmosUniqueKeyPolicyProvider>()
                     .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
                     .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
-                    .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>();
+                    .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>()
+                    .AddSingleton<ICosmosQueryableProcessor, DefaultCosmosQueryableProcessor>()
+                    .AddSingleton<IRepositoryExpressionProvider, DefaultRepositoryExpressionProvider>();
 
             if (setupAction != default)
             {
