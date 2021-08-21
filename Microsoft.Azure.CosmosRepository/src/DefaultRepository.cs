@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -38,18 +39,18 @@ namespace Microsoft.Azure.CosmosRepository
             ILogger<DefaultRepository<TItem>> logger) =>
             (_optionsMonitor, _containerProvider, _logger) = (optionsMonitor, containerProvider, logger);
 
-        public async ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default, int pageSize = 25,
-            int page = 1, string continuationToken = null)
+        public async IAsyncEnumerable<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default, int pageSize = 25,
+            int page = 1)
         {
             if (page < 1) throw new ArgumentOutOfRangeException(nameof(page));
             if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize));
-
 
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
             Expression<Func<TItem, bool>> queryPredicate = predicate.Compose(item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso);
             IQueryable<TItem> query = null;
             QueryRequestOptions queryOptions = new() { MaxItemCount = pageSize };
 
+            string continuationToken = null;
             if (continuationToken is null)
             {
                 query = page is 1 ?
@@ -71,12 +72,10 @@ namespace Microsoft.Azure.CosmosRepository
                 items.AddRange(next.Resource);
                 charge += next.RequestCharge;
                 continuationToken = next.ContinuationToken;
+
+                yield return new Page<TItem>(total, page, pageSize, items, charge);
             }
-
-            return new Page<TItem>(total, page, pageSize, items, charge, continuationToken);
         }
-
-
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(

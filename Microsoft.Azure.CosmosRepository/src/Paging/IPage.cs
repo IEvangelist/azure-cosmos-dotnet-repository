@@ -33,11 +33,6 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         IEnumerable<T> Items { get; }
 
         /// <summary>
-        /// Represents a marker from this query allowing you to continue where you left off.
-        /// </summary>
-        string? ContinuationToken { get; }
-
-        /// <summary>
         /// The amount of RU's the given query cost.
         /// </summary>
         double Charge { get; }

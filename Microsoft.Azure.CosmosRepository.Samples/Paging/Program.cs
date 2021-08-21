@@ -21,15 +21,10 @@ ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =
 .BuildServiceProvider();
 
 IRepository<Person> repository = provider.GetRequiredService<IRepository<Person>>();
-
+//await Seed();
 await PageWithContinuationTokens();
 await JumpStraightToPage();
-// await JumpToStraightToPage4ThenUseContinuationToken();
-
-
-
-
-
+await JumpToStraightToPage4ThenUseContinuationToken();
 
 async Task JumpToStraightToPage4ThenUseContinuationToken()
 {
@@ -37,16 +32,12 @@ async Task JumpToStraightToPage4ThenUseContinuationToken()
     int pageSize = 10;
     int totalItemsRead = 0;
     int totalItemsExpectedToRead = 60;
-    string continuationToken = null;
 
     double totalRuCharge = 0;
 
     //TODO: this currently fails on the second pass when using the continuation token with a 400 bad request for a malformed token not entirely sure why yet.
-
-    while (totalItemsRead < totalItemsExpectedToRead)
+    await foreach(IPage<Person> page in repository.PageAsync(p => p.Age > 10, pageSize: pageSize, page: pageNumber))
     {
-        IPage<Person> page = await repository.PageAsync(p => p.Age > 10, pageSize: pageSize, page: pageNumber, continuationToken: continuationToken);
-        continuationToken = page.ContinuationToken;
         totalItemsRead += page.Items.Count();
         pageNumber++;
         totalRuCharge += page.Charge;
@@ -58,19 +49,16 @@ async Task JumpToStraightToPage4ThenUseContinuationToken()
     WriteLine($"Total charge for paging the whole container using continuation tokens {totalRuCharge} RUs");
 }
 
-
 async Task JumpStraightToPage()
 {
     int pageNumber = 3;
     int pageSize = 10;
 
-    IPage<Person> page = await repository.PageAsync(p => p.Age > 10, pageSize: pageSize, page: pageNumber);
+    IPage<Person> page = await repository.PageAsync(p => p.Age > 10, pageSize: pageSize, page: pageNumber).FirstAsync();
     pageNumber++;
     WriteLine($"Page {page.Number} returned {page.Items.Count()} results and cost {page.Charge} RUs");
     WriteLine($"Names in page [{string.Join(",", page.Items.Select(i => $"{i.Name} ({i.Age})"))}]");
 }
-
-
 
 async Task PageWithContinuationTokens()
 {
@@ -78,14 +66,11 @@ async Task PageWithContinuationTokens()
     int pageSize = 10;
     int totalItemsRead = 0;
     int totalItemsExpectedToRead = 100;
-    string continuationToken = null;
 
     double totalRuCharge = 0;
 
-    while (totalItemsRead < totalItemsExpectedToRead)
+    await foreach (IPage<Person> page in repository.PageAsync(p => p.Age > 10, pageSize: pageSize, page: pageNumber))
     {
-        IPage<Person> page = await repository.PageAsync(p => p.Age > 10, pageSize: pageSize, page: pageNumber, continuationToken: continuationToken);
-        continuationToken = page.ContinuationToken;
         totalItemsRead += page.Items.Count();
         pageNumber++;
         totalRuCharge += page.Charge;

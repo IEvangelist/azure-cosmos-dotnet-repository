@@ -18,15 +18,13 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <param name="size"></param>
         /// <param name="items"></param>
         /// <param name="charge"></param>
-        /// <param name="continuationToken"></param>
-        public Page(int total, int number, int size, IEnumerable<T> items, double charge, string? continuationToken = null)
+        public Page(int total, int number, int size, IEnumerable<T> items, double charge)
         {
             Total = total;
             Number = number;
             Size = size;
             Items = items;
             Charge = charge;
-            ContinuationToken = continuationToken;
         }
 
 
@@ -41,9 +39,6 @@ namespace Microsoft.Azure.CosmosRepository.Paging
 
         /// <inheritdoc />
         public IEnumerable<T> Items { get; }
-
-        /// <inheritdoc />
-        public string? ContinuationToken { get; }
 
         /// <inheritdoc />
         public double Charge { get; }

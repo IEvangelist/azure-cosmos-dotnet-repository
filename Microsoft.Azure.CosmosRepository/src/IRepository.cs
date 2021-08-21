@@ -40,11 +40,9 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="cancellationToken"></param>
         /// <param name="pageSize"></param>
         /// <param name="page"></param>
-        /// <param name="continuationToken"></param>
         /// <returns></returns>
-        ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate,
-            CancellationToken cancellationToken = default, int pageSize = 25, int page = 1,
-            string continuationToken = null);
+        IAsyncEnumerable<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default, int pageSize = 25, int page = 1);
 
 
         /// <summary>

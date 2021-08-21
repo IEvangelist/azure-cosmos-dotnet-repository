@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Bogus" Version="33.0.2" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+      <PackageReference Include="System.Linq.Async" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>

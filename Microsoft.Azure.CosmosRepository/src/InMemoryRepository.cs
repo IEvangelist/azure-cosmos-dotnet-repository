@@ -27,11 +27,10 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="cancellationToken"></param>
         /// <param name="pageSize"></param>
         /// <param name="page"></param>
-        /// <param name="continuationToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default, int pageSize = 25,
-            int page = 1, string continuationToken = null)
+        public IAsyncEnumerable<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default, int pageSize = 25,
+            int page = 1)
         {
             throw new NotImplementedException();
         }
