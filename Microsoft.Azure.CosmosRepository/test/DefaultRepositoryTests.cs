@@ -79,6 +79,39 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(items, result);
             Assert.Equal(2, queryable.ToList().Count);
         }
+
+        [Fact]
+        public async Task ExistsAsyncGivenExpressionQueriesContainerCorrectly()
+        {
+            //Arrange
+            List<TestItem> items = new()
+            {
+                new(){Id = "a"},
+                new(){Id = "c"},
+                new(){Id = "ab"}
+            };
+
+            Expression<Func<TestItem, bool>> predicate = item => item.Id == "a" || item.Id == "ab";
+
+            Expression<Func<TestItem, bool>> expectedPredicate = _expressionProvider.Build(predicate);
+
+            IOrderedQueryable<TestItem> queryable = items.AsQueryable().Where(expectedPredicate).OrderBy(i => i.Id);
+            _containerProvider.Setup(o => o.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            _container
+                .Setup(o => o.GetItemLinqQueryable<TestItem>(false, null, null, null))
+                .Returns(queryable);
+
+            _queryableProcessor.Setup(o => o.CountAsync(queryable, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(items.Count);
+
+            //Act
+            bool result = await Repository.ExistsAsync(predicate);
+
+            //Assert
+            Assert.True(result);
+            Assert.Equal(2, queryable.ToList().Count);
+        }
     }
 
     class MockExpressionProvider : IRepositoryExpressionProvider
