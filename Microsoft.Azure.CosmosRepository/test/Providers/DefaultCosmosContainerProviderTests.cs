@@ -48,11 +48,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 _repositoryOptionsValidator.Object);
 
         [Fact]
-        public async Task GetContainerAsyncWhenContainerPerItemTypeIsSetGetsCorrectContainer()
+        public async Task GetContainerAsyncWhenContainerPerItemTypeIsNotSetGetsCorrectContainer()
         {
             //Arrange
             ICosmosContainerProvider<TestItem> provider = CreateDefaultCosmosContainerProvider();
-
+            _repositoryOptions.ContainerPerItemType = false;
             _repositoryOptions.ContainerId = "containerA";
 
             ItemOptions itemOptions = new (typeof(TestItem), "a", "/id", new());
@@ -65,10 +65,42 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
             _database.Setup(o =>
                 o.CreateContainerIfNotExistsAsync(
-                    It.Is<ContainerProperties>(c => c.Id == "containerA"),
+                    It.Is<ContainerProperties>(c => c.Id == "containerA"
+                                                    && c.PartitionKeyPath == "/id"),
                     (int?) null,
                     null,
                     CancellationToken.None))
+                .ReturnsAsync(_containerResponse.Object);
+
+            //Act
+            Container container = await provider.GetContainerAsync();
+
+            //Assert
+            Assert.Equal(_container.Object, container);
+        }
+
+        [Fact]
+        public async Task GetContainerAsyncWhenContainerPerItemTypeIsSetGetsCorrectContainer()
+        {
+            //Arrange
+            ICosmosContainerProvider<TestItem> provider = CreateDefaultCosmosContainerProvider();
+            _repositoryOptions.ContainerPerItemType = true;
+
+            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new());
+
+            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
+
+            _cosmosClient.Setup(o =>
+                    o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
+                .ReturnsAsync(_databaseResponse.Object);
+
+            _database.Setup(o =>
+                    o.CreateContainerIfNotExistsAsync(
+                        It.Is<ContainerProperties>(c => c.Id == "a"
+                                                        && c.PartitionKeyPath == "/test"),
+                        (int?) null,
+                        null,
+                        CancellationToken.None))
                 .ReturnsAsync(_containerResponse.Object);
 
             //Act
