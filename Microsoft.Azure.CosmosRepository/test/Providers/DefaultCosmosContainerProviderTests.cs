@@ -24,11 +24,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         readonly Mock<ICosmosItemConfigurationProvider> _itemConfigurationProvider = new();
         readonly Mock<IRepositoryOptionsValidator> _repositoryOptionsValidator = new();
         readonly Mock<CosmosClient> _cosmosClient = new();
-        private readonly Mock<Database> _database = new();
-        private readonly Mock<Container> _container = new();
-        private readonly Mock<DatabaseResponse> _databaseResponse = new();
-        private readonly Mock<ContainerResponse> _containerResponse = new();
-        private readonly RepositoryOptions _repositoryOptions = new();
+        readonly Mock<Database> _database = new();
+        readonly Mock<Container> _container = new();
+        readonly Mock<DatabaseResponse> _databaseResponse = new();
+        readonly Mock<ContainerResponse> _containerResponse = new();
+        readonly RepositoryOptions _repositoryOptions = new();
 
         public DefaultCosmosContainerProviderTests()
         {
