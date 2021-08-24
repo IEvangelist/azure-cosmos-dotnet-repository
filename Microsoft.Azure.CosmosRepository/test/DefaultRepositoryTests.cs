@@ -52,9 +52,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             List<TestItem> items = new()
             {
-                new { Id = "a" },
-                new { Id = "c" },
-                new { Id = "ab" }
+                new() { Id = "a" },
+                new() { Id = "c" },
+                new() { Id = "ab" }
             };
 
             Expression<Func<TestItem, bool>> predicate = item => item.Id == "a" || item.Id == "ab";
