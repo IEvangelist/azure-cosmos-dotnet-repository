@@ -33,7 +33,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         readonly Mock<Container> _container = new();
         readonly IRepositoryExpressionProvider _expressionProvider = new MockExpressionProvider();
 
-
         public DefaultRepositoryTests()
         {
             _options.Setup(o => o.CurrentValue).Returns(_repositoryOptions);
