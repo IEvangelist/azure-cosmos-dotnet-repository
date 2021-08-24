@@ -42,7 +42,7 @@ namespace Microsoft.Azure.CosmosRepository
             ICosmosQueryableProcessor cosmosQueryableProcessor,
             IRepositoryExpressionProvider repositoryExpressionProvider) =>
             (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider) =
-            (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider);
+                (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider);
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
