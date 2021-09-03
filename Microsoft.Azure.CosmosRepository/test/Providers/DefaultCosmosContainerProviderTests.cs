@@ -5,9 +5,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
+using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Microsoft.Azure.CosmosRepository.Validators;
 using Microsoft.Azure.CosmosRepositoryTests.Validators;
 using Microsoft.Extensions.Logging;
@@ -110,8 +110,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Equal(_container.Object, container);
         }
     }
-
-    public class TestItem : Item { }
 
     internal class TestCosmosClientProvider : ICosmosClientProvider
     {

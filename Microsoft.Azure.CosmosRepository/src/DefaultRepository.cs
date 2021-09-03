@@ -12,6 +12,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,6 +26,8 @@ namespace Microsoft.Azure.CosmosRepository
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
         readonly ILogger<DefaultRepository<TItem>> _logger;
+        readonly ICosmosQueryableProcessor _cosmosQueryableProcessor;
+        readonly IRepositoryExpressionProvider _repositoryExpressionProvider;
 
         (bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
             (_optionsMonitor.CurrentValue.OptimizeBandwidth, new ItemRequestOptions
@@ -35,8 +38,11 @@ namespace Microsoft.Azure.CosmosRepository
         public DefaultRepository(
             IOptionsMonitor<RepositoryOptions> optionsMonitor,
             ICosmosContainerProvider<TItem> containerProvider,
-            ILogger<DefaultRepository<TItem>> logger) =>
-            (_optionsMonitor, _containerProvider, _logger) = (optionsMonitor, containerProvider, logger);
+            ILogger<DefaultRepository<TItem>> logger,
+            ICosmosQueryableProcessor cosmosQueryableProcessor,
+            IRepositoryExpressionProvider repositoryExpressionProvider) =>
+            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider) =
+                (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider);
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
@@ -80,23 +86,11 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(predicate.Compose(
-                        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso));
+                    .Where(_repositoryExpressionProvider.Build(predicate));
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 
-            using FeedIterator<TItem> iterator = query.ToFeedIterator();
-
-            List<TItem> results = new();
-            while (iterator.HasMoreResults)
-            {
-                foreach (TItem result in await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false))
-                {
-                    results.Add(result);
-                }
-            }
-
-            return results;
+            return await _cosmosQueryableProcessor.IterateAsync(query, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -110,7 +104,7 @@ namespace Microsoft.Azure.CosmosRepository
             TryLogDebugDetails(_logger, () => $"Read {query}");
 
             QueryDefinition queryDefinition = new(query);
-            return await IterateQueryInternalAsync(container, queryDefinition, cancellationToken);
+            return await _cosmosQueryableProcessor.IterateAsync<TItem>(container, queryDefinition, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -123,7 +117,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             TryLogDebugDetails(_logger, () => $"Read {queryDefinition.QueryText}");
 
-            return await IterateQueryInternalAsync(container, queryDefinition, cancellationToken);
+            return await _cosmosQueryableProcessor.IterateAsync<TItem>(container, queryDefinition, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -245,31 +239,12 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(predicate.Compose(
-                        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso));
+                    .Where(_repositoryExpressionProvider.Build(predicate));
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 
-            int count = await query.CountAsync(cancellationToken);
-
+            int count = await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
             return count > 0;
-        }
-
-        static async Task<IEnumerable<TItem>> IterateQueryInternalAsync(
-            Container container,
-            QueryDefinition queryDefinition,
-            CancellationToken cancellationToken)
-        {
-            using FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition);
-
-            List<TItem> results = new();
-            while (queryIterator.HasMoreResults)
-            {
-                FeedResponse<TItem> response = await queryIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
-                results.AddRange(response.Resource);
-            }
-
-            return results;
         }
 
 
