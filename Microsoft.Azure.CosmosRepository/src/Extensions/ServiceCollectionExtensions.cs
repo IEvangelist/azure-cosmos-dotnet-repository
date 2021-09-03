@@ -13,6 +13,7 @@ using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
 using Microsoft.Azure.CosmosRepository.Processors;
+using Microsoft.Azure.CosmosRepository.Validators;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -59,6 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>()
                     .AddSingleton<ICosmosQueryableProcessor, DefaultCosmosQueryableProcessor>()
                     .AddSingleton<IRepositoryExpressionProvider, DefaultRepositoryExpressionProvider>();
+                    .AddSingleton<IRepositoryOptionsValidator, DefaultRepositoryOptionsValidator>();
 
             if (setupAction != default)
             {

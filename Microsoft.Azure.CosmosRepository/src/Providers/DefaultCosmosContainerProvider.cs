@@ -4,7 +4,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Attributes;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Validators;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -24,38 +26,15 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             ICosmosClientProvider cosmosClientProvider,
             IOptions<RepositoryOptions> options,
             ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
-            ILogger<DefaultCosmosContainerProvider<TItem>> logger)
+            ILogger<DefaultCosmosContainerProvider<TItem>> logger,
+            IRepositoryOptionsValidator repositoryOptionsValidator)
         {
-            _cosmosClientProvider = cosmosClientProvider
-                ?? throw new ArgumentNullException(
-                    nameof(cosmosClientProvider), "Cosmos client provider is required.");
-            _cosmosItemConfigurationProvider = cosmosItemConfigurationProvider
-                ?? throw new ArgumentNullException(nameof(cosmosItemConfigurationProvider) , "Cosmos item configuration provider is required.");
+            _cosmosClientProvider = cosmosClientProvider;
+            _cosmosItemConfigurationProvider = cosmosItemConfigurationProvider;
+            _options = options?.Value;
+            _logger = logger;
 
-            _options = options?.Value
-                       ?? throw new ArgumentNullException(
-                           nameof(options), "Repository options are required.");
-
-            _logger = logger
-                ?? throw new ArgumentNullException($"The {nameof(logger)} is required.");
-
-            if (_options.CosmosConnectionString is null)
-            {
-                throw new ArgumentNullException($"The {nameof(_options.CosmosConnectionString)} is required.");
-            }
-            if (_options.ContainerPerItemType is false)
-            {
-                if (_options.DatabaseId is null)
-                {
-                    throw new ArgumentNullException(
-                        $"The {nameof(_options.DatabaseId)} is required when container per item type is false.");
-                }
-                if (_options.ContainerId is null)
-                {
-                    throw new ArgumentNullException(
-                        $"The {nameof(_options.ContainerId)} is required when container per item type is false.");
-                }
-            }
+            repositoryOptionsValidator.ValidateForContainerCreation(options);
 
             _lazyContainer = new Lazy<Task<Container>>(async () => await GetContainerValueFactoryAsync());
         }
@@ -78,15 +57,9 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     Id = _options.ContainerPerItemType
                         ? itemOptions.ContainerName
                         : _options.ContainerId,
-                    PartitionKeyPath = itemOptions.PartitionKeyPath
+                    PartitionKeyPath = itemOptions.PartitionKeyPath,
+                    UniqueKeyPolicy = itemOptions.UniqueKeyPolicy ?? new()
                 };
-
-                // Setting containerProperties.UniqueKeyPolicy to null throws, prevent that issue.
-                UniqueKeyPolicy uniqueKeyPolicy = itemOptions.UniqueKeyPolicy;
-                if (uniqueKeyPolicy is not null)
-                {
-                    containerProperties.UniqueKeyPolicy = uniqueKeyPolicy;
-                }
 
                 Container container =
                     await database.CreateContainerIfNotExistsAsync(
