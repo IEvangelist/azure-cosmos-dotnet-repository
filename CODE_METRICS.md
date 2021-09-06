@@ -814,15 +814,15 @@ The `WebTier` namespace contains 2 named types.
 
 <div id='microsoft-azure-cosmosrepository'></div>
 
-## Microsoft.Azure.CosmosRepository :radioactive:
+## Microsoft.Azure.CosmosRepository :heavy_check_mark:
 
 The *Microsoft.Azure.CosmosRepository.csproj* project file contains:
 
-- 8 namespaces.
-- 34 named types.
-- 1,667 total lines of source code.
-- Approximately 375 lines of executable code.
-- The highest cyclomatic complexity is 10 :radioactive:.
+- 10 namespaces.
+- 40 named types.
+- 1,719 total lines of source code.
+- Approximately 385 lines of executable code.
+- The highest cyclomatic complexity is 7 :heavy_check_mark:.
 
 <details>
 <summary>
@@ -1006,8 +1006,8 @@ The `Microsoft.Azure.CosmosRepository.Builders` namespace contains 3 named types
 The `Microsoft.Azure.CosmosRepository` namespace contains 7 named types.
 
 - 7 named types.
-- 726 total lines of source code.
-- Approximately 209 lines of executable code.
+- 700 total lines of source code.
+- Approximately 196 lines of executable code.
 - The highest cyclomatic complexity is 6 :heavy_check_mark:.
 
 <details>
@@ -1018,34 +1018,35 @@ The `Microsoft.Azure.CosmosRepository` namespace contains 7 named types.
 </summary>
 <br>
 
-- The `DefaultRepository<TItem>` contains 21 members.
-- 262 total lines of source code.
-- Approximately 97 lines of executable code.
+- The `DefaultRepository<TItem>` contains 22 members.
+- 236 total lines of source code.
+- Approximately 84 lines of executable code.
 - The highest cyclomatic complexity is 4 :heavy_check_mark:.
 
 | Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| Field | [25](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L25 "ICosmosContainerProvider<TItem> DefaultRepository<TItem>._containerProvider") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
-| Field | [27](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L27 "ILogger<DefaultRepository<TItem>> DefaultRepository<TItem>._logger") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
-| Field | [26](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L26 "IOptionsMonitor<RepositoryOptions> DefaultRepository<TItem>._optionsMonitor") | 100 | 0 :heavy_check_mark: | 0 | 2 | 1 / 0 |
-| Method | [35](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L35 "DefaultRepository<TItem>.DefaultRepository(IOptionsMonitor<RepositoryOptions> optionsMonitor, ICosmosContainerProvider<TItem> containerProvider, ILogger<DefaultRepository<TItem>> logger)") | 89 | 1 :heavy_check_mark: | 0 | 5 | 5 / 1 |
-| Method | [130](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L130 "ValueTask<TItem> DefaultRepository<TItem>.CreateAsync(TItem value, CancellationToken cancellationToken = null)") | 68 | 1 :heavy_check_mark: | 0 | 9 | 16 / 6 |
-| Method | [147](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L147 "ValueTask<IEnumerable<TItem>> DefaultRepository<TItem>.CreateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = null)") | 71 | 1 :heavy_check_mark: | 0 | 5 | 13 / 6 |
-| Method | [178](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L178 "ValueTask DefaultRepository<TItem>.DeleteAsync(TItem value, CancellationToken cancellationToken = null)") | 80 | 1 :heavy_check_mark: | 0 | 2 | 5 / 2 |
-| Method | [184](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L184 "ValueTask DefaultRepository<TItem>.DeleteAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = null)") | 76 | 2 :heavy_check_mark: | 0 | 4 | 6 / 3 |
-| Method | [191](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L191 "ValueTask DefaultRepository<TItem>.DeleteAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = null)") | 65 | 2 :heavy_check_mark: | 0 | 10 | 19 / 8 |
-| Method | [211](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L211 "ValueTask<bool> DefaultRepository<TItem>.ExistsAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = null)") | 76 | 2 :heavy_check_mark: | 0 | 4 | 3 / 3 |
-| Method | [215](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L215 "ValueTask<bool> DefaultRepository<TItem>.ExistsAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = null)") | 65 | 2 :heavy_check_mark: | 0 | 9 | 25 / 8 |
-| Method | [241](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L241 "ValueTask<bool> DefaultRepository<TItem>.ExistsAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = null)") | 64 | 2 :heavy_check_mark: | 0 | 11 | 17 / 8 |
-| Method | [42](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L42 "ValueTask<TItem> DefaultRepository<TItem>.GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = null)") | 76 | 2 :heavy_check_mark: | 0 | 4 | 6 / 3 |
-| Method | [49](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L49 "ValueTask<TItem> DefaultRepository<TItem>.GetAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = null)") | 62 | 4 :heavy_check_mark: | 0 | 10 | 24 / 9 |
-| Method | [74](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L74 "ValueTask<IEnumerable<TItem>> DefaultRepository<TItem>.GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = null)") | 60 | 4 :heavy_check_mark: | 0 | 14 | 28 / 12 |
-| Method | [103](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L103 "ValueTask<IEnumerable<TItem>> DefaultRepository<TItem>.GetByQueryAsync(string query, CancellationToken cancellationToken = null)") | 69 | 1 :heavy_check_mark: | 0 | 9 | 13 / 6 |
-| Method | [117](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L117 "ValueTask<IEnumerable<TItem>> DefaultRepository<TItem>.GetByQueryAsync(QueryDefinition queryDefinition, CancellationToken cancellationToken = null)") | 71 | 1 :heavy_check_mark: | 0 | 9 | 12 / 5 |
-| Method | [258](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L258 "Task<IEnumerable<TItem>> DefaultRepository<TItem>.IterateQueryInternalAsync(Container container, QueryDefinition queryDefinition, CancellationToken cancellationToken)") | 71 | 2 :heavy_check_mark: | 0 | 9 | 16 / 6 |
-| Property | [29](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L29 "(bool OptimizeBandwidth, ItemRequestOptions Options) DefaultRepository<TItem>.RequestOptions") | 100 | 2 :heavy_check_mark: | 0 | 5 | 5 / 2 |
-| Method | [276](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L276 "void DefaultRepository<TItem>.TryLogDebugDetails(ILogger logger, Func<string> getMessage)") | 86 | 4 :heavy_check_mark: | 0 | 3 | 7 / 2 |
-| Method | [161](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L161 "ValueTask<TItem> DefaultRepository<TItem>.UpdateAsync(TItem value, CancellationToken cancellationToken = null)") | 66 | 2 :heavy_check_mark: | 0 | 11 | 16 / 7 |
+| Field | [26](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L26 "ICosmosContainerProvider<TItem> DefaultRepository<TItem>._containerProvider") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Field | [29](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L29 "ICosmosQueryableProcessor DefaultRepository<TItem>._cosmosQueryableProcessor") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Field | [28](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L28 "ILogger<DefaultRepository<TItem>> DefaultRepository<TItem>._logger") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Field | [27](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L27 "IOptionsMonitor<RepositoryOptions> DefaultRepository<TItem>._optionsMonitor") | 100 | 0 :heavy_check_mark: | 0 | 2 | 1 / 0 |
+| Field | [30](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L30 "IRepositoryExpressionProvider DefaultRepository<TItem>._repositoryExpressionProvider") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Method | [38](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L38 "DefaultRepository<TItem>.DefaultRepository(IOptionsMonitor<RepositoryOptions> optionsMonitor, ICosmosContainerProvider<TItem> containerProvider, ILogger<DefaultRepository<TItem>> logger, ICosmosQueryableProcessor cosmosQueryableProcessor, IRepositoryExpressionProvider repositoryExpressionProvider)") | 87 | 1 :heavy_check_mark: | 0 | 7 | 8 / 1 |
+| Method | [124](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L124 "ValueTask<TItem> DefaultRepository<TItem>.CreateAsync(TItem value, CancellationToken cancellationToken = null)") | 68 | 1 :heavy_check_mark: | 0 | 9 | 16 / 6 |
+| Method | [141](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L141 "ValueTask<IEnumerable<TItem>> DefaultRepository<TItem>.CreateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = null)") | 71 | 1 :heavy_check_mark: | 0 | 5 | 13 / 6 |
+| Method | [172](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L172 "ValueTask DefaultRepository<TItem>.DeleteAsync(TItem value, CancellationToken cancellationToken = null)") | 80 | 1 :heavy_check_mark: | 0 | 2 | 5 / 2 |
+| Method | [178](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L178 "ValueTask DefaultRepository<TItem>.DeleteAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = null)") | 76 | 2 :heavy_check_mark: | 0 | 4 | 6 / 3 |
+| Method | [185](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L185 "ValueTask DefaultRepository<TItem>.DeleteAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = null)") | 65 | 2 :heavy_check_mark: | 0 | 10 | 19 / 8 |
+| Method | [205](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L205 "ValueTask<bool> DefaultRepository<TItem>.ExistsAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = null)") | 76 | 2 :heavy_check_mark: | 0 | 4 | 3 / 3 |
+| Method | [209](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L209 "ValueTask<bool> DefaultRepository<TItem>.ExistsAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = null)") | 65 | 2 :heavy_check_mark: | 0 | 9 | 25 / 8 |
+| Method | [235](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L235 "ValueTask<bool> DefaultRepository<TItem>.ExistsAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = null)") | 66 | 1 :heavy_check_mark: | 0 | 12 | 15 / 7 |
+| Method | [48](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L48 "ValueTask<TItem> DefaultRepository<TItem>.GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = null)") | 76 | 2 :heavy_check_mark: | 0 | 4 | 6 / 3 |
+| Method | [55](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L55 "ValueTask<TItem> DefaultRepository<TItem>.GetAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = null)") | 62 | 4 :heavy_check_mark: | 0 | 10 | 24 / 9 |
+| Method | [80](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L80 "ValueTask<IEnumerable<TItem>> DefaultRepository<TItem>.GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = null)") | 68 | 1 :heavy_check_mark: | 0 | 13 | 16 / 6 |
+| Method | [97](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L97 "ValueTask<IEnumerable<TItem>> DefaultRepository<TItem>.GetByQueryAsync(string query, CancellationToken cancellationToken = null)") | 69 | 1 :heavy_check_mark: | 0 | 10 | 13 / 6 |
+| Method | [111](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L111 "ValueTask<IEnumerable<TItem>> DefaultRepository<TItem>.GetByQueryAsync(QueryDefinition queryDefinition, CancellationToken cancellationToken = null)") | 71 | 1 :heavy_check_mark: | 0 | 10 | 12 / 5 |
+| Property | [32](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L32 "(bool OptimizeBandwidth, ItemRequestOptions Options) DefaultRepository<TItem>.RequestOptions") | 100 | 2 :heavy_check_mark: | 0 | 5 | 5 / 2 |
+| Method | [251](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L251 "void DefaultRepository<TItem>.TryLogDebugDetails(ILogger logger, Func<string> getMessage)") | 86 | 4 :heavy_check_mark: | 0 | 3 | 7 / 2 |
+| Method | [155](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/DefaultRepository.cs#L155 "ValueTask<TItem> DefaultRepository<TItem>.UpdateAsync(TItem value, CancellationToken cancellationToken = null)") | 66 | 2 :heavy_check_mark: | 0 | 11 | 16 / 7 |
 
 <a href="#microsoft-azure-cosmosrepository">:top: back to Microsoft.Azure.CosmosRepository</a>
 
@@ -1227,7 +1228,7 @@ The `Microsoft.Azure.CosmosRepository` namespace contains 7 named types.
 The `Microsoft.Extensions.DependencyInjection` namespace contains 1 named types.
 
 - 1 named types.
-- 101 total lines of source code.
+- 104 total lines of source code.
 - Approximately 22 lines of executable code.
 - The highest cyclomatic complexity is 3 :heavy_check_mark:.
 
@@ -1240,16 +1241,16 @@ The `Microsoft.Extensions.DependencyInjection` namespace contains 1 named types.
 <br>
 
 - The `ServiceCollectionExtensions` contains 4 members.
-- 98 total lines of source code.
+- 101 total lines of source code.
 - Approximately 22 lines of executable code.
 - The highest cyclomatic complexity is 3 :heavy_check_mark:.
 
 | Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| Method | [31](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Extensions/ServiceCollectionExtensions.cs#L31 "IServiceCollection ServiceCollectionExtensions.AddCosmosRepository(IServiceCollection services, Action<RepositoryOptions> setupAction = null, Action<CosmosClientOptions> additionSetupAction = null)") | 62 | 3 :heavy_check_mark: | 0 | 9 | 44 / 10 |
-| Method | [110](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Extensions/ServiceCollectionExtensions.cs#L110 "IServiceCollection ServiceCollectionExtensions.AddCosmosRepository(IServiceCollection services, IConfiguration configuration, Action<RepositoryOptions> setupAction = null)") | 78 | 1 :heavy_check_mark: | 0 | 7 | 16 / 3 |
-| Method | [73](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Extensions/ServiceCollectionExtensions.cs#L73 "IServiceCollection ServiceCollectionExtensions.AddInMemoryCosmosRepository(IServiceCollection services)") | 77 | 2 :heavy_check_mark: | 0 | 5 | 18 / 4 |
-| Method | [92](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Extensions/ServiceCollectionExtensions.cs#L92 "IServiceCollection ServiceCollectionExtensions.RemoveCosmosRepositories(IServiceCollection services)") | 75 | 1 :heavy_check_mark: | 0 | 5 | 11 / 5 |
+| Method | [33](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Extensions/ServiceCollectionExtensions.cs#L33 "IServiceCollection ServiceCollectionExtensions.AddCosmosRepository(IServiceCollection services, Action<RepositoryOptions> setupAction = null, Action<CosmosClientOptions> additionSetupAction = null)") | 62 | 3 :heavy_check_mark: | 0 | 9 | 47 / 10 |
+| Method | [115](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Extensions/ServiceCollectionExtensions.cs#L115 "IServiceCollection ServiceCollectionExtensions.AddCosmosRepository(IServiceCollection services, IConfiguration configuration, Action<RepositoryOptions> setupAction = null)") | 78 | 1 :heavy_check_mark: | 0 | 7 | 16 / 3 |
+| Method | [78](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Extensions/ServiceCollectionExtensions.cs#L78 "IServiceCollection ServiceCollectionExtensions.AddInMemoryCosmosRepository(IServiceCollection services)") | 77 | 2 :heavy_check_mark: | 0 | 5 | 18 / 4 |
+| Method | [97](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Extensions/ServiceCollectionExtensions.cs#L97 "IServiceCollection ServiceCollectionExtensions.RemoveCosmosRepositories(IServiceCollection services)") | 75 | 1 :heavy_check_mark: | 0 | 5 | 11 / 5 |
 
 <a href="#microsoft-extensions-dependencyinjection">:top: back to Microsoft.Extensions.DependencyInjection</a>
 
@@ -1457,18 +1458,81 @@ The `Microsoft.Azure.CosmosRepository.Options` namespace contains 3 named types.
 
 <details>
 <summary>
-  <strong id="microsoft-azure-cosmosrepository-providers">
-    Microsoft.Azure.CosmosRepository.Providers :radioactive:
+  <strong id="microsoft-azure-cosmosrepository-processors">
+    Microsoft.Azure.CosmosRepository.Processors :heavy_check_mark:
   </strong>
 </summary>
 <br>
 
-The `Microsoft.Azure.CosmosRepository.Providers` namespace contains 14 named types.
+The `Microsoft.Azure.CosmosRepository.Processors` namespace contains 2 named types.
 
-- 14 named types.
-- 469 total lines of source code.
-- Approximately 94 lines of executable code.
-- The highest cyclomatic complexity is 10 :radioactive:.
+- 2 named types.
+- 51 total lines of source code.
+- Approximately 22 lines of executable code.
+- The highest cyclomatic complexity is 3 :heavy_check_mark:.
+
+<details>
+<summary>
+  <strong id="defaultcosmosqueryableprocessor">
+    DefaultCosmosQueryableProcessor :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `DefaultCosmosQueryableProcessor` contains 3 members.
+- 36 total lines of source code.
+- Approximately 16 lines of executable code.
+- The highest cyclomatic complexity is 3 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Method | [31](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Processors/DefaultCosmosQueryableProcessor.cs#L31 "ValueTask<int> DefaultCosmosQueryableProcessor.CountAsync<TItem>(IQueryable<TItem> queryable, CancellationToken cancellationToken = null)") | 86 | 1 :heavy_check_mark: | 0 | 4 | 2 / 2 |
+| Method | [15](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Processors/DefaultCosmosQueryableProcessor.cs#L15 "ValueTask<IEnumerable<TItem>> DefaultCosmosQueryableProcessor.IterateAsync<TItem>(IQueryable<TItem> queryable, CancellationToken cancellationToken = null)") | 69 | 3 :heavy_check_mark: | 0 | 7 | 15 / 7 |
+| Method | [34](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Processors/DefaultCosmosQueryableProcessor.cs#L34 "ValueTask<IEnumerable<TItem>> DefaultCosmosQueryableProcessor.IterateAsync<TItem>(Container container, QueryDefinition queryDefinition, CancellationToken cancellationToken = null)") | 68 | 2 :heavy_check_mark: | 0 | 9 | 14 / 7 |
+
+<a href="#microsoft-azure-cosmosrepository-processors">:top: back to Microsoft.Azure.CosmosRepository.Processors</a>
+
+</details>
+
+<details>
+<summary>
+  <strong id="icosmosqueryableprocessor">
+    ICosmosQueryableProcessor :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `ICosmosQueryableProcessor` contains 3 members.
+- 9 total lines of source code.
+- Approximately 6 lines of executable code.
+- The highest cyclomatic complexity is 1 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Method | [16](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Processors/ICosmosQueryableProcessor.cs#L16 "ValueTask<int> ICosmosQueryableProcessor.CountAsync<TItem>(IQueryable<TItem> queryable, CancellationToken cancellationToken = null)") | 87 | 1 :heavy_check_mark: | 0 | 4 | 1 / 2 |
+| Method | [14](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Processors/ICosmosQueryableProcessor.cs#L14 "ValueTask<IEnumerable<TItem>> ICosmosQueryableProcessor.IterateAsync<TItem>(IQueryable<TItem> queryable, CancellationToken cancellationToken = null)") | 87 | 1 :heavy_check_mark: | 0 | 5 | 1 / 2 |
+| Method | [18](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Processors/ICosmosQueryableProcessor.cs#L18 "ValueTask<IEnumerable<TItem>> ICosmosQueryableProcessor.IterateAsync<TItem>(Container container, QueryDefinition queryDefinition, CancellationToken cancellationToken = null)") | 87 | 1 :heavy_check_mark: | 0 | 6 | 2 / 2 |
+
+<a href="#microsoft-azure-cosmosrepository-processors">:top: back to Microsoft.Azure.CosmosRepository.Processors</a>
+
+</details>
+
+</details>
+
+<details>
+<summary>
+  <strong id="microsoft-azure-cosmosrepository-providers">
+    Microsoft.Azure.CosmosRepository.Providers :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+The `Microsoft.Azure.CosmosRepository.Providers` namespace contains 16 named types.
+
+- 16 named types.
+- 455 total lines of source code.
+- Approximately 87 lines of executable code.
+- The highest cyclomatic complexity is 7 :heavy_check_mark:.
 
 <details>
 <summary>
@@ -1549,26 +1613,26 @@ The `Microsoft.Azure.CosmosRepository.Providers` namespace contains 14 named typ
 <details>
 <summary>
   <strong id="defaultcosmoscontainerprovidertitem">
-    DefaultCosmosContainerProvider&lt;TItem&gt; :radioactive:
+    DefaultCosmosContainerProvider&lt;TItem&gt; :heavy_check_mark:
   </strong>
 </summary>
 <br>
 
 - The `DefaultCosmosContainerProvider<TItem>` contains 8 members.
-- 92 total lines of source code.
-- Approximately 25 lines of executable code.
-- The highest cyclomatic complexity is 10 :radioactive:.
+- 63 total lines of source code.
+- Approximately 16 lines of executable code.
+- The highest cyclomatic complexity is 3 :heavy_check_mark:.
 
 | Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| Field | [19](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L19 "ICosmosClientProvider DefaultCosmosContainerProvider<TItem>._cosmosClientProvider") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
-| Field | [20](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L20 "ICosmosItemConfigurationProvider DefaultCosmosContainerProvider<TItem>._cosmosItemConfigurationProvider") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
-| Field | [17](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L17 "Lazy<Task<Container>> DefaultCosmosContainerProvider<TItem>._lazyContainer") | 100 | 0 :heavy_check_mark: | 0 | 3 | 1 / 0 |
-| Field | [21](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L21 "ILogger<DefaultCosmosContainerProvider<TItem>> DefaultCosmosContainerProvider<TItem>._logger") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
-| Field | [18](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L18 "RepositoryOptions DefaultCosmosContainerProvider<TItem>._options") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
-| Method | [23](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L23 "DefaultCosmosContainerProvider<TItem>.DefaultCosmosContainerProvider(ICosmosClientProvider cosmosClientProvider, IOptions<RepositoryOptions> options, ICosmosItemConfigurationProvider cosmosItemConfigurationProvider, ILogger<DefaultCosmosContainerProvider<TItem>> logger)") | 56 | 10 :radioactive: | 0 | 11 | 39 / 13 |
-| Method | [64](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L64 "Task<Container> DefaultCosmosContainerProvider<TItem>.GetContainerAsync()") | 100 | 1 :heavy_check_mark: | 0 | 4 | 2 / 1 |
-| Method | [66](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L66 "Task<Container> DefaultCosmosContainerProvider<TItem>.GetContainerValueFactoryAsync()") | 60 | 3 :heavy_check_mark: | 0 | 12 | 38 / 11 |
+| Field | [21](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L21 "ICosmosClientProvider DefaultCosmosContainerProvider<TItem>._cosmosClientProvider") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Field | [22](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L22 "ICosmosItemConfigurationProvider DefaultCosmosContainerProvider<TItem>._cosmosItemConfigurationProvider") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Field | [19](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L19 "Lazy<Task<Container>> DefaultCosmosContainerProvider<TItem>._lazyContainer") | 100 | 0 :heavy_check_mark: | 0 | 3 | 1 / 0 |
+| Field | [23](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L23 "ILogger<DefaultCosmosContainerProvider<TItem>> DefaultCosmosContainerProvider<TItem>._logger") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Field | [20](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L20 "RepositoryOptions DefaultCosmosContainerProvider<TItem>._options") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Method | [25](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L25 "DefaultCosmosContainerProvider<TItem>.DefaultCosmosContainerProvider(ICosmosClientProvider cosmosClientProvider, IOptions<RepositoryOptions> options, ICosmosItemConfigurationProvider cosmosItemConfigurationProvider, ILogger<DefaultCosmosContainerProvider<TItem>> logger, IRepositoryOptionsValidator repositoryOptionsValidator)") | 68 | 2 :heavy_check_mark: | 0 | 10 | 16 / 7 |
+| Method | [43](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L43 "Task<Container> DefaultCosmosContainerProvider<TItem>.GetContainerAsync()") | 100 | 1 :heavy_check_mark: | 0 | 4 | 2 / 1 |
+| Method | [45](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosContainerProvider.cs#L45 "Task<Container> DefaultCosmosContainerProvider<TItem>.GetContainerValueFactoryAsync()") | 64 | 3 :heavy_check_mark: | 0 | 12 | 32 / 8 |
 
 <a href="#microsoft-azure-cosmosrepository-providers">:top: back to Microsoft.Azure.CosmosRepository.Providers</a>
 
@@ -1640,6 +1704,27 @@ The `Microsoft.Azure.CosmosRepository.Providers` namespace contains 14 named typ
 | Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
 | Method | [17](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultCosmosUniqueKeyPolicyProvider.cs#L17 "UniqueKeyPolicy DefaultCosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy<TItem>()") | 55 | 6 :heavy_check_mark: | 0 | 9 | 39 / 19 |
+
+<a href="#microsoft-azure-cosmosrepository-providers">:top: back to Microsoft.Azure.CosmosRepository.Providers</a>
+
+</details>
+
+<details>
+<summary>
+  <strong id="defaultrepositoryexpressionprovider">
+    DefaultRepositoryExpressionProvider :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `DefaultRepositoryExpressionProvider` contains 1 members.
+- 5 total lines of source code.
+- Approximately 2 lines of executable code.
+- The highest cyclomatic complexity is 2 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Method | [13](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/DefaultRepositoryExpressionProvider.cs#L13 "Expression<Func<TItem, bool>> DefaultRepositoryExpressionProvider.Build<TItem>(Expression<Func<TItem, bool>> predicate)") | 85 | 2 :heavy_check_mark: | 0 | 4 | 2 / 2 |
 
 <a href="#microsoft-azure-cosmosrepository-providers">:top: back to Microsoft.Azure.CosmosRepository.Providers</a>
 
@@ -1792,6 +1877,86 @@ The `Microsoft.Azure.CosmosRepository.Providers` namespace contains 14 named typ
 
 </details>
 
+<details>
+<summary>
+  <strong id="irepositoryexpressionprovider">
+    IRepositoryExpressionProvider :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `IRepositoryExpressionProvider` contains 1 members.
+- 4 total lines of source code.
+- Approximately 0 lines of executable code.
+- The highest cyclomatic complexity is 1 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Method | [11](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Providers/IRepositoryExpressionProvider.cs#L11 "Expression<Func<TItem, bool>> IRepositoryExpressionProvider.Build<TItem>(Expression<Func<TItem, bool>> predicate)") | 100 | 1 :heavy_check_mark: | 0 | 3 | 1 / 0 |
+
+<a href="#microsoft-azure-cosmosrepository-providers">:top: back to Microsoft.Azure.CosmosRepository.Providers</a>
+
+</details>
+
+</details>
+
+<details>
+<summary>
+  <strong id="microsoft-azure-cosmosrepository-validators">
+    Microsoft.Azure.CosmosRepository.Validators :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+The `Microsoft.Azure.CosmosRepository.Validators` namespace contains 2 named types.
+
+- 2 named types.
+- 38 total lines of source code.
+- Approximately 8 lines of executable code.
+- The highest cyclomatic complexity is 7 :heavy_check_mark:.
+
+<details>
+<summary>
+  <strong id="defaultrepositoryoptionsvalidator">
+    DefaultRepositoryOptionsValidator :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `DefaultRepositoryOptionsValidator` contains 1 members.
+- 28 total lines of source code.
+- Approximately 8 lines of executable code.
+- The highest cyclomatic complexity is 7 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Method | [12](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Validators/DefaultRepositoryOptionsValidator.cs#L12 "void DefaultRepositoryOptionsValidator.ValidateForContainerCreation(IOptions<RepositoryOptions> options)") | 64 | 7 :heavy_check_mark: | 0 | 5 | 25 / 8 |
+
+<a href="#microsoft-azure-cosmosrepository-validators">:top: back to Microsoft.Azure.CosmosRepository.Validators</a>
+
+</details>
+
+<details>
+<summary>
+  <strong id="irepositoryoptionsvalidator">
+    IRepositoryOptionsValidator :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `IRepositoryOptionsValidator` contains 1 members.
+- 4 total lines of source code.
+- Approximately 0 lines of executable code.
+- The highest cyclomatic complexity is 1 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Method | [11](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/src/Validators/IRepositoryOptionsValidator.cs#L11 "void IRepositoryOptionsValidator.ValidateForContainerCreation(IOptions<RepositoryOptions> options)") | 100 | 1 :heavy_check_mark: | 0 | 2 | 1 / 0 |
+
+<a href="#microsoft-azure-cosmosrepository-validators">:top: back to Microsoft.Azure.CosmosRepository.Validators</a>
+
+</details>
+
 </details>
 
 <a href="#microsoft-azure-cosmosrepository">:top: back to Microsoft.Azure.CosmosRepository</a>
@@ -1802,10 +1967,10 @@ The `Microsoft.Azure.CosmosRepository.Providers` namespace contains 14 named typ
 
 The *Microsoft.Azure.CosmosRepositoryTests.csproj* project file contains:
 
-- 4 namespaces.
-- 32 named types.
-- 953 total lines of source code.
-- Approximately 333 lines of executable code.
+- 6 namespaces.
+- 35 named types.
+- 1,147 total lines of source code.
+- Approximately 428 lines of executable code.
 - The highest cyclomatic complexity is 2 :heavy_check_mark:.
 
 <details>
@@ -1816,11 +1981,11 @@ The *Microsoft.Azure.CosmosRepositoryTests.csproj* project file contains:
 </summary>
 <br>
 
-The `Microsoft.Azure.CosmosRepositoryTests` namespace contains 8 named types.
+The `Microsoft.Azure.CosmosRepositoryTests` namespace contains 10 named types.
 
-- 8 named types.
-- 468 total lines of source code.
-- Approximately 168 lines of executable code.
+- 10 named types.
+- 565 total lines of source code.
+- Approximately 206 lines of executable code.
 - The highest cyclomatic complexity is 2 :heavy_check_mark:.
 
 <details>
@@ -1935,6 +2100,36 @@ The `Microsoft.Azure.CosmosRepositoryTests` namespace contains 8 named types.
 
 <details>
 <summary>
+  <strong id="defaultrepositorytests">
+    DefaultRepositoryTests :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `DefaultRepositoryTests` contains 10 members.
+- 88 total lines of source code.
+- Approximately 36 lines of executable code.
+- The highest cyclomatic complexity is 2 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Field | [33](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L33 "Mock<Container> DefaultRepositoryTests._container") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [29](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L29 "Mock<ICosmosContainerProvider<TestItem>> DefaultRepositoryTests._containerProvider") | 93 | 0 :heavy_check_mark: | 0 | 3 | 1 / 1 |
+| Field | [34](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L34 "IRepositoryExpressionProvider DefaultRepositoryTests._expressionProvider") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [31](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L31 "Mock<IOptionsMonitor<RepositoryOptions>> DefaultRepositoryTests._options") | 93 | 0 :heavy_check_mark: | 0 | 3 | 1 / 1 |
+| Field | [30](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L30 "Mock<ICosmosQueryableProcessor> DefaultRepositoryTests._queryableProcessor") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [32](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L32 "RepositoryOptions DefaultRepositoryTests._repositoryOptions") | 93 | 0 :heavy_check_mark: | 0 | 1 | 1 / 1 |
+| Method | [36](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L36 "DefaultRepositoryTests.DefaultRepositoryTests()") | 87 | 1 :heavy_check_mark: | 0 | 4 | 4 / 2 |
+| Method | [83](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L83 "Task DefaultRepositoryTests.ExistsAsyncGivenExpressionQueriesContainerCorrectly()") | 57 | 2 :heavy_check_mark: | 0 | 14 | 32 / 15 |
+| Method | [50](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L50 "Task DefaultRepositoryTests.GetAsyncGivenExpressionQueriesContainerCorrectly()") | 57 | 2 :heavy_check_mark: | 0 | 15 | 32 / 15 |
+| Property | [41](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L41 "DefaultRepository<TestItem> DefaultRepositoryTests.Repository") | 91 | 2 :heavy_check_mark: | 0 | 10 | 6 / 2 |
+
+<a href="#microsoft-azure-cosmosrepositorytests">:top: back to Microsoft.Azure.CosmosRepositoryTests</a>
+
+</details>
+
+<details>
+<summary>
   <strong id="dog">
     Dog :heavy_check_mark:
   </strong>
@@ -1996,6 +2191,27 @@ The `Microsoft.Azure.CosmosRepositoryTests` namespace contains 8 named types.
 | Method | [132](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/InMemoryRepositoryTests.cs#L132 "Task InMemoryRepositoryTests.GetAsync_PredicateThatDoesNotMatch_ReturnsEmptyList()") | 72 | 1 :heavy_check_mark: | 0 | 6 | 13 / 5 |
 | Method | [308](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/InMemoryRepositoryTests.cs#L308 "Task InMemoryRepositoryTests.UpdateAsync_ItemThatDoesNotExist_AddsItem()") | 65 | 1 :heavy_check_mark: | 0 | 5 | 19 / 9 |
 | Method | [328](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/InMemoryRepositoryTests.cs#L328 "Task InMemoryRepositoryTests.UpdateAsync_ItemThatExists_UpdatesItem()") | 62 | 1 :heavy_check_mark: | 0 | 5 | 22 / 11 |
+
+<a href="#microsoft-azure-cosmosrepositorytests">:top: back to Microsoft.Azure.CosmosRepositoryTests</a>
+
+</details>
+
+<details>
+<summary>
+  <strong id="mockexpressionprovider">
+    MockExpressionProvider :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `MockExpressionProvider` contains 1 members.
+- 5 total lines of source code.
+- Approximately 2 lines of executable code.
+- The highest cyclomatic complexity is 1 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Method | [118](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/DefaultRepositoryTests.cs#L118 "Expression<Func<TItem, bool>> MockExpressionProvider.Build<TItem>(Expression<Func<TItem, bool>> predicate)") | 88 | 1 :heavy_check_mark: | 0 | 4 | 2 / 2 |
 
 <a href="#microsoft-azure-cosmosrepositorytests">:top: back to Microsoft.Azure.CosmosRepositoryTests</a>
 
@@ -2155,11 +2371,11 @@ The `Microsoft.Azure.CosmosRepositoryTests.Options` namespace contains 2 named t
 </summary>
 <br>
 
-The `Microsoft.Azure.CosmosRepositoryTests.Providers` namespace contains 20 named types.
+The `Microsoft.Azure.CosmosRepositoryTests.Providers` namespace contains 19 named types.
 
-- 20 named types.
-- 408 total lines of source code.
-- Approximately 139 lines of executable code.
+- 19 named types.
+- 419 total lines of source code.
+- Approximately 161 lines of executable code.
 - The highest cyclomatic complexity is 2 :heavy_check_mark:.
 
 <details>
@@ -2280,22 +2496,27 @@ The `Microsoft.Azure.CosmosRepositoryTests.Providers` namespace contains 20 name
 </summary>
 <br>
 
-- The `DefaultCosmosContainerProviderTests` contains 9 members.
-- 84 total lines of source code.
-- Approximately 14 lines of executable code.
-- The highest cyclomatic complexity is 1 :heavy_check_mark:.
+- The `DefaultCosmosContainerProviderTests` contains 14 members.
+- 92 total lines of source code.
+- Approximately 35 lines of executable code.
+- The highest cyclomatic complexity is 2 :heavy_check_mark:.
 
 | Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| Field | [21](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L21 "Mock<ICosmosItemConfigurationProvider> DefaultCosmosContainerProviderTests._itemConfigurationProvider") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
-| Field | [19](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L19 "ILoggerFactory DefaultCosmosContainerProviderTests._loggerFactory") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
-| Field | [20](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L20 "Mock<IOptions<RepositoryOptions>> DefaultCosmosContainerProviderTests._options") | 93 | 0 :heavy_check_mark: | 0 | 3 | 1 / 1 |
-| Method | [49](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L49 "void DefaultCosmosContainerProviderTests.NewDefaultCosmosContainerProviderThrowsWithNullConnectionString()") | 85 | 1 :heavy_check_mark: | 0 | 9 | 12 / 2 |
-| Method | [74](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L74 "void DefaultCosmosContainerProviderTests.NewDefaultCosmosContainerProviderThrowsWithNullContainerId()") | 85 | 1 :heavy_check_mark: | 0 | 9 | 13 / 2 |
-| Method | [24](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L24 "void DefaultCosmosContainerProviderTests.NewDefaultCosmosContainerProviderThrowsWithNullCosmosClient()") | 83 | 1 :heavy_check_mark: | 0 | 9 | 13 / 2 |
-| Method | [61](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L61 "void DefaultCosmosContainerProviderTests.NewDefaultCosmosContainerProviderThrowsWithNullDatabaseId()") | 85 | 1 :heavy_check_mark: | 0 | 9 | 12 / 2 |
-| Method | [88](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L88 "void DefaultCosmosContainerProviderTests.NewDefaultCosmosContainerProviderThrowsWithNullLogger()") | 84 | 1 :heavy_check_mark: | 0 | 9 | 13 / 2 |
-| Method | [40](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L40 "void DefaultCosmosContainerProviderTests.NewDefaultCosmosContainerProviderThrowsWithNullOptions()") | 87 | 1 :heavy_check_mark: | 0 | 8 | 8 / 2 |
+| Field | [28](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L28 "Mock<Container> DefaultCosmosContainerProviderTests._container") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [30](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L30 "Mock<ContainerResponse> DefaultCosmosContainerProviderTests._containerResponse") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [26](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L26 "Mock<CosmosClient> DefaultCosmosContainerProviderTests._cosmosClient") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [27](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L27 "Mock<Database> DefaultCosmosContainerProviderTests._database") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [29](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L29 "Mock<DatabaseResponse> DefaultCosmosContainerProviderTests._databaseResponse") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [24](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L24 "Mock<ICosmosItemConfigurationProvider> DefaultCosmosContainerProviderTests._itemConfigurationProvider") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Field | [23](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L23 "Mock<IOptions<RepositoryOptions>> DefaultCosmosContainerProviderTests._options") | 93 | 0 :heavy_check_mark: | 0 | 3 | 1 / 1 |
+| Field | [31](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L31 "RepositoryOptions DefaultCosmosContainerProviderTests._repositoryOptions") | 93 | 0 :heavy_check_mark: | 0 | 1 | 1 / 1 |
+| Field | [25](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L25 "Mock<IRepositoryOptionsValidator> DefaultCosmosContainerProviderTests._repositoryOptionsValidator") | 93 | 0 :heavy_check_mark: | 0 | 2 | 1 / 1 |
+| Method | [33](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L33 "DefaultCosmosContainerProviderTests.DefaultCosmosContainerProviderTests()") | 71 | 1 :heavy_check_mark: | 0 | 8 | 6 / 6 |
+| Method | [43](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L43 "DefaultCosmosContainerProvider<TestItem> DefaultCosmosContainerProviderTests.CreateDefaultCosmosContainerProvider()") | 91 | 1 :heavy_check_mark: | 0 | 10 | 6 / 1 |
+| Method | [40](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L40 "ICosmosClientProvider DefaultCosmosContainerProviderTests.GetClientProvider()") | 100 | 1 :heavy_check_mark: | 0 | 5 | 2 / 1 |
+| Method | [51](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L51 "Task DefaultCosmosContainerProviderTests.GetContainerAsyncWhenContainerPerItemTypeIsNotSetGetsCorrectContainer()") | 59 | 2 :heavy_check_mark: | 0 | 17 | 31 / 13 |
+| Method | [83](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L83 "Task DefaultCosmosContainerProviderTests.GetContainerAsyncWhenContainerPerItemTypeIsSetGetsCorrectContainer()") | 60 | 2 :heavy_check_mark: | 0 | 17 | 30 / 12 |
 
 <a href="#microsoft-azure-cosmosrepositorytests-providers">:top: back to Microsoft.Azure.CosmosRepositoryTests.Providers</a>
 
@@ -2577,18 +2798,37 @@ The `Microsoft.Azure.CosmosRepositoryTests.Providers` namespace contains 20 name
 </summary>
 <br>
 
-- The `TestCosmosClientProvider` contains 1 members.
-- 5 total lines of source code.
-- Approximately 1 lines of executable code.
-- The highest cyclomatic complexity is 1 :heavy_check_mark:.
+- The `TestCosmosClientProvider` contains 3 members.
+- 10 total lines of source code.
+- Approximately 2 lines of executable code.
+- The highest cyclomatic complexity is 2 :heavy_check_mark:.
 
 | Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| Method | [106](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L106 "Task<T> TestCosmosClientProvider.UseClientAsync<T>(Func<CosmosClient, Task<T>> consume)") | 100 | 1 :heavy_check_mark: | 0 | 4 | 2 / 1 |
+| Field | [116](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L116 "CosmosClient TestCosmosClientProvider._cosmosClient") | 100 | 0 :heavy_check_mark: | 0 | 1 | 1 / 0 |
+| Method | [118](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L118 "TestCosmosClientProvider.TestCosmosClientProvider(CosmosClient cosmosClient)") | 96 | 1 :heavy_check_mark: | 0 | 1 | 2 / 1 |
+| Method | [121](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Providers/DefaultCosmosContainerProviderTests.cs#L121 "Task<T> TestCosmosClientProvider.UseClientAsync<T>(Func<CosmosClient, Task<T>> consume)") | 92 | 2 :heavy_check_mark: | 0 | 6 | 2 / 1 |
 
 <a href="#microsoft-azure-cosmosrepositorytests-providers">:top: back to Microsoft.Azure.CosmosRepositoryTests.Providers</a>
 
 </details>
+
+</details>
+
+<details>
+<summary>
+  <strong id="microsoft-azure-cosmosrepositorytests-stubs">
+    Microsoft.Azure.CosmosRepositoryTests.Stubs :question:
+  </strong>
+</summary>
+<br>
+
+The `Microsoft.Azure.CosmosRepositoryTests.Stubs` namespace contains 1 named types.
+
+- 1 named types.
+- 7 total lines of source code.
+- Approximately 0 lines of executable code.
+- The highest cyclomatic complexity is 0 :question:.
 
 <details>
 <summary>
@@ -2599,14 +2839,60 @@ The `Microsoft.Azure.CosmosRepositoryTests.Providers` namespace contains 20 name
 <br>
 
 - The `TestItem` contains 0 members.
-- 1 total lines of source code.
+- 4 total lines of source code.
 - Approximately 0 lines of executable code.
 - The highest cyclomatic complexity is 0 :question:.
 
 | Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
 
-<a href="#microsoft-azure-cosmosrepositorytests-providers">:top: back to Microsoft.Azure.CosmosRepositoryTests.Providers</a>
+<a href="#microsoft-azure-cosmosrepositorytests-stubs">:top: back to Microsoft.Azure.CosmosRepositoryTests.Stubs</a>
+
+</details>
+
+</details>
+
+<details>
+<summary>
+  <strong id="microsoft-azure-cosmosrepositorytests-validators">
+    Microsoft.Azure.CosmosRepositoryTests.Validators :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+The `Microsoft.Azure.CosmosRepositoryTests.Validators` namespace contains 1 named types.
+
+- 1 named types.
+- 79 total lines of source code.
+- Approximately 35 lines of executable code.
+- The highest cyclomatic complexity is 1 :heavy_check_mark:.
+
+<details>
+<summary>
+  <strong id="defaultrepositoryoptionsvalidatortests">
+    DefaultRepositoryOptionsValidatorTests :heavy_check_mark:
+  </strong>
+</summary>
+<br>
+
+- The `DefaultRepositoryOptionsValidatorTests` contains 9 members.
+- 76 total lines of source code.
+- Approximately 35 lines of executable code.
+- The highest cyclomatic complexity is 1 :heavy_check_mark:.
+
+| Member kind | Line number | Maintainability index | Cyclomatic complexity | Depth of inheritance | Class coupling | Lines of source / executable code |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Field | [15](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L15 "Mock<IOptions<RepositoryOptions>> DefaultRepositoryOptionsValidatorTests._options") | 93 | 0 :heavy_check_mark: | 0 | 3 | 1 / 1 |
+| Field | [17](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L17 "RepositoryOptions DefaultRepositoryOptionsValidatorTests._repositoryOptions") | 93 | 0 :heavy_check_mark: | 0 | 1 | 1 / 1 |
+| Field | [19](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L19 "DefaultRepositoryOptionsValidator DefaultRepositoryOptionsValidatorTests._validator") | 93 | 0 :heavy_check_mark: | 0 | 1 | 1 / 1 |
+| Method | [51](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L51 "void DefaultRepositoryOptionsValidatorTests.NullContainerIdWhenItemPerContainerTypeThrowsArgumentNullException()") | 67 | 1 :heavy_check_mark: | 0 | 6 | 14 / 8 |
+| Method | [26](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L26 "void DefaultRepositoryOptionsValidatorTests.NullCosmosConnectionStringThrowsArgumentNullException()") | 78 | 1 :heavy_check_mark: | 0 | 6 | 10 / 4 |
+| Method | [37](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L37 "void DefaultRepositoryOptionsValidatorTests.NullDatabaseIdWhenItemPerContainerTypeThrowsArgumentNullException()") | 69 | 1 :heavy_check_mark: | 0 | 6 | 13 / 7 |
+| Method | [22](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L22 "void DefaultRepositoryOptionsValidatorTests.NullIOptionsThrowsArgumentNullException()") | 90 | 1 :heavy_check_mark: | 0 | 3 | 3 / 2 |
+| Method | [66](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L66 "void DefaultRepositoryOptionsValidatorTests.ValidSettingsWithItemPerContainerTimeDoesNotThrow()") | 73 | 1 :heavy_check_mark: | 0 | 6 | 10 / 5 |
+| Method | [77](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/Microsoft.Azure.CosmosRepository/test/Validators/DefaultRepositoryOptionsValidatorTests.cs#L77 "void DefaultRepositoryOptionsValidatorTests.ValidSettingsWithoutItemPerContainerTimeDoesNotThrow()") | 68 | 1 :heavy_check_mark: | 0 | 6 | 12 / 7 |
+
+<a href="#microsoft-azure-cosmosrepositorytests-validators">:top: back to Microsoft.Azure.CosmosRepositoryTests.Validators</a>
 
 </details>
 
