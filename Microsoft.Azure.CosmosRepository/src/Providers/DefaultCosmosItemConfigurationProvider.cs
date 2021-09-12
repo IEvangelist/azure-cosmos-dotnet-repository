@@ -15,15 +15,18 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         private readonly ICosmosContainerNameProvider _containerNameProvider;
         private readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
         private readonly ICosmosUniqueKeyPolicyProvider _cosmosUniqueKeyPolicyProvider;
+        private readonly ICosmosContainerDefaultTimeToLiveProvider _containerDefaultTimeToLiveProvider;
 
         public DefaultCosmosItemConfigurationProvider(
             ICosmosContainerNameProvider containerNameProvider,
             ICosmosPartitionKeyPathProvider cosmosPartitionKeyPathProvider,
-            ICosmosUniqueKeyPolicyProvider cosmosUniqueKeyPolicyProvider)
+            ICosmosUniqueKeyPolicyProvider cosmosUniqueKeyPolicyProvider,
+            ICosmosContainerDefaultTimeToLiveProvider containerDefaultTimeToLiveProvider)
         {
             _containerNameProvider = containerNameProvider;
             _cosmosPartitionKeyPathProvider = cosmosPartitionKeyPathProvider;
             _cosmosUniqueKeyPolicyProvider = cosmosUniqueKeyPolicyProvider;
+            _containerDefaultTimeToLiveProvider = containerDefaultTimeToLiveProvider;
         }
 
         public ItemOptions GetOptions<TItem>() where TItem : IItem =>
@@ -34,8 +37,9 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             string containerName = _containerNameProvider.GetContainerName<TItem>();
             string partitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>();
             UniqueKeyPolicy uniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy<TItem>();
+            int timeToLive = _containerDefaultTimeToLiveProvider.GetDefaultTimeToLive<TItem>();
 
-            return new(optionType, containerName, partitionKeyPath, uniqueKeyPolicy);
+            return new(optionType, containerName, partitionKeyPath, uniqueKeyPolicy, timeToLive);
         }
     }
 }

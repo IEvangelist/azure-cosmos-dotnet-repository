@@ -60,7 +60,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>()
                     .AddSingleton<ICosmosQueryableProcessor, DefaultCosmosQueryableProcessor>()
                     .AddSingleton<IRepositoryExpressionProvider, DefaultRepositoryExpressionProvider>()
-                    .AddSingleton<IRepositoryOptionsValidator, DefaultRepositoryOptionsValidator>();
+                    .AddSingleton<IRepositoryOptionsValidator, DefaultRepositoryOptionsValidator>()
+                    .AddSingleton<ICosmosContainerDefaultTimeToLiveProvider, DefaultCosmosContainerDefaultTimeToLiveProvider>();
 
             if (setupAction != default)
             {

@@ -58,7 +58,8 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                         ? itemOptions.ContainerName
                         : _options.ContainerId,
                     PartitionKeyPath = itemOptions.PartitionKeyPath,
-                    UniqueKeyPolicy = itemOptions.UniqueKeyPolicy ?? new()
+                    UniqueKeyPolicy = itemOptions.UniqueKeyPolicy ?? new(),
+                    DefaultTimeToLive = itemOptions.DefaultTimeToLive
                 };
 
                 Container container =
