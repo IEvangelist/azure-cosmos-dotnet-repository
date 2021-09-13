@@ -41,7 +41,6 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// Sets the <see cref="ContainerDefaultTimeToLive"/> for a container.
         /// </summary>
         /// <param name="containerDefaultTimeToLive">The default time to live for the container.</param>
-        /// <returns></returns>
         public ContainerOptionsBuilder WithContainerDefaultTimeToLive(TimeSpan containerDefaultTimeToLive)
         {
             ContainerDefaultTimeToLive = containerDefaultTimeToLive;
