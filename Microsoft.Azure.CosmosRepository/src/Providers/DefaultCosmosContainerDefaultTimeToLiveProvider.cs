@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-
     /// <inheritdoc/>
     public class DefaultCosmosContainerDefaultTimeToLiveProvider : ICosmosContainerDefaultTimeToLiveProvider
     {
