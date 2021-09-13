@@ -86,7 +86,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             ICosmosContainerProvider<TestItem> provider = CreateDefaultCosmosContainerProvider();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new());
+            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), 5);
 
             _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
 
@@ -97,7 +97,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             _database.Setup(o =>
                     o.CreateContainerIfNotExistsAsync(
                         It.Is<ContainerProperties>(c => c.Id == "a"
-                                                        && c.PartitionKeyPath == "/test"),
+                                                        && c.PartitionKeyPath == "/test"
+                                                        && c.DefaultTimeToLive == 5),
                         (int?) null,
                         null,
                         CancellationToken.None))

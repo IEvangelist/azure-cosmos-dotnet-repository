@@ -16,12 +16,15 @@ namespace Microsoft.Azure.CosmosRepository.Options
 
         public UniqueKeyPolicy UniqueKeyPolicy { get; }
 
-        public ItemOptions(Type type, string containerName, string partitionKeyPath, UniqueKeyPolicy uniqueKeyPolicy)
+        public int DefaultTimeToLive { get; }
+
+        public ItemOptions(Type type, string containerName, string partitionKeyPath, UniqueKeyPolicy uniqueKeyPolicy, int defaultTimeToLive = -1)
         {
             Type = type;
             ContainerName = containerName;
             PartitionKeyPath = partitionKeyPath;
             UniqueKeyPolicy = uniqueKeyPolicy;
+            DefaultTimeToLive = defaultTimeToLive;
         }
     }
 }

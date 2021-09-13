@@ -16,23 +16,39 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         internal Type Type { get; }
 
         /// <summary>
-        /// Creates an instance of <see cref="ContainerOptionsBuilder"/>
+        /// Creates an instance of <see cref="ContainerOptionsBuilder"/>.
         /// </summary>
-        /// <param name="type">The type of <see cref="IItem"/> the options are for</param>
+        /// <param name="type">The type of <see cref="IItem"/> the options are for.</param>
         public ContainerOptionsBuilder(Type type) => Type = type;
 
         /// <summary>
-        /// Name of the container
+        /// Name of the container.
         /// </summary>
         internal string Name { get; private set; }
 
         /// <summary>
-        /// The partition key for the container
+        /// The partition key for the container.
         /// </summary>
         internal string PartitionKey { get; private set; }
 
         /// <summary>
-        /// Sets the name of the container
+        /// The default time to live for a container.
+        /// </summary>
+        /// <remarks>If <see cref="Item"/> share a container they will share this property.</remarks>
+        internal TimeSpan? ContainerDefaultTimeToLive { get; private set; }
+
+        /// <summary>
+        /// Sets the <see cref="ContainerDefaultTimeToLive"/> for a container.
+        /// </summary>
+        /// <param name="containerDefaultTimeToLive">The default time to live for the container.</param>
+        public ContainerOptionsBuilder WithContainerDefaultTimeToLive(TimeSpan containerDefaultTimeToLive)
+        {
+            ContainerDefaultTimeToLive = containerDefaultTimeToLive;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the <see cref="Name"/> of the container
         /// </summary>
         /// <param name="name">The name of the container</param>
         /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>

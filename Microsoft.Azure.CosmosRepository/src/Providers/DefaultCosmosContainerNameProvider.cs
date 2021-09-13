@@ -15,7 +15,6 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     class  DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
     {
         private readonly IOptions<RepositoryOptions> _options;
-        static readonly ConcurrentDictionary<Type, string> ContainerNameMap = new();
 
         public DefaultCosmosContainerNameProvider(IOptions<RepositoryOptions> options)
         {
