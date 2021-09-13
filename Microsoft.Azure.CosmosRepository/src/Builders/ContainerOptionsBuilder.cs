@@ -38,6 +38,12 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         internal TimeSpan? ContainerDefaultTimeToLive { get; private set; }
 
         /// <summary>
+        /// Syncs the container properties when the container is first created.
+        /// </summary>
+        /// <remarks>This can sync settings such as <see cref="ContainerDefaultTimeToLive"/></remarks>
+        internal bool SyncContainerProperties { get; private set; }
+
+        /// <summary>
         /// Sets the <see cref="ContainerDefaultTimeToLive"/> for a container.
         /// </summary>
         /// <param name="containerDefaultTimeToLive">The default time to live for the container.</param>
@@ -68,6 +74,16 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         public ContainerOptionsBuilder WithPartitionKey(string partitionKey)
         {
             PartitionKey = partitionKey ?? throw new ArgumentNullException(nameof(partitionKey));
+            return this;
+        }
+
+        /// <summary>
+        /// Sets <see cref="SyncContainerProperties"/> to true
+        /// </summary>
+        /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+        public ContainerOptionsBuilder WithSyncedContainerProperties()
+        {
+            SyncContainerProperties = true;
             return this;
         }
     }

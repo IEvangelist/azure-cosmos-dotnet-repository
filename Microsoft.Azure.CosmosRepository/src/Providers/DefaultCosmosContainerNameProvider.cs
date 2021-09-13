@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             Attribute attribute =
                 Attribute.GetCustomAttribute(itemType, attributeType);
 
-            ContainerOptionsBuilder optionsBuilder = _options.Value.ContainerOptions.FirstOrDefault(opts => opts.Type == itemType);
+            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions<TItem>();
 
             if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.Name) is false)
             {

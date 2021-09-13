@@ -27,7 +27,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             Type itemType = typeof(TItem);
             Type attributeType = typeof(PartitionKeyPathAttribute);
 
-            ContainerOptionsBuilder optionsBuilder = _options.Value.ContainerOptions.FirstOrDefault(opts => opts.Type == itemType);
+            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions<TItem>();
 
             if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
             {

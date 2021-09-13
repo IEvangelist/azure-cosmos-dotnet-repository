@@ -66,6 +66,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     await database.CreateContainerIfNotExistsAsync(
                         containerProperties).ConfigureAwait(false);
 
+                if (itemOptions.SyncContainerProperties)
+                {
+                    await container.ReplaceContainerAsync(containerProperties);
+                }
+
                 return container;
             }
             catch (Exception ex)

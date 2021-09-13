@@ -16,6 +16,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         private readonly Mock<ICosmosPartitionKeyPathProvider> _partitionKeyPathProvider = new();
         private readonly Mock<ICosmosUniqueKeyPolicyProvider> _uniqueKeyPolicyProvider = new();
         private readonly Mock<ICosmosContainerDefaultTimeToLiveProvider> _defaultTimeToLiveProvider = new();
+        private readonly Mock<ICosmosContainerSyncContainerPropertiesProvider> _syncContainerPropertiesProvider = new();
 
         [Fact]
         public void GetOptionsAlwaysGetOptionsForItem()
@@ -24,7 +25,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 _containerNameProvider.Object,
                 _partitionKeyPathProvider.Object,
                 _uniqueKeyPolicyProvider.Object,
-                _defaultTimeToLiveProvider.Object);
+                _defaultTimeToLiveProvider.Object,
+                _syncContainerPropertiesProvider.Object);
 
             UniqueKeyPolicy uniqueKeyPolicy = new();
 
@@ -32,6 +34,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             _partitionKeyPathProvider.Setup(o => o.GetPartitionKeyPath<Item1>()).Returns("/id");
             _uniqueKeyPolicyProvider.Setup(o => o.GetUniqueKeyPolicy<Item1>()).Returns(uniqueKeyPolicy);
             _defaultTimeToLiveProvider.Setup(o => o.GetDefaultTimeToLive<Item1>()).Returns(10);
+            _syncContainerPropertiesProvider.Setup(o => o.GetWhetherToSyncContainerProperties<Item1>()).Returns(true);
 
             ItemOptions options = provider.GetOptions<Item1>();
 
@@ -39,6 +42,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Equal("/id", options.PartitionKeyPath);
             Assert.Equal(uniqueKeyPolicy, options.UniqueKeyPolicy);
             Assert.Equal(10, options.DefaultTimeToLive);
+            Assert.True(options.SyncContainerProperties);
         }
 
         class Item1 : Item

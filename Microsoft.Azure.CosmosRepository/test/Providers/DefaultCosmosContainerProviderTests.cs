@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -35,6 +36,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             _databaseResponse.Setup(o => o.Database).Returns(_database.Object);
             _containerResponse.Setup(o => o.Container).Returns(_container.Object);
             _options.Setup(o => o.Value).Returns(_repositoryOptions);
+            _containerResponse.Setup(o => o.Container).Returns(_container.Object);
         }
 
         ICosmosClientProvider GetClientProvider() =>
@@ -77,6 +79,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
             //Assert
             Assert.Equal(_container.Object, container);
+            _container.Verify(o => o.ReplaceContainerAsync(It.IsAny<ContainerProperties>(), null, CancellationToken.None), Times.Never);
         }
 
         [Fact]
@@ -109,7 +112,45 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
             //Assert
             Assert.Equal(_container.Object, container);
+            _container.Verify(o => o.ReplaceContainerAsync(It.IsAny<ContainerProperties>(), null, CancellationToken.None), Times.Never);
         }
+
+        [Fact]
+        public async Task GetContainerAsyncWhenSyncContainerPropertiesIsSetReplacesContainerProperties()
+        {
+            //Arrange
+            ICosmosContainerProvider<TestItem> provider = CreateDefaultCosmosContainerProvider();
+            _repositoryOptions.ContainerPerItemType = true;
+
+            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), 5, true);
+
+            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
+
+            _cosmosClient.Setup(o =>
+                    o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
+                .ReturnsAsync(_databaseResponse.Object);
+
+            _database.Setup(o =>
+                    o.CreateContainerIfNotExistsAsync(
+                        It.Is<ContainerProperties>(c => ValidateContainerProperties(c)),
+                        (int?) null,
+                        null,
+                        CancellationToken.None))
+                .ReturnsAsync(_containerResponse.Object);
+
+            //Act
+            Container container = await provider.GetContainerAsync();
+
+            //Assert
+            _container.Verify(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None), Times.Once);
+
+            Assert.Equal(_container.Object, container);
+        }
+
+        private static bool ValidateContainerProperties(ContainerProperties properties) =>
+            properties.Id == "a"
+            && properties.PartitionKeyPath == "/test"
+            && properties.DefaultTimeToLive == 5;
     }
 
     internal class TestCosmosClientProvider : ICosmosClientProvider
