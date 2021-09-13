@@ -26,8 +26,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             TimeSpan timeToLive = TimeSpan.FromMinutes(5);
             _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
                 builder.WithContainerDefaultTimeToLive(timeToLive));
-
-
         }
 
         [Fact]
