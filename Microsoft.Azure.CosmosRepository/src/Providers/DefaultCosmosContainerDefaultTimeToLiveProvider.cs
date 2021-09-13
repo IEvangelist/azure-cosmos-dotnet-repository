@@ -11,7 +11,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 {
 
     /// <inheritdoc/>
-    public class DefaultCosmosContainerDefaultTimeToLiveProvider : ICosmosContainerDefaultTimeToLiveProvider
+    class DefaultCosmosContainerDefaultTimeToLiveProvider : ICosmosContainerDefaultTimeToLiveProvider
     {
         private readonly IOptions<RepositoryOptions> _options;
 
