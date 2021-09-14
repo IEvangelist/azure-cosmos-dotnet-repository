@@ -73,6 +73,5 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Contains("500", exception.Message);
             Assert.Contains("700", exception.Message);
         }
-
     }
 }
