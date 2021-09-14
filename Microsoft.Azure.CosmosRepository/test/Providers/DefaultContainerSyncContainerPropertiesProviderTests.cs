@@ -39,6 +39,5 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => { });
             Assert.False(_provider.GetWhetherToSyncContainerProperties<TestItem>());
         }
-
     }
 }
