@@ -7,6 +7,5 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Stubs
 {
     public class AnotherTestItem : Item
     {
-
     }
 }

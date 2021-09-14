@@ -10,7 +10,6 @@ namespace Microsoft.Azure.CosmosRepository.Services
     /// </summary>
     public interface ICosmosContainerSyncService
     {
-
         /// <summary>
         /// Syncs a specific container for an <see cref="IItem"/>
         /// </summary>

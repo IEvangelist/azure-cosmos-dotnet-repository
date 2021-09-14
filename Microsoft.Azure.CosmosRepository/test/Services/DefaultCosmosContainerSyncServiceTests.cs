@@ -11,7 +11,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 {
     public class DefaultCosmosContainerSyncServiceTests
     {
-
         Mock<ICosmosContainerService> _containerService = new();
         readonly DefaultCosmosContainerSyncService _syncService;
 
