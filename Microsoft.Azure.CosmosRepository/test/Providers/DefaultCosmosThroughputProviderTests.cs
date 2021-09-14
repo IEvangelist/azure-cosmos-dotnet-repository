@@ -12,7 +12,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 {
     public class DefaultCosmosThroughputProviderTests : WithRepositoryOptions
     {
-
         readonly DefaultCosmosThroughputProvider _provider;
 
         public DefaultCosmosThroughputProviderTests() =>
