@@ -123,7 +123,9 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             if (maxAutoScaleThroughput is < 4_000 or > 1_000_000)
             {
-                throw new ArgumentOutOfRangeException(nameof(maxAutoScaleThroughput),"Autoscale throughput must be between 4,000 and 1,000,000 RUs.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxAutoScaleThroughput),
+                    "Autoscale throughput must be between 4,000 and 1,000,000 RUs.");
             }
 
             if (maxAutoScaleThroughput % 1000 != 0)
