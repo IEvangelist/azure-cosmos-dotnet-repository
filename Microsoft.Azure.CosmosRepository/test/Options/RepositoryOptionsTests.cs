@@ -31,12 +31,31 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Options
             => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithContainer(null)));
 
         [Fact]
-        public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenPartionKeyIsNull()
+        public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenPartitionKeyIsNull()
             => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithPartitionKey(null)));
 
         [Fact]
         public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenContainerBuilderActionIsNull()
             => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(null));
+
+        [Theory]
+        [InlineData(300)]
+        [InlineData(1_100_000)]
+        public void RepositoryOptionsBuilderThrowsOutOfRangeExceptionWhenAutoscaleThroughputIsOutOfRange(int throughput) =>
+            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(builder => builder.WithAutoscaleThroughput(throughput)));
+
+        [Theory]
+        [InlineData(1500)]
+        [InlineData(1_150_000)]
+        public void RepositoryOptionsBuilderThrowsInvalidOperationExceptionWhenAutoscaleThroughputNotAMultipleOf1000(int throughput) =>
+            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(builder => builder.WithAutoscaleThroughput(throughput)));
+
+
+        [Theory]
+        [InlineData(200)]
+        [InlineData(100)]
+        public void RepositoryOptionsBuilderThrowsOutOfRangeExceptionWhenManualThroughputIsOutOfRange(int throughput) =>
+            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(builder => builder.WithManualThroughput(throughput)));
     }
 
     public class Product : Item

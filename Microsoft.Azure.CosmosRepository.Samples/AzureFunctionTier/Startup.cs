@@ -17,6 +17,7 @@ namespace AzureFunctionTier
                     .WithContainer("users")
                     .WithPartitionKey("/emailAddress")
                     .WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(1))
+                    .WithManualThroughput(500)
                     .WithSyncableContainerProperties()
                 );
             });

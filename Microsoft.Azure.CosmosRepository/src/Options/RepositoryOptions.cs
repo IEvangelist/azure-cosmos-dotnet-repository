@@ -98,5 +98,16 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <returns>null or <see cref="ContainerOptionsBuilder"/>.</returns>
         internal ContainerOptionsBuilder GetContainerOptions<TItem>() where TItem : IItem =>
             ContainerOptions.FirstOrDefault(co => co.Type == typeof(TItem));
+
+        /// <summary>
+        /// Gets container options for <see cref="IItem"/>s that share the same container.
+        /// </summary>
+        /// <typeparam name="TItem">The type of <see cref="IItem"/> to find common types for.</typeparam>
+        /// <returns>A collection of <see cref="ContainerOptionsBuilder"/>s that share the same container.</returns>
+        internal IEnumerable<ContainerOptionsBuilder> GetContainerSharedContainerOptions<TItem>() where TItem : IItem
+        {
+            ContainerOptionsBuilder containerOptionsBuilder = GetContainerOptions<TItem>();
+            return containerOptionsBuilder is not null ? ContainerOptions.Where(co => co.Name == containerOptionsBuilder.Name) : new List<ContainerOptionsBuilder>();
+        }
     }
 }

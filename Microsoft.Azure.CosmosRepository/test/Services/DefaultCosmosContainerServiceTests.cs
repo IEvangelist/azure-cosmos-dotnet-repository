@@ -8,7 +8,6 @@ using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepository.Services;
 using Microsoft.Azure.CosmosRepository.Validators;
-using Microsoft.Azure.CosmosRepositoryTests.Providers;
 using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -57,7 +56,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             _repositoryOptions.ContainerPerItemType = false;
             _repositoryOptions.ContainerId = "containerA";
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/id", new());
+            ItemOptions itemOptions = new (typeof(TestItem), "a", "/id", new(), ThroughputProperties.CreateManualThroughput(400));
 
             _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
 
@@ -69,7 +68,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
                 o.CreateContainerIfNotExistsAsync(
                     It.Is<ContainerProperties>(c => c.Id == "containerA"
                                                     && c.PartitionKeyPath == "/id"),
-                    (int?) null,
+                    itemOptions.ThroughputProperties,
                     null,
                     CancellationToken.None))
                 .ReturnsAsync(_containerResponse.Object);
@@ -80,6 +79,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             //Assert
             Assert.Equal(_container.Object, container);
             _container.Verify(o => o.ReplaceContainerAsync(It.IsAny<ContainerProperties>(), null, CancellationToken.None), Times.Never);
+            _container.Verify(o => o.ReplaceThroughputAsync(It.IsAny<ThroughputProperties>(), null, CancellationToken.None), Times.Never);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), 5);
+            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400) ,5);
 
             _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
 
@@ -102,7 +102,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
                         It.Is<ContainerProperties>(c => c.Id == "a"
                                                         && c.PartitionKeyPath == "/test"
                                                         && c.DefaultTimeToLive == 5),
-                        (int?) null,
+                        itemOptions.ThroughputProperties,
                         null,
                         CancellationToken.None))
                 .ReturnsAsync(_containerResponse.Object);
@@ -113,6 +113,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             //Assert
             Assert.Equal(_container.Object, container);
             _container.Verify(o => o.ReplaceContainerAsync(It.IsAny<ContainerProperties>(), null, CancellationToken.None), Times.Never);
+            _container.Verify(o => o.ReplaceThroughputAsync(It.IsAny<ThroughputProperties>(), null, CancellationToken.None), Times.Never);
         }
 
         [Fact]
@@ -122,7 +123,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), 5, true);
+            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
 
             _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
 
@@ -133,7 +134,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             _database.Setup(o =>
                     o.CreateContainerIfNotExistsAsync(
                         It.Is<ContainerProperties>(c => ValidateContainerProperties(c)),
-                        (int?) null,
+                        itemOptions.ThroughputProperties,
                         null,
                         CancellationToken.None))
                 .ReturnsAsync(_containerResponse.Object);
@@ -143,6 +144,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 
             //Assert
             _container.Verify(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None), Times.Once);
+            _container.Verify(o => o.ReplaceThroughputAsync(itemOptions.ThroughputProperties, null, CancellationToken.None), Times.Once);
 
             Assert.Equal(_container.Object, container);
         }
@@ -154,7 +156,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), 5, false);
+            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, false);
 
             _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
 
@@ -165,7 +167,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             _database.Setup(o =>
                     o.CreateContainerIfNotExistsAsync(
                         It.Is<ContainerProperties>(c => ValidateContainerProperties(c)),
-                        (int?) null,
+                        itemOptions.ThroughputProperties,
                         null,
                         CancellationToken.None))
                 .ReturnsAsync(_containerResponse.Object);
@@ -175,6 +177,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 
             //Assert
             _container.Verify(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None), Times.Once);
+            _container.Verify(o => o.ReplaceThroughputAsync(itemOptions.ThroughputProperties, null, CancellationToken.None), Times.Once);
 
             Assert.Equal(_container.Object, container);
         }
