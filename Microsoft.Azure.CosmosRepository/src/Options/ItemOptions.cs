@@ -16,15 +16,19 @@ namespace Microsoft.Azure.CosmosRepository.Options
 
         public UniqueKeyPolicy UniqueKeyPolicy { get; }
 
+        public ThroughputProperties ThroughputProperties { get; }
+
         public int DefaultTimeToLive { get; }
+
         public bool SyncContainerProperties { get; }
 
-        public ItemOptions(Type type, string containerName, string partitionKeyPath, UniqueKeyPolicy uniqueKeyPolicy, int defaultTimeToLive = -1, bool syncContainerProperties = false)
+        public ItemOptions(Type type, string containerName, string partitionKeyPath, UniqueKeyPolicy uniqueKeyPolicy,ThroughputProperties throughputProperties, int defaultTimeToLive = -1, bool syncContainerProperties = false)
         {
             Type = type;
             ContainerName = containerName;
             PartitionKeyPath = partitionKeyPath;
             UniqueKeyPolicy = uniqueKeyPolicy;
+            ThroughputProperties = throughputProperties;
             DefaultTimeToLive = defaultTimeToLive;
             SyncContainerProperties = syncContainerProperties;
         }

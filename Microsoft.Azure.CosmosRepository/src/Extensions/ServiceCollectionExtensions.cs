@@ -65,7 +65,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<ICosmosContainerDefaultTimeToLiveProvider, DefaultCosmosContainerDefaultTimeToLiveProvider>()
                     .AddSingleton<ICosmosContainerSyncContainerPropertiesProvider, DefaultContainerSyncContainerPropertiesProvider>()
                     .AddSingleton<ICosmosContainerService, DefaultCosmosContainerService>()
-                    .AddSingleton<ICosmosContainerSyncService, DefaultCosmosContainerSyncService>();
+                    .AddSingleton<ICosmosContainerSyncService, DefaultCosmosContainerSyncService>()
+                    .AddSingleton<ICosmosThroughputProvider, DefaultCosmosThroughputProvider>();
 
             if (setupAction != default)
             {

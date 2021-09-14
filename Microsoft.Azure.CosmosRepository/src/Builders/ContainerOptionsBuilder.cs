@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using Microsoft.Azure.Cosmos;
 
 namespace Microsoft.Azure.CosmosRepository.Builders
 {
@@ -44,6 +45,12 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         internal bool SyncContainerProperties { get; private set; }
 
         /// <summary>
+        /// The <see cref="ThroughputProperties"/> for the given container.
+        /// </summary>
+        /// <remarks>By default this uses a manual throughput reserved at 400 RU/s in line with the Cosmos SDK.</remarks>
+        internal ThroughputProperties ThroughputProperties { get; private set; } = ThroughputProperties.CreateManualThroughput(400);
+
+        /// <summary>
         /// Sets the <see cref="ContainerDefaultTimeToLive"/> for a container.
         /// </summary>
         /// <param name="containerDefaultTimeToLive">The default time to live for the container.</param>
@@ -84,6 +91,49 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         public ContainerOptionsBuilder WithSyncableContainerProperties()
         {
             SyncContainerProperties = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the container for this <see cref="IItem"/> to use a manual throughput value.
+        /// </summary>
+        /// <param name="throughput">The RU/s that this container can utilise.</param>
+        /// <remarks>This value must be at least 400 RU/s.</remarks>
+        /// <remarks>If a container has already been created without specifying a throughput then it cannot be updated.</remarks>
+        /// <exception cref="InvalidOperationException">When the RU/s is less than 400.</exception>
+        /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+        public ContainerOptionsBuilder WithManualThroughput(int throughput = 400)
+        {
+            if (throughput < 400)
+            {
+                throw new ArgumentOutOfRangeException(nameof(throughput),"A container must at least set a throughput level of 400 RU/s");
+            }
+
+            ThroughputProperties = ThroughputProperties.CreateManualThroughput(throughput);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the container for this <see cref="IItem"/> to use a autoscale throughput value.
+        /// </summary>
+        /// <param name="maxAutoScaleThroughput">The maximum RU/s that this containers throughput can autoscale to.</param>
+        /// <remarks>If a container has already been created without specifying a throughput then it cannot be updated.</remarks>
+        /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+        public ContainerOptionsBuilder WithAutoscaleThroughput(int maxAutoScaleThroughput = 4_000)
+        {
+            if (maxAutoScaleThroughput is < 4_000 or > 1_000_000)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxAutoScaleThroughput),
+                    "Autoscale throughput must be between 4,000 and 1,000,000 RUs.");
+            }
+
+            if (maxAutoScaleThroughput % 1000 != 0)
+            {
+                throw new InvalidOperationException("Autoscale throughput must be defined in increments of 1,000");
+            }
+
+            ThroughputProperties = ThroughputProperties.CreateAutoscaleThroughput(maxAutoScaleThroughput);
             return this;
         }
     }

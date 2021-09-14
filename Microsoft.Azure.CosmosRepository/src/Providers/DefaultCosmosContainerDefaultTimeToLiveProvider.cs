@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                 return -1;
             }
 
-            foreach (ContainerOptionsBuilder containerOptions in _options.Value.ContainerOptions.Where(co => co.Name == options.Name))
+            foreach (ContainerOptionsBuilder containerOptions in _options.Value.GetContainerSharedContainerOptions<TItem>())
             {
                 if (containerOptions.ContainerDefaultTimeToLive != null && containerOptions.ContainerDefaultTimeToLive != options.ContainerDefaultTimeToLive)
                 {
