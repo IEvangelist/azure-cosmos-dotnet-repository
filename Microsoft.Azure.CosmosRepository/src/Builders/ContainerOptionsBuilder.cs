@@ -81,7 +81,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// Sets <see cref="SyncContainerProperties"/> to true
         /// </summary>
         /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
-        public ContainerOptionsBuilder WithSyncedContainerProperties()
+        public ContainerOptionsBuilder WithSyncableContainerProperties()
         {
             SyncContainerProperties = true;
             return this;

@@ -29,7 +29,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void GetWhetherToSyncContainerPropertiesWhenOptionsToSyncIsTrue()
         {
-            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithSyncedContainerProperties());
+            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithSyncableContainerProperties());
             Assert.True(_provider.GetWhetherToSyncContainerProperties<TestItem>());
         }
 
