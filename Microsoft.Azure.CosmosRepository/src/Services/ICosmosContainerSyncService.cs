@@ -16,6 +16,6 @@ namespace Microsoft.Azure.CosmosRepository.Services
         /// </summary>
         /// <typeparam name="TItem">The <see cref="IItem"/> to sync.</typeparam>
         /// <returns></returns>
-        Task SyncAsync<TItem>() where TItem : IItem;
+        Task SyncContainerPropertiesAsync<TItem>() where TItem : IItem;
     }
 }

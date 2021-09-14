@@ -15,6 +15,6 @@ namespace Microsoft.Azure.CosmosRepository.Services
 
         public DefaultCosmosContainerSyncService(ICosmosContainerService containerService) => _containerService = containerService;
 
-        public Task SyncAsync<TItem>() where TItem : IItem => _containerService.GetContainerAsync<TItem>(true);
+        public Task SyncContainerPropertiesAsync<TItem>() where TItem : IItem => _containerService.GetContainerAsync<TItem>(true);
     }
 }
