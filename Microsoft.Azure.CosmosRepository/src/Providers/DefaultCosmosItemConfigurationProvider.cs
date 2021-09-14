@@ -16,17 +16,20 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         private readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
         private readonly ICosmosUniqueKeyPolicyProvider _cosmosUniqueKeyPolicyProvider;
         private readonly ICosmosContainerDefaultTimeToLiveProvider _containerDefaultTimeToLiveProvider;
+        private readonly ICosmosContainerSyncContainerPropertiesProvider _syncContainerPropertiesProvider;
 
         public DefaultCosmosItemConfigurationProvider(
             ICosmosContainerNameProvider containerNameProvider,
             ICosmosPartitionKeyPathProvider cosmosPartitionKeyPathProvider,
             ICosmosUniqueKeyPolicyProvider cosmosUniqueKeyPolicyProvider,
-            ICosmosContainerDefaultTimeToLiveProvider containerDefaultTimeToLiveProvider)
+            ICosmosContainerDefaultTimeToLiveProvider containerDefaultTimeToLiveProvider,
+            ICosmosContainerSyncContainerPropertiesProvider syncContainerPropertiesProvider)
         {
             _containerNameProvider = containerNameProvider;
             _cosmosPartitionKeyPathProvider = cosmosPartitionKeyPathProvider;
             _cosmosUniqueKeyPolicyProvider = cosmosUniqueKeyPolicyProvider;
             _containerDefaultTimeToLiveProvider = containerDefaultTimeToLiveProvider;
+            _syncContainerPropertiesProvider = syncContainerPropertiesProvider;
         }
 
         public ItemOptions GetOptions<TItem>() where TItem : IItem =>
@@ -38,8 +41,9 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             string partitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>();
             UniqueKeyPolicy uniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy<TItem>();
             int timeToLive = _containerDefaultTimeToLiveProvider.GetDefaultTimeToLive<TItem>();
+            bool sync = _syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties<TItem>();
 
-            return new(optionType, containerName, partitionKeyPath, uniqueKeyPolicy, timeToLive);
+            return new(optionType, containerName, partitionKeyPath, uniqueKeyPolicy, timeToLive, sync);
         }
     }
 }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 
@@ -68,6 +69,13 @@ namespace Microsoft.Azure.CosmosRepository.Options
         public bool AllowBulkExecution { get; set; }
 
         /// <summary>
+        /// Get or sets whether or not to sync all container properties. Setting this option will mean all containers when created for the first time will ensure that
+        /// the container properties are up to date.
+        /// <remarks>If you want to specify this at the container level see <see cref="ContainerBuilder"/></remarks>
+        /// </summary>
+        public bool SyncAllContainerProperties { get; set; }
+
+        /// <summary>
         /// Gets or sets the repository serialization options.
         /// </summary>
         public RepositorySerializationOptions SerializationOptions { get; set; }
@@ -82,5 +90,13 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// Container options provided by the <see cref="Builders.IItemContainerBuilder"/>
         /// </summary>
         internal IReadOnlyList<ContainerOptionsBuilder> ContainerOptions => ContainerBuilder.Options;
+
+        /// <summary>
+        /// Get the <see cref="ContainerOptionsBuilder"/> for a given <see cref="IItem"/>.
+        /// </summary>
+        /// <typeparam name="TItem"></typeparam>
+        /// <returns>null or <see cref="ContainerOptionsBuilder"/>.</returns>
+        internal ContainerOptionsBuilder GetContainerOptions<TItem>() where TItem : IItem =>
+            ContainerOptions.FirstOrDefault(co => co.Type == typeof(TItem));
     }
 }

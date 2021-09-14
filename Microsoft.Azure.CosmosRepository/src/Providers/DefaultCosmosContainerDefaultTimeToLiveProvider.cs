@@ -23,7 +23,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         /// <inheritdoc/>
         public int GetDefaultTimeToLive<TItem>() where TItem : IItem
         {
-            ContainerOptionsBuilder options = _options.Value.ContainerOptions.FirstOrDefault(co => co.Type == typeof(TItem));
+            ContainerOptionsBuilder options = _options.Value.GetContainerOptions<TItem>();
 
             if (options is null)
             {
