@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Azure.Core;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 
@@ -79,6 +80,11 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// Gets or sets the repository serialization options.
         /// </summary>
         public RepositorySerializationOptions SerializationOptions { get; set; }
+
+        /// <summary>
+        /// The <see cref="TokenCredential"/> which can be used to access azure resources, including Cosmos DB.
+        /// </summary>
+        public TokenCredential TokenCredential { get; set; } = null;
 
         /// <summary>
         /// A builder to configure containers.
