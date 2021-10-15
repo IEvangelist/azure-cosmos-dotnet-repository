@@ -35,7 +35,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         CosmosClient GetCosmoClient()
         {
             return _options.TokenCredential is not null
-                ? new CosmosClient(_options.CosmosConnectionString, _options.TokenCredential, _cosmosClientOptions)
+                ? new CosmosClient(_options.AccountEndpoint, _options.TokenCredential, _cosmosClientOptions)
                 : new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions);
         }
 
