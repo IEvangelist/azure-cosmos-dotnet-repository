@@ -199,7 +199,7 @@ In a basic scenario, there are three steps that need to be completed:
                 options =>
                 {
                     options.TokenCredential = credential;
-                    options.AccountEndpoint = "< account endpoint URI >"
+                    options.AccountEndpoint = "< account endpoint URI >";
                     options.ContainerId = "data-store";
                     options.DatabaseId = "samples";
                 });
