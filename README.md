@@ -107,6 +107,7 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
 | Key                                                           | Data type                  | Default value                          |
 |---------------------------------------------------------------|----------------------------|----------------------------------------|
 | RepositoryOptions__CosmosConnectionString                     | string                     | `null`                                 |
+| RepositoryOptions__AccountEndpoint                            | string                     | `null`                                 |
 | RepositoryOptions__DatabaseId                                 | string                     | `"database"`                           |
 | RepositoryOptions__ContainerId                                | string                     | `"container"`                          |
 | RepositoryOptions__OptimizeBandwidth                          | boolean                    | `true`                                 |
@@ -130,6 +131,7 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
   "AllowedHosts": "*",
   "RepositoryOptions": {
     "CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
+    "AccountEndpoint": "<Your-CosmosDB-URI>"
     "DatabaseId": "<Your-CosmosDB-DatabaseName>",
     "ContainerId": "<Your-CosmosDB-ContainerName>",
     "OptimizeBandwidth": true,
@@ -159,6 +161,7 @@ For more information, see [JSON configuration provider](https://docs.microsoft.c
   "AllowedHosts": "*",
   "Values": {
     "RepositoryOptions:CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
+    "RepositoryOptions:AccountEndpoint": "<Your-CosmosDB-URI>",
     "RepositoryOptions:DatabaseId": "<Your-CosmosDB-DatabaseName>",
     "RepositoryOptions:ContainerId": "<Your-CosmosDB-ContainerName>",
     "RepositoryOptions:OptimizeBandwidth": true,
