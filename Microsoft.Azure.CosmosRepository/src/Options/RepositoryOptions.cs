@@ -21,6 +21,15 @@ namespace Microsoft.Azure.CosmosRepository.Options
         public string CosmosConnectionString { get; set; }
 
         /// <summary>
+        /// Gets or sets the cosmos account endpoint URI. This can be retrieved from the Overview section of the Azure Portal.
+        /// This is required if you are authenticating using tokens.
+        /// <remarks>
+        /// In the form of https://{databaseaccount}.documents.azure.com:443/, see: https://docs.microsoft.com/en-us/rest/api/cosmos-db/cosmosdb-resource-uri-syntax-for-rest
+        /// </remarks>
+        /// </summary>
+        public string AccountEndpoint { get; set; }
+
+        /// <summary>
         /// Gets or sets the name identifier for the cosmos database.
         /// </summary>
         /// <remarks>
