@@ -177,7 +177,7 @@ For more information, see [Customizing configuration sources](https://docs.micro
 
 #### Authenticating using an identity
 
-The Azure Cosmos DB .NET SDK also supports authentication using identities, which are considered superior from an audit and granularity of permissions perspective, authenticating using a connection string essentially provides full access to perform options within the [data plane](https://docs.microsoft.com/en-us/azure/cosmos-db/role-based-access-control)
+The Azure Cosmos DB .NET SDK also supports authentication using identities, which are considered superior from an audit and granularity of permissions perspective. Authenticating using a connection string essentially provides full access to perform operations within the [data plane](https://docs.microsoft.com/en-us/azure/cosmos-db/role-based-access-control)
 of your Cosmos DB Account. More information on the Azure control plane and data plane is available [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane).
 
 This libary also supports authentication using an identity. To authenticate using an identity (User, Group, Application Registration, or Managed Identity) you will need to set the `AccountEndpoint` and `TokenCredential` options that are available on the `RepositoryOptions` class.
@@ -193,7 +193,7 @@ In a basic scenario, there are three steps that need to be completed:
 
         public void ConfigureServices(IServiceCollection services)
         {
-            DefaultAzureCredential credential = new DefaultAzureCredential();
+            DefaultAzureCredential credential = new();
             
             services.AddCosmosRepository(
                 options =>
