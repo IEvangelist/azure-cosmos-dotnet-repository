@@ -164,6 +164,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
         {
             //Arrange
             _repositoryOptions.CosmosConnectionString = "Some Connection String";
+            _repositoryOptions.AccountEndpoint = null;
             _repositoryOptions.TokenCredential = null;
             _repositoryOptions.DatabaseId = null;
             _repositoryOptions.ContainerPerItemType = false;
@@ -179,6 +180,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
         {
             //Arrange
             _repositoryOptions.CosmosConnectionString = "Some Connection String";
+            _repositoryOptions.AccountEndpoint = null;
             _repositoryOptions.TokenCredential = null;
             _repositoryOptions.DatabaseId = "Database 1";
             _repositoryOptions.ContainerId = null;
@@ -244,6 +246,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
         {
             //Arrange
             _repositoryOptions.CosmosConnectionString = "Some Connection String";
+            _repositoryOptions.AccountEndpoint = null;
+            _repositoryOptions.TokenCredential = null;
             _repositoryOptions.ContainerPerItemType = true;
             _options.Setup(o => o.Value).Returns(_repositoryOptions);
 
@@ -255,6 +259,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
         {
             //Arrange
             _repositoryOptions.CosmosConnectionString = "Some Connection String";
+            _repositoryOptions.AccountEndpoint = null;
+            _repositoryOptions.TokenCredential = null;
             _repositoryOptions.ContainerPerItemType = false;
             _repositoryOptions.DatabaseId = "Database 1";
             _repositoryOptions.ContainerId = "Container";
