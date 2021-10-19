@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.Validators
                 if (current.TokenCredential is not null && current.AccountEndpoint is null)
                 {
                     exceptionsEncountered.Add(new ArgumentNullException($"The {nameof(current.AccountEndpoint)} is required when using token authentication."));
-               }
+                }
 
                 if (current.ContainerPerItemType)
                 {
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.CosmosRepository.Validators
             }
             catch (AggregateException aggregateException)
             {
-                foreach(Exception exception in aggregateException.InnerExceptions)
+                foreach (Exception exception in aggregateException.InnerExceptions)
                 {
                     throw;
                 }
