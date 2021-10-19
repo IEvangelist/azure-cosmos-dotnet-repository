@@ -28,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                     .Build();
             IServiceCollection services = new ServiceCollection();
             services.AddSingleton<IConfiguration>(configuration);
-            
+
             services.AddCosmosRepository();
 
             IServiceProvider provider = services.BuildServiceProvider();
