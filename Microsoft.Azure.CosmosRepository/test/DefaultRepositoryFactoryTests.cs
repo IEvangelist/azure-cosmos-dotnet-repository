@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 new DefaultRepositoryFactory(null));
 
         [Fact]
-        public void RepositoryFactoryCorrectlyGetsRepositoryTest()
+        public void RepositoryFactoryCorrectlyGetsRepositoryUsingConnectionStringTest()
         {
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
@@ -30,6 +31,32 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             services.AddSingleton<IConfiguration>(configuration);
 
             services.AddCosmosRepository();
+
+            IServiceProvider provider = services.BuildServiceProvider();
+            IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();
+
+            Assert.NotNull(factory.RepositoryOf<AnotherTestItem>());
+            Assert.NotNull(factory.RepositoryOf<AndAnotherItem>());
+            Assert.NotNull(factory.RepositoryOf<AndACustomEntity>());
+        }
+
+        [Fact]
+        public void RepositoryFactoryCorrectlyGetsRepositoryUsingTokenCredentialAuthenticationTest()
+        {
+            IConfigurationRoot configuration =
+                new ConfigurationBuilder()
+                    .AddInMemoryCollection(new Dictionary<string, string>
+                    {
+                        ["RepositoryOptions:AccountEndpoint"] = "Account Endpoint"
+                    })
+                    .Build();
+            IServiceCollection services = new ServiceCollection();
+            services.AddSingleton<IConfiguration>(configuration);
+
+            services.AddCosmosRepository(options =>
+            {
+                options.TokenCredential = new TestTokenCredential();
+            });
 
             IServiceProvider provider = services.BuildServiceProvider();
             IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();

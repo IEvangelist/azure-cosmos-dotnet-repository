@@ -14,9 +14,14 @@ namespace Microsoft.Azure.CosmosRepository.Validators
             RepositoryOptions current = options?.Value
                 ?? throw new ArgumentNullException(nameof(options), "Repository option are required");
 
-            if (current.CosmosConnectionString is null)
+            if (current.CosmosConnectionString is null && current.TokenCredential is null)
             {
-                throw new ArgumentNullException($"The {nameof(current.CosmosConnectionString)} is required.");
+                throw new ArgumentNullException($"A {nameof(current.CosmosConnectionString)} or {nameof(current.TokenCredential)} are required.");
+            }
+
+            if (current.TokenCredential is not null && current.AccountEndpoint is null)
+            {
+                throw new ArgumentNullException($"The {nameof(current.AccountEndpoint)} is required when using token authentication.");
             }
 
             if (current.ContainerPerItemType)
