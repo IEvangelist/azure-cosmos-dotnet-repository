@@ -10,6 +10,9 @@ namespace Microsoft.Azure.CosmosRepository.Validators
 {
     class DefaultRepositoryOptionsValidator : IRepositoryOptionsValidator
     {
+        private const string SingularErrorMessage = "An error was encountered";
+        private const string PluralErrorMessage = "Multiple errors were encountered";
+
         public void ValidateForContainerCreation(IOptions<RepositoryOptions> options)
         {
             try
@@ -17,26 +20,56 @@ namespace Microsoft.Azure.CosmosRepository.Validators
                 RepositoryOptions current = options?.Value;
                 List<Exception> exceptionsEncountered = new();
 
-                if (current is null)
+                bool respositoryOptionsIsNull = current is null;
+
+                if (respositoryOptionsIsNull)
                 {
-                    throw new AggregateException("An error was encountered", new ArgumentNullException(nameof(options), "Repository option are required"));
+                    throw new AggregateException(SingularErrorMessage, new ArgumentNullException(nameof(options), "Repository option are required"));
                 }
 
-                if (current.CosmosConnectionString is null && current.TokenCredential is null)
+                (bool connectionStringIsNull, bool accountEndpointIsNull, bool tokenCredentialIsNull, bool databaseIdIsNull, bool containerIdIsNull) = (
+                    current.CosmosConnectionString is null,
+                    current.AccountEndpoint is null,
+                    current.TokenCredential is null,
+                    current.DatabaseId is null,
+                    current.ContainerId is null
+                );
+
+                // Bad - nothing provided for either connection method
+                if (connectionStringIsNull && tokenCredentialIsNull && accountEndpointIsNull)
                 {
-                    exceptionsEncountered.Add(new ArgumentNullException($"A {nameof(current.CosmosConnectionString)} or {nameof(current.TokenCredential)} are required."));
+                    exceptionsEncountered.Add(new ArgumentException($"Missing required arguments, you must provide either a {nameof(current.CosmosConnectionString)} or a {nameof(current.TokenCredential)} and {nameof(current.AccountEndpoint)}."));
                 }
 
-                if (current.TokenCredential is not null && current.AccountEndpoint is null)
+                // Bad - everything provided for both connection methods
+                if (!connectionStringIsNull && !tokenCredentialIsNull && !accountEndpointIsNull)
                 {
-                    exceptionsEncountered.Add(new ArgumentNullException($"The {nameof(current.AccountEndpoint)} is required when using token authentication."));
+                    exceptionsEncountered.Add(new ArgumentException($"Invalid configuration, you must provide either a {nameof(current.CosmosConnectionString)} or a {nameof(current.TokenCredential)} and {nameof(current.AccountEndpoint)}, not both."));
+                }
+
+                // Bad - some token auth details provided along connection string, the reverse case is covered above with everything for both connection methods
+                if (!connectionStringIsNull && (!tokenCredentialIsNull || !accountEndpointIsNull))
+                {
+                    exceptionsEncountered.Add(new ArgumentException($"When {current.CosmosConnectionString} is provided, you should not provide {nameof(current.TokenCredential)} or {nameof(current.AccountEndpoint)}"));
+                }
+
+                // Bad - endpoint without token
+                if (!tokenCredentialIsNull && accountEndpointIsNull)
+                {
+                    exceptionsEncountered.Add(new ArgumentNullException($"An {nameof(current.AccountEndpoint)} is required when {nameof(current.TokenCredential)} is set."));
+                }
+
+                // Bad - token without endpoint
+                if (tokenCredentialIsNull && !accountEndpointIsNull)
+                {
+                    exceptionsEncountered.Add(new ArgumentNullException($"A {nameof(current.TokenCredential)} is required when {nameof(current.AccountEndpoint)} is set."));
                 }
 
                 if (current.ContainerPerItemType)
                 {
                     if (exceptionsEncountered.Count > 0)
                     {
-                        throw new AggregateException($"{(exceptionsEncountered.Count > 1 ? "Multiple errors were" : "An error was")} encountered", exceptionsEncountered);
+                        throw new AggregateException(exceptionsEncountered.Count > 1 ? PluralErrorMessage : SingularErrorMessage, exceptionsEncountered);
                     }
                     else
                     {
@@ -56,7 +89,7 @@ namespace Microsoft.Azure.CosmosRepository.Validators
 
                 if (exceptionsEncountered.Count > 0)
                 {
-                    throw new AggregateException($"{(exceptionsEncountered.Count > 1 ? "Multiple errors were" : "An error was")} encountered", exceptionsEncountered);
+                    throw new AggregateException(exceptionsEncountered.Count > 1 ? PluralErrorMessage : SingularErrorMessage, exceptionsEncountered);
                 }
             }
             catch (AggregateException aggregateException)

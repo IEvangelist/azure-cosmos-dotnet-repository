@@ -63,6 +63,102 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
             Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
         }
 
+        // Bad - nothing provided for either connection method
+        [Fact]
+        public void NullCosmosConnectionStringAndNullTokenCredentialAndNullAccountEndpointProvidedThrowsAggregateException()
+        {
+            //Arrange
+            _repositoryOptions.CosmosConnectionString = null;
+            _repositoryOptions.TokenCredential = null;
+            _repositoryOptions.AccountEndpoint = null;
+            _options.Setup(o => o.Value).Returns(_repositoryOptions);
+
+            //Act
+            //Assert
+            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+        }
+
+        // Bad - everything provided for both connection methods
+        [Fact]
+        public void NotNullConnectionStringAndNotNullTokenCredentialAndNotNullAccountEndpointProvidedThrowsAggregateException()
+        {
+            //Arrange
+            _repositoryOptions.CosmosConnectionString = "Some Connection String";
+            _repositoryOptions.TokenCredential = new TestTokenCredential();
+            _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
+            _options.Setup(o => o.Value).Returns(_repositoryOptions);
+
+            //Act
+            //Assert
+            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+        }
+
+        // Bad - some token auth details provided along connection string, the reverse case is covered above with everything for both connection methods
+        [Fact]
+        public void NotNullConnectionStringAndNullTokenCredentialAndNotNullAccountEndpointProvidedThrowsAggregateException()
+        {
+            //Arrange
+            _repositoryOptions.CosmosConnectionString = "Some Connection String";
+            _repositoryOptions.TokenCredential = null;
+            _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
+            _options.Setup(o => o.Value).Returns(_repositoryOptions);
+
+            //Act
+            //Assert
+            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+        }
+
+        // Bad - some token auth details provided along connection string, the reverse case is covered above with everything for both connection methods
+        [Fact]
+        public void NotNullConnectionStringAndNotNullTokenCredentialAndNullAccountEndpointProvidedThrowsAggregateException()
+        {
+            //Arrange
+            _repositoryOptions.CosmosConnectionString = "Some Connection String";
+            _repositoryOptions.TokenCredential = new TestTokenCredential();
+            _repositoryOptions.AccountEndpoint = null;
+            _options.Setup(o => o.Value).Returns(_repositoryOptions);
+
+            //Act
+            //Assert
+            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+        }
+
+        // Bad - endpoint without token
+        [Fact]
+        public void NotNullAccountEndpointProvidedWithNullTokenCredentialThrowsAggregateException()
+        {
+            //Arrange
+            _repositoryOptions.CosmosConnectionString = null;
+            _repositoryOptions.TokenCredential = null;
+            _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
+            _repositoryOptions.ContainerPerItemType = false;
+            _repositoryOptions.DatabaseId = "Database 1";
+            _repositoryOptions.ContainerId = "Container";
+            _options.Setup(o => o.Value).Returns(_repositoryOptions);
+
+            //Act
+            //Assert
+            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+        }
+
+        // Bad - token without endpoint
+        [Fact]
+        public void NotNullTokenCredentialProvidedWithNullAccountEndpointThrowsAggregateException()
+        {
+            //Arrange
+            _repositoryOptions.CosmosConnectionString = null;
+            _repositoryOptions.TokenCredential = new TestTokenCredential();
+            _repositoryOptions.AccountEndpoint = null;
+            _repositoryOptions.ContainerPerItemType = false;
+            _repositoryOptions.DatabaseId = "Database 1";
+            _repositoryOptions.ContainerId = "Container";
+            _options.Setup(o => o.Value).Returns(_repositoryOptions);
+
+            //Act
+            //Assert
+            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+        }
+
         [Fact]
         public void NullDatabaseIdWhenUsingConnectionStringAuthenticationAndItemPerContainerTypeThrowsAggregateException()
         {
