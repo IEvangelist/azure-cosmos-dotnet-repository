@@ -160,7 +160,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
         }
 
         [Fact]
-        public void NullDatabaseIdWhenUsingConnectionStringAuthenticationAndItemPerContainerTypeThrowsAggregateException()
+        public void NullDatabaseIdWhenUsingConnectionStringAuthenticationAndItemPerContainerTypeThrowsArgumentNullException()
         {
             //Arrange
             _repositoryOptions.CosmosConnectionString = "Some Connection String";
@@ -172,11 +172,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
 
             //Act
             //Assert
-            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(_options.Object));
         }
 
         [Fact]
-        public void NullContainerIdWhenUsingConnectionStringAuthenticationAndItemPerContainerTypeThrowsAggregateException()
+        public void NullContainerIdWhenUsingConnectionStringAuthenticationAndItemPerContainerTypeThrowsArgumentNullException()
         {
             //Arrange
             _repositoryOptions.CosmosConnectionString = "Some Connection String";
@@ -189,11 +189,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
 
             //Act
             //Assert
-            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(_options.Object));
         }
 
         [Fact]
-        public void NullDatabaseIdWhenUsingTokenCredentialAuthenticationAndItemPerContainerTypeThrowsAggregateException()
+        public void NullDatabaseIdWhenUsingTokenCredentialAuthenticationAndItemPerContainerTypeThrowsArgumentNullException()
         {
             //Arrange
             _repositoryOptions.CosmosConnectionString = null;
@@ -205,11 +205,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
 
             //Act
             //Assert
-            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(_options.Object));
         }
 
         [Fact]
-        public void NullContainerIdWhenUsingTokenCredentialAuthenticationAndItemPerContainerTypeThrowsAggregateException()
+        public void NullContainerIdWhenUsingTokenCredentialAuthenticationAndItemPerContainerTypeThrowsArgumentNullException()
         {
             //Arrange
             _repositoryOptions.CosmosConnectionString = null;
@@ -222,7 +222,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
 
             //Act
             //Assert
-            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
+            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(_options.Object));
         }
 
         [Fact]
