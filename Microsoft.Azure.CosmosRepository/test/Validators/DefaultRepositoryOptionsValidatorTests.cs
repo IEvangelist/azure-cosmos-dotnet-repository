@@ -23,8 +23,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
         private readonly DefaultRepositoryOptionsValidator _validator = new();
 
         [Fact]
-        public void NullIOptionsThrowsAggregateException() =>
-            Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(null));
+        public void NullIOptionsThrowsArgumentNullException() =>
+            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(null));
 
         [Fact]
         public void NullCosmosConnectionStringThrowsAggregateException()
