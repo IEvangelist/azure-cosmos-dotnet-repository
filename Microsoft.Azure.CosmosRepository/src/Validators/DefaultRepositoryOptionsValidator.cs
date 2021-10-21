@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepository.Validators
             {
                 throw new ArgumentNullException(nameof(options), "Repository option are required");
             }
-            
+
             List<Exception> exceptionsEncountered = new();
 
             (bool connectionStringIsNull, bool accountEndpointIsNull, bool tokenCredentialIsNull, bool databaseIdIsNull, bool containerIdIsNull, bool containerPerType) = (
