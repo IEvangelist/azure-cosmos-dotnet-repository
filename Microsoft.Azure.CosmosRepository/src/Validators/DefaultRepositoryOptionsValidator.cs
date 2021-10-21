@@ -16,14 +16,12 @@ namespace Microsoft.Azure.CosmosRepository.Validators
         public void ValidateForContainerCreation(IOptions<RepositoryOptions> options)
         {
             RepositoryOptions current = options?.Value;
-            List<Exception> exceptionsEncountered = new();
-
-            bool respositoryOptionsIsNull = current is null;
-
-            if (respositoryOptionsIsNull)
+            if (current is null)
             {
-                throw new AggregateException(SingularErrorMessage, new ArgumentNullException(nameof(options), "Repository option are required"));
+                throw new ArgumentNullException(nameof(options), "Repository option are required");
             }
+            
+            List<Exception> exceptionsEncountered = new();
 
             (bool connectionStringIsNull, bool accountEndpointIsNull, bool tokenCredentialIsNull, bool databaseIdIsNull, bool containerIdIsNull, bool containerPerType) = (
                 current.CosmosConnectionString is null,
