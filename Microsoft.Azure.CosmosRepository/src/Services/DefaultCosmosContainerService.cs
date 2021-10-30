@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Options;
@@ -18,6 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Services
         readonly ICosmosClientProvider _cosmosClientProvider;
         readonly ILogger<DefaultCosmosContainerService> _logger;
         readonly RepositoryOptions _options;
+        private readonly Dictionary<string, DateTime> _containerSyncLog = new();
 
         public DefaultCosmosContainerService(ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
             ICosmosClientProvider cosmosClientProvider,
@@ -55,18 +57,24 @@ namespace Microsoft.Azure.CosmosRepository.Services
                     await database.CreateContainerIfNotExistsAsync(
                         containerProperties, itemOptions.ThroughputProperties).ConfigureAwait(false);
 
-                if (itemOptions.SyncContainerProperties || forceContainerSync)
+                if ((itemOptions.SyncContainerProperties is false || _containerSyncLog.ContainsKey(container.Id)) && forceContainerSync is false)
                 {
-                    await container.ReplaceThroughputAsync(itemOptions.ThroughputProperties);
-                    await container.ReplaceContainerAsync(containerProperties);
+                    return container;
+                }
+
+                await container.ReplaceThroughputAsync(itemOptions.ThroughputProperties);
+                await container.ReplaceContainerAsync(containerProperties);
+
+                if (itemOptions.SyncContainerProperties)
+                {
+                    _containerSyncLog.Add(container.Id, DateTime.UtcNow);
                 }
 
                 return container;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
-
+                _logger.LogError(ex, "Failed to get container with error {GetContainerError}", ex.Message);
                 throw;
             }
         }
