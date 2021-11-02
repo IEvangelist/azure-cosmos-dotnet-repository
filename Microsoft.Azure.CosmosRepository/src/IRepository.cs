@@ -128,6 +128,16 @@ namespace Microsoft.Azure.CosmosRepository
             CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Updates one or more cosmos item(s) representing the given <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The item values to update.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A collection of updated item instances.</returns>
+        ValueTask<IEnumerable<TItem>> UpdateAsync(
+            IEnumerable<TItem> values,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The object to delete.</param>
