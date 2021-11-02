@@ -177,7 +177,8 @@ namespace Microsoft.Azure.CosmosRepository
                 values.Select(value => UpdateAsync(value, cancellationToken).AsTask())
                     .ToList();
 
-            _ = await Task.WhenAll(updateTasks).ConfigureAwait(false);
+            await Task.WhenAll(updateTasks).ConfigureAwait(false);
+
 
             return updateTasks.Select(x => x.Result);
         }
