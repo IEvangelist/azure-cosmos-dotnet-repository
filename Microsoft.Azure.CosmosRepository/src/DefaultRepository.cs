@@ -179,7 +179,6 @@ namespace Microsoft.Azure.CosmosRepository
 
             await Task.WhenAll(updateTasks).ConfigureAwait(false);
 
-
             return updateTasks.Select(x => x.Result);
         }
 
