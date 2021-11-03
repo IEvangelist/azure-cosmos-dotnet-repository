@@ -17,7 +17,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// <inheritdoc/>
     public class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
-        internal ConcurrentDictionary<string,TItem> Items { get; } = new();
+        internal ConcurrentDictionary<string, TItem> Items { get; } = new();
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)
@@ -48,7 +48,7 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
             return Items.Values.Where(predicate.Compose(
-                item =>  item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
+                item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
         /// <inheritdoc/>
@@ -106,6 +106,19 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
+        public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default)
+        {
+            IEnumerable<TItem> enumerable = values.ToList();
+
+            foreach (TItem value in enumerable)
+            {
+                await UpdateAsync(value, cancellationToken);
+            }
+
+            return enumerable;
+        }
+
+        /// <inheritdoc/>
         public ValueTask DeleteAsync(TItem value, CancellationToken cancellationToken = default)
             => DeleteAsync(value.Id, value.PartitionKey, cancellationToken);
 
@@ -150,7 +163,7 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
             return Items.Values.Any(predicate.Compose(
-                item =>  item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
+                item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);

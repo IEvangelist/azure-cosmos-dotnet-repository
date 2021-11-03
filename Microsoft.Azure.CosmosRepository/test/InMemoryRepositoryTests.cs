@@ -325,6 +325,52 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
+        public async Task UpdateAsync_ManyItems_UpdatesAllItems()
+        {
+            //Arrange
+            List<Person> items = new()
+            {
+                new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
+                new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
+                new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
+            };
+
+            List<Person> itemsUpdate = new();
+
+            foreach(Person item in items)
+            {
+                Person itemUpdate = new($"{item.Name}Updated")
+                {
+                    Id = item.Id,
+                    Type = item.Type
+                };
+                itemsUpdate.Add(itemUpdate);
+            }
+            
+            //Act
+            IEnumerable<Person> people = (await _personRepository.UpdateAsync(itemsUpdate)).ToList();
+
+            foreach (Person item in items)
+            {
+                Person updatedPerson = _personRepository.Items.Values.First(i => i.Id == item.Id);
+                Person person = people.First(i => i.Id == item.Id);
+                Person itemUpdate = itemsUpdate.First(i => i.Id == item.Id);
+
+                Assert.NotEqual(item.Name, updatedPerson.Name);
+                Assert.Equal(item.Id, updatedPerson.Id);
+                Assert.Equal(item.Type, updatedPerson.Type);
+
+                Assert.Equal(person.Name, updatedPerson.Name);
+                Assert.Equal(person.Id, updatedPerson.Id);
+                Assert.Equal(person.Type, updatedPerson.Type);
+
+                Assert.Equal(itemUpdate.Name, updatedPerson.Name);
+                Assert.Equal(itemUpdate.Id, updatedPerson.Id);
+                Assert.Equal(itemUpdate.Type, updatedPerson.Type);
+            }
+        }
+
+        [Fact]
         public async Task UpdateAsync_ItemThatExists_UpdatesItem()
         {
             //Arrange

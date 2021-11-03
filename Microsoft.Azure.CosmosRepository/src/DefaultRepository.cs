@@ -169,6 +169,20 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
+        public async ValueTask<IEnumerable<TItem>> UpdateAsync(
+            IEnumerable<TItem> values,
+            CancellationToken cancellationToken = default)
+        {
+            IEnumerable<Task<TItem>> updateTasks =
+                values.Select(value => UpdateAsync(value, cancellationToken).AsTask())
+                    .ToList();
+
+            await Task.WhenAll(updateTasks).ConfigureAwait(false);
+
+            return updateTasks.Select(x => x.Result);
+        }
+
+        /// <inheritdoc/>
         public ValueTask DeleteAsync(
             TItem value,
             CancellationToken cancellationToken = default) =>
