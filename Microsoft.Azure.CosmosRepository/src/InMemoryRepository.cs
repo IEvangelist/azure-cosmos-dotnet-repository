@@ -137,15 +137,15 @@ namespace Microsoft.Azure.CosmosRepository
 
             builder(patchOperationBuilder);
 
-            foreach (KeyValuePair<PatchOperationType, InternalPatchOperation> internalPatchOperation in patchOperationBuilder._rawPatchOperations)
+            foreach (InternalPatchOperation internalPatchOperation in patchOperationBuilder._rawPatchOperations)
             {
-                if (internalPatchOperation.Key is not PatchOperationType.Replace)
+                if (internalPatchOperation.Type is not PatchOperationType.Replace)
                 {
                     continue;
                 }
 
-                PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.Value.PropertyInfo.Name);
-                property?.SetValue(item, internalPatchOperation.Value.NewValue);
+                PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.PropertyInfo.Name);
+                property?.SetValue(item, internalPatchOperation.NewValue);
             }
         }
 

@@ -19,7 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         private readonly List<PatchOperation> _patchOperations = new();
         private readonly CamelCaseNamingStrategy _namingStrategy = new();
 
-        internal readonly Dictionary<PatchOperationType, InternalPatchOperation> _rawPatchOperations = new();
+        internal readonly List<InternalPatchOperation> _rawPatchOperations = new();
 
         public IReadOnlyList<PatchOperation> PatchOperations => _patchOperations;
 
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             PropertyInfo property = expression.GetPropertyInfo();
             string propertyToReplace = GetPropertyToReplace(property);
-            _rawPatchOperations.Add(PatchOperationType.Replace, new InternalPatchOperation(property, value));
+            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Replace));
             _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
             return this;
         }
