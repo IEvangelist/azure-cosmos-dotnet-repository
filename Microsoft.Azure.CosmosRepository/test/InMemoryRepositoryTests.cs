@@ -26,12 +26,14 @@ namespace Microsoft.Azure.CosmosRepositoryTests
     class Dog : Item
     {
         public string Breed { get; }
+        public string Name { get; private set; }
 
         protected override string GetPartitionKeyValue() => Breed;
 
-        public Dog(string breed)
+        public Dog(string breed, string name = "dasher")
         {
             Breed = breed;
+            Name = name;
         }
     }
 
@@ -346,7 +348,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 };
                 itemsUpdate.Add(itemUpdate);
             }
-            
+
             //Act
             IEnumerable<Person> people = (await _personRepository.UpdateAsync(itemsUpdate)).ToList();
 
@@ -455,6 +457,20 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             //Assert
             Assert.True(exists);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_PropertiesToPatch_UpdatesValues()
+        {
+            //Arrange
+            Dog dog = new("labrador", "fred");
+            _dogRepository.Items.TryAdd(dog.Id, dog);
+
+            //Act
+            await _dogRepository.UpdateAsync(dog.Id, dog.Breed, builder => builder.Replace(d => d.Name, "kenny"));
+
+            //Assert
+            Assert.Equal("kenny",_dogRepository.Items.First().Value.Name);
         }
 
 

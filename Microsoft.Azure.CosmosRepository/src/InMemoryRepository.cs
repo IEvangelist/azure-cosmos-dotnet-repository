@@ -133,9 +133,9 @@ namespace Microsoft.Azure.CosmosRepository
                 NotFound();
             }
 
-            PatchOperationBuilder<IItem> patchOperationBuilder = new();
+            PatchOperationBuilder<TItem> patchOperationBuilder = new();
 
-            builder((IPatchOperationBuilder<TItem>)patchOperationBuilder);
+            builder(patchOperationBuilder);
 
             foreach (KeyValuePair<PatchOperationType, InternalPatchOperation> internalPatchOperation in patchOperationBuilder._rawPatchOperations)
             {
