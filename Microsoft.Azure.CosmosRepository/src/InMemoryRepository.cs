@@ -7,15 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Extensions;
+using Microsoft.Azure.CosmosRepository.Internals;
 
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    public class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
+    internal class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
         internal ConcurrentDictionary<string, TItem> Items { get; } = new();
 
@@ -116,6 +119,34 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             return enumerable;
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask UpdateAsync(string id, string partitionKeyValue, Action<IPatchOperationBuilder<TItem>> builder,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            IItem item = Items.Values.FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
+
+            if (item is null)
+            {
+                NotFound();
+            }
+
+            PatchOperationBuilder<IItem> patchOperationBuilder = new();
+
+            builder((IPatchOperationBuilder<TItem>)patchOperationBuilder);
+
+            foreach (KeyValuePair<PatchOperationType, InternalPatchOperation> internalPatchOperation in patchOperationBuilder._rawPatchOperations)
+            {
+                if (internalPatchOperation.Key is not PatchOperationType.Replace)
+                {
+                    continue;
+                }
+
+                PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.Value.PropertyInfo.Name);
+                property?.SetValue(item, internalPatchOperation.Value.NewValue);
+            }
         }
 
         /// <inheritdoc/>

@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -180,6 +181,19 @@ namespace Microsoft.Azure.CosmosRepository
             await Task.WhenAll(updateTasks).ConfigureAwait(false);
 
             return updateTasks.Select(x => x.Result);
+        }
+
+        public async ValueTask UpdateAsync(string id, string partitionKeyValue,
+            Action<IPatchOperationBuilder<TItem>> builder,
+            CancellationToken cancellationToken = default)
+        {
+            IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>();
+            builder(patchOperationBuilder);
+
+            Container container = await _containerProvider.GetContainerAsync();
+
+            await container.PatchItemAsync<TItem>(id, new PartitionKey(partitionKeyValue),
+                patchOperationBuilder.PatchOperations, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc/>

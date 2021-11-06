@@ -7,6 +7,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Extensions;
+using Microsoft.Azure.CosmosRepository.Internals;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -17,14 +19,16 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         private readonly List<PatchOperation> _patchOperations = new();
         private readonly CamelCaseNamingStrategy _namingStrategy = new();
 
+        internal readonly Dictionary<PatchOperationType, InternalPatchOperation> _rawPatchOperations = new();
+
         public IReadOnlyList<PatchOperation> PatchOperations => _patchOperations;
 
 
         public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue value)
         {
-            PropertyInfo property = GetPropertyInfo(expression);
+            PropertyInfo property = expression.GetPropertyInfo();
             string propertyToReplace = GetPropertyToReplace(property);
-
+            _rawPatchOperations.Add(PatchOperationType.Replace, new InternalPatchOperation(property, value));
             _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
             return this;
         }
@@ -48,24 +52,6 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             }
 
             return _namingStrategy.GetPropertyName(propertyInfo.Name, false);
-        }
-
-        private PropertyInfo GetPropertyInfo<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda)
-        {
-            Type type = typeof(TSource);
-
-            MemberExpression member = propertyLambda.Body as MemberExpression;
-            if (member == null)
-                throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
-
-            PropertyInfo propInfo = member.Member as PropertyInfo;
-            if (propInfo == null)
-                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
-
-            if (propInfo.ReflectedType != null && type != propInfo.ReflectedType && !type.IsSubclassOf(propInfo.ReflectedType))
-                throw new ArgumentException($"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
-
-            return propInfo;
         }
     }
 }
