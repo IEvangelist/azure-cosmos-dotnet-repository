@@ -189,10 +189,12 @@ namespace Microsoft.Azure.CosmosRepository
             CancellationToken cancellationToken = default)
         {
             IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>();
+
             builder(patchOperationBuilder);
 
             Container container = await _containerProvider.GetContainerAsync();
 
+            partitionKeyValue ??= id;
 
             await container.PatchItemAsync<TItem>(id, new PartitionKey(partitionKeyValue),
                 patchOperationBuilder.PatchOperations, cancellationToken: cancellationToken);

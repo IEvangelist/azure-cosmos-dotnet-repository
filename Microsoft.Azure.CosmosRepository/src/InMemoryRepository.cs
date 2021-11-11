@@ -128,6 +128,9 @@ namespace Microsoft.Azure.CosmosRepository
             CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
+
+            partitionKeyValue ??= id;
+
             IItem item = Items.Values.FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
 
             if (item is null)
