@@ -43,7 +43,9 @@ namespace WebTier.Controllers
                 return BadRequest("A name is required");
             }
 
-            await _repository.UpdateAsync(id, id, builder => builder.Replace(language => language.Name, name));
+            await _repository
+                .UpdateAsync(id: id,
+                    builder: builder => builder.Replace(language => language.Name, name));
 
             return Ok();
         }

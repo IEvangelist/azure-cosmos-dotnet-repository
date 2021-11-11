@@ -122,7 +122,9 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask UpdateAsync(string id, string partitionKeyValue, Action<IPatchOperationBuilder<TItem>> builder,
+        public async ValueTask UpdateAsync(string id,
+            Action<IPatchOperationBuilder<TItem>> builder,
+            string partitionKeyValue = null,
             CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;

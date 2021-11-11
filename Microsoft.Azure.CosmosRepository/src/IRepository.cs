@@ -149,8 +149,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <returns></returns>
         ValueTask UpdateAsync(
             string id,
-            string partitionKeyValue,
             Action<IPatchOperationBuilder<TItem>> builder,
+            string partitionKeyValue = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>

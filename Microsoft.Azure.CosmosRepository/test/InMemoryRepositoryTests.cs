@@ -492,7 +492,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             _dogRepository.Items.TryAdd(dog.Id, dog);
 
             //Act
-            await _dogRepository.UpdateAsync(dog.Id, dog.Breed, builder => builder.Replace(d => d.Name, "kenny"));
+            await _dogRepository.UpdateAsync(dog.Id, builder => builder.Replace(d => d.Name, "kenny"), dog.Breed);
 
             //Assert
             Assert.Equal("kenny", _dogRepository.Items.First().Value.Name);
@@ -516,7 +516,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             _rootObjectRepository.Items.TryAdd(root.Id, root);
 
             //Act
-            await _rootObjectRepository.UpdateAsync(root.Id, root.Id, builder =>
+            await _rootObjectRepository.UpdateAsync(root.Id, builder =>
                 builder.Replace(x => x.Type1, "CBA")
                     .Replace(x => x.NestedObject, new NestedObject
                     {

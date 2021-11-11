@@ -183,14 +183,16 @@ namespace Microsoft.Azure.CosmosRepository
             return updateTasks.Select(x => x.Result);
         }
 
-        public async ValueTask UpdateAsync(string id, string partitionKeyValue,
+        public async ValueTask UpdateAsync(string id,
             Action<IPatchOperationBuilder<TItem>> builder,
+            string partitionKeyValue = null,
             CancellationToken cancellationToken = default)
         {
             IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>();
             builder(patchOperationBuilder);
 
             Container container = await _containerProvider.GetContainerAsync();
+
 
             await container.PatchItemAsync<TItem>(id, new PartitionKey(partitionKeyValue),
                 patchOperationBuilder.PatchOperations, cancellationToken: cancellationToken);
