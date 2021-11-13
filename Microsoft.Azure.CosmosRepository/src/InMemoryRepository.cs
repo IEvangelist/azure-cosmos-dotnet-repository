@@ -132,7 +132,6 @@ namespace Microsoft.Azure.CosmosRepository
             partitionKeyValue ??= id;
 
             IItem item = Items.Values.FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
-
             if (item is null)
             {
                 NotFound();
