@@ -141,12 +141,9 @@ namespace Microsoft.Azure.CosmosRepository
 
             builder(patchOperationBuilder);
 
-            foreach (InternalPatchOperation internalPatchOperation in patchOperationBuilder._rawPatchOperations)
+            foreach (InternalPatchOperation internalPatchOperation in 
+                patchOperationBuilder._rawPatchOperations.Where(ipo => ipo.Type is PatchOperationType.Replace))
             {
-                if (internalPatchOperation.Type is not PatchOperationType.Replace)
-                {
-                    continue;
-                }
 
                 PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.PropertyInfo.Name);
                 property?.SetValue(item, internalPatchOperation.NewValue);
