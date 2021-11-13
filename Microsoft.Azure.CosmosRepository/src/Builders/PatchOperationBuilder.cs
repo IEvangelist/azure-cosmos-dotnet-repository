@@ -23,7 +23,6 @@ namespace Microsoft.Azure.CosmosRepository.Builders
 
         public IReadOnlyList<PatchOperation> PatchOperations => _patchOperations;
 
-
         public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue value)
         {
             PropertyInfo property = expression.GetPropertyInfo();
