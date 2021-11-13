@@ -47,12 +47,10 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
         {
             Type type = typeof(TSource);
 
-            MemberExpression member = propertyLambda.Body as MemberExpression;
-            if (member == null)
+            if (propertyLambda.Body is not MemberExpression member)
                 throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
 
-            PropertyInfo propInfo = member.Member as PropertyInfo;
-            if (propInfo == null)
+            if (member.Member is not PropertyInfo propInfo)
                 throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
 
             if (propInfo.ReflectedType != null && type != propInfo.ReflectedType && !type.IsSubclassOf(propInfo.ReflectedType))
