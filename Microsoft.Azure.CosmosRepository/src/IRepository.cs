@@ -140,13 +140,13 @@ namespace Microsoft.Azure.CosmosRepository
 
 
         /// <summary>
-        ///
+        /// Updates the given cosmos item using the provided and supported patch operations.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="partitionKeyValue"></param>
-        /// <param name="builder"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
+        /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
         ValueTask UpdateAsync(
             string id,
             Action<IPatchOperationBuilder<TItem>> builder,
