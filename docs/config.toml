@@ -1,0 +1,12 @@
+baseURL = 'http://example.org/'
+languageCode = 'en-us'
+title = 'Azure Cosmos .NET Repository - Docs'
+
+theme = "hugo-theme-learn"
+
+[params]
+    themeVariant = "blue"
+
+# For search functionality
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
