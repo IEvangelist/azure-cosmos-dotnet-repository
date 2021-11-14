@@ -5,7 +5,14 @@ on:
     branches:
       - main
     paths:
-    - ./docs/*
+    - './docs/*'
+
+  workflow_dispatch:
+      inputs:
+        reason:
+          description: 'The reason for running the workflow'
+          required: true
+          default: 'Manual run'
 
 jobs:
   deploy:
