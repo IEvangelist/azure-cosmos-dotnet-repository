@@ -24,6 +24,8 @@ bld/
 [Oo]bj/
 [Ll]og/
 
+docs/public/*
+
 .DS_STORE
 
 # Visual Studio 2015/2017 cache/options directory
