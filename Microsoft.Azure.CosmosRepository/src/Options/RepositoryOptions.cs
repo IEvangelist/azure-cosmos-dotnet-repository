@@ -81,7 +81,7 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <summary>
         /// Get or sets whether or not to sync all container properties. Setting this option will mean all containers when created for the first time will ensure that
         /// the container properties are up to date.
-        /// <remarks>If you want to specify this at the container level see <see cref="ContainerBuilder"/></remarks>
+        /// <remarks>If you want to specify this at the container level see <see cref="Builder"/></remarks>
         /// </summary>
         public bool SyncAllContainerProperties { get; set; }
 
@@ -99,12 +99,12 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// A builder to configure containers.
         /// Ensure that ContainerPerItemType is set to true for the container name configured here to take affect.
         /// </summary>
-        public IItemContainerBuilder ContainerBuilder { get; } = new DefaultItemContainerBuilder();
+        public IItemBuilder Builder { get; } = new DefaultItemBuilder();
 
         /// <summary>
-        /// Container options provided by the <see cref="Builders.IItemContainerBuilder"/>
+        /// Container options provided by the <see cref="IItemBuilder"/>
         /// </summary>
-        internal IReadOnlyList<ContainerOptionsBuilder> ContainerOptions => ContainerBuilder.Options;
+        internal IReadOnlyList<ContainerOptionsBuilder> ContainerOptions => Builder.ContainerItemOptions;
 
         /// <summary>
         /// Get the <see cref="ContainerOptionsBuilder"/> for a given <see cref="IItem"/>.

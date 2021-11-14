@@ -15,7 +15,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Options
         public void RepositoryOptionsBuilderConfiguresItemCorrectly()
         {
             RepositoryOptions options = new();
-            options.ContainerBuilder.Configure<Product>(
+            options.Builder.ConfigureContainer<Product>(
                 containerOptions => containerOptions
                     .WithContainer("products")
                     .WithPartitionKey("/category")
@@ -28,34 +28,34 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Options
 
         [Fact]
         public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenContainerNameIsNull()
-            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithContainer(null)));
+            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().Builder.ConfigureContainer<Product>(options => options.WithContainer(null)));
 
         [Fact]
         public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenPartitionKeyIsNull()
-            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithPartitionKey(null)));
+            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().Builder.ConfigureContainer<Product>(options => options.WithPartitionKey(null)));
 
         [Fact]
         public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenContainerBuilderActionIsNull()
-            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(null));
+            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().Builder.ConfigureOptions<Product>(null));
 
         [Theory]
         [InlineData(300)]
         [InlineData(1_100_000)]
         public void RepositoryOptionsBuilderThrowsOutOfRangeExceptionWhenAutoscaleThroughputIsOutOfRange(int throughput) =>
-            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(builder => builder.WithAutoscaleThroughput(throughput)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().Builder.ConfigureContainer<Product>(builder => builder.WithAutoscaleThroughput(throughput)));
 
         [Theory]
         [InlineData(1500)]
         [InlineData(1_150_000)]
         public void RepositoryOptionsBuilderThrowsInvalidOperationExceptionWhenAutoscaleThroughputNotAMultipleOf1000(int throughput) =>
-            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(builder => builder.WithAutoscaleThroughput(throughput)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().Builder.ConfigureContainer<Product>(builder => builder.WithAutoscaleThroughput(throughput)));
 
 
         [Theory]
         [InlineData(200)]
         [InlineData(100)]
         public void RepositoryOptionsBuilderThrowsOutOfRangeExceptionWhenManualThroughputIsOutOfRange(int throughput) =>
-            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(builder => builder.WithManualThroughput(throughput)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new RepositoryOptions().Builder.ConfigureContainer<Product>(builder => builder.WithManualThroughput(throughput)));
     }
 
     public class Product : Item

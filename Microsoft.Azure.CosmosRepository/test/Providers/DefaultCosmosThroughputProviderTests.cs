@@ -29,7 +29,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void GetThroughputPropertiesItemAutoscaleThroughputProperties()
         {
-            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithAutoscaleThroughput());
+            _repositoryOptions.Builder.ConfigureContainer<TestItem>(builder => builder.WithAutoscaleThroughput());
             ThroughputProperties throughputProperties = _provider.GetThroughputProperties<TestItem>();
 
             Assert.Equal(4000, throughputProperties.AutoscaleMaxThroughput);
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void GetThroughputPropertiesItemManualThroughputProperties()
         {
-            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithManualThroughput(500));
+            _repositoryOptions.Builder.ConfigureContainer<TestItem>(builder => builder.WithManualThroughput(500));
             ThroughputProperties throughputProperties = _provider.GetThroughputProperties<TestItem>();
 
             Assert.Equal(500, throughputProperties.Throughput);
@@ -49,9 +49,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void GetThroughputPropertiesItemsWithConflictingAutoscaleValues()
         {
-            _repositoryOptions.ContainerBuilder
-                .Configure<TestItem>(builder => builder.WithAutoscaleThroughput(4000))
-                .Configure<AnotherTestItem>(builder => builder.WithAutoscaleThroughput(5000));
+            _repositoryOptions.Builder
+                .ConfigureContainer<TestItem>(builder => builder.WithAutoscaleThroughput(4000))
+                .ConfigureContainer<AnotherTestItem>(builder => builder.WithAutoscaleThroughput(5000));
 
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => _provider.GetThroughputProperties<TestItem>());
 
@@ -63,9 +63,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void GetThroughputPropertiesItemsWithConflictingManualValues()
         {
-            _repositoryOptions.ContainerBuilder
-                .Configure<TestItem>(builder => builder.WithManualThroughput(500))
-                .Configure<AnotherTestItem>(builder => builder.WithManualThroughput(700));
+            _repositoryOptions.Builder
+                .ConfigureContainer<TestItem>(builder => builder.WithManualThroughput(500))
+                .ConfigureContainer<AnotherTestItem>(builder => builder.WithManualThroughput(700));
 
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => _provider.GetThroughputProperties<TestItem>());
 

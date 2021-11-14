@@ -13,7 +13,7 @@ namespace AzureFunctionTier
             builder.Services.AddCosmosRepository(options =>
             {
                 options.ContainerPerItemType = true;
-                options.ContainerBuilder.Configure<User>(containerOptions => containerOptions
+                options.Builder.ConfigureContainer<User>(containerOptions => containerOptions
                     .WithContainer("users")
                     .WithPartitionKey("/emailAddress")
                     .WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(1))

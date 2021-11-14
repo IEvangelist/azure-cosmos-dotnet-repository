@@ -45,7 +45,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void CosmosContainerNameProviderGetsNameForTypeWhenProvidedByOptions()
         {
-            _repositoryOptions.ContainerBuilder.Configure<CustomTypeOverridenByOptions>(options => options.WithContainer("SomethingDefinedByOptions"));
+            _repositoryOptions.Builder.ConfigureContainer<CustomTypeOverridenByOptions>(options => options.WithContainer("SomethingDefinedByOptions"));
 
             ICosmosContainerNameProvider provider = new DefaultCosmosContainerNameProvider(_options.Object);
 
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void CosmosContainerNameProviderGetsNameForTypeWhenEmptyStringProvidedByOptions()
         {
-            _repositoryOptions.ContainerBuilder.Configure<SomeOtherItem>(options => options.WithContainer(""));
+            _repositoryOptions.Builder.ConfigureContainer<SomeOtherItem>(options => options.WithContainer(""));
 
             ICosmosContainerNameProvider provider = new DefaultCosmosContainerNameProvider(_options.Object);
 

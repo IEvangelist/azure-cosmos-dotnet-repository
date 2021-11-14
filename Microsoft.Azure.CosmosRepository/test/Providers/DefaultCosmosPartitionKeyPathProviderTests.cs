@@ -27,7 +27,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void CosmosCosmosPartitionKeyPathProviderCorrectlyGetsPathWhenOptionsAreDefined()
         {
-            _repositoryOptions.ContainerBuilder.Configure<Person>(options => options.WithPartitionKey("/firstName"));
+            _repositoryOptions.Builder.ConfigureContainer<Person>(options => options.WithPartitionKey("/firstName"));
 
             ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
 
@@ -38,7 +38,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void CosmosCosmosPartitionKeyPathProviderCorrectlyGetsPathWhenOptionsAreDefinedButNull()
         {
-            _repositoryOptions.ContainerBuilder.Configure<Person>(options => options.WithPartitionKey(""));
+            _repositoryOptions.Builder.ConfigureContainer<Person>(options => options.WithPartitionKey(""));
 
             ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
 
