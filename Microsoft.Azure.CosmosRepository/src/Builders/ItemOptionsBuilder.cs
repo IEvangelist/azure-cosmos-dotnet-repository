@@ -32,13 +32,8 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             PropertyInfo propertyInfo = Type.GetProperty(fieldOrPropertyName,
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            if (propertyInfo is null)
-            {
-                throw new InvalidOperationException(
-                    $"A property or field with the name {fieldOrPropertyName} could not be found on the root of the object with the type {Type.Name}");
-            }
-
-            ETagPropertyInformation = propertyInfo;
+            ETagPropertyInformation = propertyInfo ?? throw new InvalidOperationException(
+                $"A property or field with the name {fieldOrPropertyName} could not be found on the root of the object with the type {Type.Name}");
             return this;
         }
 
