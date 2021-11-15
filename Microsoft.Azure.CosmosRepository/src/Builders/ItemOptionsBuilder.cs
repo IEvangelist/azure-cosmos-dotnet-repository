@@ -9,7 +9,7 @@ using System.Reflection;
 namespace Microsoft.Azure.CosmosRepository.Builders
 {
     /// <summary>
-    /// Allows metadata such etags and last updated times to be added to an <see cref="IItem"/>
+    /// Allows metadata such as eTags and last updated times to be added to an <see cref="IItem"/>
     /// </summary>
     public class ItemOptionsBuilder
     {
