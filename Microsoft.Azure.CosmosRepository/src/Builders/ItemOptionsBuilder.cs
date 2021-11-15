@@ -18,6 +18,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             Type = type;
             ETagPropertyInformation = null;
         }
+        
         internal Type Type { get; private set; }
 
         internal PropertyInfo ETagPropertyInformation { get; private set; }
