@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
@@ -26,24 +27,43 @@ namespace Microsoft.Azure.CosmosRepositoryTests
     class Dog : Item
     {
         public string Breed { get; }
+        public string Name { get; private set; }
 
         protected override string GetPartitionKeyValue() => Breed;
 
-        public Dog(string breed)
+        public Dog(string breed, string name = "dasher")
         {
             Breed = breed;
+            Name = name;
         }
+    }
+
+
+    class RootObject : Item
+    {
+        public string Type1 { get; set; }
+
+        public NestedObject NestedObject { get; set; }
+    }
+
+    class NestedObject
+    {
+        public string Property1 { get; set; }
+
+        public int Property2 { get; set; }
     }
 
     public class InMemoryRepositoryTests
     {
         private readonly InMemoryRepository<Person> _personRepository;
         private readonly InMemoryRepository<Dog> _dogRepository;
+        private readonly InMemoryRepository<RootObject> _rootObjectRepository;
 
         public InMemoryRepositoryTests()
         {
             _personRepository = new InMemoryRepository<Person>();
             _dogRepository = new InMemoryRepository<Dog>();
+            _rootObjectRepository = new InMemoryRepository<RootObject>();
         }
 
         [Fact]
@@ -52,7 +72,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             //Act
             //Assert
-            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.GetAsync(Guid.NewGuid().ToString()).AsTask());
+            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() =>
+                _personRepository.GetAsync(Guid.NewGuid().ToString()).AsTask());
 
             Assert.Equal(HttpStatusCode.NotFound, ex.StatusCode);
         }
@@ -63,7 +84,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             //Act
             //Assert
-            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _dogRepository.GetAsync(Guid.NewGuid().ToString(), "cocker-spaniel").AsTask());
+            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() =>
+                _dogRepository.GetAsync(Guid.NewGuid().ToString(), "cocker-spaniel").AsTask());
 
             Assert.Equal(HttpStatusCode.NotFound, ex.StatusCode);
         }
@@ -74,7 +96,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             //Act
             //Assert
-            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _dogRepository.GetAsync(Guid.NewGuid().ToString(), new PartitionKey("cocker-spaniel")).AsTask());
+            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() =>
+                _dogRepository.GetAsync(Guid.NewGuid().ToString(), new PartitionKey("cocker-spaniel")).AsTask());
 
             Assert.Equal(HttpStatusCode.NotFound, ex.StatusCode);
         }
@@ -110,7 +133,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(item.Id, dog.Id);
             Assert.Equal(item.Type, dog.Type);
             Assert.Equal(item.Breed, dog.Breed);
-
         }
 
         [Fact]
@@ -165,11 +187,12 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task CreateAsync_ItemWhereIdAlreadyExists_ThrowsCosmosException()
         {
             //Arrange
-            Person item = new("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
             _personRepository.Items.TryAdd(item.Id, item);
 
             //Act
-            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.CreateAsync(new Person("joe") {Id = item.Id, Type = nameof(Person)}).AsTask());
+            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() =>
+                _personRepository.CreateAsync(new Person("joe") {Id = item.Id, Type = nameof(Person)}).AsTask());
 
             Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
         }
@@ -178,7 +201,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task CreateAsync_Item_CreatesItem()
         {
             //Arrange
-            Person item = new("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
 
             //Act
             Person person = await _personRepository.CreateAsync(item);
@@ -224,7 +247,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
-        public async Task CreateAsync_ManyItemsWhereOneHasIdThatAlreadyExists_CreatesInitalItemsThenThrowsCosmosException()
+        public async Task
+            CreateAsync_ManyItemsWhereOneHasIdThatAlreadyExists_CreatesInitalItemsThenThrowsCosmosException()
         {
             //Arrange
             List<Person> items = new()
@@ -238,7 +262,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             items.Add(badPerson);
 
             //Act
-            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.CreateAsync(items).AsTask());
+            CosmosException ex =
+                await Assert.ThrowsAsync<CosmosException>(() => _personRepository.CreateAsync(items).AsTask());
 
             Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
 
@@ -258,7 +283,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             //Act
-            CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.DeleteAsync("does-not-exist").AsTask());
+            CosmosException ex =
+                await Assert.ThrowsAsync<CosmosException>(
+                    () => _personRepository.DeleteAsync("does-not-exist").AsTask());
 
             //Assert
             Assert.Equal(HttpStatusCode.NotFound, ex.StatusCode);
@@ -308,7 +335,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task UpdateAsync_ItemThatDoesNotExist_AddsItem()
         {
             //Arrange
-            Person item = new("joe"){Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
 
             //Act
             Person person = await _personRepository.UpdateAsync(item);
@@ -330,14 +357,14 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             List<Person> items = new()
             {
-                new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
-                new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
-                new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
+                new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
             };
 
             List<Person> itemsUpdate = new();
 
-            foreach(Person item in items)
+            foreach (Person item in items)
             {
                 Person itemUpdate = new($"{item.Name}Updated")
                 {
@@ -346,7 +373,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 };
                 itemsUpdate.Add(itemUpdate);
             }
-            
+
             //Act
             IEnumerable<Person> people = (await _personRepository.UpdateAsync(itemsUpdate)).ToList();
 
@@ -377,7 +404,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Person originalPerson = new("phil");
             _personRepository.Items.TryAdd(originalPerson.Id, originalPerson);
 
-            Person item = new("joe"){Id = originalPerson.Id};
+            Person item = new("joe") {Id = originalPerson.Id};
 
             //Act
             Person person = await _personRepository.UpdateAsync(item);
@@ -457,6 +484,50 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.True(exists);
         }
 
+        [Fact]
+        public async Task UpdateAsync_PropertiesToPatch_UpdatesValues()
+        {
+            //Arrange
+            Dog dog = new("labrador", "fred");
+            _dogRepository.Items.TryAdd(dog.Id, dog);
 
+            //Act
+            await _dogRepository.UpdateAsync(dog.Id, builder => builder.Replace(d => d.Name, "kenny"), dog.Breed);
+
+            //Assert
+            Assert.Equal("kenny", _dogRepository.Items.First().Value.Name);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_NestedObjectToPatch_UpdatesValues()
+        {
+            //Arrange
+            RootObject root = new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Type1 = "ABC",
+                NestedObject = new NestedObject
+                {
+                    Property1 = "prop1",
+                    Property2 = 55
+                }
+            };
+
+            _rootObjectRepository.Items.TryAdd(root.Id, root);
+
+            //Act
+            await _rootObjectRepository.UpdateAsync(root.Id, builder =>
+                builder.Replace(x => x.Type1, "CBA")
+                    .Replace(x => x.NestedObject, new NestedObject
+                    {
+                        Property1 = "prop2",
+                        Property2 = 2
+                    }));
+
+            //Assert
+            Assert.Equal("CBA", _rootObjectRepository.Items.First().Value.Type1);
+            Assert.Equal("prop2", _rootObjectRepository.Items.First().Value.NestedObject.Property1);
+            Assert.Equal(2, _rootObjectRepository.Items.First().Value.NestedObject.Property2);
+        }
     }
 }

@@ -7,15 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Extensions;
+using Microsoft.Azure.CosmosRepository.Internals;
 
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    public class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
+    internal class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
         internal ConcurrentDictionary<string, TItem> Items { get; } = new();
 
@@ -116,6 +119,35 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             return enumerable;
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask UpdateAsync(string id,
+            Action<IPatchOperationBuilder<TItem>> builder,
+            string partitionKeyValue = null,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+
+            partitionKeyValue ??= id;
+
+            IItem item = Items.Values.FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
+            if (item is null)
+            {
+                NotFound();
+            }
+
+            PatchOperationBuilder<TItem> patchOperationBuilder = new();
+
+            builder(patchOperationBuilder);
+
+            foreach (InternalPatchOperation internalPatchOperation in 
+                patchOperationBuilder._rawPatchOperations.Where(ipo => ipo.Type is PatchOperationType.Replace))
+            {
+
+                PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.PropertyInfo.Name);
+                property?.SetValue(item, internalPatchOperation.NewValue);
+            }
         }
 
         /// <inheritdoc/>

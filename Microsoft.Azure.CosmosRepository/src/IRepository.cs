@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Builders;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -137,6 +138,21 @@ namespace Microsoft.Azure.CosmosRepository
             IEnumerable<TItem> values,
             CancellationToken cancellationToken = default);
 
+
+        /// <summary>
+        /// Updates the given cosmos item using the provided and supported patch operations.
+        /// </summary>
+        /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
+        /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
+        ValueTask UpdateAsync(
+            string id,
+            Action<IPatchOperationBuilder<TItem>> builder,
+            string partitionKeyValue = null,
+            CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="value"/>.
         /// </summary>
@@ -180,7 +196,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
-        ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default);
+        ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Queries cosmos DB to see if an item exists.
@@ -190,7 +207,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="partitionKey">The <see cref="PartitionKey"/> value if different than the <see cref="IItem.Id"/>.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
-        ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default);
+        ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Queries cosmos DB to see if an item exists.

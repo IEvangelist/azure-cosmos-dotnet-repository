@@ -221,7 +221,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
         }
 
         [Fact]
-        public async Task GetContainerAsyncWhenSyncContainerPropertiesIsSetAndConatinerHasAlreadyBeenSyncByItemSharingTheContainerDoesNotSyncContainerAgain()
+        public async Task GetContainerAsyncWhenSyncContainerPropertiesIsSetAndContainerHasAlreadyBeenSyncByItemSharingTheContainerDoesNotSyncContainerAgain()
         {
             //Arrange
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
