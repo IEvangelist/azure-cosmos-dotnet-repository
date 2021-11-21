@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -218,6 +219,21 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
         ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="lastPage"></param>
+        /// <param name="predicate"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="continuationToken"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        ValueTask<IPage<TItem>> ScrollAsync(int lastPage = 0,
+            Expression<Func<TItem, bool>> predicate = null,
+            int pageSize = 25,
+            string continuationToken = null,
             CancellationToken cancellationToken = default);
     }
 }

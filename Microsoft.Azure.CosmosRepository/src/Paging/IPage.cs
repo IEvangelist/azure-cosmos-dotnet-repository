@@ -36,5 +36,10 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// The amount of RU's the given query cost.
         /// </summary>
         double Charge { get; }
+
+        /// <summary>
+        /// The continuation token used to load results from where last read
+        /// </summary>
+        string? Continuation { get; }
     }
 }

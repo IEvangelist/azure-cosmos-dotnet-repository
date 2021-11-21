@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
-using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Logging;
@@ -277,6 +277,39 @@ namespace Microsoft.Azure.CosmosRepository
 
             int count = await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
             return count > 0;
+        }
+
+        public async ValueTask<IPage<TItem>> ScrollAsync(int lastPage = 0,
+            Expression<Func<TItem, bool>> predicate = null,
+            int pageSize = 25,
+            string continuationToken = null,
+            CancellationToken cancellationToken = default)
+        {
+            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            QueryRequestOptions options = new()
+            {
+                MaxItemCount = pageSize
+            };
+
+            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>(requestOptions: options, continuationToken: continuationToken)
+                .Where(_repositoryExpressionProvider.Build(predicate));
+
+            Response<int> countResponse = await query.CountAsync(cancellationToken);
+
+            List<TItem> results = new();
+
+            FeedIterator<TItem> iterator = query.ToFeedIterator();
+
+            FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+
+            foreach (TItem result in next)
+            {
+                results.Add(result);
+            }
+
+            lastPage++;
+            return new Page<TItem>(countResponse.Resource, lastPage, pageSize, results, next.RequestCharge + countResponse.RequestCharge, next.ContinuationToken);
         }
 
 
