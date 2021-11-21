@@ -14,7 +14,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     interface ICosmosContainerProvider<TItem> where TItem : IItem
     {
         /// <summary>
-        /// Asynchronously gets the configured <see cref="Container"/> instance that corresponds to the 
+        /// Asynchronously gets the configured <see cref="Container"/> instance that corresponds to the
         /// cosmos <see cref="RepositoryOptions"/>.
         /// </summary>
         /// <returns>A <see cref="Container"/> instance.</returns>

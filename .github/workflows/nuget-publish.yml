@@ -1,0 +1,55 @@
+name: Release Package Version
+on:
+  push:
+    tags:
+     - 2.*     
+jobs: 
+  build:
+    if: github.event.base_ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:    
+    
+    - name: Print Tag Ref
+      run: echo $GITHUB_REF
+      
+    - name: Extract Version Number
+      uses: actions-ecosystem/action-regex-match@v2
+      id: regex-match
+      with:
+        text: ${{ github.ref }}
+        regex: '[0-9.]+'
+       
+    - name: Print Version Number
+      run: echo '${{ steps.regex-match.outputs.match }}'
+      
+    - uses: actions/checkout@v2
+    - name: Setup .NET  
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.402
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: |
+        dotnet build --configuration Release --no-restore
+      
+    - name: Test
+      run: |
+        dotnet test --no-restore --verbosity normal
+      
+    - name: Pack
+      run: |
+        dotnet pack ./Microsoft.Azure.CosmosRepository/src/Microsoft.Azure.CosmosRepository.csproj --output packages
+      
+    - name: Publish Package
+      run: |
+        nuget push **\*.nupkg -NoSymbols -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+      
+    - name: Upload Package
+      uses: actions/upload-artifact@v2
+      with:
+        name: IEvangelist.Azure.CosmosRepository.V${{ steps.regex-match.outputs.match }}
+        path: packages/
+        

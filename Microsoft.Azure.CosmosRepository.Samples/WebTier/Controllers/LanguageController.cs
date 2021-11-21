@@ -35,6 +35,21 @@ namespace WebTier.Controllers
         public ValueTask<Language> PutLanguage([FromBody] Language language) =>
             _repository.UpdateAsync(language);
 
+        [HttpPut("{id}")]
+        public async ValueTask<IActionResult> UpdateName([FromRoute] string id, [FromQuery] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest("A name is required");
+            }
+
+            await _repository
+                .UpdateAsync(id: id,
+                    builder: builder => builder.Replace(language => language.Name, name));
+
+            return Ok();
+        }
+
         [HttpDelete("{id}", Name = nameof(DeleteLanguage))]
         public ValueTask DeleteLanguage(string id) =>
             _repository.DeleteAsync(id);

@@ -1,6 +1,6 @@
-﻿![build](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/build/badge.svg) ![CodeQL](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/CodeQL/badge.svg) [![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository) [![.NET code metrics](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml/badge.svg)](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml) [![Discord](https://img.shields.io/discord/868239483529723914.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/pRsUTJM9)
+﻿![build](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/build/badge.svg) ![CodeQL](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/CodeQL/badge.svg) [![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository) [![.NET code metrics](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml/badge.svg)](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml) [![Discord](https://img.shields.io/discord/868239483529723914.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.com/invite/qMXrX4shAv)
  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Azure Cosmos DB Repository .NET SDK
@@ -107,6 +107,7 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
 | Key                                                           | Data type                  | Default value                          |
 |---------------------------------------------------------------|----------------------------|----------------------------------------|
 | RepositoryOptions__CosmosConnectionString                     | string                     | `null`                                 |
+| RepositoryOptions__AccountEndpoint                            | string                     | `null`                                 |
 | RepositoryOptions__DatabaseId                                 | string                     | `"database"`                           |
 | RepositoryOptions__ContainerId                                | string                     | `"container"`                          |
 | RepositoryOptions__OptimizeBandwidth                          | boolean                    | `true`                                 |
@@ -130,6 +131,7 @@ Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet
   "AllowedHosts": "*",
   "RepositoryOptions": {
     "CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
+    "AccountEndpoint": "<Your-CosmosDB-URI>"
     "DatabaseId": "<Your-CosmosDB-DatabaseName>",
     "ContainerId": "<Your-CosmosDB-ContainerName>",
     "OptimizeBandwidth": true,
@@ -159,6 +161,7 @@ For more information, see [JSON configuration provider](https://docs.microsoft.c
   "AllowedHosts": "*",
   "Values": {
     "RepositoryOptions:CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
+    "RepositoryOptions:AccountEndpoint": "<Your-CosmosDB-URI>",
     "RepositoryOptions:DatabaseId": "<Your-CosmosDB-DatabaseName>",
     "RepositoryOptions:ContainerId": "<Your-CosmosDB-ContainerName>",
     "RepositoryOptions:OptimizeBandwidth": true,
@@ -171,6 +174,42 @@ For more information, see [JSON configuration provider](https://docs.microsoft.c
 ```
 
 For more information, see [Customizing configuration sources](https://docs.microsoft.com/azure/azure-functions/functions-dotnet-dependency-injection?WC.m_id=dapine#customizing-configuration-sources).
+
+#### Authenticating using an identity
+
+The Azure Cosmos DB .NET SDK also supports authentication using identities, which are considered superior from an audit and granularity of permissions perspective. Authenticating using a connection string essentially provides full access to perform operations within the [data plane](https://docs.microsoft.com/en-us/azure/cosmos-db/role-based-access-control)
+of your Cosmos DB Account. More information on the Azure control plane and data plane is available [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane).
+
+This libary also supports authentication using an identity. To authenticate using an identity (User, Group, Application Registration, or Managed Identity) you will need to set the `AccountEndpoint` and `TokenCredential` options that are available on the `RepositoryOptions` class.
+
+In a basic scenario, there are three steps that need to be completed:
+
+1. If the identity that you would like to use, does not exist in Azure Active Directory, create it now.
+
+1. Use the Azure CLI to [assign](https://docs.microsoft.com/en-us/cli/azure/cosmosdb/sql/role/assignment?view=azure-cli-latest#az_cosmosdb_sql_role_assignment_create) the appropriate role to your identity at the desired scope.
+        - In most cases, using the [built-in roles](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac#built-in-role-definitions) will be sufficient. However, there is support for creating custom role definitions using the Azure CLI, you can read more on this [here](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac#role-definitions).
+    
+1. Configure your application using the `AddCosmosRepository` method in your `Startup.cs` file:
+
+    ```csharp
+    using Azure.Identity;
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        DefaultAzureCredential credential = new();
+
+        services.AddCosmosRepository(
+            options =>
+            {
+                options.TokenCredential = credential;
+                options.AccountEndpoint = "< account endpoint URI >";
+                options.ContainerId = "data-store";
+                options.DatabaseId = "samples";
+            });
+    }
+    ```
+
+The example above is using the `DefaultAzureCredential` object provided by the [Azure Identity](https://www.nuget.org/packages/Azure.Identity) NuGet package, which provides seamless integration with Azure Active Directory. More information on this package is available [here](https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme).
 
 ## Advanced partitioning strategy
 
@@ -237,7 +276,7 @@ Visit the `Microsoft.Azure.CosmosRepository.Samples` [directory](https://github.
 ## Discord
 Get extra support on our dedicated Discord channel.
 
-[![alt Join the conversation](https://img.shields.io/discord/868239483529723914.svg "Discord")](https://discord.gg/pRsUTJM9)
+[![alt Join the conversation](https://img.shields.io/discord/868239483529723914.svg "Discord")](https://discord.com/invite/qMXrX4shAv)
 
 ## Contributors ✨
 
@@ -267,6 +306,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="http://www.bradwestness.com"><img src="https://avatars.githubusercontent.com/u/1802434?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Brad Westness</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/pulls?q=is%3Apr+reviewed-by%3Abradwestness" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/BeigeBadger"><img src="https://avatars.githubusercontent.com/u/8124536?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matt Stannett</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=BeigeBadger" title="Code">💻</a> <a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=BeigeBadger" title="Documentation">📖</a> <a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=BeigeBadger" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/mustafarabie"><img src="https://avatars.githubusercontent.com/u/24240605?v=4?s=100" width="100px;" alt=""/><br /><sub><b>mustafarabie</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=mustafarabie" title="Code">💻</a> <a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=mustafarabie" title="Tests">⚠️</a></td>
   </tr>
 </table>
 

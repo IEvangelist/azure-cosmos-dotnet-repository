@@ -2,22 +2,42 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Linq;
 using Microsoft.Azure.CosmosRepository.Attributes;
+using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosPartitionKeyPathProvider" />
     class DefaultCosmosPartitionKeyPathProvider :
-        BaseCosmosAttributeConstraintProvider<string, PartitionKeyPathAttribute>,
         ICosmosPartitionKeyPathProvider
     {
-        /// <inheritdoc />
-        public string GetPartitionKeyPath<TItem>() where TItem : IItem => GetConstraint<TItem>();
+        private readonly IOptions<RepositoryOptions> _options;
 
-        protected override string GetConstraintFactory((Type ConstraintAttributeType, Type Type) key) =>
-            Attribute.GetCustomAttribute(
-                key.Type, key.ConstraintAttributeType) is PartitionKeyPathAttribute partitionKeyPathAttribute
+        public DefaultCosmosPartitionKeyPathProvider(IOptions<RepositoryOptions> options)
+        {
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+        }
+
+        /// <inheritdoc />
+        public string GetPartitionKeyPath<TItem>() where TItem : IItem
+        {
+            Type itemType = typeof(TItem);
+            Type attributeType = typeof(PartitionKeyPathAttribute);
+
+            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions<TItem>();
+
+            if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
+            {
+                return optionsBuilder.PartitionKey;
+            }
+
+            return Attribute.GetCustomAttribute(
+                itemType, attributeType) is PartitionKeyPathAttribute partitionKeyPathAttribute
                 ? partitionKeyPathAttribute.Path
                 : "/id";
+        }
     }
 }

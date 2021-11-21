@@ -11,19 +11,19 @@ using Microsoft.Azure.CosmosRepository.Attributes;
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <inheritdoc />
-    class DefaultCosmosUniqueKeyPolicyProvider :
-        BaseCosmosAttributeConstraintProvider<UniqueKeyPolicy, UniqueKeyAttribute>,
-        ICosmosUniqueKeyPolicyProvider
+    class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
     {
         /// <inheritdoc />
-        public UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem => GetConstraint<TItem>();
-
-        protected override UniqueKeyPolicy GetConstraintFactory((Type ConstraintAttributeType, Type Type) key)
+        public UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem
         {
+            Type itemType = typeof(TItem);
+            Type attributeType = typeof(UniqueKeyAttribute);
+
+
             Dictionary<string, HashSet<PropertyInfo>> keyNamesToPropertyMap = new();
             foreach ((PropertyInfo property, string keyName) in
-                key.Type.GetProperties()
-                    .Where(p => Attribute.IsDefined(p, key.ConstraintAttributeType))
+                itemType.GetProperties()
+                    .Where(p => Attribute.IsDefined(p, attributeType))
                     .Select(p => (Property: p, p.GetCustomAttribute<UniqueKeyAttribute>().KeyName)))
             {
                 if (!keyNamesToPropertyMap.ContainsKey(keyName))

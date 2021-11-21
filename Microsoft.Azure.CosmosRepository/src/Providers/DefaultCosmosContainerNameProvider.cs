@@ -3,28 +3,43 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using Microsoft.Azure.CosmosRepository.Attributes;
+using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-    /// <inheritdoc />
-    class DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
+    /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosContainerNameProvider" />
+    class  DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
     {
-        static readonly Type _containerAttributeType = typeof(ContainerAttribute);
-        static readonly ConcurrentDictionary<Type, string> _containerNameMap = new();
+        private readonly IOptions<RepositoryOptions> _options;
+
+        public DefaultCosmosContainerNameProvider(IOptions<RepositoryOptions> options)
+        {
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+        }
 
         /// <inheritdoc />
-        public string GetContainerName<TItem>() where TItem : IItem =>
-            _containerNameMap.GetOrAdd(typeof(TItem), GetContainerNameFactory);
-
-        static string GetContainerNameFactory(Type type)
+        public string GetContainerName<TItem>() where TItem : IItem
         {
+            Type itemType = typeof(TItem);
+            Type attributeType = typeof(ContainerAttribute);
+
             Attribute attribute =
-                Attribute.GetCustomAttribute(type, _containerAttributeType);
+                Attribute.GetCustomAttribute(itemType, attributeType);
+
+            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions<TItem>();
+
+            if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.Name) is false)
+            {
+                return optionsBuilder.Name;
+            }
 
             return attribute is ContainerAttribute containerAttribute
                 ? containerAttribute.Name
-                : type.Name;
+                : itemType.Name;
         }
     }
 }
