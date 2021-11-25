@@ -38,8 +38,9 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         double Charge { get; }
 
         /// <summary>
-        /// The continuation token used to load results from where last read
+        /// The continuation token used to load results from a stateless marker.
         /// </summary>
+        /// <remarks>This is provided by cosmos DB.</remarks>
         string? Continuation { get; }
     }
 }

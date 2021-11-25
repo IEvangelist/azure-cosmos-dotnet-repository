@@ -222,14 +222,16 @@ namespace Microsoft.Azure.CosmosRepository
             CancellationToken cancellationToken = default);
 
         /// <summary>
-        ///
+        /// Offers a load more paging implementation for infinite scroll scenarios.
+        /// Allows for efficient paging making use of cosmos DBs continuation tokens, making this implementation cost effective.
         /// </summary>
-        /// <param name="lastPage"></param>
-        /// <param name="predicate"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="continuationToken"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="lastPage">The last page previous query, defaults to 0 for the first page</param>
+        /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
+        /// <param name="pageSize">The size of the page to return from cosmos db.</param>
+        /// <param name="continuationToken">The token returned from a previous query, if null starts at the beginning of the data</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
+        /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
         ValueTask<IPage<TItem>> ScrollAsync(int lastPage = 0,
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
