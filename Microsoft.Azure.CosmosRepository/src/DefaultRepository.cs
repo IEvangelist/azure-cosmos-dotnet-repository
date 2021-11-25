@@ -300,7 +300,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             List<TItem> results = new();
 
-            FeedIterator<TItem> iterator = query.ToFeedIterator();
+            using FeedIterator<TItem> iterator = query.ToFeedIterator();
 
             FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
 
