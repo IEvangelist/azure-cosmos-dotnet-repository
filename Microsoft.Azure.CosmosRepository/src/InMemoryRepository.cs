@@ -199,7 +199,11 @@ namespace Microsoft.Azure.CosmosRepository
                 item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
-        public ValueTask<IPage<TItem>> ScrollAsync(int lastPage = 0, Expression<Func<TItem, bool>> predicate = null, int pageSize = 25, string continuationToken = null,
+        public ValueTask<IPage<TItem>> ScrollAsync(
+            int page = 0,
+            Expression<Func<TItem, bool>> predicate = null,
+            int pageSize = 25,
+            string continuationToken = null,
             CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
