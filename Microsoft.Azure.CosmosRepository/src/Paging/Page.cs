@@ -28,7 +28,6 @@ namespace Microsoft.Azure.CosmosRepository.Paging
             Continuation = continuation;
         }
 
-
         /// <inheritdoc />
         public int Total { get; }
 
