@@ -310,7 +310,13 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             lastPage++;
-            return new Page<TItem>(countResponse.Resource, lastPage, pageSize, results, next.RequestCharge + countResponse.RequestCharge, next.ContinuationToken);
+            return new Page<TItem>(
+                countResponse.Resource,
+                lastPage,
+                pageSize,
+                results.AsReadOnly(),
+                next.RequestCharge + countResponse.RequestCharge,
+                next.ContinuationToken);
         }
 
 
