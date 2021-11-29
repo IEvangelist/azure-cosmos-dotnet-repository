@@ -38,7 +38,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         public int Size { get; }
 
         /// <inheritdoc />
-        public IEnumerable<T> Items { get; }
+        public IReadOnlyList<T> Items { get; }
 
         /// <inheritdoc />
         public double Charge { get; }
