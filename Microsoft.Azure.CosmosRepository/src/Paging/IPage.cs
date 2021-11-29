@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <summary>
         /// The items that are in the current page.
         /// </summary>
-        IEnumerable<T> Items { get; }
+        IReadOnlyList<T> Items { get; }
 
         /// <summary>
         /// The amount of RU's the given query cost.
