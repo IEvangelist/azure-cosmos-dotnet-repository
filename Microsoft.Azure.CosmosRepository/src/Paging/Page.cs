@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace Microsoft.Azure.CosmosRepository.Paging
 {
-
     /// <inheritdoc/>
     public class Page<T> : IPage<T> where T : IItem
     {
