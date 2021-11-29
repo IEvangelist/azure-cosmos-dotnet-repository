@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <param name="items"></param>
         /// <param name="charge"></param>
         /// <param name="continuation"></param>
-        public Page(int total, int number, int size, IEnumerable<T> items, double charge, string? continuation = null)
+        internal Page(int total, int number, int size, IReadOnlyList<T> items, double charge, string? continuation = null)
         {
             Total = total;
             Number = number;
