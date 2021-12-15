@@ -23,7 +23,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
     }
 
-
     class Dog : Item
     {
         public string Breed { get; }
@@ -215,6 +214,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(item.Name, addedPerson.Name);
             Assert.Equal(item.Id, addedPerson.Id);
             Assert.Equal(item.Type, addedPerson.Type);
+
+            Assert.True(!string.IsNullOrWhiteSpace(item.Etag) && item.Etag != Guid.Empty.ToString());
         }
 
         [Fact]
@@ -243,6 +244,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 Assert.Equal(item.Name, addedPerson.Name);
                 Assert.Equal(item.Id, addedPerson.Id);
                 Assert.Equal(item.Type, addedPerson.Type);
+
+                Assert.True(!string.IsNullOrWhiteSpace(item.Etag) && item.Etag != Guid.Empty.ToString());
             }
         }
 
