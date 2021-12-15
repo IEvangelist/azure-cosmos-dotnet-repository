@@ -231,7 +231,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
         /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
-        ValueTask<IPage<TItem>> ScrollAsync(
+        ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
             string continuationToken = null,

@@ -207,7 +207,7 @@ namespace Microsoft.Azure.CosmosRepository
                 item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
-        public ValueTask<IPage<TItem>> ScrollAsync(
+        public ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
             string continuationToken = null,

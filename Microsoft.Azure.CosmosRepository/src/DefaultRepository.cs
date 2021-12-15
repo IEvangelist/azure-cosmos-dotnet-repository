@@ -285,7 +285,7 @@ namespace Microsoft.Azure.CosmosRepository
             return count > 0;
         }
 
-        public async ValueTask<IPage<TItem>> ScrollAsync(
+        public async ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
             string continuationToken = null,
