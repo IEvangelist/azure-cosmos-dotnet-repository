@@ -14,13 +14,18 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
+using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
     internal class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
-        internal ConcurrentDictionary<string, TItem> Items { get; } = new();
+        internal ConcurrentDictionary<string, string> Items { get; } = new();
+
+        internal string SerialiseItem(TItem item) => JsonConvert.SerializeObject(item);
+        internal TItem DeserialiseItem(string serialisedItem) => JsonConvert.DeserializeObject<TItem>(serialisedItem);
+        internal TDeserialiseTo DeserialiseItem<TDeserialiseTo>(string serialisedItem) => JsonConvert.DeserializeObject<TDeserialiseTo>(serialisedItem);
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)
@@ -36,7 +41,7 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Items.Values.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
+            TItem item = Items.Values.Select(DeserialiseItem).FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if (item is null)
             {
@@ -50,7 +55,7 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            return Items.Values.Where(predicate.Compose(
+            return Items.Values.Select(DeserialiseItem).Where(predicate.Compose(
                 item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
@@ -73,16 +78,17 @@ namespace Microsoft.Azure.CosmosRepository
 
             await Task.CompletedTask;
 
-            TItem item = Items.Values.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
+            TItem item = Items.Values.Select(DeserialiseItem).FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
 
             if (item is not null)
             {
                 Conflict();
             }
 
-            Items.TryAdd(value.Id, value);
+            string serialisedValue = JsonConvert.SerializeObject(value);
+            Items.TryAdd(value.Id, serialisedValue);
 
-            return value;
+            return DeserialiseItem(Items[value.Id]);
         }
 
         /// <inheritdoc/>
@@ -103,9 +109,9 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
 
-            TItem item = Items.Values.FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
+            Items[value.Id] = SerialiseItem(value);
 
-            return Items[value.Id] = value;
+            return DeserialiseItem(Items[value.Id]);
         }
 
         /// <inheritdoc/>
@@ -131,7 +137,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             partitionKeyValue ??= id;
 
-            IItem item = Items.Values.FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
+            TItem item = Items.Values.Select(DeserialiseItem).FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
             if (item is null)
             {
                 NotFound();
@@ -141,13 +147,15 @@ namespace Microsoft.Azure.CosmosRepository
 
             builder(patchOperationBuilder);
 
-            foreach (InternalPatchOperation internalPatchOperation in 
+            foreach (InternalPatchOperation internalPatchOperation in
                 patchOperationBuilder._rawPatchOperations.Where(ipo => ipo.Type is PatchOperationType.Replace))
             {
 
                 PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.PropertyInfo.Name);
                 property?.SetValue(item, internalPatchOperation.NewValue);
             }
+
+            Items[id] = SerialiseItem(item);
         }
 
         /// <inheritdoc/>
@@ -169,7 +177,7 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Items.Values.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
+            TItem item = Items.Values.Select(DeserialiseItem).FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if (item is null)
             {
@@ -187,14 +195,14 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            return Items.Values.FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey) is not null;
+            return Items.Values.Select(DeserialiseItem).FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey) is not null;
         }
 
         /// <inheritdoc/>
         public async ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            return Items.Values.Any(predicate.Compose(
+            return Items.Values.Select(DeserialiseItem).Any(predicate.Compose(
                 item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
