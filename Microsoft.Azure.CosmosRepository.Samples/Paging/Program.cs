@@ -22,9 +22,9 @@ ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =
 IRepository<Person> repository = provider.GetRequiredService<IRepository<Person>>();
 
 await SeedAsync();
-await BasicScrolling();
+await BasicScrollingAsync();
 
-async Task BasicScrolling()
+async Task BasicScrollingAsync()
 {
     double totalCharge = 0;
 
