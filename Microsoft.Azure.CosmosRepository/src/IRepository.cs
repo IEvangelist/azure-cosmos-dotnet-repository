@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -218,6 +219,22 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
         ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Offers a load more paging implementation for infinite scroll scenarios.
+        /// Allows for efficient paging making use of cosmos DBs continuation tokens, making this implementation cost effective.
+        /// </summary>
+        /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
+        /// <param name="pageSize">The size of the page to return from cosmos db.</param>
+        /// <param name="continuationToken">The token returned from a previous query, if null starts at the beginning of the data</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
+        /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
+        ValueTask<IPage<TItem>> PageAsync(
+            Expression<Func<TItem, bool>> predicate = null,
+            int pageSize = 25,
+            string continuationToken = null,
             CancellationToken cancellationToken = default);
     }
 }

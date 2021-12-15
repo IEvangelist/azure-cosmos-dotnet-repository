@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
-using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Logging;
@@ -75,6 +75,7 @@ namespace Microsoft.Azure.CosmosRepository
             TryLogDebugDetails(_logger, () => $"Read: {JsonConvert.SerializeObject(item)}");
 
             return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name ? item : default;
+
         }
 
         /// <inheritdoc/>
@@ -130,7 +131,8 @@ namespace Microsoft.Azure.CosmosRepository
                 await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
             ItemResponse<TItem> response =
-                await container.CreateItemAsync(value, new PartitionKey(value.PartitionKey), cancellationToken: cancellationToken)
+                await container.CreateItemAsync(value, new PartitionKey(value.PartitionKey),
+                        cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
 
             TryLogDebugDetails(_logger, () => $"Created: {JsonConvert.SerializeObject(value)}");
@@ -161,7 +163,8 @@ namespace Microsoft.Azure.CosmosRepository
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
             ItemResponse<TItem> response =
-                await container.UpsertItemAsync<TItem>(value, new PartitionKey(value.PartitionKey), options, cancellationToken)
+                await container.UpsertItemAsync<TItem>(value, new PartitionKey(value.PartitionKey), options,
+                        cancellationToken)
                     .ConfigureAwait(false);
 
             TryLogDebugDetails(_logger, () => $"Updated: {JsonConvert.SerializeObject(value)}");
@@ -234,11 +237,13 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null, CancellationToken cancellationToken = default)
+        public ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null,
+            CancellationToken cancellationToken = default)
             => ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
         /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default)
+        public async ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey,
+            CancellationToken cancellationToken = default)
         {
             Container container =
                 await _containerProvider.GetContainerAsync().ConfigureAwait(false);
@@ -264,7 +269,8 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
+        public async ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default)
         {
             Container container =
                 await _containerProvider.GetContainerAsync().ConfigureAwait(false);
@@ -277,6 +283,57 @@ namespace Microsoft.Azure.CosmosRepository
 
             int count = await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
             return count > 0;
+        }
+
+        public async ValueTask<IPage<TItem>> PageAsync(
+            Expression<Func<TItem, bool>> predicate = null,
+            int pageSize = 25,
+            string continuationToken = null,
+            CancellationToken cancellationToken = default)
+        {
+            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            QueryRequestOptions options = new()
+            {
+                MaxItemCount = pageSize
+            };
+
+            IQueryable<TItem> query = container
+                .GetItemLinqQueryable<TItem>(requestOptions: options, continuationToken: continuationToken)
+                .Where(_repositoryExpressionProvider.Build(predicate));
+
+            Response<int> countResponse = await query.CountAsync(cancellationToken);
+            using FeedIterator<TItem> iterator = query.ToFeedIterator();
+
+            List<TItem> results = new();
+            int readItemsCount = 0;
+            double charge = countResponse.RequestCharge;
+
+            while (readItemsCount < pageSize && iterator.HasMoreResults)
+            {
+                FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+
+                foreach (TItem result in next)
+                {
+                    if (readItemsCount == pageSize)
+                    {
+                        break;
+                    }
+
+                    results.Add(result);
+                    readItemsCount++;
+                }
+
+                charge += next.RequestCharge;
+                continuationToken = next.ContinuationToken;
+            }
+
+            return new Page<TItem>(
+                countResponse.Resource,
+                pageSize,
+                results.AsReadOnly(),
+                charge,
+                continuationToken);
         }
 
 

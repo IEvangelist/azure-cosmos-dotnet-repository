@@ -10,7 +10,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 {
     class DefaultRepositoryExpressionProvider : IRepositoryExpressionProvider
     {
-        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate) where TItem : IItem =>
-            predicate.Compose(item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name, Expression.AndAlso);
+        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate = null)
+            where TItem : IItem =>
+            predicate is null
+                ? item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name
+                : predicate.Compose(item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name,
+                    Expression.AndAlso);
     }
 }

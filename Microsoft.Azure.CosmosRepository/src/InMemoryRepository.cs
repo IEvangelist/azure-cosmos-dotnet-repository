@@ -14,6 +14,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
+using Microsoft.Azure.CosmosRepository.Paging;
 using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepository
@@ -204,6 +205,15 @@ namespace Microsoft.Azure.CosmosRepository
             await Task.CompletedTask;
             return Items.Values.Select(DeserializeItem).Any(predicate.Compose(
                 item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
+        }
+
+        public ValueTask<IPage<TItem>> PageAsync(
+            Expression<Func<TItem, bool>> predicate = null,
+            int pageSize = 25,
+            string continuationToken = null,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
 
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
