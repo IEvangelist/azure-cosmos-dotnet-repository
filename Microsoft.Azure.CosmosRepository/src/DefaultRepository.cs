@@ -74,7 +74,8 @@ namespace Microsoft.Azure.CosmosRepository
 
             TryLogDebugDetails(_logger, () => $"Read: {JsonConvert.SerializeObject(item)}");
 
-            return item is {Type: {Length: 0}} || item.Type == typeof(TItem).Name ? item : default;
+            return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name ? item : default;
+
         }
 
         /// <inheritdoc/>
