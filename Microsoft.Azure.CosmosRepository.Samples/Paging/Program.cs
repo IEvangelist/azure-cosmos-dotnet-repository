@@ -21,7 +21,6 @@ ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =
 
 IRepository<Person> repository = provider.GetRequiredService<IRepository<Person>>();
 
-
 await Seed();
 await BasicScrolling();
 
