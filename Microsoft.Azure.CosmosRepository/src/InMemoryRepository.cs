@@ -12,9 +12,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -23,7 +25,18 @@ namespace Microsoft.Azure.CosmosRepository
     {
         internal ConcurrentDictionary<string, string> Items { get; } = new();
 
-        internal string SerializeItem(TItem item) => JsonConvert.SerializeObject(item);
+        internal string SerializeItem(TItem item, string etag=null)
+        {
+            JObject jObject = JObject.FromObject(item);
+            if (etag != null)
+            {
+                jObject.Remove("_etag");
+                jObject.Add("_etag", JToken.FromObject(etag));
+            }
+
+            return jObject.ToString();
+        }
+
         internal TItem DeserializeItem(string jsonItem) => JsonConvert.DeserializeObject<TItem>(jsonItem);
         internal TDeserializeTo DeserializeItem<TDeserializeTo>(string jsonItem) => JsonConvert.DeserializeObject<TDeserializeTo>(jsonItem);
 
@@ -85,10 +98,11 @@ namespace Microsoft.Azure.CosmosRepository
                 Conflict();
             }
 
-            string serialisedValue = JsonConvert.SerializeObject(value);
+            string serialisedValue = SerializeItem(value, Guid.NewGuid().ToString());
             Items.TryAdd(value.Id, serialisedValue);
 
-            return DeserializeItem(Items[value.Id]);
+            value = DeserializeItem(Items[value.Id]);
+            return value;
         }
 
         /// <inheritdoc/>
@@ -109,7 +123,33 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
 
-            Items[value.Id] = SerializeItem(value);
+            if (Items.ContainsKey(value.Id))
+            {
+                if (verifyEtag)
+                {
+                    if (value is IItemWithEtag valueWithEtag)
+                    {
+                        TItem existingItem = DeserializeItem(Items[value.Id]);
+                        if (existingItem is IItemWithEtag existingItemWithEtag)
+                        {
+                            if (existingItemWithEtag.Etag != valueWithEtag.Etag)
+                            {
+                                MismatchedEtags();
+                            }
+                        }
+                        else
+                        {
+                            throw new InvalidEtagConfigurationException(string.Empty);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidEtagConfigurationException(string.Empty);
+                    }
+                }
+            }
+
+            Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString());
 
             return DeserializeItem(Items[value.Id]);
         }
@@ -121,7 +161,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             foreach (TItem value in enumerable)
             {
-                await UpdateAsync(value, cancellationToken);
+                await UpdateAsync(value, cancellationToken, verifyEtag);
             }
 
             return enumerable;
@@ -209,5 +249,6 @@ namespace Microsoft.Azure.CosmosRepository
 
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
         private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);
+        private void MismatchedEtags() => throw new CosmosException(string.Empty, HttpStatusCode.PreconditionFailed, 0, string.Empty, 0);
     }
 }
