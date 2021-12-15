@@ -177,7 +177,7 @@ namespace Microsoft.Azure.CosmosRepository
             bool verifyEtag = false)
         {
             IEnumerable<Task<TItem>> updateTasks =
-                values.Select(value => UpdateAsync(value, cancellationToken).AsTask())
+                values.Select(value => UpdateAsync(value, cancellationToken, verifyEtag).AsTask())
                     .ToList();
 
             await Task.WhenAll(updateTasks).ConfigureAwait(false);

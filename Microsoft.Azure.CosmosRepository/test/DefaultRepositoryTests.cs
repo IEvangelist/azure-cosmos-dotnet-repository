@@ -3,14 +3,12 @@
 
 #nullable enable
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
@@ -205,6 +203,160 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             // Assert
             _container.Verify(
                 container => container.UpsertItemAsync(itemWithEtag, new PartitionKey(itemWithEtag.Id),
+                    It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        //////////
+        [Fact]
+        public async Task UpdateAsync_MultipleItems_WhenUseEtagIsTrueAndEtagIsProvided_UseEtagInUpsertOptions()
+        {
+            // Arrange
+            TestItemWithEtag itemWithEtag1 = new()
+            {
+                Etag = Guid.NewGuid().ToString()
+            };
+
+            TestItemWithEtag itemWithEtag2 = new()
+            {
+                Etag = Guid.NewGuid().ToString()
+            };
+
+            IEnumerable<TestItemWithEtag> testItemWithEtags = new []
+            {
+                itemWithEtag1,
+                itemWithEtag2
+            };
+
+            _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act
+            await RepositoryForItemWithETag.UpdateAsync(testItemWithEtags, default, true);
+
+            // Assert
+            _container.Verify(container => container.UpsertItemAsync(itemWithEtag1, new PartitionKey(itemWithEtag1.Id), It.Is<ItemRequestOptions>(options => options.IfMatchEtag == itemWithEtag1.Etag), It.IsAny<CancellationToken>()), Times.Once);
+            _container.Verify(container => container.UpsertItemAsync(itemWithEtag2, new PartitionKey(itemWithEtag2.Id), It.Is<ItemRequestOptions>(options => options.IfMatchEtag == itemWithEtag2.Etag), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_MultipleItems_WhenVerifyEtagIsTrueAndItemTypeIsNotAssignableToIItemWithEtag_ThrowXYZException()
+        {
+            // Arrange
+            TestItem item1 = new();
+            TestItem item2 = new();
+
+            IEnumerable<TestItem> testItems = new []
+            {
+                item1,
+                item2
+            };
+
+            _containerProviderForTestItem.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(() => RepositoryForItemWithoutETag.UpdateAsync(testItems, default, true).AsTask());
+        }
+
+        [Fact]
+        public async Task UpdateAsync_MultipleItems_WhenVerifyEtagIsFalseAndItemTypeIsNotAssignableToIItemWithEtag_UseDefaultEtagValueInUpsertOptions()
+        {
+            // Arrange
+            TestItem item1 = new();
+            TestItem item2 = new();
+
+            IEnumerable<TestItem> testItems = new []
+            {
+                item1,
+                item2
+            };
+
+            _containerProviderForTestItem.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act
+            await RepositoryForItemWithoutETag.UpdateAsync(testItems);
+
+            // Assert
+            _container.Verify(
+                container => container.UpsertItemAsync(item2, new PartitionKey(item1.Id),
+                    It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
+                    It.IsAny<CancellationToken>()), Times.Once);
+
+            _container.Verify(
+                container => container.UpsertItemAsync(item2, new PartitionKey(item1.Id),
+                    It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_MultipleItems_WhenVerifyEtagIsFalseAndEtagIsNull_UseDefaultEtagValueInUpsertOptions()
+        {
+            // Arrange
+            TestItemWithEtag itemWithEtag1 = new()
+            {
+                Etag = Guid.NewGuid().ToString()
+            };
+
+            TestItemWithEtag itemWithEtag2 = new()
+            {
+                Etag = null
+            };
+
+            IEnumerable<TestItemWithEtag> testItemWithEtags = new []
+            {
+                itemWithEtag1,
+                itemWithEtag2
+            };
+
+            _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act
+            await RepositoryForItemWithETag.UpdateAsync(testItemWithEtags);
+
+            // Assert
+            _container.Verify(
+                container => container.UpsertItemAsync(itemWithEtag1, new PartitionKey(itemWithEtag1.Id),
+                    It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
+                    It.IsAny<CancellationToken>()), Times.Once);
+
+            _container.Verify(
+                container => container.UpsertItemAsync(itemWithEtag2, new PartitionKey(itemWithEtag1.Id),
+                    It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_MultipleItems_WhenVerifyEtagIsTrueAndAEtagIsNull_UseDefaultEtagValueInUpsertOptions()
+        {
+            // Arrange
+            TestItemWithEtag itemWithEtag1 = new()
+            {
+                Etag = Guid.NewGuid().ToString()
+            };
+
+            TestItemWithEtag itemWithEtag2 = new()
+            {
+                Etag = null
+            };
+
+            IEnumerable<TestItemWithEtag> testItemWithEtags = new []
+            {
+                itemWithEtag1,
+                itemWithEtag2
+            };
+
+            _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act
+            await RepositoryForItemWithETag.UpdateAsync(testItemWithEtags, default, true);
+
+            // Assert
+            _container.Verify(
+                container => container.UpsertItemAsync(itemWithEtag1, new PartitionKey(itemWithEtag1.Id),
+                    It.Is<ItemRequestOptions>(options => options.IfMatchEtag == itemWithEtag1.Etag),
+                    It.IsAny<CancellationToken>()), Times.Once);
+
+            _container.Verify(
+                container => container.UpsertItemAsync(itemWithEtag2, new PartitionKey(itemWithEtag2.Id),
                     It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
                     It.IsAny<CancellationToken>()), Times.Once);
         }
