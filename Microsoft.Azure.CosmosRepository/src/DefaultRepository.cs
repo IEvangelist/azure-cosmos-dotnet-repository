@@ -189,7 +189,7 @@ namespace Microsoft.Azure.CosmosRepository
             Action<IPatchOperationBuilder<TItem>> builder,
             string partitionKeyValue = null,
             CancellationToken cancellationToken = default,
-            bool verifyEtag = false)
+            string etag = default)
         {
             IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>();
 

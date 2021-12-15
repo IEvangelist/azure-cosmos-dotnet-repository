@@ -360,6 +360,43 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                     It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
                     It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Fact]
+        public async Task UpdateAsync_Patch_WhenEtagIsDefault_UseDefaultEtagValueInPatchOptions()
+        {
+            // Arrange
+            string id = Guid.NewGuid().ToString();
+
+            _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act
+            await RepositoryForItemWithETag.UpdateAsync(id, _ => { });
+
+            // Assert
+            _container.Verify(
+                container => container.PatchItemStreamAsync(id, It.IsAny<PartitionKey>(), It.IsAny<IReadOnlyList<PatchOperation>>(),
+                    It.Is<PatchItemRequestOptions>(options => options.IfMatchEtag == default),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Patch_WhenEtagIsSet_UseSetEtagValueInPatchOptions()
+        {
+            // Arrange
+            string id = Guid.NewGuid().ToString();
+            string etag = Guid.NewGuid().ToString();
+
+            _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act
+            await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, default, etag);
+
+            // Assert
+            _container.Verify(
+                container => container.PatchItemStreamAsync(id, It.IsAny<PartitionKey>(), It.IsAny<IReadOnlyList<PatchOperation>>(),
+                    It.Is<PatchItemRequestOptions>(options => options.IfMatchEtag == etag),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 
     class MockExpressionProvider : IRepositoryExpressionProvider

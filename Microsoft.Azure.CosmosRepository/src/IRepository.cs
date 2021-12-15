@@ -150,14 +150,14 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
         /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <param name="verifyEtag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires the Repository item to implement the IItemWithEtag interface.</param>
+        /// <param name="etag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires the Repository item to implement the IItemWithEtag interface.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
         ValueTask UpdateAsync(
             string id,
             Action<IPatchOperationBuilder<TItem>> builder,
             string partitionKeyValue = null,
             CancellationToken cancellationToken = default,
-            bool verifyEtag = false);
+            string etag = default);
 
         /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="value"/>.
