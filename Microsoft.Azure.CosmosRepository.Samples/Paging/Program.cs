@@ -62,7 +62,7 @@ async Task BasicScrolling()
     Console.WriteLine($"Total Charge {totalCharge} RU's");
 }
 
-async Task Seed()
+async Task SeedAsync()
 {
     IEnumerable<Person> current = await repository.GetAsync(x => x.Type == nameof(Person));
 
