@@ -6,7 +6,6 @@ using Microsoft.Azure.CosmosRepository.Attributes;
 
 [Container("people")]
 [PartitionKeyPath("/id")]
-
 public class Person : Item
 {
     public string Name { get; set; }
