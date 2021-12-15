@@ -1,4 +1,4 @@
-baseURL = 'http://example.org/'
+baseURL = 'https://ievangelist.github.io/azure-cosmos-dotnet-repository/'
 languageCode = 'en-us'
 title = 'Azure Cosmos .NET Repository - Docs'
 
