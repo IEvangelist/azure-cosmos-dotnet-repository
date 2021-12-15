@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -161,6 +162,16 @@ namespace Microsoft.Azure.CosmosRepository
             (bool optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
+            if (verifyEtag)
+            {
+                if (value is not IItemWithEtag valueWithEtag)
+                {
+                    throw new InvalidEtagConfigurationException($"{typeof(TItem).Name} is not assignable to {nameof(IItemWithEtag)}. You cannot specify {nameof(verifyEtag)} is true and not provide a value without an implementation of {nameof(IItemWithEtag)}.");
+                }
+
+                options.IfMatchEtag = valueWithEtag.Etag;
+            }
+
             ItemResponse<TItem> response =
                 await container.UpsertItemAsync<TItem>(value, new PartitionKey(value.PartitionKey), options, cancellationToken)
                     .ConfigureAwait(false);
@@ -199,8 +210,14 @@ namespace Microsoft.Azure.CosmosRepository
 
             partitionKeyValue ??= id;
 
+            PatchItemRequestOptions patchItemRequestOptions = new();
+            if (etag != default && !string.IsNullOrWhiteSpace(etag))
+            {
+                patchItemRequestOptions.IfMatchEtag = etag;
+            }
+
             await container.PatchItemAsync<TItem>(id, new PartitionKey(partitionKeyValue),
-                patchOperationBuilder.PatchOperations, cancellationToken: cancellationToken);
+                patchOperationBuilder.PatchOperations, patchItemRequestOptions, cancellationToken);
         }
 
         /// <inheritdoc/>

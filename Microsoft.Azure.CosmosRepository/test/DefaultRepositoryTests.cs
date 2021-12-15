@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -136,7 +137,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
-        public async Task UpdateAsync_SingleItem_WhenVerifyEtagIsTrueAndItemTypeIsNotAssignableToIItemWithEtag_ThrowXYZException()
+        public async Task UpdateAsync_SingleItem_WhenVerifyEtagIsTrueAndItemTypeIsNotAssignableToIItemWithEtag_ThrowInvalidEtagConfigurationException()
         {
             // Arrange
             TestItem item = new();
@@ -144,7 +145,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             _containerProviderForTestItem.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => RepositoryForItemWithoutETag.UpdateAsync(item, default, true).AsTask());
+            await Assert.ThrowsAsync<InvalidEtagConfigurationException>(() => RepositoryForItemWithoutETag.UpdateAsync(item, default, true).AsTask());
         }
 
         [Fact]
@@ -239,7 +240,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
-        public async Task UpdateAsync_MultipleItems_WhenVerifyEtagIsTrueAndItemTypeIsNotAssignableToIItemWithEtag_ThrowXYZException()
+        public async Task UpdateAsync_MultipleItems_WhenVerifyEtagIsTrueAndItemTypeIsNotAssignableToIItemWithEtag_ThrowInvalidEtagConfigurationException()
         {
             // Arrange
             TestItem item1 = new();
@@ -254,7 +255,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             _containerProviderForTestItem.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => RepositoryForItemWithoutETag.UpdateAsync(testItems, default, true).AsTask());
+            await Assert.ThrowsAsync<InvalidEtagConfigurationException>(() => RepositoryForItemWithoutETag.UpdateAsync(testItems, default, true).AsTask());
         }
 
         [Fact]
@@ -277,12 +278,12 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             // Assert
             _container.Verify(
-                container => container.UpsertItemAsync(item2, new PartitionKey(item1.Id),
+                container => container.UpsertItemAsync(item1, It.Is<PartitionKey>(key => key == new PartitionKey(item1.Id)),
                     It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
                     It.IsAny<CancellationToken>()), Times.Once);
 
             _container.Verify(
-                container => container.UpsertItemAsync(item2, new PartitionKey(item1.Id),
+                container => container.UpsertItemAsync(item2, It.Is<PartitionKey>(key => key == new PartitionKey(item2.Id)),
                     It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
                     It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -314,12 +315,12 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             // Assert
             _container.Verify(
-                container => container.UpsertItemAsync(itemWithEtag1, new PartitionKey(itemWithEtag1.Id),
+                container => container.UpsertItemAsync(itemWithEtag1, It.Is<PartitionKey>(key => key == new PartitionKey(itemWithEtag1.Id)),
                     It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
                     It.IsAny<CancellationToken>()), Times.Once);
 
             _container.Verify(
-                container => container.UpsertItemAsync(itemWithEtag2, new PartitionKey(itemWithEtag1.Id),
+                container => container.UpsertItemAsync(itemWithEtag2, It.Is<PartitionKey>(key => key == new PartitionKey(itemWithEtag2.Id)),
                     It.Is<ItemRequestOptions>(options => options.IfMatchEtag == default),
                     It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -374,7 +375,45 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             // Assert
             _container.Verify(
-                container => container.PatchItemStreamAsync(id, It.IsAny<PartitionKey>(), It.IsAny<IReadOnlyList<PatchOperation>>(),
+                container => container.PatchItemAsync<TestItemWithEtag>(id, It.Is<PartitionKey>(key => key == new PartitionKey(id)), It.IsAny<IReadOnlyList<PatchOperation>>(),
+                    It.Is<PatchItemRequestOptions>(options => options.IfMatchEtag == default),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Patch_WhenEtagIsEmpty_UseDefaultEtagValueInPatchOptions()
+        {
+            // Arrange
+            string id = Guid.NewGuid().ToString();
+            string etag = string.Empty;
+
+            _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act
+            await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, default, etag);
+
+            // Assert
+            _container.Verify(
+                container => container.PatchItemAsync<TestItemWithEtag>(id, It.Is<PartitionKey>(key => key == new PartitionKey(id)), It.IsAny<IReadOnlyList<PatchOperation>>(),
+                    It.Is<PatchItemRequestOptions>(options => options.IfMatchEtag == default),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Patch_WhenEtagIsWhiteSpace_UseDefaultEtagValueInPatchOptions()
+        {
+            // Arrange
+            string id = Guid.NewGuid().ToString();
+            string etag = "         ";
+
+            _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+
+            // Act
+            await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, default, etag);
+
+            // Assert
+            _container.Verify(
+                container => container.PatchItemAsync<TestItemWithEtag>(id, It.Is<PartitionKey>(key => key == new PartitionKey(id)), It.IsAny<IReadOnlyList<PatchOperation>>(),
                     It.Is<PatchItemRequestOptions>(options => options.IfMatchEtag == default),
                     It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -393,7 +432,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             // Assert
             _container.Verify(
-                container => container.PatchItemStreamAsync(id, It.IsAny<PartitionKey>(), It.IsAny<IReadOnlyList<PatchOperation>>(),
+                container => container.PatchItemAsync<TestItemWithEtag>(id, It.Is<PartitionKey>(key => key == new PartitionKey(id)),It.IsAny<IReadOnlyList<PatchOperation>>(),
                     It.Is<PatchItemRequestOptions>(options => options.IfMatchEtag == etag),
                     It.IsAny<CancellationToken>()), Times.Once);
         }
