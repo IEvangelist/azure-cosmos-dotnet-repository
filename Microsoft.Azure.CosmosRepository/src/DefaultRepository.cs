@@ -303,13 +303,10 @@ namespace Microsoft.Azure.CosmosRepository
                 .Where(_repositoryExpressionProvider.Build(predicate));
 
             Response<int> countResponse = await query.CountAsync(cancellationToken);
-
-            List<TItem> results = new();
-
-            int readItemsCount = 0;
-
             using FeedIterator<TItem> iterator = query.ToFeedIterator();
 
+            List<TItem> results = new();
+            int readItemsCount = 0;
             double charge = countResponse.RequestCharge;
 
             while (readItemsCount < pageSize && iterator.HasMoreResults)
