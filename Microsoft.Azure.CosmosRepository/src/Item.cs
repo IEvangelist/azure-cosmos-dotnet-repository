@@ -21,7 +21,7 @@ namespace Microsoft.Azure.CosmosRepository
     ///     public IEnumerable<Child> Children { get; set; }
     ///     public IEnumerable<string> Tags { get; set; }
     /// }
-    /// 
+    ///
     /// public class Child
     /// {
     ///     public string Name { get; set; }
@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// ]]>
     /// </code>
     /// </example>
-    public abstract class Item : IItem
+    public abstract class Item : IItemWithEtag
     {
         /// <summary>
         /// Gets or sets the item's globally unique identifier.
@@ -46,6 +46,15 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         [JsonProperty("type")]
         public string Type { get; set; }
+
+        /// <summary>
+        /// Etag for the item which was set by Cosmos the last time the item was updated. This string is used for the relevant operations when specified.
+        /// </summary>
+        /// <remarks>
+        /// Will only be used if the verifyEtag flag is specified on the relevant methods.
+        /// </remarks>
+        [JsonProperty("_etag")]
+        public string Etag { get; }
 
         /// <summary>
         /// Gets the PartitionKey based on <see cref="GetPartitionKeyValue"/>.
