@@ -59,7 +59,6 @@ async Task BasicScrolling()
     totalCharge += page.Charge;
 
     Console.WriteLine($"Last 50 results cost {page.Charge}");
-
     Console.WriteLine($"Total Charge {totalCharge} RU's");
 }
 
