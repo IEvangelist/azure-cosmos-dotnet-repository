@@ -19,25 +19,25 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         {
             _repositoryOptions.SyncAllContainerProperties = true;
 
-            Assert.True(_provider.GetWhetherToSyncContainerProperties<TestItem>());
+            Assert.True(_provider.GetWhetherToSyncContainerProperties<TestItemWithEtag>());
         }
 
         [Fact]
         public void GetWhetherToSyncContainerPropertiesWhenNoOptionsForItemReturnsFalse() =>
-            Assert.False(_provider.GetWhetherToSyncContainerProperties<TestItem>());
+            Assert.False(_provider.GetWhetherToSyncContainerProperties<TestItemWithEtag>());
 
         [Fact]
         public void GetWhetherToSyncContainerPropertiesWhenOptionsToSyncIsTrue()
         {
-            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithSyncableContainerProperties());
-            Assert.True(_provider.GetWhetherToSyncContainerProperties<TestItem>());
+            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithSyncableContainerProperties());
+            Assert.True(_provider.GetWhetherToSyncContainerProperties<TestItemWithEtag>());
         }
 
         [Fact]
         public void GetWhetherToSyncContainerPropertiesWhenOptionsToSyncIsFalse()
         {
-            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => { });
-            Assert.False(_provider.GetWhetherToSyncContainerProperties<TestItem>());
+            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => { });
+            Assert.False(_provider.GetWhetherToSyncContainerProperties<TestItemWithEtag>());
         }
     }
 }

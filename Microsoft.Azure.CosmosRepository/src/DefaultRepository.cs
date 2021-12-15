@@ -155,7 +155,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<TItem> UpdateAsync(
             TItem value,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            bool verifyEtag = false)
         {
             (bool optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
@@ -172,7 +173,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<IEnumerable<TItem>> UpdateAsync(
             IEnumerable<TItem> values,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            bool verifyEtag = false)
         {
             IEnumerable<Task<TItem>> updateTasks =
                 values.Select(value => UpdateAsync(value, cancellationToken).AsTask())
@@ -186,7 +188,8 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask UpdateAsync(string id,
             Action<IPatchOperationBuilder<TItem>> builder,
             string partitionKeyValue = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            bool verifyEtag = false)
         {
             IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>();
 

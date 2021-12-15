@@ -18,9 +18,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public async Task GetContainerAsyncGetsCorrectContainer()
         {
-            ICosmosContainerProvider<TestItem> provider = new DefaultCosmosContainerProvider<TestItem>(_cosmosContainerService.Object);
+            ICosmosContainerProvider<TestItemWithEtag> provider = new DefaultCosmosContainerProvider<TestItemWithEtag>(_cosmosContainerService.Object);
 
-            _cosmosContainerService.Setup(o => o.GetContainerAsync<TestItem>(false)).ReturnsAsync(_container.Object);
+            _cosmosContainerService.Setup(o => o.GetContainerAsync<TestItemWithEtag>(false)).ReturnsAsync(_container.Object);
 
             Container container = await provider.GetContainerAsync();
 

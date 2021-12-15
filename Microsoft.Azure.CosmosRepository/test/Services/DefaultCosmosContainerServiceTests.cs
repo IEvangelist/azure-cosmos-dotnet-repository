@@ -56,9 +56,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             _repositoryOptions.ContainerPerItemType = false;
             _repositoryOptions.ContainerId = "containerA";
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/id", new(), ThroughputProperties.CreateManualThroughput(400));
+            ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/id", new(), ThroughputProperties.CreateManualThroughput(400));
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
                 .ReturnsAsync(_containerResponse.Object);
 
             //Act
-            Container container = await service.GetContainerAsync<TestItem>();
+            Container container = await service.GetContainerAsync<TestItemWithEtag>();
 
             //Assert
             Assert.Equal(_container.Object, container);
@@ -89,9 +89,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400) ,5);
+            ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400) ,5);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -108,7 +108,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
                 .ReturnsAsync(_containerResponse.Object);
 
             //Act
-            Container container = await service.GetContainerAsync<TestItem>();
+            Container container = await service.GetContainerAsync<TestItemWithEtag>();
 
             //Assert
             Assert.Equal(_container.Object, container);
@@ -123,9 +123,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
+            ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -142,7 +142,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             _container.Setup(o => o.Id).Returns("a");
 
             //Act
-            Container container = await service.GetContainerAsync<TestItem>();
+            Container container = await service.GetContainerAsync<TestItemWithEtag>();
 
             //Assert
             _container.Verify(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None), Times.Once);
@@ -158,9 +158,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, false);
+            ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, false);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -175,7 +175,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
                 .ReturnsAsync(_containerResponse.Object);
 
             //Act
-            Container container = await service.GetContainerAsync<TestItem>(true);
+            Container container = await service.GetContainerAsync<TestItemWithEtag>(true);
 
             //Assert
             _container.Verify(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None), Times.Once);
@@ -191,9 +191,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions itemOptions = new (typeof(TestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
+            ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -210,8 +210,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             _container.Setup(o => o.Id).Returns("a");
 
             //Act
-            await service.GetContainerAsync<TestItem>();
-            Container container = await service.GetContainerAsync<TestItem>();
+            await service.GetContainerAsync<TestItemWithEtag>();
+            Container container = await service.GetContainerAsync<TestItemWithEtag>();
 
             //Assert
             _container.Verify(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None), Times.Once);
@@ -227,11 +227,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             ICosmosContainerService service = CreateDefaultCosmosContainerService();
             _repositoryOptions.ContainerPerItemType = true;
 
-            ItemOptions testItemOptions = new (typeof(TestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
+            ItemOptions testItemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
 
             ItemOptions anotherTestItemOptions = new (typeof(AnotherTestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItem>()).Returns(testItemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(testItemOptions);
             _itemConfigurationProvider.Setup(o => o.GetOptions<AnotherTestItem>()).Returns(anotherTestItemOptions);
 
             _cosmosClient.Setup(o =>
@@ -249,7 +249,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
             _container.Setup(o => o.Id).Returns("a");
 
             //Act
-            await service.GetContainerAsync<TestItem>();
+            await service.GetContainerAsync<TestItemWithEtag>();
             Container container = await service.GetContainerAsync<AnotherTestItem>();
 
             //Assert

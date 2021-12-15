@@ -99,7 +99,7 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default)
+        public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default, bool verifyEtag = false)
         {
             await Task.CompletedTask;
 
@@ -109,7 +109,7 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default)
+        public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default, bool verifyEtag = false)
         {
             IEnumerable<TItem> enumerable = values.ToList();
 
@@ -125,7 +125,8 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask UpdateAsync(string id,
             Action<IPatchOperationBuilder<TItem>> builder,
             string partitionKeyValue = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            bool verifyEtag = false)
         {
             await Task.CompletedTask;
 
@@ -141,7 +142,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             builder(patchOperationBuilder);
 
-            foreach (InternalPatchOperation internalPatchOperation in 
+            foreach (InternalPatchOperation internalPatchOperation in
                 patchOperationBuilder._rawPatchOperations.Where(ipo => ipo.Type is PatchOperationType.Replace))
             {
 
