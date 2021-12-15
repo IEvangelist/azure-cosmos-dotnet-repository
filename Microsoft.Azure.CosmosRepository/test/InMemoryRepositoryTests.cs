@@ -113,17 +113,17 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
-        public async Task GetAsync_InvalidSerialisable_ThrowsNullException()
+        public async Task GetAsync_InvalidSerializable_ThrowsNullException()
         {
             //Arrange
             InvalidSerialisableArguments args = new("id", "property1");
-            InvalidSerialisable invalidSerialisable = new(args);
-            _invalidSerialisableRepository.Items[invalidSerialisable.Id] = JsonConvert.SerializeObject(invalidSerialisable);
+            InvalidSerialisable invalidSerializable = new(args);
+            _invalidSerialisableRepository.Items[invalidSerializable.Id] = JsonConvert.SerializeObject(invalidSerializable);
 
             //Act
             //Assert
             await Assert.ThrowsAsync<NullReferenceException>(() =>
-                _invalidSerialisableRepository.GetAsync(invalidSerialisable.Id).AsTask());
+                _invalidSerialisableRepository.GetAsync(invalidSerializable.Id).AsTask());
         }
 
         [Fact]
@@ -255,8 +255,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             await Assert.ThrowsAsync<NullReferenceException>(() =>
                 _invalidSerialisableRepository.CreateAsync(invalidSerialisable).AsTask());
             Assert.True(_invalidSerialisableRepository.Items.ContainsKey(invalidSerialisable.Id));
-            Assert.Equal(args.Property1, _invalidSerialisableRepository.DeserialiseItem<ValidInvalidSerialisable>(_invalidSerialisableRepository.Items[invalidSerialisable.Id]).Property1);
-            Assert.Equal(args.PartitionKey, _invalidSerialisableRepository.DeserialiseItem<ValidInvalidSerialisable>(_invalidSerialisableRepository.Items[invalidSerialisable.Id]).PartitionKey);
+            Assert.Equal(args.Property1, _invalidSerialisableRepository.DeserializeItem<ValidInvalidSerialisable>(_invalidSerialisableRepository.Items[invalidSerialisable.Id]).Property1);
+            Assert.Equal(args.PartitionKey, _invalidSerialisableRepository.DeserializeItem<ValidInvalidSerialisable>(_invalidSerialisableRepository.Items[invalidSerialisable.Id]).PartitionKey);
         }
 
         [Fact]
@@ -282,7 +282,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Act
             Person person = await _personRepository.CreateAsync(item);
 
-            Person addedPerson = _personRepository.DeserialiseItem(_personRepository.Items.Values.First());
+            Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
 
             Assert.Equal(item.Name, person.Name);
             Assert.Equal(item.Id, person.Id);
@@ -309,7 +309,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             foreach (Person item in items)
             {
-                Person addedPerson = _personRepository.Items.Values.Select(_personRepository.DeserialiseItem).First(i => i.Id == item.Id);
+                Person addedPerson = _personRepository.Items.Values.Select(_personRepository.DeserializeItem).First(i => i.Id == item.Id);
                 Person person = people.First(i => i.Id == item.Id);
 
                 Assert.Equal(item.Name, person.Name);
@@ -416,7 +416,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Act
             Person person = await _personRepository.UpdateAsync(item);
 
-            Person addedPerson = _personRepository.DeserialiseItem(_personRepository.Items.Values.First());
+            Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
 
             Assert.Equal(item.Name, person.Name);
             Assert.Equal(item.Id, person.Id);
@@ -455,7 +455,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             foreach (Person item in items)
             {
-                Person updatedPerson = _personRepository.Items.Values.Select(_personRepository.DeserialiseItem).First(i => i.Id == item.Id);
+                Person updatedPerson = _personRepository.Items.Values.Select(_personRepository.DeserializeItem).First(i => i.Id == item.Id);
                 Person person = people.First(i => i.Id == item.Id);
                 Person itemUpdate = itemsUpdate.First(i => i.Id == item.Id);
 
@@ -485,7 +485,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Act
             Person person = await _personRepository.UpdateAsync(item);
 
-            Person addedPerson = _personRepository.DeserialiseItem(_personRepository.Items.Values.First());
+            Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
 
             Assert.Equal(item.Name, person.Name);
             Assert.Equal(originalPerson.Id, person.Id);
@@ -571,7 +571,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             await _dogRepository.UpdateAsync(dog.Id, builder => builder.Replace(d => d.Name, "kenny"), dog.Breed);
 
             //Assert
-            Assert.Equal("kenny", _dogRepository.DeserialiseItem(_dogRepository.Items.First().Value).Name);
+            Assert.Equal("kenny", _dogRepository.DeserializeItem(_dogRepository.Items.First().Value).Name);
         }
 
         [Fact]
@@ -601,7 +601,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                     }));
 
             //Assert
-            RootObject deserialisedItem = _rootObjectRepository.DeserialiseItem(_rootObjectRepository.Items.First().Value);
+            RootObject deserialisedItem = _rootObjectRepository.DeserializeItem(_rootObjectRepository.Items.First().Value);
             Assert.Equal("CBA", deserialisedItem.Type1);
             Assert.Equal("prop2", deserialisedItem.NestedObject.Property1);
             Assert.Equal(2, deserialisedItem.NestedObject.Property2);

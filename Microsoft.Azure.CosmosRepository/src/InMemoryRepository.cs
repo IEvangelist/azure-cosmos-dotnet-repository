@@ -155,7 +155,7 @@ namespace Microsoft.Azure.CosmosRepository
                 property?.SetValue(item, internalPatchOperation.NewValue);
             }
 
-            Items[id] = SerialiseItem(item);
+            Items[id] = SerializeItem(item);
         }
 
         /// <inheritdoc/>
