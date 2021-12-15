@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Extensions
 {
-    public static class ItemsDictionaryEasyTryAdd
+    public static class ConcurrentDictionaryExtensions
     {
-        public static bool TryAdd<TItem>(this ConcurrentDictionary<string, string> items, string id, TItem item)
+        public static bool TryAddAsJson<TItem>(this ConcurrentDictionary<string, string> items, string id, TItem item)
         {
             return items.TryAdd(id, JsonConvert.SerializeObject(item));
         }

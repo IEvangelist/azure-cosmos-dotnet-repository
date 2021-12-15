@@ -167,7 +167,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
-            _personRepository.Items.TryAdd(item.Id, item);
+            _personRepository.Items.TryAddAsJson(item.Id, item);
 
             //Act
             Person person = await _personRepository.GetAsync(item.Id);
@@ -184,7 +184,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Dog item = new("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
-            _dogRepository.Items.TryAdd(item.Id, item);
+            _dogRepository.Items.TryAddAsJson(item.Id, item);
 
             //Act
             Dog dog = await _dogRepository.GetAsync(item.Id, item.Breed);
@@ -199,7 +199,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task GetAsync_IdAndPartitionKeyObjectExists_GetsItem()
         {
             Dog item = new("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
-            _dogRepository.Items.TryAdd(item.Id, item);
+            _dogRepository.Items.TryAddAsJson(item.Id, item);
 
             //Act
             Dog dog = await _dogRepository.GetAsync(item.Id, new PartitionKey(item.Breed));
@@ -215,7 +215,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Person person = new("joe");
-            _personRepository.Items.TryAdd(person.Id, person);
+            _personRepository.Items.TryAddAsJson(person.Id, person);
 
             //Act
             IEnumerable<Person> people = await _personRepository.GetAsync(p => p.Name == "fred");
@@ -229,7 +229,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Person person = new("joe");
-            _personRepository.Items.TryAdd(person.Id, person);
+            _personRepository.Items.TryAddAsJson(person.Id, person);
 
             //Act
             IEnumerable<Person> people = await _personRepository.GetAsync(p => p.Name == "joe");
@@ -264,7 +264,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
-            _personRepository.Items.TryAdd(item.Id, item);
+            _personRepository.Items.TryAddAsJson(item.Id, item);
 
             //Act
             CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() =>
@@ -384,7 +384,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Person person = new("joe");
-            _personRepository.Items.TryAdd(person.Id, person);
+            _personRepository.Items.TryAddAsJson(person.Id, person);
 
             //Act
             await _personRepository.DeleteAsync(person.Id);
@@ -398,7 +398,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Dog dog = new("cocker spaniel");
-            _dogRepository.Items.TryAdd(dog.Id, dog);
+            _dogRepository.Items.TryAddAsJson(dog.Id, dog);
 
             //Act
             await _dogRepository.DeleteAsync(dog.Id, dog.Breed);
@@ -478,7 +478,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Person originalPerson = new("phil");
-            _personRepository.Items.TryAdd(originalPerson.Id, originalPerson);
+            _personRepository.Items.TryAddAsJson(originalPerson.Id, originalPerson);
 
             Person item = new("joe") {Id = originalPerson.Id};
 
@@ -502,7 +502,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             Person person = new("joe");
 
-            _personRepository.Items.TryAdd(person.Id, person);
+            _personRepository.Items.TryAddAsJson(person.Id, person);
 
             //Act
             bool exists = await _personRepository.ExistsAsync(person.Id);
@@ -516,7 +516,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Dog dog = new("cocker spaniel");
-            _dogRepository.Items.TryAdd(dog.Id, dog);
+            _dogRepository.Items.TryAddAsJson(dog.Id, dog);
 
             //Act
             bool exists = await _dogRepository.ExistsAsync(dog.Id, dog.Breed);
@@ -531,7 +531,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             Person person = new("joe");
 
-            _personRepository.Items.TryAdd(person.Id, person);
+            _personRepository.Items.TryAddAsJson(person.Id, person);
 
             //Act
             bool exists = await _personRepository.ExistsAsync("fred");
@@ -549,9 +549,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Dog dog2 = new("cocker spaniel");
             Dog dog3 = new("golden retriever");
 
-            _dogRepository.Items.TryAdd(dog1.Id, dog1);
-            _dogRepository.Items.TryAdd(dog2.Id, dog2);
-            _dogRepository.Items.TryAdd(dog3.Id, dog3);
+            _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
+            _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
+            _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
 
             //Act
             bool exists = await _dogRepository.ExistsAsync(d => d.Breed == "cocker spaniel" || d.Id == dog3.Id);
@@ -565,7 +565,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             Dog dog = new("labrador", "fred");
-            _dogRepository.Items.TryAdd(dog.Id, dog);
+            _dogRepository.Items.TryAddAsJson(dog.Id, dog);
 
             //Act
             await _dogRepository.UpdateAsync(dog.Id, builder => builder.Replace(d => d.Name, "kenny"), dog.Breed);
@@ -589,7 +589,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 }
             };
 
-            _rootObjectRepository.Items.TryAdd(root.Id, root);
+            _rootObjectRepository.Items.TryAddAsJson(root.Id, root);
 
             //Act
             await _rootObjectRepository.UpdateAsync(root.Id, builder =>
