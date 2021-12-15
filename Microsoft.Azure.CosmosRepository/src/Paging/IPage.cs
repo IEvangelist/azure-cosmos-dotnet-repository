@@ -18,11 +18,6 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         int Total { get; }
 
         /// <summary>
-        /// The page number.
-        /// </summary>
-        int Number { get; }
-
-        /// <summary>
         /// The size of the current page.
         /// </summary>
         int Size { get; }

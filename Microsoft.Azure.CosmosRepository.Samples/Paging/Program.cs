@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +28,7 @@ await BasicScrolling();
 async Task BasicScrolling()
 {
     double totalCharge = 0;
+
     IPage<Person> page = await repository.ScrollAsync(pageSize: 25);
 
     foreach (Person person in page.Items)
@@ -41,7 +40,7 @@ async Task BasicScrolling()
 
     Console.WriteLine($"First 25 results cost {page.Charge}");
 
-    page = await repository.ScrollAsync(pageSize: 25, continuationToken: page.Continuation, lastPage: page.Number);
+    page = await repository.ScrollAsync(pageSize: 25, continuationToken: page.Continuation);
 
     foreach (Person person in page.Items)
     {
@@ -51,7 +50,7 @@ async Task BasicScrolling()
     totalCharge += page.Charge;
     Console.WriteLine($"Second 25 results cost {page.Charge}");
 
-    page = await repository.ScrollAsync(pageSize: 50, continuationToken: page.Continuation, lastPage: page.Number);
+    page = await repository.ScrollAsync(pageSize: 50, continuationToken: page.Continuation);
 
     foreach (Person person in page.Items)
     {

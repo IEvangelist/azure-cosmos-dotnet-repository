@@ -200,7 +200,6 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         public ValueTask<IPage<TItem>> ScrollAsync(
-            int page = 0,
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
             string continuationToken = null,
