@@ -16,10 +16,9 @@ namespace Microsoft.Azure.CosmosRepository.Exceptions
         /// <summary>
         /// Constructor specifying the message to set in the exception.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">The message for the exception.</param>
         public InvalidEtagConfigurationException(string message) : base(message)
         {
-
         }
     }
 }

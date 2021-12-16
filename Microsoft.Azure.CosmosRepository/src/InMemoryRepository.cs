@@ -26,7 +26,7 @@ namespace Microsoft.Azure.CosmosRepository
     {
         internal ConcurrentDictionary<string, string> Items { get; } = new();
 
-        internal string SerializeItem(TItem item, string etag=null)
+        internal string SerializeItem(TItem item, string etag = null)
         {
             JObject jObject = JObject.FromObject(item);
             if (etag != null)
@@ -126,27 +126,24 @@ namespace Microsoft.Azure.CosmosRepository
 
             if (Items.ContainsKey(value.Id))
             {
-                if (verifyEtag)
+                if (verifyEtag && value is IItemWithEtag valueWithEtag)
                 {
-                    if (value is IItemWithEtag valueWithEtag)
+                    TItem existingItem = DeserializeItem(Items[value.Id]);
+                    if (existingItem is IItemWithEtag existingItemWithEtag)
                     {
-                        TItem existingItem = DeserializeItem(Items[value.Id]);
-                        if (existingItem is IItemWithEtag existingItemWithEtag)
+                        if (existingItemWithEtag.Etag != valueWithEtag.Etag)
                         {
-                            if (existingItemWithEtag.Etag != valueWithEtag.Etag)
-                            {
-                                MismatchedEtags();
-                            }
-                        }
-                        else
-                        {
-                            throw new InvalidEtagConfigurationException(string.Empty);
+                            MismatchedEtags();
                         }
                     }
                     else
                     {
                         throw new InvalidEtagConfigurationException(string.Empty);
                     }
+                }
+                else
+                {
+                    throw new InvalidEtagConfigurationException(string.Empty);
                 }
             }
 
