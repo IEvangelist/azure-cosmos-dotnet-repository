@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         [JsonProperty("_etag")]
         public string Etag { get; set; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
         public Person(string name)
         {
@@ -475,7 +475,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Person updateItem = new("joe") {Id = storedItem.Id, Type = nameof(Person), Etag = updateEtag};
 
             //Act
-            await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(updateItem, default, false).AsTask());
+            CosmosException cosmosException = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(updateItem).AsTask());
+            Assert.Equal(HttpStatusCode.PreconditionFailed, cosmosException.StatusCode);
         }
 
         [Fact]
@@ -661,6 +662,112 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             //Assert
             Assert.Equal("kenny", _dogRepository.DeserializeItem(_dogRepository.Items.First().Value).Name);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_PropertiesToPatch_WhenEtagMatches_UpdatesValues()
+        {
+            //Arrange
+            string originalEtag = Guid.NewGuid().ToString();
+            Person person = new("steve")
+            {
+                Etag = originalEtag
+            };
+            _personRepository.Items.TryAddAsJson(person.Id, person);
+
+            //Act
+            await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, originalEtag);
+
+            //Assert
+            Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+            Assert.Equal("kenny", updatedPerson.Name);
+            Assert.Equal(person.Id, updatedPerson.Id);
+            Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_PropertiesToPatch_WhenEtagIsNull_UpdatesValues()
+        {
+            //Arrange
+            string originalEtag = Guid.NewGuid().ToString();
+            Person person = new("steve")
+            {
+                Etag = originalEtag
+            };
+            _personRepository.Items.TryAddAsJson(person.Id, person);
+
+            //Act
+            await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, null);
+
+            //Assert
+            Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+            Assert.Equal("kenny", updatedPerson.Name);
+            Assert.Equal(person.Id, updatedPerson.Id);
+            Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+        }
+
+
+        [Fact]
+        public async Task UpdateAsync_PropertiesToPatch_WhenEtagIsEmpty_UpdatesValues()
+        {
+            //Arrange
+            string originalEtag = Guid.NewGuid().ToString();
+            Person person = new("steve")
+            {
+                Etag = originalEtag
+            };
+            _personRepository.Items.TryAddAsJson(person.Id, person);
+
+            //Act
+            await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, string.Empty);
+
+            //Assert
+            Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+            Assert.Equal("kenny", updatedPerson.Name);
+            Assert.Equal(person.Id, updatedPerson.Id);
+            Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_PropertiesToPatch_WhenEtagIsWhiteSpace_UpdatesValues()
+        {
+            //Arrange
+            string originalEtag = Guid.NewGuid().ToString();
+            Person person = new("steve")
+            {
+                Etag = originalEtag
+            };
+            _personRepository.Items.TryAddAsJson(person.Id, person);
+
+            //Act
+            await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, "            ");
+
+            //Assert
+            Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+            Assert.Equal("kenny", updatedPerson.Name);
+            Assert.Equal(person.Id, updatedPerson.Id);
+            Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_PropertiesToPatch_WhenEtagDoesNotMatch_ThrowsCosmosException()
+        {
+            //Arrange
+            string originalEtag = Guid.NewGuid().ToString();
+            Person person = new("steve")
+            {
+                Etag = originalEtag
+            };
+            _personRepository.Items.TryAddAsJson(person.Id, person);
+
+            //Act & Assert
+            CosmosException cosmosException = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, Guid.NewGuid().ToString()).AsTask());
+            Assert.Equal(HttpStatusCode.PreconditionFailed, cosmosException.StatusCode);
+
+
+            Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+            Assert.Equal(person.Name, updatedPerson.Name);
+            Assert.Equal(person.Id, updatedPerson.Id);
         }
 
         [Fact]

@@ -166,6 +166,14 @@ namespace Microsoft.Azure.CosmosRepository
                 NotFound();
             }
 
+            if (item is IItemWithEtag itemWithEtag && etag != default && !string.IsNullOrWhiteSpace(etag))
+            {
+                if (itemWithEtag.Etag != etag)
+                {
+                    MismatchedEtags();
+                }
+            }
+
             PatchOperationBuilder<TItem> patchOperationBuilder = new();
 
             builder(patchOperationBuilder);
@@ -178,7 +186,7 @@ namespace Microsoft.Azure.CosmosRepository
                 property?.SetValue(item, internalPatchOperation.NewValue);
             }
 
-            Items[id] = SerializeItem(item);
+            Items[id] = SerializeItem(item, Guid.NewGuid().ToString());
         }
 
         /// <inheritdoc/>
