@@ -25,9 +25,13 @@ IRepository<BankAccount> BuildRepository(bool optimizeBandwidth)
     return repository;
 }
 
+Console.WriteLine("----------------------");
 await ConcurrencyWithOptimizeBandwidthOff();
+Console.WriteLine("----------------------");
 await ConcurrencyWithOptimizeBandwidthOn();
+Console.WriteLine("----------------------");
 await ConcurrencyWithOptimizeBandwidthOnTrapDemo();
+Console.WriteLine("----------------------");
 
 async Task ConcurrencyWithOptimizeBandwidthOff()
 {
@@ -51,9 +55,9 @@ async Task ConcurrencyWithOptimizeBandwidthOff()
     Console.WriteLine("Attempting to withdraw 250 from the bank account.");
     try
     {
-        currentBankAccount.Withdraw(250.0);
         Console.WriteLine("Attempting to withdraw 250 from the bank account.");
-        currentBankAccount = await repository.UpdateAsync(currentBankAccount);
+        await repository.UpdateAsync(currentBankAccount.Id,
+            builder => builder.Replace(account => account.Balance, currentBankAccount.Balance - 250), etag: currentBankAccount.Etag);
     }
     catch (CosmosException exception)
     {
@@ -69,13 +73,13 @@ async Task ConcurrencyWithOptimizeBandwidthOff()
 
     try
     {
-        currentBankAccount.Withdraw(750.0);
         Console.WriteLine("Attempting to withdraw 750 from the bank account.");
+        currentBankAccount.Withdraw(750);
         currentBankAccount = await repository.UpdateAsync(currentBankAccount);
     }
     catch (InvalidOperationException)
     {
-        Console.WriteLine("Failed to withdraw 250 from the bank account as it would take the user overdrawn.");
+        Console.WriteLine("Failed to withdraw 750 from the bank account as it would take the user overdrawn.");
     }
 
     currentBankAccount.Deposit(500);
@@ -116,7 +120,8 @@ async Task ConcurrencyWithOptimizeBandwidthOn()
     {
         currentBankAccount.Withdraw(250.0);
         Console.WriteLine("Attempting to withdraw 250 from the bank account.");
-        await repository.UpdateAsync(currentBankAccount);
+        await repository.UpdateAsync(currentBankAccount.Id,
+            builder => builder.Replace(account => account.Balance, currentBankAccount.Balance - 250), etag: currentBankAccount.Etag);
         currentBankAccount = await repository.GetAsync(bankAccountInfo.Id);
     }
     catch (CosmosException exception)
@@ -141,7 +146,7 @@ async Task ConcurrencyWithOptimizeBandwidthOn()
     }
     catch (InvalidOperationException)
     {
-        Console.WriteLine("Failed to withdraw 250 from the bank account as it would take the user overdrawn.");
+        Console.WriteLine("Failed to withdraw 750 from the bank account as it would take the user overdrawn.");
     }
 
     currentBankAccount.Deposit(500);
