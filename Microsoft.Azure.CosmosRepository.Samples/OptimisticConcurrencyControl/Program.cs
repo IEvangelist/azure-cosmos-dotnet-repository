@@ -12,7 +12,7 @@ ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =
     {
         options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
         options.DatabaseId = "optimistic-concurrency-control";
-        options.OptimizeBandwidth = false;
+        options.OptimizeBandwidth = false; // Must be false to receive the upto date etags back on update calls
     })
     .AddSingleton<IConfiguration>(configuration.Build())
     .BuildServiceProvider();
