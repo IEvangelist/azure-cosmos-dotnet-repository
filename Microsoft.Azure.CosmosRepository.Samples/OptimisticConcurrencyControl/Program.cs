@@ -6,78 +6,198 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OptimisticConcurrencyControl;
 
-ConfigurationBuilder configuration = new();
 
-ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =>
-    {
-        options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
-        options.DatabaseId = "optimistic-concurrency-control";
-        options.OptimizeBandwidth = false; // Must be false to receive the upto date etags back on update calls
-    })
-    .AddSingleton<IConfiguration>(configuration.Build())
-    .BuildServiceProvider();
-
-IRepository<BankAccount> repository = provider.GetRequiredService<IRepository<BankAccount>>();
-
-await SeedAsync();
-await Concurrency();
-
-async Task Concurrency()
+IRepository<BankAccount> BuildRepository(bool optimizeBandwidth)
 {
-    double totalCharge = 0;
+    ConfigurationBuilder configuration = new();
 
-    BankAccount createdBankAccount = await repository.CreateAsync(new BankAccount()
+    ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =>
+        {
+            options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
+            options.DatabaseId = "optimistic-concurrency-control";
+            options.OptimizeBandwidth = optimizeBandwidth; // Must be false to receive the upto date etags back on update calls
+        })
+        .AddSingleton<IConfiguration>(configuration.Build())
+        .BuildServiceProvider();
+
+    IRepository<BankAccount> repository = provider.GetRequiredService<IRepository<BankAccount>>();
+
+    return repository;
+}
+
+await ConcurrencyWithOptimizeBandwidthOff();
+await ConcurrencyWithOptimizeBandwidthOn();
+await ConcurrencyWithOptimizeBandwidthOnTrapDemo();
+
+async Task ConcurrencyWithOptimizeBandwidthOff()
+{
+    Console.WriteLine($"Optimized bandwidth OFF.");
+    IRepository<BankAccount> repository = BuildRepository(false);
+
+    BankAccount currentBankAccount = await repository.CreateAsync(new BankAccount()
     {
         Name = "Current Account",
         Balance = 500.0
     });
 
-    Console.WriteLine($"Created a bank account: {createdBankAccount}.");
-    Console.WriteLine("Attempting to update the same instance of the created bank account three times.");
+    Console.WriteLine($"Created a bank account: {currentBankAccount}.");
 
-    Console.WriteLine($"1) Attempting to update balance to 750.0.");
-    BankAccount bankAccountUpdate = await repository.GetAsync(createdBankAccount.Id);
-    bankAccountUpdate.Balance = 750.0;
-    BankAccount updatedBankAccount = await repository.UpdateAsync(bankAccountUpdate);
+    currentBankAccount.Withdraw(500);
+    await repository.UpdateAsync(currentBankAccount);
+    currentBankAccount.Deposit(500);
 
-    Console.WriteLine($"1) Bank account updated {updatedBankAccount}.");
+    Console.WriteLine($"Simulating a withdrawal of 500 that happened from another service. Remote State - {await repository.GetAsync(currentBankAccount.Id)}. Local State - {currentBankAccount}");
 
+    Console.WriteLine("Attempting to withdraw 250 from the bank account.");
     try
     {
-        bankAccountUpdate.Balance = 1000.0;
-        Console.WriteLine($"2) Attempting to update balance to 1000.0 using the original etag. {bankAccountUpdate}");
-        await repository.UpdateAsync(bankAccountUpdate);
+        currentBankAccount.Withdraw(250.0);
+        Console.WriteLine("Attempting to withdraw 250 from the bank account.");
+        currentBankAccount = await repository.UpdateAsync(currentBankAccount);
     }
     catch (CosmosException exception)
     {
         if (exception.StatusCode == HttpStatusCode.PreconditionFailed)
         {
-            Console.WriteLine("2) Failed to update balance to 1000.0 as etags did not match.");
+            Console.WriteLine("Failed to withdraw 250 from the bank account as the local state was out of date with the remote state.");
+            Console.WriteLine("Syncing local state with remote state.");
+            currentBankAccount = await repository.GetAsync(currentBankAccount.Id);
+            Console.WriteLine($"Updated local state. {currentBankAccount}");
+
         }
     }
 
-    Console.WriteLine($"3) Forcing balance to update update balance to 1000.0 using the original etag. But explicitly telling it to ignore the etag {bankAccountUpdate}");
-    updatedBankAccount = await repository.UpdateAsync(bankAccountUpdate, ignoreEtag: true);
-    Console.WriteLine($"3) Bank account updated {updatedBankAccount}.");
-
-    BankAccount finalAccountInfo = await repository.GetAsync(createdBankAccount.Id);
-    Console.WriteLine($"Final account information {finalAccountInfo}");
-}
-
-async Task SeedAsync()
-{
-    IEnumerable<BankAccount> current = await repository.GetAsync(x => x.Type == nameof(BankAccount));
-
-    if (current.Any())
+    try
     {
-        return;
+        currentBankAccount.Withdraw(750.0);
+        Console.WriteLine("Attempting to withdraw 750 from the bank account.");
+        currentBankAccount = await repository.UpdateAsync(currentBankAccount);
+    }
+    catch (InvalidOperationException)
+    {
+        Console.WriteLine("Failed to withdraw 250 from the bank account as it would take the user overdrawn.");
     }
 
-    Faker<BankAccount> peopleFaker = new();
-    peopleFaker
-        .RuleFor(p => p.Name, f => f.Name.FullName())
-        .RuleFor(p => p.Balance, f => f.Random.Number(0, 10000));
+    currentBankAccount.Deposit(500);
+    await repository.UpdateAsync(currentBankAccount);
+    currentBankAccount.Withdraw(500);
 
-    List<BankAccount> people = peopleFaker.Generate(100);
-    await repository.CreateAsync(people);
+    Console.WriteLine($"Simulating a deposit of 500 that happened from another service. Remote State - {await repository.GetAsync(currentBankAccount.Id)}. Local State - {currentBankAccount}");
+
+    Console.WriteLine("Forcing the balance to equal 1000");
+    currentBankAccount.Balance = 1000.0;
+    currentBankAccount = await repository.UpdateAsync(currentBankAccount, ignoreEtag: true);
+
+    Console.WriteLine($"Forced update succeeded as etag was ignored.  Remote State - {await repository.GetAsync(currentBankAccount.Id)}. Local State - {currentBankAccount}");
+}
+
+async Task ConcurrencyWithOptimizeBandwidthOn()
+{
+    Console.WriteLine($"Optimized bandwidth ON.");
+    IRepository<BankAccount> repository = BuildRepository(true);
+
+    BankAccount bankAccountInfo = new BankAccount()
+    {
+        Name = "Current Account",
+        Balance = 500.0
+    };
+    await repository.CreateAsync(bankAccountInfo);
+
+    BankAccount currentBankAccount = await repository.GetAsync(bankAccountInfo.Id);
+    Console.WriteLine($"Created a bank account: {currentBankAccount}.");
+
+    currentBankAccount.Withdraw(500);
+    await repository.UpdateAsync(currentBankAccount);
+    currentBankAccount.Deposit(500);
+
+    Console.WriteLine($"Simulating a withdrawal of 500 that happened from another service. Remote State - {await repository.GetAsync(currentBankAccount.Id)}. Local State - {currentBankAccount}");
+
+    try
+    {
+        currentBankAccount.Withdraw(250.0);
+        Console.WriteLine("Attempting to withdraw 250 from the bank account.");
+        await repository.UpdateAsync(currentBankAccount);
+        currentBankAccount = await repository.GetAsync(bankAccountInfo.Id);
+    }
+    catch (CosmosException exception)
+    {
+        if (exception.StatusCode == HttpStatusCode.PreconditionFailed)
+        {
+            Console.WriteLine("Failed to withdraw 250 from the bank account as the local state was out of date with the remote state.");
+            Console.WriteLine("Syncing local state with remote state.");
+            currentBankAccount = await repository.GetAsync(currentBankAccount.Id);
+            Console.WriteLine($"Updated local state. {currentBankAccount}");
+
+        }
+    }
+
+    Console.WriteLine("Attempting to withdraw 750 from the bank account.");
+    try
+    {
+        currentBankAccount.Withdraw(750.0);
+        Console.WriteLine("Attempting to withdraw 750 from the bank account.");
+        await repository.UpdateAsync(currentBankAccount);
+        currentBankAccount = await repository.GetAsync(bankAccountInfo.Id);
+    }
+    catch (InvalidOperationException)
+    {
+        Console.WriteLine("Failed to withdraw 250 from the bank account as it would take the user overdrawn.");
+    }
+
+    currentBankAccount.Deposit(500);
+    await repository.UpdateAsync(currentBankAccount);
+    currentBankAccount.Withdraw(500);
+
+    Console.WriteLine($"Simulating a deposit of 500 that happened from another service. Remote State - {await repository.GetAsync(currentBankAccount.Id)}. Local State - {currentBankAccount}");
+
+    Console.WriteLine("Forcing the balance to equal 1000");
+    currentBankAccount.Balance = 1000.0;
+    await repository.UpdateAsync(currentBankAccount, ignoreEtag: true);
+    currentBankAccount = await repository.GetAsync(bankAccountInfo.Id);
+
+    Console.WriteLine($"Forced update succeeded as etag was ignored.  Remote State - {await repository.GetAsync(currentBankAccount.Id)}. Local State - {currentBankAccount}");
+}
+
+// Be cautious if doing multiple updates and using the result from the update.
+// If optimize bandwidth is on then the result returned will be the value passed in and the etag will not update.
+async Task ConcurrencyWithOptimizeBandwidthOnTrapDemo()
+{
+    Console.WriteLine($"Optimized bandwidth ON.");
+    IRepository<BankAccount> repository = BuildRepository(true);
+
+    BankAccount bankAccountInfo = new BankAccount()
+    {
+        Name = "Current Account",
+        Balance = 500.0
+    };
+
+    BankAccount currentBankAccount = await repository.CreateAsync(bankAccountInfo);
+    Console.WriteLine($"Created a bank account: {currentBankAccount}. From information in {bankAccountInfo}");
+
+    Console.WriteLine($"Setting balance to 200");
+    currentBankAccount.Balance = 200;
+    currentBankAccount = await repository.UpdateAsync(currentBankAccount);
+    Console.WriteLine($"Updated bank account: {currentBankAccount}.");
+
+    Console.WriteLine($"Setting balance to 300. Using result from last update.");
+    currentBankAccount.Balance = 300;
+    try
+    {
+        currentBankAccount = await repository.UpdateAsync(currentBankAccount);
+        Console.WriteLine($"Updated bank account: {currentBankAccount}.");
+    }
+    catch (CosmosException exception)
+    {
+        if (exception.StatusCode == HttpStatusCode.PreconditionFailed)
+        {
+            Console.WriteLine("Failed to update balance as the etags did not match.");
+        }
+    }
+
+    Console.WriteLine($"Reattempting using value from the database.");
+    currentBankAccount = await repository.GetAsync(currentBankAccount.Id);
+    currentBankAccount.Balance = 300;
+    await repository.UpdateAsync(currentBankAccount);
+    Console.WriteLine($"Updated bank account: {await repository.GetAsync(currentBankAccount.Id)}.");
+
 }

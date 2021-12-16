@@ -10,8 +10,20 @@ namespace OptimisticConcurrencyControl;
 [PartitionKeyPath("/id")]
 public class BankAccount : EtagItem
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public double Balance { get; set; }
+
+    public void Withdraw(double amount)
+    {
+        if (Balance - amount < 0.0) throw new InvalidOperationException("Cannot go overdrawn");
+
+        Balance -= amount;
+    }
+
+    public void Deposit(double amount)
+    {
+        Balance += amount;
+    }
 
     public override string ToString() =>
         $"Account (Name = {Name}, Balance = {Balance}, Etag = {Etag})";
