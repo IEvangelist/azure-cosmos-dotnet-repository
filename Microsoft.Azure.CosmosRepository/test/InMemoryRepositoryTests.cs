@@ -15,7 +15,7 @@ using Microsoft.Azure.CosmosRepositoryTests.Extensions;
 
 namespace Microsoft.Azure.CosmosRepositoryTests
 {
-    class Person : Item
+    class Person : EtagItem
     {
         public string Name { get; }
 
@@ -444,7 +444,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Person updateItem = new("joe2") {Id = item.Id, Type = nameof(Person), Etag = originalEtag};
 
             //Act
-            Person person = await _personRepository.UpdateAsync(updateItem, default, true);
+            Person person = await _personRepository.UpdateAsync(updateItem, default, false);
 
             Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
 
@@ -472,7 +472,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Person updateItem = new("joe") {Id = storedItem.Id, Type = nameof(Person), Etag = updateEtag};
 
             //Act
-            await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(updateItem, default, true).AsTask());
+            await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(updateItem, default, false).AsTask());
         }
 
         [Fact]
@@ -502,7 +502,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             }
 
             //Act
-            IEnumerable<Person> people = (await _personRepository.UpdateAsync(itemsUpdate, default, true)).ToList();
+            IEnumerable<Person> people = (await _personRepository.UpdateAsync(itemsUpdate, default, false)).ToList();
 
             foreach (Person item in items)
             {
@@ -553,7 +553,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             }
 
             //Act & Assert
-            await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(itemsUpdate, default, true).AsTask());
+            await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(itemsUpdate, default, false).AsTask());
         }
 
         [Fact]

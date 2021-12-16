@@ -118,24 +118,17 @@ namespace Microsoft.Azure.CosmosRepository
             return enumerable;
         }
 
-        private bool DoETagsMatch(TItem updatedItem)
-        {
-            if (updatedItem is IItemWithEtag updatedItemWithEtag && DeserializeItem(Items[updatedItem.Id]) is IItemWithEtag existingItemWithEtag)
-            {
-                return updatedItemWithEtag.Etag == existingItemWithEtag.Etag;
-            }
-
-            throw new InvalidEtagConfigurationException(string.Empty);
-        }
-
         /// <inheritdoc/>
-        public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default, bool verifyEtag = false)
+        public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default, bool ignoreEtag = false)
         {
             await Task.CompletedTask;
 
-            if (verifyEtag && !DoETagsMatch(value))
+            if (value is IItemWithEtag valueWithEtag && Items.ContainsKey(value.Id) && DeserializeItem(Items[value.Id]) is IItemWithEtag existingItemWithEtag && !ignoreEtag)
             {
-                MismatchedEtags();
+                if (valueWithEtag.Etag != existingItemWithEtag.Etag)
+                {
+                    MismatchedEtags();
+                }
             }
 
             Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString());
@@ -144,13 +137,13 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default, bool verifyEtag = false)
+        public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default, bool ignoreEtag = false)
         {
             IEnumerable<TItem> enumerable = values.ToList();
 
             foreach (TItem value in enumerable)
             {
-                await UpdateAsync(value, cancellationToken, verifyEtag);
+                await UpdateAsync(value, cancellationToken, ignoreEtag);
             }
 
             return enumerable;

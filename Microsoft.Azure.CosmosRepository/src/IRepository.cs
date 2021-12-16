@@ -124,24 +124,24 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="value">The item value to update.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <param name="verifyEtag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires the Repository item to implement the IItemWithEtag interface.</param>
+        /// <param name="ignoreEtag">When TItem implements IItemWithEtag the etag will be verified on all updates. Setting this flag to true indicates that the</param>
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> UpdateAsync(
             TItem value,
             CancellationToken cancellationToken = default,
-            bool verifyEtag = false);
+            bool ignoreEtag = false);
 
         /// <summary>
         /// Updates one or more cosmos item(s) representing the given <paramref name="values"/>.
         /// </summary>
         /// <param name="values">The item values to update.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <param name="verifyEtag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires the Repository item to implement the IItemWithEtag interface.</param>
+        /// <param name="ignoreEtag">When TItem implements IItemWithEtag the etag will be verified on all updates. Setting this flag to true indicates that the</param>
         /// <returns>A collection of updated item instances.</returns>
         ValueTask<IEnumerable<TItem>> UpdateAsync(
             IEnumerable<TItem> values,
             CancellationToken cancellationToken = default,
-            bool verifyEtag = false);
+            bool ignoreEtag = false);
 
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
         /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <param name="etag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires the Repository item to implement the IItemWithEtag interface.</param>
+        /// <param name="etag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires TItem to implement the IItemWithEtag interface.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
         ValueTask UpdateAsync(
             string id,

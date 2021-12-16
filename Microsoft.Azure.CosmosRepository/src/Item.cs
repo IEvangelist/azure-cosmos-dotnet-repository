@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// ]]>
     /// </code>
     /// </example>
-    public abstract class Item : IItemWithEtag
+    public abstract class Item : IItem
     {
         /// <summary>
         /// Gets or sets the item's globally unique identifier.

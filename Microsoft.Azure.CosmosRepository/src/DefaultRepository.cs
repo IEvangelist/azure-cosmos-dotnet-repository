@@ -160,19 +160,14 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<TItem> UpdateAsync(
             TItem value,
             CancellationToken cancellationToken = default,
-            bool verifyEtag = false)
+            bool ignoreEtag = false)
         {
             (bool optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-            if (verifyEtag)
+            if (value is IItemWithEtag valueWithEtag && !ignoreEtag)
             {
-                if (value is not IItemWithEtag valueWithEtag)
-                {
-                    throw new InvalidEtagConfigurationException($"{typeof(TItem).Name} is not assignable to {nameof(IItemWithEtag)}. You cannot specify {nameof(verifyEtag)} is true and not provide a value without an implementation of {nameof(IItemWithEtag)}.");
-                }
-
-                options.IfMatchEtag = valueWithEtag.Etag;
+                options.IfMatchEtag = string.IsNullOrWhiteSpace(valueWithEtag.Etag) ? default : valueWithEtag.Etag;
             }
 
             ItemResponse<TItem> response =
@@ -189,10 +184,10 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<IEnumerable<TItem>> UpdateAsync(
             IEnumerable<TItem> values,
             CancellationToken cancellationToken = default,
-            bool verifyEtag = false)
+            bool ignoreEtag = false)
         {
             IEnumerable<Task<TItem>> updateTasks =
-                values.Select(value => UpdateAsync(value, cancellationToken, verifyEtag).AsTask())
+                values.Select(value => UpdateAsync(value, cancellationToken, ignoreEtag).AsTask())
                     .ToList();
 
             await Task.WhenAll(updateTasks).ConfigureAwait(false);

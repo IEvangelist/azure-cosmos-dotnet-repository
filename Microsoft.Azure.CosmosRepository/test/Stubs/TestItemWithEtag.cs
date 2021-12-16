@@ -5,7 +5,7 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Stubs
 {
-    public class TestItemWithEtag : Item
+    public class TestItemWithEtag : FullItem
     {
     }
 }
