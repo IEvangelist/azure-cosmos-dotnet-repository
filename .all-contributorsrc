@@ -171,6 +171,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "robertbennett1998",
+      "name": "Robert Bennett",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8798036?v=4",
+      "profile": "https://www.linkedin.com/in/robertobennett",
+      "contributions": [
+        "test",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
