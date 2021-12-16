@@ -15,8 +15,11 @@ using Microsoft.Azure.CosmosRepositoryTests.Extensions;
 
 namespace Microsoft.Azure.CosmosRepositoryTests
 {
-    class Person : EtagItem
+    class Person : Item, IItemWithEtag
     {
+        [JsonProperty("_etag")]
+        public string Etag { get; set; }
+
         public string Name { get; }
 
         public Person(string name)

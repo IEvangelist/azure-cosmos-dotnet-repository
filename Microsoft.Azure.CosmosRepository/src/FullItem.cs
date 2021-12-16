@@ -1,8 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.IO;
 using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepository
@@ -42,6 +40,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// Will only be used if the verifyEtag flag is specified on the relevant methods.
         /// </remarks>
         [JsonProperty("_etag")]
-        public string Etag { get; set; }
+        public string Etag { get; private set; }
     }
 }

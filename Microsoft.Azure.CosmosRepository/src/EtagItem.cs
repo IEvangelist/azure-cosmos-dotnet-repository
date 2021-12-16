@@ -39,6 +39,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// Will only be used if the verifyEtag flag is specified on the relevant methods.
         /// </remarks>
         [JsonProperty("_etag")]
-        public string Etag { get; set; }
+        public string Etag { get; private set; }
     }
 }
