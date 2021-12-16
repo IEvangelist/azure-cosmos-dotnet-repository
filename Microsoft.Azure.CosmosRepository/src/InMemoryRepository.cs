@@ -31,8 +31,7 @@ namespace Microsoft.Azure.CosmosRepository
             JObject jObject = JObject.FromObject(item);
             if (etag != null)
             {
-                jObject.Remove("_etag");
-                jObject.Add("_etag", JToken.FromObject(etag));
+                jObject["_etag"] = JToken.FromObject(etag);
             }
 
             return jObject.ToString();
@@ -119,32 +118,24 @@ namespace Microsoft.Azure.CosmosRepository
             return enumerable;
         }
 
+        private bool DoETagsMatch(TItem updatedItem)
+        {
+            if (updatedItem is IItemWithEtag updatedItemWithEtag && DeserializeItem(Items[updatedItem.Id]) is IItemWithEtag existingItemWithEtag)
+            {
+                return updatedItemWithEtag.Etag == existingItemWithEtag.Etag;
+            }
+
+            throw new InvalidEtagConfigurationException(string.Empty);
+        }
+
         /// <inheritdoc/>
         public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default, bool verifyEtag = false)
         {
             await Task.CompletedTask;
 
-            if (Items.ContainsKey(value.Id))
+            if (verifyEtag && !DoETagsMatch(value))
             {
-                if (verifyEtag && value is IItemWithEtag valueWithEtag)
-                {
-                    TItem existingItem = DeserializeItem(Items[value.Id]);
-                    if (existingItem is IItemWithEtag existingItemWithEtag)
-                    {
-                        if (existingItemWithEtag.Etag != valueWithEtag.Etag)
-                        {
-                            MismatchedEtags();
-                        }
-                    }
-                    else
-                    {
-                        throw new InvalidEtagConfigurationException(string.Empty);
-                    }
-                }
-                else
-                {
-                    throw new InvalidEtagConfigurationException(string.Empty);
-                }
+                MismatchedEtags();
             }
 
             Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString());
