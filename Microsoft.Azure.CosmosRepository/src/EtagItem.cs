@@ -14,7 +14,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// Here is an example subclass item, which adds several properties:
     /// <code language="c#">
     /// <![CDATA[
-    /// public class SubItem : FullItem
+    /// public class SubItem : EtagItem
     /// {
     ///     public DateTimeOffset Date { get; set; }
     ///     public string Name { get; set; }
