@@ -22,9 +22,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
         [Fact]
         public async Task SyncContainerPropertiesAsync_Item_SyncsItem()
         {
-            await _syncService.SyncContainerPropertiesAsync<TestItem>();
+            await _syncService.SyncContainerPropertiesAsync<TestItemWithEtag>();
 
-            _containerService.Verify(o => o.GetContainerAsync<TestItem>(true));
+            _containerService.Verify(o => o.GetContainerAsync<TestItemWithEtag>(true));
         }
     }
 }

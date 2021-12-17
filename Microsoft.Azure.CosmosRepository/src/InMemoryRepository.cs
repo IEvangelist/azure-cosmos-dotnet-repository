@@ -12,10 +12,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -24,7 +26,17 @@ namespace Microsoft.Azure.CosmosRepository
     {
         internal ConcurrentDictionary<string, string> Items { get; } = new();
 
-        internal string SerializeItem(TItem item) => JsonConvert.SerializeObject(item);
+        internal string SerializeItem(TItem item, string etag = null)
+        {
+            JObject jObject = JObject.FromObject(item);
+            if (etag != null)
+            {
+                jObject["_etag"] = JToken.FromObject(etag);
+            }
+
+            return jObject.ToString();
+        }
+
         internal TItem DeserializeItem(string jsonItem) => JsonConvert.DeserializeObject<TItem>(jsonItem);
         internal TDeserializeTo DeserializeItem<TDeserializeTo>(string jsonItem) => JsonConvert.DeserializeObject<TDeserializeTo>(jsonItem);
 
@@ -86,10 +98,11 @@ namespace Microsoft.Azure.CosmosRepository
                 Conflict();
             }
 
-            string serialisedValue = JsonConvert.SerializeObject(value);
+            string serialisedValue = SerializeItem(value, Guid.NewGuid().ToString());
             Items.TryAdd(value.Id, serialisedValue);
 
-            return DeserializeItem(Items[value.Id]);
+            value = DeserializeItem(Items[value.Id]);
+            return value;
         }
 
         /// <inheritdoc/>
@@ -106,23 +119,31 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default)
+        public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default, bool ignoreEtag = false)
         {
             await Task.CompletedTask;
 
-            Items[value.Id] = SerializeItem(value);
+            if (value is IItemWithEtag valueWithEtag && Items.ContainsKey(value.Id) && DeserializeItem(Items[value.Id]) is IItemWithEtag existingItemWithEtag && !ignoreEtag)
+            {
+                if (valueWithEtag.Etag != existingItemWithEtag.Etag)
+                {
+                    MismatchedEtags();
+                }
+            }
+
+            Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString());
 
             return DeserializeItem(Items[value.Id]);
         }
 
         /// <inheritdoc/>
-        public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default)
+        public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default, bool ignoreEtag = false)
         {
             IEnumerable<TItem> enumerable = values.ToList();
 
             foreach (TItem value in enumerable)
             {
-                await UpdateAsync(value, cancellationToken);
+                await UpdateAsync(value, cancellationToken, ignoreEtag);
             }
 
             return enumerable;
@@ -132,7 +153,8 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask UpdateAsync(string id,
             Action<IPatchOperationBuilder<TItem>> builder,
             string partitionKeyValue = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            string etag = default)
         {
             await Task.CompletedTask;
 
@@ -142,6 +164,14 @@ namespace Microsoft.Azure.CosmosRepository
             if (item is null)
             {
                 NotFound();
+            }
+
+            if (item is IItemWithEtag itemWithEtag && etag != default && !string.IsNullOrWhiteSpace(etag))
+            {
+                if (itemWithEtag.Etag != etag)
+                {
+                    MismatchedEtags();
+                }
             }
 
             PatchOperationBuilder<TItem> patchOperationBuilder = new();
@@ -156,7 +186,7 @@ namespace Microsoft.Azure.CosmosRepository
                 property?.SetValue(item, internalPatchOperation.NewValue);
             }
 
-            Items[id] = SerializeItem(item);
+            Items[id] = SerializeItem(item, Guid.NewGuid().ToString());
         }
 
         /// <inheritdoc/>
@@ -218,5 +248,6 @@ namespace Microsoft.Azure.CosmosRepository
 
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
         private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);
+        private void MismatchedEtags() => throw new CosmosException(string.Empty, HttpStatusCode.PreconditionFailed, 0, string.Empty, 0);
     }
 }

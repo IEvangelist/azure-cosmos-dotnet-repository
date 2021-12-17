@@ -21,7 +21,7 @@ namespace Microsoft.Azure.CosmosRepository
     ///     public IEnumerable<Child> Children { get; set; }
     ///     public IEnumerable<string> Tags { get; set; }
     /// }
-    /// 
+    ///
     /// public class Child
     /// {
     ///     public string Name { get; set; }

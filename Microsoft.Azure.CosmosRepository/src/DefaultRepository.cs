@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Exceptions;
+using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -157,10 +159,16 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<TItem> UpdateAsync(
             TItem value,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            bool ignoreEtag = false)
         {
             (bool optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            if (value is IItemWithEtag valueWithEtag && !ignoreEtag)
+            {
+                options.IfMatchEtag = string.IsNullOrWhiteSpace(valueWithEtag.Etag) ? default : valueWithEtag.Etag;
+            }
 
             ItemResponse<TItem> response =
                 await container.UpsertItemAsync<TItem>(value, new PartitionKey(value.PartitionKey), options,
@@ -175,10 +183,11 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask<IEnumerable<TItem>> UpdateAsync(
             IEnumerable<TItem> values,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            bool ignoreEtag = false)
         {
             IEnumerable<Task<TItem>> updateTasks =
-                values.Select(value => UpdateAsync(value, cancellationToken).AsTask())
+                values.Select(value => UpdateAsync(value, cancellationToken, ignoreEtag).AsTask())
                     .ToList();
 
             await Task.WhenAll(updateTasks).ConfigureAwait(false);
@@ -189,7 +198,8 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask UpdateAsync(string id,
             Action<IPatchOperationBuilder<TItem>> builder,
             string partitionKeyValue = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            string etag = default)
         {
             IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>();
 
@@ -199,8 +209,14 @@ namespace Microsoft.Azure.CosmosRepository
 
             partitionKeyValue ??= id;
 
+            PatchItemRequestOptions patchItemRequestOptions = new();
+            if (etag != default && !string.IsNullOrWhiteSpace(etag))
+            {
+                patchItemRequestOptions.IfMatchEtag = etag;
+            }
+
             await container.PatchItemAsync<TItem>(id, new PartitionKey(partitionKeyValue),
-                patchOperationBuilder.PatchOperations, cancellationToken: cancellationToken);
+                patchOperationBuilder.PatchOperations, patchItemRequestOptions, cancellationToken);
         }
 
         /// <inheritdoc/>
