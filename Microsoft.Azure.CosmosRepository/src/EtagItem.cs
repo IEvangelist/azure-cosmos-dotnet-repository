@@ -35,9 +35,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// <summary>
         /// Etag for the item which was set by Cosmos the last time the item was updated. This string is used for the relevant operations when specified.
         /// </summary>
-        /// <remarks>
-        /// Will only be used if the verifyEtag flag is specified on the relevant methods.
-        /// </remarks>
         [JsonProperty("_etag")]
         public string Etag { get; private set; }
     }

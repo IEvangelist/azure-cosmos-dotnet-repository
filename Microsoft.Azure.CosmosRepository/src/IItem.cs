@@ -23,5 +23,4 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         string PartitionKey { get; }
     }
-
 }

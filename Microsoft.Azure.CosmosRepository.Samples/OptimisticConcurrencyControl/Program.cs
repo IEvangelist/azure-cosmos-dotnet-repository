@@ -59,16 +59,12 @@ async Task ConcurrencyWithOptimizeBandwidthOff()
         await repository.UpdateAsync(currentBankAccount.Id,
             builder => builder.Replace(account => account.Balance, currentBankAccount.Balance - 250), etag: currentBankAccount.Etag);
     }
-    catch (CosmosException exception)
+    catch (CosmosException exception) when (exception.StatusCode == HttpStatusCode.PreconditionFailed)
     {
-        if (exception.StatusCode == HttpStatusCode.PreconditionFailed)
-        {
-            Console.WriteLine("Failed to withdraw 250 from the bank account as the local state was out of date with the remote state.");
-            Console.WriteLine("Syncing local state with remote state.");
-            currentBankAccount = await repository.GetAsync(currentBankAccount.Id);
-            Console.WriteLine($"Updated local state. {currentBankAccount}");
-
-        }
+        Console.WriteLine("Failed to withdraw 250 from the bank account as the local state was out of date with the remote state.");
+        Console.WriteLine("Syncing local state with remote state.");
+        currentBankAccount = await repository.GetAsync(currentBankAccount.Id);
+        Console.WriteLine($"Updated local state. {currentBankAccount}");
     }
 
     try
@@ -124,16 +120,13 @@ async Task ConcurrencyWithOptimizeBandwidthOn()
             builder => builder.Replace(account => account.Balance, currentBankAccount.Balance - 250), etag: currentBankAccount.Etag);
         currentBankAccount = await repository.GetAsync(bankAccountInfo.Id);
     }
-    catch (CosmosException exception)
+    catch (CosmosException exception) when (exception.StatusCode == HttpStatusCode.PreconditionFailed)
     {
-        if (exception.StatusCode == HttpStatusCode.PreconditionFailed)
-        {
-            Console.WriteLine("Failed to withdraw 250 from the bank account as the local state was out of date with the remote state.");
-            Console.WriteLine("Syncing local state with remote state.");
-            currentBankAccount = await repository.GetAsync(currentBankAccount.Id);
-            Console.WriteLine($"Updated local state. {currentBankAccount}");
+        Console.WriteLine("Failed to withdraw 250 from the bank account as the local state was out of date with the remote state.");
+        Console.WriteLine("Syncing local state with remote state.");
+        currentBankAccount = await repository.GetAsync(currentBankAccount.Id);
+        Console.WriteLine($"Updated local state. {currentBankAccount}");
 
-        }
     }
 
     Console.WriteLine("Attempting to withdraw 750 from the bank account.");
@@ -191,12 +184,9 @@ async Task ConcurrencyWithOptimizeBandwidthOnTrapDemo()
         currentBankAccount = await repository.UpdateAsync(currentBankAccount);
         Console.WriteLine($"Updated bank account: {currentBankAccount}.");
     }
-    catch (CosmosException exception)
+    catch (CosmosException exception) when (exception.StatusCode == HttpStatusCode.PreconditionFailed)
     {
-        if (exception.StatusCode == HttpStatusCode.PreconditionFailed)
-        {
-            Console.WriteLine("Failed to update balance as the etags did not match.");
-        }
+        Console.WriteLine("Failed to update balance as the etags did not match.");
     }
 
     Console.WriteLine($"Reattempting using value from the database.");

@@ -124,7 +124,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="value">The item value to update.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <param name="ignoreEtag">When TItem implements IItemWithEtag the etag will be verified on all updates. Setting this flag to true indicates that the</param>
+        /// <param name="ignoreEtag">When TItem implements IItemWithEtag the etag will be verified on all updates. Setting this flag to true indicates that the etag should be ignored.</param>
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> UpdateAsync(
             TItem value,
@@ -136,7 +136,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="values">The item values to update.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <param name="ignoreEtag">When TItem implements IItemWithEtag the etag will be verified on all updates. Setting this flag to true indicates that the</param>
+        /// <param name="ignoreEtag">When TItem implements IItemWithEtag the etag will be verified on all updates. Setting this flag to true indicates that the etag should be ignored.</param>
         /// <returns>A collection of updated item instances.</returns>
         ValueTask<IEnumerable<TItem>> UpdateAsync(
             IEnumerable<TItem> values,
