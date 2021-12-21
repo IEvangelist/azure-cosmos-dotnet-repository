@@ -7,16 +7,13 @@ using Newtonsoft.Json;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <summary>
-    /// A base helper class that implements IItemWithEtag
-    /// <remarks>
-    /// This base class will implement all supported interfaces giving the complete information available from this SDK.
-    /// </remarks>
+    /// A base helper class that implements IItemWithTimeToLive
     /// </summary>
     /// <example>
     /// Here is an example subclass item, which adds several properties:
     /// <code language="c#">
     /// <![CDATA[
-    /// public class SubItem : FullItem
+    /// public class SubItem : ItemWithTimeToLive
     /// {
     ///     public DateTimeOffset Date { get; set; }
     ///     public string Name { get; set; }
@@ -32,12 +29,8 @@ namespace Microsoft.Azure.CosmosRepository
     /// ]]>
     /// </code>
     /// </example>
-    public abstract class FullItem : Item, IItemWithEtag, IItemWithTimeToLive, IItemWithTimeStamps
+    public abstract class ItemWithTimeToLive : Item, IItemWithTimeToLive
     {
-        /// <inheritdoc />
-        [JsonProperty("_etag")]
-        public string Etag { get; private set; }
-
         /// <inheritdoc />
         public TimeSpan? TimeToLive
         {
@@ -50,21 +43,5 @@ namespace Microsoft.Azure.CosmosRepository
 
         [JsonProperty("ttl", NullValueHandling = NullValueHandling.Ignore)]
         private int? _timeToLive;
-
-        /// <inheritdoc />
-        [JsonIgnore]
-        public DateTime LastUpdatedTimeUtc  => new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(LastUpdatedTimeRaw);
-
-        /// <inheritdoc />
-        [JsonProperty("_ts")]
-        public int LastUpdatedTimeRaw
-        {
-            get;
-            private set;
-        }
-
-        /// <inheritdoc />
-        [JsonProperty]
-        public DateTime? CreatedTimeUtc { get; set; }
     }
 }

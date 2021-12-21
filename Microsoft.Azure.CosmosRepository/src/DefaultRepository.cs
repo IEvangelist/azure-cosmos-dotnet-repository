@@ -132,6 +132,11 @@ namespace Microsoft.Azure.CosmosRepository
             Container container =
                 await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
+            if (value is IItemWithTimeStamps { CreatedTimeUtc: null } valueWithTimestamps)
+            {
+                valueWithTimestamps.CreatedTimeUtc = DateTime.UtcNow;
+            }
+
             ItemResponse<TItem> response =
                 await container.CreateItemAsync(value, new PartitionKey(value.PartitionKey),
                         cancellationToken: cancellationToken)

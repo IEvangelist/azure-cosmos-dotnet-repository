@@ -16,6 +16,9 @@ IRepository<BankAccount> BuildRepository(bool optimizeBandwidth)
             options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
             options.DatabaseId = "optimistic-concurrency-control";
             options.OptimizeBandwidth = optimizeBandwidth; // Must be false to receive the upto date etags back on update calls
+            options.ContainerBuilder.Configure<BankAccount>(containerOptions => containerOptions
+                .WithContainerDefaultTimeToLive(TimeSpan.FromMilliseconds(-1))
+            );
         })
         .AddSingleton<IConfiguration>(configuration.Build())
         .BuildServiceProvider();
@@ -41,7 +44,8 @@ async Task ConcurrencyWithOptimizeBandwidthOff()
     BankAccount currentBankAccount = await repository.CreateAsync(new BankAccount()
     {
         Name = "Current Account",
-        Balance = 500.0
+        Balance = 500.0,
+        TimeToLive = TimeSpan.FromMinutes(2)
     });
 
     Console.WriteLine($"Created a bank account: {currentBankAccount}.");
