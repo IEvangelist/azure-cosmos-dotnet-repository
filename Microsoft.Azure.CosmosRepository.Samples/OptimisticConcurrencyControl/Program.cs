@@ -16,9 +16,6 @@ IRepository<BankAccount> BuildRepository(bool optimizeBandwidth)
             options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
             options.DatabaseId = "optimistic-concurrency-control";
             options.OptimizeBandwidth = optimizeBandwidth; // Must be false to receive the upto date etags back on update calls
-            options.ContainerBuilder.Configure<BankAccount>(containerOptions => containerOptions
-                .WithContainerDefaultTimeToLive(TimeSpan.FromMilliseconds(-1))
-            );
         })
         .AddSingleton<IConfiguration>(configuration.Build())
         .BuildServiceProvider();
