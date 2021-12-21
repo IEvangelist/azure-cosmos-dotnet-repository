@@ -105,7 +105,7 @@ async Task ConcurrencyWithOptimizeBandwidthOn()
         Balance = 500.0,
         TimeToLive = TimeSpan.FromSeconds(-1)
     });
-    
+
     await repository.CreateAsync(bankAccountInfo);
 
     BankAccount currentBankAccount = await repository.GetAsync(bankAccountInfo.Id);
