@@ -272,7 +272,7 @@ When creating a new object, if storing in memory, it is important to store the r
 
 For example your code should look something like this:
 
-```c#
+```csharp
 TItem currentItem = new TItem(...);
 currentItem = _repository.CreateAsync(currentItem);
 ```
@@ -283,7 +283,7 @@ When doing sequential updates to the same item it is important to use the result
 
 #### Optimize Bandwith Off
 
-```c#
+```csharp
 TItem currentItem = _repository.CreateAsync(itemConfig);
 currentItem = _repository.UpdateAsync(currentItem);
 currentItem = _repository.UpdateAsync(currentItem);
@@ -291,7 +291,7 @@ currentItem = _repository.UpdateAsync(currentItem);
 
 #### Optimize Bandwith On
 
-```c#
+```csharp
 TItem currentItem = _repository.CreateAsync(itemConfig);
 _repository.UpdateAsync(currentItem);
 currentItem = _repository.GetAsync(currentItem.Id);
@@ -304,7 +304,7 @@ currentItem = _repository.UpdateAsync(currentItem);
 
 The following code shows how to catch the error when the etags do not match.
 
-```c#
+```csharp
   try
   {
       currentBankAccount = await repository.UpdateAsync(currentBankAccount);
@@ -320,7 +320,7 @@ The following code shows how to catch the error when the etags do not match.
 
 The following code shows how to ignore the etag when doing an update.
 
-```c#
+```csharp
 await repository.UpdateAsync(currentBankAccount, ignoreEtag: true);
 ```
 
@@ -337,14 +337,14 @@ await repository.UpdateAsync(currentBankAccount.Id,
 
 The time to live property can be set at both an item and container level. At a container level this can be done through the container options builder:
 
-```C#
+```csharp
 options.ContainerBuilder.Configure<BankAccount>(
   x => x.WithContainerDefaultTimeToLive(TimeSpan.FromHours(2)));
 ```
 
 In the above example the container would have a default item lifespan of 2 hours. This can be overriden at the item level by using the `TimeToLive` property when correctly implemented. This is available through the `FullItem` and `TimeToLiveItem` base classes. The example below shows this been overriden so the item has a lifespan of 4 hours rather than the default of 2:
 
-```C#
+```csharp
 BankAccount currentBankAccount = await repository.CreateAsync(
   new BankAccount()
     {
