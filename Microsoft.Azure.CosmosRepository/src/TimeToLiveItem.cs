@@ -29,7 +29,7 @@ namespace Microsoft.Azure.CosmosRepository
     /// ]]>
     /// </code>
     /// </example>
-    public abstract class ItemWithTimeToLive : Item, IItemWithTimeToLive
+    public abstract class TimeToLiveItem : Item, IItemWithTimeToLive
     {
         /// <inheritdoc />
         public TimeSpan? TimeToLive
