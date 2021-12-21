@@ -13,7 +13,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <summary>
         /// The time an item should exist within the container.
         /// <remarks>
-        /// This requires the default TTL at container level to be set to a non-null value.
+        /// When setting this to a positive integer this requires the default TTL at container level to be set to a non-null value.
         /// </remarks>
         /// </summary>
         public TimeSpan? TimeToLive { get; set; }
