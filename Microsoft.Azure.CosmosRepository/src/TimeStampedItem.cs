@@ -37,7 +37,7 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <inheritdoc />
         [JsonIgnore]
-        public DateTime LastUpdatedTimeUtc { get; }
+        public DateTime LastUpdatedTimeUtc => new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(LastUpdatedTimeRaw);
 
         /// <inheritdoc />
         [JsonProperty("_ts")]

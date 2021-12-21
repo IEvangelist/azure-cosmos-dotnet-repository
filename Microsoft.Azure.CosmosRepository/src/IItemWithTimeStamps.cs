@@ -18,6 +18,9 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <summary>
         /// Time stamp of the last update.
+        /// <remarks>
+        /// This value will not be updated on the object passed into create / update methods.
+        /// </remarks>
         /// </summary>
         public DateTime LastUpdatedTimeUtc { get; }
 
@@ -25,6 +28,9 @@ namespace Microsoft.Azure.CosmosRepository
         /// Epoch time the last update or when the item was created in Cosmos.
         /// <remarks>
         /// Stored as stored in Cosmos DB.
+        /// </remarks>
+        /// <remarks>
+        /// This value will not be updated on the object passed into create / update methods.
         /// </remarks>
         /// </summary>
         public int LastUpdatedTimeRaw { get; }

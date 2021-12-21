@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Stubs
 {
-    public class TestItem : Item
+    public class TestItem : FullItem
     {
     }
 }

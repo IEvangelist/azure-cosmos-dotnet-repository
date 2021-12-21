@@ -24,14 +24,20 @@ namespace Microsoft.Azure.CosmosRepository
     /// <inheritdoc/>
     internal class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
+        internal int CurrentTs => (int)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
         internal ConcurrentDictionary<string, string> Items { get; } = new();
 
-        internal string SerializeItem(TItem item, string etag = null)
+        internal string SerializeItem(TItem item, string etag = null, int? ts = null)
         {
             JObject jObject = JObject.FromObject(item);
             if (etag != null)
             {
                 jObject["_etag"] = JToken.FromObject(etag);
+            }
+
+            if (ts.HasValue)
+            {
+                jObject["_ts"] = JToken.FromObject(ts);
             }
 
             return jObject.ToString();
@@ -98,7 +104,12 @@ namespace Microsoft.Azure.CosmosRepository
                 Conflict();
             }
 
-            string serialisedValue = SerializeItem(value, Guid.NewGuid().ToString());
+            if (value is IItemWithTimeStamps { CreatedTimeUtc: null } valueWithTimestamps)
+            {
+                valueWithTimestamps.CreatedTimeUtc = DateTime.UtcNow;
+            }
+
+            string serialisedValue = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
             Items.TryAdd(value.Id, serialisedValue);
 
             value = DeserializeItem(Items[value.Id]);
@@ -131,7 +142,7 @@ namespace Microsoft.Azure.CosmosRepository
                 }
             }
 
-            Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString());
+            Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
 
             return DeserializeItem(Items[value.Id]);
         }
@@ -186,7 +197,7 @@ namespace Microsoft.Azure.CosmosRepository
                 property?.SetValue(item, internalPatchOperation.NewValue);
             }
 
-            Items[id] = SerializeItem(item, Guid.NewGuid().ToString());
+            Items[id] = SerializeItem(item, Guid.NewGuid().ToString(), CurrentTs);
         }
 
         /// <inheritdoc/>
