@@ -327,7 +327,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(addedDog.Id, dog.Id);
             Assert.Equal(addedDog.Type, dog.Type);
 
-            int calculatedTs = _dogRepository.CurrentTs;
+            long calculatedTs = _dogRepository.CurrentTs;
             DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
             Assert.InRange(returnedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
             Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
@@ -650,7 +650,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             Assert.True(!string.IsNullOrWhiteSpace(addedDog.Etag) && addedDog.Etag != Guid.Empty.ToString() && addedDog.Etag != originalEtag);
 
-            int calculatedTs = _dogRepository.CurrentTs;
+            long calculatedTs = _dogRepository.CurrentTs;
             DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
             Assert.InRange(returnedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
             Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
@@ -734,7 +734,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.First().Value);
             Assert.Equal("kenny", addedDog.Name);
 
-            int calculatedTs = _dogRepository.CurrentTs;
+            long calculatedTs = _dogRepository.CurrentTs;
             DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
             Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
             Assert.InRange(addedDog.LastUpdatedTimeRaw, calculatedTs - 1, calculatedTs + 1);

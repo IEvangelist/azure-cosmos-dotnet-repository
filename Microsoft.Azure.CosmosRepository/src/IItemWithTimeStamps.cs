@@ -33,6 +33,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// This value will not be updated on the object passed into create / update methods.
         /// </remarks>
         /// </summary>
-        public int LastUpdatedTimeRaw { get; }
+        public long LastUpdatedTimeRaw { get; }
     }
 }

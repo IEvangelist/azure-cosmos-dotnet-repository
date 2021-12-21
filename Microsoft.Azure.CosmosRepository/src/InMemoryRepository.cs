@@ -24,10 +24,10 @@ namespace Microsoft.Azure.CosmosRepository
     /// <inheritdoc/>
     internal class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
-        internal int CurrentTs => (int)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
 
-        internal string SerializeItem(TItem item, string etag = null, int? ts = null)
+        internal string SerializeItem(TItem item, string etag = null, long? ts = null)
         {
             JObject jObject = JObject.FromObject(item);
             if (etag != null)
