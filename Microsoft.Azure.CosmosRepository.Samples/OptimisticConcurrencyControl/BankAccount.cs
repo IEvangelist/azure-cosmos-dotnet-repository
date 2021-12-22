@@ -8,7 +8,7 @@ namespace OptimisticConcurrencyControl;
 
 [Container("accounts")]
 [PartitionKeyPath("/id")]
-public class BankAccount : EtagItem
+public class BankAccount : FullItem
 {
     public string Name { get; set; } = string.Empty;
     public double Balance { get; set; }
