@@ -12,6 +12,8 @@ using Microsoft.Azure.CosmosRepository;
 using Newtonsoft.Json;
 using Xunit;
 using Microsoft.Azure.CosmosRepositoryTests.Extensions;
+using Microsoft.Azure.CosmosRepository.Paging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Azure.CosmosRepositoryTests
 {
@@ -35,6 +37,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
         protected override string GetPartitionKeyValue() => Breed;
 
+
         public Dog(string breed, string name = "dasher")
         {
             Breed = breed;
@@ -42,6 +45,18 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
     }
 
+    class DogComparer : IEqualityComparer<Dog>
+    {
+        public bool Equals([AllowNull] Dog x, [AllowNull] Dog y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode([DisallowNull] Dog obj)
+        {
+            return obj?.Id.GetHashCode() ?? 0;
+        }
+    }
 
     class RootObject : Item
     {
@@ -168,7 +183,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task GetAsync_IdThatExists_GetsItem()
         {
             //Arrange
-            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) };
             _personRepository.Items.TryAddAsJson(item.Id, item);
 
             //Act
@@ -185,7 +200,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task GetAsync_IdAndPartitionKeyStringExists_GetsItem()
         {
             //Arrange
-            Dog item = new("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
+            Dog item = new("cocker-spanel") { Id = Guid.NewGuid().ToString(), Type = nameof(Dog) };
             _dogRepository.Items.TryAddAsJson(item.Id, item);
 
             //Act
@@ -200,7 +215,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         [Fact]
         public async Task GetAsync_IdAndPartitionKeyObjectExists_GetsItem()
         {
-            Dog item = new("cocker-spanel") {Id = Guid.NewGuid().ToString(), Type = nameof(Dog)};
+            Dog item = new("cocker-spanel") { Id = Guid.NewGuid().ToString(), Type = nameof(Dog) };
             _dogRepository.Items.TryAddAsJson(item.Id, item);
 
             //Act
@@ -265,12 +280,12 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task CreateAsync_ItemWhereIdAlreadyExists_ThrowsCosmosException()
         {
             //Arrange
-            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) };
             _personRepository.Items.TryAddAsJson(item.Id, item);
 
             //Act
             CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() =>
-                _personRepository.CreateAsync(new Person("joe") {Id = item.Id, Type = nameof(Person)}).AsTask());
+                _personRepository.CreateAsync(new Person("joe") { Id = item.Id, Type = nameof(Person) }).AsTask());
 
             Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
         }
@@ -279,7 +294,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task CreateAsync_Item_CreatesItem()
         {
             //Arrange
-            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) };
 
             //Act
             Person person = await _personRepository.CreateAsync(item);
@@ -303,9 +318,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             List<Person> items = new()
             {
-                new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
-                new("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
-                new("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
+                new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
+                new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
             };
 
             //Act
@@ -335,12 +350,12 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             //Arrange
             List<Person> items = new()
             {
-                new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
-                new("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
-                new("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)},
+                new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
+                new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
+                new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
             };
 
-            Person badPerson = new("copy") {Id = items.First().Id, Type = nameof(Person)};
+            Person badPerson = new("copy") { Id = items.First().Id, Type = nameof(Person) };
             items.Add(badPerson);
 
             //Act
@@ -419,7 +434,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public async Task UpdateAsync_ItemThatDoesNotExist_AddsItem()
         {
             //Arrange
-            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person)};
+            Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) };
 
             //Act
             Person person = await _personRepository.UpdateAsync(item);
@@ -442,9 +457,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             string originalEtag = Guid.NewGuid().ToString();
-            Person item = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag};
+            Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag };
             _personRepository.Items.TryAddAsJson(item.Id, item);
-            Person updateItem = new("joe2") {Id = item.Id, Type = nameof(Person), Etag = originalEtag};
+            Person updateItem = new("joe2") { Id = item.Id, Type = nameof(Person), Etag = originalEtag };
 
             //Act
             Person person = await _personRepository.UpdateAsync(updateItem, default, false);
@@ -469,10 +484,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             string updateEtag = Guid.NewGuid().ToString();
             string storedEtag = Guid.NewGuid().ToString();
 
-            Person storedItem = new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = storedEtag};
+            Person storedItem = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = storedEtag };
             _personRepository.Items.TryAddAsJson(storedItem.Id, storedItem);
 
-            Person updateItem = new("joe") {Id = storedItem.Id, Type = nameof(Person), Etag = updateEtag};
+            Person updateItem = new("joe") { Id = storedItem.Id, Type = nameof(Person), Etag = updateEtag };
 
             //Act
             CosmosException cosmosException = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(updateItem).AsTask());
@@ -486,9 +501,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             string originalEtag = Guid.NewGuid().ToString();
             List<Person> items = new()
             {
-                new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag},
-                new("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag},
-                new("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag},
+                new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
+                new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
+                new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
             };
 
             List<Person> itemsUpdate = new();
@@ -537,9 +552,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             string originalEtag = Guid.NewGuid().ToString();
             List<Person> items = new()
             {
-                new("joe") {Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag},
-                new("bill") {Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag},
-                new("fred") {Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag},
+                new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
+                new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
+                new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
             };
 
             List<Person> itemsUpdate = new();
@@ -568,7 +583,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Person originalPerson = new("phil");
             _personRepository.Items.TryAddAsJson(originalPerson.Id, originalPerson);
 
-            Person item = new("joe") {Id = originalPerson.Id};
+            Person item = new("joe") { Id = originalPerson.Id };
 
             //Act
             Person person = await _personRepository.UpdateAsync(item);
@@ -801,6 +816,68 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal("CBA", deserialisedItem.Type1);
             Assert.Equal("prop2", deserialisedItem.NestedObject.Property1);
             Assert.Equal(2, deserialisedItem.NestedObject.Property2);
+        }
+
+        [Fact]
+        public async Task PageAsync_PredicateThatDoesNotMatch_ReturnsEmptyList()
+        {
+            //Arrange
+            Dog dog1 = new("cocker spaniel");
+            Dog dog2 = new("cocker spaniel");
+            Dog dog3 = new("cocker spaniel");
+            _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
+            _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
+            _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+            int pageSize = 2;
+            int pageNumber = 2;
+
+            //Act
+            IPage<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize);
+
+            //Assert
+            List<Dog> enumerable = dogs.Items.ToList();
+            Assert.False(enumerable.Any());
+        }
+
+        [Fact]
+        public async Task PageAsync_PredicateThatDoesMatch_ReturnsItemInList()
+        {
+            //Arrange
+            Dog dog1 = new("cocker spaniel");
+            Dog dog2 = new("cocker spaniel");
+            Dog dog3 = new("cocker spaniel");
+            Dog dog4 = new("cocker spaniel");
+            Dog dog5 = new("cocker spaniel");
+            Dog dog6 = new("cocker spaniel");
+            Dog dog7 = new("golden retriever");
+            _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
+            _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
+            _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+            _dogRepository.Items.TryAddAsJson(dog4.Id, dog4);
+            _dogRepository.Items.TryAddAsJson(dog5.Id, dog5);
+            _dogRepository.Items.TryAddAsJson(dog6.Id, dog6);
+            _dogRepository.Items.TryAddAsJson(dog7.Id, dog7);
+            int pageSize = 2;
+            int pageNumber = 2;
+
+            List<Dog> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
+                                                         .Where(d => d.Breed == "cocker spaniel")
+                                                         .Skip(pageSize * (pageNumber - 1))
+                                                         .Take(pageSize)
+                                                         .ToList();
+
+            //Act
+            IPage<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
+
+            //Assert
+            List<Dog> enumerable = dogs.Items.ToList();
+            Assert.True(enumerable.Any());
+            Assert.Equal(expectedList, enumerable, new DogComparer());
+            Assert.True(dogs.HasPreviousPage);
+            Assert.Equal(1, dogs.PreviousPageNumber);
+            Assert.True(dogs.HasNextPage);
+            Assert.Equal(3, dogs.NextPageNumber);
+            Assert.Equal(3, dogs.TotalPages);
         }
     }
 }
