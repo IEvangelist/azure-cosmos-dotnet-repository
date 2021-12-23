@@ -271,9 +271,8 @@ namespace Microsoft.Azure.CosmosRepository
 
             try
             {
-                ItemResponse<TItem> response =
-                    await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
-                        .ConfigureAwait(false);
+                _ = await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
+                                   .ConfigureAwait(false);
             }
             catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
 
@@ -301,6 +300,7 @@ namespace Microsoft.Azure.CosmosRepository
             return count > 0;
         }
 
+        /// <inheritdoc/>
         public async ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
@@ -350,6 +350,37 @@ namespace Microsoft.Azure.CosmosRepository
                 results.AsReadOnly(),
                 charge,
                 continuationToken);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate = null, int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
+        {
+            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>()
+                                               .Where(_repositoryExpressionProvider.Build(predicate));
+
+            Response<int> countResponse = await query.CountAsync(cancellationToken);
+            query = query.Skip(pageSize * (pageNumber - 1))
+                         .Take(pageSize);
+
+            using FeedIterator<TItem> iterator = query.ToFeedIterator();
+
+            FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken)
+                                                     .ConfigureAwait(false);
+
+            List<TItem> results = new();
+            foreach (TItem result in next)
+            {
+                results.Add(result);
+            }
+
+            return new Page<TItem>(
+                countResponse.Resource,
+                pageNumber,
+                pageSize,
+                results.AsReadOnly(),
+                next.RequestCharge + countResponse.RequestCharge);
         }
 
 
