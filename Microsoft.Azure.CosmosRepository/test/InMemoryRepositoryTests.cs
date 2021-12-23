@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
     }
 
-    class Dog : Item
+    class Dog : FullItem
     {
         public string Breed { get; }
         public string Name { get; private set; }
@@ -288,6 +288,71 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 _personRepository.CreateAsync(new Person("joe") { Id = item.Id, Type = nameof(Person) }).AsTask());
 
             Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateAsync_SingleItemWithTimeStamps_WhenCreatedTimeStampHasNotBeenSet_ShouldSetCreatedTimeStamp()
+        {
+            // Arrange
+            Dog dog = new("labradoodle", "Thor");
+
+            // Act
+            Dog returnedDog = await _dogRepository.CreateAsync(dog);
+
+            // Assert
+            Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.Values.First());
+
+            Assert.Equal(returnedDog.Name, addedDog.Name);
+            Assert.Equal(returnedDog.Id, addedDog.Id);
+            Assert.Equal(returnedDog.Type, addedDog.Type);
+
+            Assert.Equal(addedDog.Name, dog.Name);
+            Assert.Equal(addedDog.Id, dog.Id);
+            Assert.Equal(addedDog.Type, dog.Type);
+
+            Assert.NotNull(dog.CreatedTimeUtc);
+            Assert.NotNull(returnedDog.CreatedTimeUtc);
+            Assert.NotNull(addedDog.CreatedTimeUtc);
+            Assert.InRange(dog.CreatedTimeUtc!.Value, DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+            Assert.InRange(returnedDog.CreatedTimeUtc!.Value, DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+            Assert.InRange(addedDog.CreatedTimeUtc!.Value, DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+        }
+
+        [Fact]
+        public async Task CreateAsync_SingleItemWithTimeStamps_WhenCreatedTimeStampHasAlreadyBeenSet_ShouldNotSetCreatedTimeStamp()
+        {
+            // Arrange
+            DateTime expectedCreatedTimeUtc = DateTime.UtcNow.AddDays(-7);
+            Dog dog = new("labradoodle", "Thor")
+            {
+                CreatedTimeUtc = expectedCreatedTimeUtc
+            };
+
+            // Act
+            Dog returnedDog = await _dogRepository.CreateAsync(dog);
+
+            // Assert
+            Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.Values.First());
+
+            Assert.Equal(returnedDog.Name, addedDog.Name);
+            Assert.Equal(returnedDog.Id, addedDog.Id);
+            Assert.Equal(returnedDog.Type, addedDog.Type);
+
+            Assert.Equal(addedDog.Name, dog.Name);
+            Assert.Equal(addedDog.Id, dog.Id);
+            Assert.Equal(addedDog.Type, dog.Type);
+
+            long calculatedTs = _dogRepository.CurrentTs;
+            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
+            Assert.InRange(returnedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
+            Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
+
+            Assert.NotNull(dog.CreatedTimeUtc);
+            Assert.NotNull(returnedDog.CreatedTimeUtc);
+            Assert.NotNull(addedDog.CreatedTimeUtc);
+            Assert.Equal(expectedCreatedTimeUtc, dog.CreatedTimeUtc!.Value);
+            Assert.Equal(expectedCreatedTimeUtc, returnedDog.CreatedTimeUtc!.Value);
+            Assert.Equal(expectedCreatedTimeUtc, addedDog.CreatedTimeUtc!.Value);
         }
 
         [Fact]
@@ -580,25 +645,29 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             //Arrange
             string originalEtag = Guid.NewGuid().ToString();
-            Person originalPerson = new("phil");
-            _personRepository.Items.TryAddAsJson(originalPerson.Id, originalPerson);
-
-            Person item = new("joe") { Id = originalPerson.Id };
+            Dog dog = new("labrador");
+            _dogRepository.Items.TryAddAsJson(dog.Id, dog);
+            Dog updatedDog = new("labradoodle") {Id = dog.Id};
 
             //Act
-            Person person = await _personRepository.UpdateAsync(item);
+            Dog returnedDog = await _dogRepository.UpdateAsync(updatedDog);
 
-            Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
+            Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.Values.First());
 
-            Assert.Equal(item.Name, person.Name);
-            Assert.Equal(originalPerson.Id, person.Id);
-            Assert.Equal(item.Type, person.Type);
+            Assert.Equal(updatedDog.Name, returnedDog.Name);
+            Assert.Equal(dog.Id, returnedDog.Id);
+            Assert.Equal(updatedDog.Type, returnedDog.Type);
 
-            Assert.Equal(item.Name, addedPerson.Name);
-            Assert.Equal(originalPerson.Id, addedPerson.Id);
-            Assert.Equal(item.Type, addedPerson.Type);
+            Assert.Equal(updatedDog.Name, addedDog.Name);
+            Assert.Equal(dog.Id, addedDog.Id);
+            Assert.Equal(updatedDog.Type, addedDog.Type);
 
-            Assert.True(!string.IsNullOrWhiteSpace(addedPerson.Etag) && addedPerson.Etag != Guid.Empty.ToString() && addedPerson.Etag != originalEtag);
+            Assert.True(!string.IsNullOrWhiteSpace(addedDog.Etag) && addedDog.Etag != Guid.Empty.ToString() && addedDog.Etag != originalEtag);
+
+            long calculatedTs = _dogRepository.CurrentTs;
+            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
+            Assert.InRange(returnedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
+            Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
         }
 
         [Fact]
@@ -676,7 +745,13 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             await _dogRepository.UpdateAsync(dog.Id, builder => builder.Replace(d => d.Name, "kenny"), dog.Breed);
 
             //Assert
-            Assert.Equal("kenny", _dogRepository.DeserializeItem(_dogRepository.Items.First().Value).Name);
+            Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.First().Value);
+            Assert.Equal("kenny", addedDog.Name);
+
+            long calculatedTs = _dogRepository.CurrentTs;
+            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
+            Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
+            Assert.InRange(addedDog.LastUpdatedTimeRaw, calculatedTs - 1, calculatedTs + 1);
         }
 
         [Fact]

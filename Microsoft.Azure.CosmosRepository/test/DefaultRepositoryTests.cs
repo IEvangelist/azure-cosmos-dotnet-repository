@@ -119,6 +119,46 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
+        public async Task CreateAsync_SingleItemWithTimeStamps_WhenCreatedTimeStampHasNotBeenSet_ShouldSetCreatedTimeStamp()
+        {
+            // Arrange
+            TestItem item = new();
+
+            _containerProviderForTestItem.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+            _container.Setup(x => x.CreateItemAsync(It.IsAny<TestItem>(), It.IsAny<PartitionKey>(), It.IsAny<ItemRequestOptions>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Mock<ItemResponse<TestItem>>().Object);
+
+            // Act
+            await RepositoryForItemWithoutETag.CreateAsync(item);
+
+            // Assert
+            Assert.NotNull(item.CreatedTimeUtc);
+            Assert.InRange(item.CreatedTimeUtc!.Value, DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+        }
+
+        [Fact]
+        public async Task CreateAsync_SingleItemWithTimeStamps_WhenCreatedTimeStampHasAlreadyBeenSet_ShouldNotSetCreatedTimeStamp()
+        {
+            // Arrange
+            DateTime expectedCreatedTimeUtc = DateTime.UtcNow.AddDays(-7);
+            TestItem item = new()
+            {
+                CreatedTimeUtc = expectedCreatedTimeUtc
+            };
+
+            _containerProviderForTestItem.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
+            _container.Setup(x => x.CreateItemAsync(It.IsAny<TestItem>(), It.IsAny<PartitionKey>(), It.IsAny<ItemRequestOptions>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Mock<ItemResponse<TestItem>>().Object);
+
+            // Act
+            await RepositoryForItemWithoutETag.CreateAsync(item);
+
+            // Assert
+            Assert.NotNull(item.CreatedTimeUtc);
+            Assert.Equal(expectedCreatedTimeUtc, item.CreatedTimeUtc!.Value);
+        }
+
+        [Fact]
         public async Task UpdateAsync_SingleItem_WhenIgnoreEtagIsFalseAndEtagIsProvided_UseEtagInUpsertOptions()
         {
             // Arrange
