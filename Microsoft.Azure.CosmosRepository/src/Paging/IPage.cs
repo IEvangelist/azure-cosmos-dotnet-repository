@@ -18,6 +18,16 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         int Total { get; }
 
         /// <summary>
+        /// The total amount pages that matched the query.
+        /// </summary>
+        int TotalPages { get; }
+
+        /// <summary>
+        /// The total amount items that matched the query.
+        /// </summary>
+        int? PageNumber { get; }
+
+        /// <summary>
         /// The size of the current page.
         /// </summary>
         int Size { get; }
@@ -37,5 +47,25 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// </summary>
         /// <remarks>This is provided by cosmos DB.</remarks>
         string? Continuation { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the are next pages.
+        /// </summary>
+        bool HasNextPage { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the are previous pages.
+        /// </summary>
+        bool HasPreviousPage { get; }
+
+        /// <summary>
+        /// The previous page number.
+        /// </summary>
+        int PreviousPageNumber { get; }
+
+        /// <summary>
+        /// The next page number.
+        /// </summary>
+        int NextPageNumber { get; }
     }
 }
