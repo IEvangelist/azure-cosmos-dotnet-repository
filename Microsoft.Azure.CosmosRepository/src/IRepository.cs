@@ -251,9 +251,9 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="pageNumber">The page number to return from cosmos db.</param>
         /// <param name="pageSize">The size of the page to return from cosmos db.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-        /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
+        /// <returns>A <see cref="IPageExtended{T}"/> of <see cref="IItem"/>s</returns>
         /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
-        ValueTask<IPage<TItem>> PageAsync(
+        ValueTask<IPageExtended<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageNumber = 1,
             int pageSize = 25,

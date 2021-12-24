@@ -2,14 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
@@ -324,12 +327,54 @@ namespace Microsoft.Azure.CosmosRepository
                 .Where(_repositoryExpressionProvider.Build(predicate));
 
             Response<int> countResponse = await query.CountAsync(cancellationToken);
-            using FeedIterator<TItem> iterator = query.ToFeedIterator();
+            (List<TItem> Items, double Charge, string ContinuationToken) result = await GetAllItems(query, pageSize, cancellationToken);
 
+            return new Page<TItem>(
+                countResponse.Resource,
+                pageSize,
+                result.Items.AsReadOnly(),
+                result.Charge + countResponse.RequestCharge,
+                result.ContinuationToken);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<IPageExtended<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate = null, int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
+        {
+            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>()
+                                               .Where(_repositoryExpressionProvider.Build(predicate));
+
+            Response<int> countResponse = await query.CountAsync(cancellationToken);
+            query = query.Skip(pageSize * (pageNumber - 1))
+                         .Take(pageSize);
+
+            (List<TItem> Items, double Charge, string ContinuationToken) result = await GetAllItems(query, pageSize, cancellationToken);
+
+            return new PageExtended<TItem>(
+                countResponse.Resource,
+                pageNumber,
+                pageSize,
+                result.Items.AsReadOnly(),
+                result.Charge + countResponse.RequestCharge);
+        }
+
+
+        static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
+        {
+            if (logger?.IsEnabled(LogLevel.Debug) ?? false)
+            {
+                logger.LogDebug(getMessage());
+            }
+        }
+
+        static async Task<(List<TItem> items, double charge, string continuationToken)> GetAllItems(IQueryable<TItem> query, int pageSize, CancellationToken cancellationToken = default)
+        {
+            string continuationToken = null;
             List<TItem> results = new();
             int readItemsCount = 0;
-            double charge = countResponse.RequestCharge;
-
+            double charge = 0;
+            using FeedIterator<TItem> iterator = query.ToFeedIterator();
             while (readItemsCount < pageSize && iterator.HasMoreResults)
             {
                 FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
@@ -348,53 +393,7 @@ namespace Microsoft.Azure.CosmosRepository
                 charge += next.RequestCharge;
                 continuationToken = next.ContinuationToken;
             }
-
-            return new Page<TItem>(
-                countResponse.Resource,
-                pageSize,
-                results.AsReadOnly(),
-                charge,
-                continuationToken);
-        }
-
-        /// <inheritdoc/>
-        public async ValueTask<IPage<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate = null, int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
-        {
-            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
-
-            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>()
-                                               .Where(_repositoryExpressionProvider.Build(predicate));
-
-            Response<int> countResponse = await query.CountAsync(cancellationToken);
-            query = query.Skip(pageSize * (pageNumber - 1))
-                         .Take(pageSize);
-
-            using FeedIterator<TItem> iterator = query.ToFeedIterator();
-
-            FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken)
-                                                     .ConfigureAwait(false);
-
-            List<TItem> results = new();
-            foreach (TItem result in next)
-            {
-                results.Add(result);
-            }
-
-            return new Page<TItem>(
-                countResponse.Resource,
-                pageNumber,
-                pageSize,
-                results.AsReadOnly(),
-                next.RequestCharge + countResponse.RequestCharge);
-        }
-
-
-        static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
-        {
-            if (logger?.IsEnabled(LogLevel.Debug) ?? false)
-            {
-                logger.LogDebug(getMessage());
-            }
+            return (results, charge, continuationToken);
         }
     }
 }

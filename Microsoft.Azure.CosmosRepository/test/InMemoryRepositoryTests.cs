@@ -907,7 +907,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             int pageNumber = 2;
 
             //Act
-            IPage<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize);
+            IPageExtended<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize);
 
             //Assert
             List<Dog> enumerable = dogs.Items.ToList();
@@ -942,7 +942,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                                                          .ToList();
 
             //Act
-            IPage<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
+            IPageExtended<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
 
             //Assert
             List<Dog> enumerable = dogs.Items.ToList();
