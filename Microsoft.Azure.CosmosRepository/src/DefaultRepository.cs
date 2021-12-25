@@ -353,7 +353,8 @@ namespace Microsoft.Azure.CosmosRepository
             query = query.Skip(pageSize * (pageNumber - 1))
                          .Take(pageSize);
 
-            (List<TItem> Items, double Charge, string ContinuationToken) result = await GetAllItems(query, pageSize, cancellationToken);
+            (List<TItem> Items, double Charge, string ContinuationToken) result =
+                await GetAllItemsAsync(query, pageSize, cancellationToken);
 
             return new PageExtended<TItem>(
                 countResponse.Resource,
