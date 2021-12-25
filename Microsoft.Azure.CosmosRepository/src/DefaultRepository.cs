@@ -372,7 +372,10 @@ namespace Microsoft.Azure.CosmosRepository
             }
         }
 
-        static async Task<(List<TItem> items, double charge, string continuationToken)> GetAllItems(IQueryable<TItem> query, int pageSize, CancellationToken cancellationToken = default)
+        static async Task<(List<TItem> items, double charge, string continuationToken)> GetAllItemsAsync(
+            IQueryable<TItem> query,
+            int pageSize,
+            CancellationToken cancellationToken = default)
         {
             string continuationToken = null;
             List<TItem> results = new();
