@@ -10,7 +10,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
     /// Represents a page of data from a cosmos query
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IPageExtended<out T>:IPage<T> where T : IItem
+    public interface IPageExtended<out T> : IPage<T> where T : IItem
     {
         /// <summary>
         /// The total amount pages that matched the query.
