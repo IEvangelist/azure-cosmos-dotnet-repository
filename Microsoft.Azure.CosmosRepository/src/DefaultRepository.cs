@@ -338,7 +338,11 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<IPageExtended<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate = null, int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
+        public async ValueTask<IPageExtended<TItem>> PageAsync(
+            Expression<Func<TItem, bool>> predicate = null,
+            int pageNumber = 1,
+            int pageSize = 25,
+            CancellationToken cancellationToken = default)
         {
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
