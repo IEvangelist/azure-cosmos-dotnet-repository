@@ -350,7 +350,8 @@ namespace Microsoft.Azure.CosmosRepository
             IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>()
                                                .Where(_repositoryExpressionProvider.Build(predicate));
 
-            Response<int> countResponse = await query.CountAsync(cancellationToken);
+            Response<int> countResponse =
+                await query.CountAsync(cancellationToken).ConfigureAwait(false);
             query = query.Skip(pageSize * (pageNumber - 1))
                          .Take(pageSize);
 
