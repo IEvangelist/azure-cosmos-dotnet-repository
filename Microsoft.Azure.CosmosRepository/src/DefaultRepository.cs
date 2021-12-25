@@ -327,7 +327,8 @@ namespace Microsoft.Azure.CosmosRepository
                 .Where(_repositoryExpressionProvider.Build(predicate));
 
             Response<int> countResponse = await query.CountAsync(cancellationToken);
-            (List<TItem> Items, double Charge, string ContinuationToken) result = await GetAllItems(query, pageSize, cancellationToken);
+            (List<TItem> Items, double Charge, string ContinuationToken) result =
+                await GetAllItemsAsync(query, pageSize, cancellationToken);
 
             return new Page<TItem>(
                 countResponse.Resource,
