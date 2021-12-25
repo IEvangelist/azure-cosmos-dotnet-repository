@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Microsoft.Azure.CosmosRepository.Paging
 {
     /// <inheritdoc/>
-    public class PageExtended<T> : Page<T>, IPageExtended<T> where T : IItem
+    public class PageQueryResult<T> : Page<T>, IPageQueryResult<T> where T : IItem
     {
         /// <summary>
         /// Creates a page.
@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <param name="items"></param>
         /// <param name="charge"></param>
         /// <param name="continuation"></param>
-        internal PageExtended(
+        internal PageQueryResult(
             int total,
             int size,
             IReadOnlyList<T> items,
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <param name="items">The items.</param>
         /// <param name="charge">The charge.</param>
         /// <param name="continuation">The continuation.</param>
-        internal PageExtended(
+        internal PageQueryResult(
             int total,
             int? pageNumber,
             int size,

@@ -249,6 +249,7 @@ namespace Microsoft.Azure.CosmosRepository
                 item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
+        /// <inheritdoc/>
         public ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
@@ -258,13 +259,14 @@ namespace Microsoft.Azure.CosmosRepository
             throw new NotImplementedException();
         }
 
-        public async ValueTask<IPageExtended<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate = null, int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
+        /// <inheritdoc/>
+        public async ValueTask<IPageQueryResult<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate = null, int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             IEnumerable<TItem> filteredItems = Items.Values.Select(DeserializeItem)
                                                            .Where(predicate.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
             IEnumerable<TItem> items = filteredItems.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
-            return new PageExtended<TItem>(
+            return new PageQueryResult<TItem>(
                     filteredItems.Count(),
                     pageNumber,
                     pageSize,

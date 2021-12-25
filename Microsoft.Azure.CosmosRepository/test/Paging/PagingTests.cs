@@ -85,7 +85,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Paging
             List<Dog> dogs = new() { dog1, dog2 };
 
             //Act
-            PageExtended<Dog> pageOfDogs = new(total, size, dogs.AsReadOnly(), charge);
+            PageQueryResult<Dog> pageOfDogs = new(total, size, dogs.AsReadOnly(), charge);
 
             //Assert
             Assert.Equal(total, pageOfDogs.Total);
@@ -110,7 +110,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Paging
             string continuationToken = "ContinuationToken";
 
             //Act
-            PageExtended<Dog> pageOfDogs = new(total, pageNumber, size, dogs.AsReadOnly(), charge, continuationToken);
+            PageQueryResult<Dog> pageOfDogs = new(total, pageNumber, size, dogs.AsReadOnly(), charge, continuationToken);
 
             //Assert
             Assert.Equal(total, pageOfDogs.Total);
@@ -145,7 +145,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Paging
             int expectedNextPage = 2;
 
             //Act
-            PageExtended<Dog> pageOfDogs = new(total, pageNumber, size, dogs.AsReadOnly(), charge, continuationToken);
+            PageQueryResult<Dog> pageOfDogs = new(total, pageNumber, size, dogs.AsReadOnly(), charge, continuationToken);
 
             //Assert
             Assert.Equal(total, pageOfDogs.Total);
@@ -184,7 +184,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Paging
             int expectedPreviousPage = 1;
 
             //Act
-            PageExtended<Dog> pageOfDogs = new(total, pageNumber, size, dogs.AsReadOnly(), charge, continuationToken);
+            PageQueryResult<Dog> pageOfDogs = new(total, pageNumber, size, dogs.AsReadOnly(), charge, continuationToken);
 
             //Assert
             Assert.Equal(total, pageOfDogs.Total);
@@ -225,7 +225,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Paging
             int expectedNextPage = 3;
 
             //Act
-            PageExtended<Dog> pageOfDogs = new(total, pageNumber, size, dogs.AsReadOnly(), charge, continuationToken);
+            PageQueryResult<Dog> pageOfDogs = new(total, pageNumber, size, dogs.AsReadOnly(), charge, continuationToken);
 
             //Assert
             Assert.Equal(total, pageOfDogs.Total);
@@ -267,7 +267,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Paging
             int expectedNextPage = 5;
 
             //Act
-            PageExtended<Dog> pageOfDogs = new(total, size, dogs.AsReadOnly(), charge, continuationToken);
+            PageQueryResult<Dog> pageOfDogs = new(total, size, dogs.AsReadOnly(), charge, continuationToken);
 
             //Assert
             Assert.Equal(total, pageOfDogs.Total);

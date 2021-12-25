@@ -334,7 +334,7 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<IPageExtended<TItem>> PageAsync(
+        public async ValueTask<IPageQueryResult<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageNumber = 1,
             int pageSize = 25,
@@ -353,7 +353,7 @@ namespace Microsoft.Azure.CosmosRepository
             (List<TItem> Items, double Charge, string ContinuationToken) result =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
 
-            return new PageExtended<TItem>(
+            return new PageQueryResult<TItem>(
                 countResponse.Resource,
                 pageNumber,
                 pageSize,

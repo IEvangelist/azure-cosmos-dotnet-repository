@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #nullable enable
-using System.Collections.Generic;
 
 namespace Microsoft.Azure.CosmosRepository.Paging
 {
@@ -10,7 +9,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
     /// Represents a page of data from a cosmos query
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IPageExtended<out T> : IPage<T> where T : IItem
+    public interface IPageQueryResult<out T> : IPage<T> where T : IItem
     {
         /// <summary>
         /// The total amount pages that matched the query.
