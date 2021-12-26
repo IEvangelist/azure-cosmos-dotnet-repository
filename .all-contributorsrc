@@ -181,6 +181,17 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "Rabosa616",
+      "name": "Rabosa616",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12774781?v=4",
+      "profile": "https://github.com/Rabosa616",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
