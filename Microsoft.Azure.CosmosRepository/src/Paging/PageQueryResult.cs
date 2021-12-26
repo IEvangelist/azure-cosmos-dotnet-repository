@@ -13,11 +13,11 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <summary>
         /// Creates a page.
         /// </summary>
-        /// <param name="total"></param>
-        /// <param name="size"></param>
-        /// <param name="items"></param>
-        /// <param name="charge"></param>
-        /// <param name="continuation"></param>
+        /// <param name="total">The total.</param>
+        /// <param name="size">The size.</param>
+        /// <param name="items">The items.</param>
+        /// <param name="charge">The charge.</param>
+        /// <param name="continuation">The continuation.</param>
         internal PageQueryResult(
             int total,
             int size,
