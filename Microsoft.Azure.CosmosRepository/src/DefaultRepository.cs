@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
-using Microsoft.Azure.CosmosRepository.Exceptions;
-using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -276,9 +274,8 @@ namespace Microsoft.Azure.CosmosRepository
 
             try
             {
-                ItemResponse<TItem> response =
-                    await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
-                        .ConfigureAwait(false);
+                _ = await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
+                                   .ConfigureAwait(false);
             }
             catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
 
@@ -306,6 +303,7 @@ namespace Microsoft.Azure.CosmosRepository
             return count > 0;
         }
 
+        /// <inheritdoc/>
         public async ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
@@ -324,12 +322,64 @@ namespace Microsoft.Azure.CosmosRepository
                 .Where(_repositoryExpressionProvider.Build(predicate));
 
             Response<int> countResponse = await query.CountAsync(cancellationToken);
-            using FeedIterator<TItem> iterator = query.ToFeedIterator();
+            (List<TItem> Items, double Charge, string ContinuationToken) result =
+                await GetAllItemsAsync(query, pageSize, cancellationToken);
 
+            return new Page<TItem>(
+                countResponse.Resource,
+                pageSize,
+                result.Items.AsReadOnly(),
+                result.Charge + countResponse.RequestCharge,
+                result.ContinuationToken);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<IPageQueryResult<TItem>> PageAsync(
+            Expression<Func<TItem, bool>> predicate = null,
+            int pageNumber = 1,
+            int pageSize = 25,
+            CancellationToken cancellationToken = default)
+        {
+            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>()
+                                               .Where(_repositoryExpressionProvider.Build(predicate));
+
+            Response<int> countResponse =
+                await query.CountAsync(cancellationToken).ConfigureAwait(false);
+            query = query.Skip(pageSize * (pageNumber - 1))
+                         .Take(pageSize);
+
+            (List<TItem> Items, double Charge, string ContinuationToken) result =
+                await GetAllItemsAsync(query, pageSize, cancellationToken);
+
+            return new PageQueryResult<TItem>(
+                countResponse.Resource,
+                pageNumber,
+                pageSize,
+                result.Items.AsReadOnly(),
+                result.Charge + countResponse.RequestCharge);
+        }
+
+
+        static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
+        {
+            if (logger?.IsEnabled(LogLevel.Debug) ?? false)
+            {
+                logger.LogDebug(getMessage());
+            }
+        }
+
+        static async Task<(List<TItem> items, double charge, string continuationToken)> GetAllItemsAsync(
+            IQueryable<TItem> query,
+            int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            string continuationToken = null;
             List<TItem> results = new();
             int readItemsCount = 0;
-            double charge = countResponse.RequestCharge;
-
+            double charge = 0;
+            using FeedIterator<TItem> iterator = query.ToFeedIterator();
             while (readItemsCount < pageSize && iterator.HasMoreResults)
             {
                 FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
@@ -348,22 +398,7 @@ namespace Microsoft.Azure.CosmosRepository
                 charge += next.RequestCharge;
                 continuationToken = next.ContinuationToken;
             }
-
-            return new Page<TItem>(
-                countResponse.Resource,
-                pageSize,
-                results.AsReadOnly(),
-                charge,
-                continuationToken);
-        }
-
-
-        static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
-        {
-            if (logger?.IsEnabled(LogLevel.Debug) ?? false)
-            {
-                logger.LogDebug(getMessage());
-            }
+            return (results, charge, continuationToken);
         }
     }
 }

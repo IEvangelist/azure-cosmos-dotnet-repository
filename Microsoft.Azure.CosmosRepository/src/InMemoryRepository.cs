@@ -67,7 +67,7 @@ namespace Microsoft.Azure.CosmosRepository
                 NotFound();
             }
 
-            return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name ? item : default;
+            return item is { Type: { Length: 0 } } || item?.Type == typeof(TItem).Name ? item : default;
         }
 
         /// <inheritdoc/>
@@ -134,12 +134,13 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
 
-            if (value is IItemWithEtag valueWithEtag && Items.ContainsKey(value.Id) && DeserializeItem(Items[value.Id]) is IItemWithEtag existingItemWithEtag && !ignoreEtag)
+            if (value is IItemWithEtag valueWithEtag &&
+                Items.ContainsKey(value.Id) &&
+                DeserializeItem(Items[value.Id]) is IItemWithEtag existingItemWithEtag &&
+                !ignoreEtag
+                && valueWithEtag.Etag != existingItemWithEtag.Etag)
             {
-                if (valueWithEtag.Etag != existingItemWithEtag.Etag)
-                {
-                    MismatchedEtags();
-                }
+                MismatchedEtags();
             }
 
             Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
@@ -177,12 +178,12 @@ namespace Microsoft.Azure.CosmosRepository
                 NotFound();
             }
 
-            if (item is IItemWithEtag itemWithEtag && etag != default && !string.IsNullOrWhiteSpace(etag))
+            if (item is IItemWithEtag itemWithEtag &&
+                etag != default &&
+                !string.IsNullOrWhiteSpace(etag) &&
+                itemWithEtag.Etag != etag)
             {
-                if (itemWithEtag.Etag != etag)
-                {
-                    MismatchedEtags();
-                }
+                MismatchedEtags();
             }
 
             PatchOperationBuilder<TItem> patchOperationBuilder = new();
@@ -248,6 +249,7 @@ namespace Microsoft.Azure.CosmosRepository
                 item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
         }
 
+        /// <inheritdoc/>
         public ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
@@ -257,8 +259,24 @@ namespace Microsoft.Azure.CosmosRepository
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
+        public async ValueTask<IPageQueryResult<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate = null, int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            IEnumerable<TItem> filteredItems = Items.Values.Select(DeserializeItem)
+                                                           .Where(predicate.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
+            IEnumerable<TItem> items = filteredItems.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+            return new PageQueryResult<TItem>(
+                    filteredItems.Count(),
+                    pageNumber,
+                    pageSize,
+                    items.ToList().AsReadOnly(),
+                    0);
+        }
+
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
         private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);
         private void MismatchedEtags() => throw new CosmosException(string.Empty, HttpStatusCode.PreconditionFailed, 0, string.Empty, 0);
+
     }
 }
