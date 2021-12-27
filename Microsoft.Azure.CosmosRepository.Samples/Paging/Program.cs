@@ -28,7 +28,7 @@ await BasicPageAsync();
 async Task BasicPageAsync()
 {
     double totalCharge = 0;
-    IPageQueryResult<Person> page = await repository.PageAsync(pageNumber:1,pageSize: 25);
+    IPageQueryResult<Person> page = await repository.PageAsync(pageNumber: 1,pageSize: 25);
     while (page.HasNextPage)
     {
         foreach (Person person in page.Items)
