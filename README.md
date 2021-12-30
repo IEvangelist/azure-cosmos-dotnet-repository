@@ -326,7 +326,7 @@ await repository.UpdateAsync(currentBankAccount, ignoreEtag: true);
 
 The following code shows how to pass the etag when doing a update to specific properties.
 
-```
+```csharp
 await repository.UpdateAsync(currentBankAccount.Id,
   builder => builder.Replace(account => account.Balance, currentBankAccount.Balance - 250), etag: currentBankAccount.Etag);
 ```
@@ -354,7 +354,7 @@ BankAccount currentBankAccount = await repository.CreateAsync(
 
 If you didn't want that specific item to ever expire the following code can be used:
 
-```
+```csharp
 BankAccount currentBankAccount = await repository.CreateAsync(
   new BankAccount()
     {
@@ -366,10 +366,7 @@ BankAccount currentBankAccount = await repository.CreateAsync(
 
 The demo `BankAccount` class can be found in the [OptimisticCurrencyControl sample](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/OptimisticConcurrencyControl) and its implementation looks like the following:
 
-```
-// Copyright (c) IEvangelist. All rights reserved.
-// Licensed under the MIT License.
-
+```csharp
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Attributes;
 
