@@ -192,6 +192,16 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "WestDiscGolf",
+      "name": "Adam Storr",
+      "avatar_url": "https://avatars.githubusercontent.com/u/374343?v=4",
+      "profile": "http://www.adamstorr.co.uk",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
