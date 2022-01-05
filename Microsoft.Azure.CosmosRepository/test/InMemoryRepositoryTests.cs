@@ -754,6 +754,16 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
+        public async Task CountAsync_CountAllOnEmptyContainer_ReturnsZero()
+        {
+            //Act
+            int count = await _dogRepository.CountAsync();
+
+            //Assert
+            Assert.Equal(0, count);
+        }
+
+        [Fact]
         public async Task CountAsync_CountQueryWithItemsThatMatch_ReturnsTotal()
         {
             //Arrange
@@ -770,6 +780,25 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             //Assert
             Assert.Equal(2, count);
+        }
+
+        [Fact]
+        public async Task CountAsync_CountQueryWithItemsThatDoNotMatch_ReturnsZero()
+        {
+            //Arrange
+            Dog dog1 = new("cocker spaniel");
+            Dog dog2 = new("cocker spaniel");
+            Dog dog3 = new("golden retriever");
+
+            _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
+            _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
+            _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+
+            //Act
+            int count = await _dogRepository.CountAsync(d => d.Breed == "maltese");
+
+            //Assert
+            Assert.Equal(0, count);
         }
 
         [Fact]
