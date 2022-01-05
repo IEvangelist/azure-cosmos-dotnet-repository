@@ -43,8 +43,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
 
             foreach (object attribute in attributes)
             {
-                JsonPropertyAttribute jsonAttribute = (JsonPropertyAttribute) attribute;
-                if (jsonAttribute is not null)
+                if (attribute is JsonPropertyAttribute jsonAttribute)
                 {
                     return jsonAttribute.PropertyName;
                 }

@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
@@ -18,6 +19,18 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Builders
         public int TestIntProperty { get; set; }
     }
 
+    public class RequiredItem : Item
+    {
+        [Required]
+        public string TestProperty { get; set; }
+    }
+
+    public class RequiredAndJsonItem : Item
+    {
+        [Required]
+        [JsonProperty("testProperty")]
+        public string TestProperty { get; set; }
+    }
 
     public class PatchOperationBuilderTests
     {
@@ -49,7 +62,36 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Builders
             PatchOperation operation = builder.PatchOperations.First();
             Assert.Equal(PatchOperationType.Replace, operation.OperationType);
             Assert.Equal("/testIntProperty", operation.Path);
+        }
 
+        [Fact]
+        public void ReplaceGivenPropertyWithRequiredAttributeSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<RequiredItem> builder = new PatchOperationBuilder<RequiredItem>();
+
+            //Act
+            builder.Replace(x => x.TestProperty, "Test Value");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations.First();
+            Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+            Assert.Equal("/testProperty", operation.Path);
+        }
+
+        [Fact]
+        public void ReplaceGivenPropertyWithRequiredAndJsonAttributesSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<RequiredAndJsonItem> builder = new PatchOperationBuilder<RequiredAndJsonItem>();
+
+            //Act
+            builder.Replace(x => x.TestProperty, "Test Value");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations.First();
+            Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+            Assert.Equal("/testProperty", operation.Path);
         }
     }
 }
