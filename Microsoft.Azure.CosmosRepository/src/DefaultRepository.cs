@@ -304,6 +304,36 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
+        public async ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
+
+            TryLogDebugDetails(_logger, () => $"Read: {query}");
+
+            return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<int> CountAsync(
+            Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query =
+                container.GetItemLinqQueryable<TItem>()
+                    .Where(_repositoryExpressionProvider.Build(predicate));
+
+            TryLogDebugDetails(_logger, () => $"Read: {query}");
+
+            return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public async ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
