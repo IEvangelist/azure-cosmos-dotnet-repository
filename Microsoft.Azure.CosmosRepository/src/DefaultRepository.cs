@@ -311,8 +311,6 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
 
-            TryLogDebugDetails(_logger, () => $"Read: {query}");
-
             return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
         }
 
