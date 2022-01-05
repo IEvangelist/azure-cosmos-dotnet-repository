@@ -311,11 +311,14 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
 
+            TryLogDebugDetails(_logger, () => $"Read: {query}");
+
             return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async ValueTask<int> CountAsync(Expression<Func<TItem, bool>> predicate,
+        public async ValueTask<int> CountAsync(
+            Expression<Func<TItem, bool>> predicate,
             CancellationToken cancellationToken = default)
         {
             Container container =
