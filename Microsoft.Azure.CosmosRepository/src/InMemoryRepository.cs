@@ -253,7 +253,7 @@ namespace Microsoft.Azure.CosmosRepository
         public async ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            return Items.Values.Count;
+            return Items.Values.Select(DeserializeItem).Count(item => item.Type == typeof(TItem).Name);
         }
 
         /// <inheritdoc/>
