@@ -250,6 +250,21 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
+        public async ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            return Items.Values.Count;
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<int> CountAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            return Items.Values.Select(DeserializeItem).Count(predicate.Compose(
+                item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
+        }
+
+        /// <inheritdoc/>
         public ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,

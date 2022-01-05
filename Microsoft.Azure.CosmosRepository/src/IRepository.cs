@@ -228,6 +228,29 @@ namespace Microsoft.Azure.CosmosRepository
             CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Queries cosmos DB to obtain the count of items.
+        /// </summary>
+        /// <remarks>
+        /// This queries the total number of documents in the container.
+        /// </remarks>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous count operation.</returns>
+        ValueTask<int> CountAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Queries cosmos DB to obtain the count of items.
+        /// </summary>
+        /// <remarks>
+        /// This queries the total number of documents in the container as filtered by the provided predicate.
+        /// </remarks>
+        /// <param name="predicate">The expression used for evaluating any matching items.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="ValueTask"/> representing the asynchronous count operation.</returns>
+        ValueTask<int> CountAsync(
+            Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Offers a load more paging implementation for infinite scroll scenarios.
         /// Allows for efficient paging making use of cosmos DBs continuation tokens, making this implementation cost effective.
         /// </summary>
