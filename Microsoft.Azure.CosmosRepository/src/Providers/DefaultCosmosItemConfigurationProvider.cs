@@ -43,7 +43,6 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             _itemOptionsMap.GetOrAdd(itemType, AddOptions(itemType));
 
 
-
         private ItemOptions AddOptions(Type itemType)
         {
             itemType.EnsureIsTypeOfIItem();
@@ -55,7 +54,12 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             bool sync = _syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties(itemType);
             ThroughputProperties throughputProperties = _cosmosThroughputProvider.GetThroughputProperties(itemType);
 
-            return new(itemType, containerName, partitionKeyPath, uniqueKeyPolicy, throughputProperties, timeToLive,
+            return new(itemType,
+                containerName,
+                partitionKeyPath,
+                uniqueKeyPolicy,
+                throughputProperties,
+                timeToLive,
                 sync);
         }
     }
