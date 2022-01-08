@@ -4,7 +4,7 @@
 using Microsoft.Azure.CosmosRepository;
 using Newtonsoft.Json;
 
-namespace ChangeFeedConsole;
+namespace ChangedFeedSamples.Shared.Items;
 
 public class Book : FullItem
 {

@@ -4,7 +4,7 @@
 using Microsoft.Azure.CosmosRepository;
 using Newtonsoft.Json;
 
-namespace ChangeFeedConsole;
+namespace ChangedFeedSamples.Shared.Items;
 
 public class BookByIdReference : Item
 {
@@ -23,7 +23,7 @@ public class BookByIdReference : Item
         PartitionKey = partitionKey;
     }
 
-    public string Category { get; set; }   
-    
+    public string Category { get; set; }
+
     public string PartitionKey { get; set; }
 }

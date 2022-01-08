@@ -101,6 +101,15 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Adds all <see cref="IItemChangeFeedProcessor{TItem}"/> in the given assemblies
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddCosmosRepositoryItemChangeFeedProcessorsFromAssemblyContainingType<T>(
+            this IServiceCollection services) =>
+            services.AddCosmosRepositoryItemChangeFeedProcessors(typeof(T).Assembly);
+
+        /// <summary>
         /// Adds the services required to run the in memory implementation of the cosmos repository.
         /// </summary>
         /// <param name="services">The service collection to add services to.</param>

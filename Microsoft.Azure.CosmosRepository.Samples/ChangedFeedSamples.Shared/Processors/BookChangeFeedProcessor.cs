@@ -1,11 +1,12 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using ChangedFeedSamples.Shared.Items;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Extensions.Logging;
 
-namespace ChangeFeedConsole.Processors;
+namespace ChangedFeedSamples.Shared.Processors;
 
 public class BookChangeFeedProcessor : IItemChangeFeedProcessor<Book>
 {
@@ -29,5 +30,7 @@ public class BookChangeFeedProcessor : IItemChangeFeedProcessor<Book>
         }
 
         _logger.LogInformation($"Processed change for book with ID: {book.Id}");
+
+        Console.WriteLine($"Processed Change for book with id {book.Id}");
     }
 }

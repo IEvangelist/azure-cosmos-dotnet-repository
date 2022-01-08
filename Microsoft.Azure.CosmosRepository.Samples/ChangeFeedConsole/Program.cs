@@ -1,20 +1,22 @@
-﻿using System.Reflection;
-using ChangeFeedConsole;
+﻿using ChangedFeedSamples.Shared.Items;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
-using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+
+string connectionString = Environment.GetEnvironmentVariable("CosmosConnectionString") ??
+                          throw new NullReferenceException("Make sure the connection string is set as an env var");
 
 IServiceCollection services = new ServiceCollection();
 ConfigurationBuilder configuration = new();
 
-void CosmosRepositoryConfiguration(RepositoryOptions options)
+services.AddSingleton<IConfiguration>(configuration.Build());
+
+services.AddCosmosRepository(options =>
 {
-    options.DatabaseId = "change-feed-console-demo";
+    options.CosmosConnectionString = connectionString;
+    options.DatabaseId = "change-feed-demo";
     options.ContainerPerItemType = true;
-    options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
 
     options.ContainerBuilder.Configure<Book>(containerOptions =>
     {
@@ -28,12 +30,9 @@ void CosmosRepositoryConfiguration(RepositoryOptions options)
         containerOptions.WithContainer("books");
         containerOptions.WithPartitionKey("/partitionKey");
     });
-}
+});
 
-services.AddCosmosRepository(CosmosRepositoryConfiguration)
-    .AddCosmosRepositoryItemChangeFeedProcessors(Assembly.GetExecutingAssembly())
-    .AddSingleton<IConfiguration>(configuration.Build())
-    .AddLogging(options => options.ClearProviders().AddConsole());
+services.AddCosmosRepositoryItemChangeFeedProcessors();
 
 IServiceProvider provider = services.BuildServiceProvider();
 
