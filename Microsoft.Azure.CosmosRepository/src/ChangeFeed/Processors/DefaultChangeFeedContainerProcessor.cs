@@ -61,7 +61,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
                 itemContainer.Id);
         }
 
-        internal async Task OnChanges(IReadOnlyCollection<JObject> changes, CancellationToken cancellationtoken,
+        internal async Task OnChanges(IReadOnlyCollection<JObject> changes, CancellationToken cancellationToken,
             string containerName)
         {
             _logger.LogDebug("Detected changes for container {ContainerName} total ({ChangesCount})",
@@ -86,7 +86,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
                     continue;
                 }
 
-                await InvokeHandler(itemType, change, cancellationtoken);
+                await InvokeHandler(itemType, change, cancellationToken);
             }
         }
 
