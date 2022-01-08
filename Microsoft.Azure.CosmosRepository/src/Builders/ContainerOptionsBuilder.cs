@@ -51,6 +51,8 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// <remarks>By default this uses a manual throughput reserved at 400 RU/s in line with the Cosmos SDK.</remarks>
         internal ThroughputProperties ThroughputProperties { get; private set; } = ThroughputProperties.CreateManualThroughput(400);
 
+        internal ChangeFeedOptions ChangeFeedOptions { get; private set; } = null;
+
         /// <summary>
         /// Sets the <see cref="ContainerDefaultTimeToLive"/> for a container.
         /// </summary>
@@ -145,6 +147,11 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
         public ContainerOptionsBuilder WithChangeFeedMonitoring(Action<ChangeFeedOptions> optionsActions = null)
         {
+            ChangeFeedOptions options = new(Type);
+
+            optionsActions?.Invoke(options);
+
+            ChangeFeedOptions = options;
 
             return this;
         }

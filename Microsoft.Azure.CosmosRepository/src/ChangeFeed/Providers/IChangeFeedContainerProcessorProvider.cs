@@ -8,6 +8,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
 {
     internal interface IChangeFeedContainerProcessorProvider
     {
-        List<IChangeFeedContainerProcessor> GetProcessors();
+        IEnumerable<IChangeFeedContainerProcessor> GetProcessors();
     }
 }

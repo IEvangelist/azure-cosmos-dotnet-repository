@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Azure.CosmosRepository.Extensions
 {
@@ -14,6 +15,11 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
                 throw new InvalidOperationException(
                     $"The type {type.FullName} does not implement {typeof(IItem).FullName}");
             }
+        }
+
+        public static void EnsureAllAreTypeOfIItem(this IReadOnlyList<Type> types)
+        {
+            foreach (Type type in types) type.EnsureIsTypeOfIItem();
         }
     }
 }
