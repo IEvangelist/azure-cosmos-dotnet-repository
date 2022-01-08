@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.ChangeFeed;
 
 namespace Microsoft.Azure.CosmosRepository.Builders
 {
@@ -134,6 +135,17 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             }
 
             ThroughputProperties = ThroughputProperties.CreateAutoscaleThroughput(maxAutoScaleThroughput);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds monitoring of the change feed for the given <see cref="IItem"/>
+        /// </summary>
+        /// <param name="optionsActions">An action to configure the change feed.</param>
+        /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+        public ContainerOptionsBuilder WithChangeFeedMonitoring(Action<ChangeFeedOptions> optionsActions = null)
+        {
+
             return this;
         }
     }

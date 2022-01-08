@@ -1,12 +1,13 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using Microsoft.Azure.Cosmos;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
     /// <summary>
-    /// The cosmos partition key path provider exposes the ability 
+    /// The cosmos partition key path provider exposes the ability
     /// to get an <see cref="IItem"/>'s partition key path.
     /// </summary>
     interface ICosmosUniqueKeyPolicyProvider
@@ -17,5 +18,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         /// <typeparam name="TItem">The item for which the unique key policy corresponds.</typeparam>
         /// <returns>A <see cref="UniqueKeyPolicy"/> for the corresponding to the given <typeparamref name="TItem"/>.</returns>
         UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem;
+
+        UniqueKeyPolicy GetUniqueKeyPolicy(Type itemType);
     }
 }

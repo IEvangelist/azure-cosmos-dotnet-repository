@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
@@ -36,18 +37,26 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         }
 
         public ItemOptions GetOptions<TItem>() where TItem : IItem =>
-            _itemOptionsMap.GetOrAdd(typeof(TItem), AddOptions<TItem>);
+            GetOptions(typeof(TItem));
 
-        private ItemOptions AddOptions<TItem>(Type optionType) where TItem : IItem
+        public ItemOptions GetOptions(Type itemType) =>
+            _itemOptionsMap.GetOrAdd(itemType, AddOptions(itemType));
+
+
+
+        private ItemOptions AddOptions(Type itemType)
         {
-            string containerName = _containerNameProvider.GetContainerName<TItem>();
-            string partitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath<TItem>();
-            UniqueKeyPolicy uniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy<TItem>();
-            int timeToLive = _containerDefaultTimeToLiveProvider.GetDefaultTimeToLive<TItem>();
-            bool sync = _syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties<TItem>();
-            ThroughputProperties throughputProperties = _cosmosThroughputProvider.GetThroughputProperties<TItem>();
+            itemType.EnsureIsTypeOfIItem();
 
-            return new(optionType, containerName, partitionKeyPath, uniqueKeyPolicy, throughputProperties, timeToLive, sync);
+            string containerName = _containerNameProvider.GetContainerName(itemType);
+            string partitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath(itemType);
+            UniqueKeyPolicy uniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy(itemType);
+            int timeToLive = _containerDefaultTimeToLiveProvider.GetDefaultTimeToLive(itemType);
+            bool sync = _syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties(itemType);
+            ThroughputProperties throughputProperties = _cosmosThroughputProvider.GetThroughputProperties(itemType);
+
+            return new(itemType, containerName, partitionKeyPath, uniqueKeyPolicy, throughputProperties, timeToLive,
+                sync);
         }
     }
 }

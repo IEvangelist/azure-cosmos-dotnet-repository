@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.ChangeFeed;
 
 namespace Microsoft.Azure.CosmosRepository.Options
 {
@@ -22,7 +23,11 @@ namespace Microsoft.Azure.CosmosRepository.Options
 
         public bool SyncContainerProperties { get; }
 
-        public ItemOptions(Type type, string containerName, string partitionKeyPath, UniqueKeyPolicy uniqueKeyPolicy,ThroughputProperties throughputProperties, int defaultTimeToLive = -1, bool syncContainerProperties = false)
+        public ChangeFeedOptions ChangeFeedOptions { get; } = null;
+
+        public ItemOptions(Type type, string containerName, string partitionKeyPath, UniqueKeyPolicy uniqueKeyPolicy,
+            ThroughputProperties throughputProperties, int defaultTimeToLive = -1, bool syncContainerProperties = false,
+            ChangeFeedOptions changeFeedOptions = null)
         {
             Type = type;
             ContainerName = containerName;
@@ -31,6 +36,7 @@ namespace Microsoft.Azure.CosmosRepository.Options
             ThroughputProperties = throughputProperties;
             DefaultTimeToLive = defaultTimeToLive;
             SyncContainerProperties = syncContainerProperties;
+            ChangeFeedOptions = changeFeedOptions;
         }
     }
 }

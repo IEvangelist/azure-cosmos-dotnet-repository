@@ -22,15 +22,17 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         }
 
         /// <inheritdoc />
-        public string GetContainerName<TItem>() where TItem : IItem
+        public string GetContainerName<TItem>() where TItem : IItem =>
+            GetContainerName(typeof(TItem));
+
+        public string GetContainerName(Type itemType)
         {
-            Type itemType = typeof(TItem);
             Type attributeType = typeof(ContainerAttribute);
 
             Attribute attribute =
                 Attribute.GetCustomAttribute(itemType, attributeType);
 
-            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions<TItem>();
+            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions(itemType);
 
             if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.Name) is false)
             {

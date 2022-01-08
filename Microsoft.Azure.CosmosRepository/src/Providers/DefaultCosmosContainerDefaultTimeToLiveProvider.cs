@@ -21,16 +21,19 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         public DefaultCosmosContainerDefaultTimeToLiveProvider(IOptions<RepositoryOptions> options) => _options = options;
 
         /// <inheritdoc/>
-        public int GetDefaultTimeToLive<TItem>() where TItem : IItem
+        public int GetDefaultTimeToLive<TItem>() where TItem : IItem =>
+            GetDefaultTimeToLive(typeof(TItem));
+
+        public int GetDefaultTimeToLive(Type itemType)
         {
-            ContainerOptionsBuilder options = _options.Value.GetContainerOptions<TItem>();
+            ContainerOptionsBuilder options = _options.Value.GetContainerOptions(itemType);
 
             if (options is null)
             {
                 return -1;
             }
 
-            foreach (ContainerOptionsBuilder containerOptions in _options.Value.GetContainerSharedContainerOptions<TItem>())
+            foreach (ContainerOptionsBuilder containerOptions in _options.Value.GetContainerSharedContainerOptions(itemType))
             {
                 if (containerOptions.ContainerDefaultTimeToLive != null && containerOptions.ContainerDefaultTimeToLive != options.ContainerDefaultTimeToLive)
                 {
