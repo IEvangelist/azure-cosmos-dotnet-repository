@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
+using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Services;
@@ -123,7 +124,8 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
-                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
+                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
+                .AddSingleton(typeof(InMemoryChangeFeed<>));
 
             return services;
         }

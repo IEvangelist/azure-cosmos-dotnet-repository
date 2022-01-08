@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
 using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
@@ -26,6 +27,8 @@ namespace Microsoft.Azure.CosmosRepository
     {
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
+
+        internal EventHandler<ChangeFeedItemArgs<TItem>> Changes { get; set; }
 
         internal string SerializeItem(TItem item, string etag = null, long? ts = null)
         {
@@ -113,6 +116,9 @@ namespace Microsoft.Azure.CosmosRepository
             Items.TryAdd(value.Id, serialisedValue);
 
             value = DeserializeItem(Items[value.Id]);
+
+            Changes?.Invoke(this, new ChangeFeedItemArgs<TItem>(value));
+
             return value;
         }
 
