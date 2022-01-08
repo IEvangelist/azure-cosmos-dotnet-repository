@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
@@ -8,6 +9,7 @@ using Microsoft.Azure.CosmosRepository.ChangeFeed.Processors;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepository.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
@@ -15,15 +17,20 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
     internal class DefaultChangeFeedContainerProcessorProvider : IChangeFeedContainerProcessorProvider
     {
         private readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
-        private readonly ICosmosClientProvider _cosmosClientProvider;
         private readonly ICosmosContainerService _containerService;
+        private readonly ILeaseContainerProvider _leaseContainerProvider;
+        private readonly ILoggerFactory _loggerFactory;
+        private readonly IServiceProvider _serviceProvider;
 
         public DefaultChangeFeedContainerProcessorProvider(IOptionsMonitor<RepositoryOptions> optionsMonitor,
-            ICosmosClientProvider cosmosClientProvider, ICosmosContainerService containerService)
+            ICosmosContainerService containerService, ILeaseContainerProvider leaseContainerProvider,
+            ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             _optionsMonitor = optionsMonitor;
-            _cosmosClientProvider = cosmosClientProvider;
             _containerService = containerService;
+            _leaseContainerProvider = leaseContainerProvider;
+            _loggerFactory = loggerFactory;
+            _serviceProvider = serviceProvider;
         }
 
         public IEnumerable<IChangeFeedContainerProcessor> GetProcessors()
@@ -38,9 +45,9 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
 
             foreach (IGrouping<string, ContainerOptionsBuilder> container in containers)
             {
-                yield return new DefaultChangeFeedContainerProcessor(_cosmosClientProvider,
-                    _containerService,
-                    container.Select(x => x.Type).ToList());
+                yield return new DefaultChangeFeedContainerProcessor(_containerService,
+                    container.Select(x => x.Type).ToList(), _leaseContainerProvider,
+                    _loggerFactory.CreateLogger<DefaultChangeFeedContainerProcessor>(), _serviceProvider);
             }
         }
     }
