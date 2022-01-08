@@ -13,6 +13,7 @@ using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
@@ -63,14 +64,14 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
         internal async Task OnChanges(IReadOnlyCollection<JObject> changes, CancellationToken cancellationtoken,
             string containerName)
         {
-            _logger.LogDebug("Detected ({ChangesCount}) changes for container {ContainerName}", changes.Count,
-                containerName);
+            _logger.LogDebug("Detected changes for container {ContainerName} total ({ChangesCount})",
+                containerName, changes.Count);
 
             foreach (JObject change in changes)
             {
                 if (!change.TryGetValue("type", out JToken type))
                 {
-                    //TODO: _logger.LogWarning(...) here? Should this be turn on/off thing?
+                    //TODO: _logger.LogWarning(...) here? Should this be turn on/off thing? A user might not have created documents with the type field ?!
                     continue;
                 }
 
@@ -78,7 +79,10 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
 
                 if (itemType is null)
                 {
-                    //TODO: _logger.LogWarning(...) here? Should this be turn on/off thing? Or Should we do nothing?
+                    _logger.LogDebug(
+                        "No change feed processor registered for type {ItemType} in container {ContainerName}",
+                        type.Value<string>(), containerName);
+
                     continue;
                 }
 
@@ -100,6 +104,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
 
             handlerType ??= Handlers[itemType];
 
+            //TODO: Do we want to resolve more than method for the (handlerType) multiple IItemChangeFeedProcessor<TItem> to process a change?
             object response = handlerType.GetMethod("HandleAsync")?
                 .Invoke(_serviceProvider.GetRequiredService(handlerType), new[] {item, cancellationToken});
 

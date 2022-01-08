@@ -21,7 +21,7 @@ public class BookChangeFeedProcessor : IItemChangeFeedProcessor<Book>
 
     public async ValueTask HandleAsync(Book book, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Change detected for book with ID: {book.Id}");
+        _logger.LogInformation("Change detected for book with ID: {BookId}", book.Id);
 
         if (!book.HasBeenUpdated)
         {
@@ -29,8 +29,6 @@ public class BookChangeFeedProcessor : IItemChangeFeedProcessor<Book>
                 cancellationToken);
         }
 
-        _logger.LogInformation($"Processed change for book with ID: {book.Id}");
-
-        Console.WriteLine($"Processed Change for book with id {book.Id}");
+        _logger.LogInformation("Processed change for book with ID: {BookId}", book.Id);
     }
 }
