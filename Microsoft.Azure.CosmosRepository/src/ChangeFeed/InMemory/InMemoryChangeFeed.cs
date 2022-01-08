@@ -13,7 +13,12 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
         private readonly IRepository<TItem> _repository;
         private readonly IItemChangeFeedProcessor<TItem> _changeFeedProcessor;
 
-        internal InMemoryChangeFeed(IRepository<TItem> repository, IItemChangeFeedProcessor<TItem> changeFeedProcessor)
+        /// <summary>
+        /// Creates an instance of an <see cref="InMemoryRepository{TItem}"/>
+        /// </summary>
+        /// <param name="repository">The instance of an <see cref="InMemoryRepository{TItem}"/> in which listen to changes</param>
+        /// <param name="changeFeedProcessor">The processor that will be invoked when changes occur</param>
+        public InMemoryChangeFeed(IRepository<TItem> repository, IItemChangeFeedProcessor<TItem> changeFeedProcessor)
         {
             _repository = repository;
             _changeFeedProcessor = changeFeedProcessor;
@@ -31,6 +36,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
                 {
                     foreach (TItem changes in args.ItemChanges)
                     {
+                        //TODO: Again should this invoke more than one?
                         _changeFeedProcessor.HandleAsync(changes, default).AsTask().Wait();
                     }
                 };
