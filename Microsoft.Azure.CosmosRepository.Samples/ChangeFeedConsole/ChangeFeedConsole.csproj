@@ -11,4 +11,8 @@
       <ProjectReference Include="..\..\Microsoft.Azure.CosmosRepository\src\Microsoft.Azure.CosmosRepository.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    </ItemGroup>
+
 </Project>

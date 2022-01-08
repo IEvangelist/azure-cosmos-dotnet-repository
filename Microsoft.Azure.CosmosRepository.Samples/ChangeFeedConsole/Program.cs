@@ -3,9 +3,12 @@ using ChangeFeedConsole;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 IServiceCollection services = new ServiceCollection();
+ConfigurationBuilder configuration = new();
 
 void CosmosRepositoryConfiguration(RepositoryOptions options)
 {
@@ -28,7 +31,9 @@ void CosmosRepositoryConfiguration(RepositoryOptions options)
 }
 
 services.AddCosmosRepository(CosmosRepositoryConfiguration)
-    .AddCosmosRepositoryItemChangeFeedProcessors(Assembly.GetExecutingAssembly());
+    .AddCosmosRepositoryItemChangeFeedProcessors(Assembly.GetExecutingAssembly())
+    .AddSingleton<IConfiguration>(configuration.Build())
+    .AddLogging(options => options.ClearProviders().AddConsole());
 
 IServiceProvider provider = services.BuildServiceProvider();
 
@@ -37,18 +42,19 @@ IChangeFeedService changeFeedService = provider.GetRequiredService<IChangeFeedSe
 await changeFeedService.StartAsync(default);
 
 IRepository<Book> bookRepository = provider.GetRequiredService<IRepository<Book>>();
-IRepository<BookByIdReference> bookByIdReferenceRepository = provider.GetRequiredService<IRepository<BookByIdReference>>();
+IRepository<BookByIdReference> bookByIdReferenceRepository =
+    provider.GetRequiredService<IRepository<BookByIdReference>>();
 
 Book book = new("Book 1", "Mr Jones", "Tech");
 
 await bookRepository.CreateAsync(book);
 
-//Wait for the change feed to be triggered
-await Task.Delay(5000);
+Console.WriteLine("Press any key to read the book by it's ID");
+Console.ReadKey();
 
 BookByIdReference bookByIdReference = await bookByIdReferenceRepository.GetAsync(book.Id);
 
-Console.WriteLine(bookByIdReference);
+Console.WriteLine($"Book category {bookByIdReference.Category}");
 
 Console.WriteLine("Press any key to stop");
 Console.ReadKey();
