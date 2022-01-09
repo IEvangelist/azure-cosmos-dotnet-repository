@@ -22,9 +22,12 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         private readonly ILoggerFactory _loggerFactory;
         private readonly IServiceProvider _serviceProvider;
 
-        public DefaultChangeFeedContainerProcessorProvider(IOptionsMonitor<RepositoryOptions> optionsMonitor,
-            ICosmosContainerService containerService, ILeaseContainerProvider leaseContainerProvider,
-            ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
+        public DefaultChangeFeedContainerProcessorProvider(
+            IOptionsMonitor<RepositoryOptions> optionsMonitor,
+            ICosmosContainerService containerService,
+            ILeaseContainerProvider leaseContainerProvider,
+            ILoggerFactory loggerFactory,
+            IServiceProvider serviceProvider)
         {
             _optionsMonitor = optionsMonitor;
             _containerService = containerService;
