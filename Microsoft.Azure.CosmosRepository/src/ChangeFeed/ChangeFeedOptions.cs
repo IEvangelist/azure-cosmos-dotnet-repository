@@ -12,7 +12,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
     {
         internal Type ItemType { get; }
 
-
         internal ChangeFeedOptions(Type itemType)
         {
             ItemType = itemType;
