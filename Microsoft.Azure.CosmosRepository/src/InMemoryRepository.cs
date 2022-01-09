@@ -156,8 +156,8 @@ namespace Microsoft.Azure.CosmosRepository
             return value;
         }
 
-        /// <inheritdoc/>
-        public async ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default,
+        private async ValueTask<TItem> UpdateAsync(TItem value, bool raiseChanges,
+            CancellationToken cancellationToken = default,
             bool ignoreEtag = false)
         {
             await Task.CompletedTask;
@@ -173,21 +173,39 @@ namespace Microsoft.Azure.CosmosRepository
 
             Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
 
-            return DeserializeItem(Items[value.Id]);
+            TItem item = DeserializeItem(Items[value.Id]);
+
+            if (raiseChanges)
+            {
+                Changes?.Invoke(this, new ChangeFeedItemArgs<TItem>(item));
+            }
+
+            return item;
         }
 
         /// <inheritdoc/>
+        public ValueTask<TItem> UpdateAsync(TItem value,
+            CancellationToken cancellationToken = default,
+            bool ignoreEtag = false) =>
+            UpdateAsync(value, true, cancellationToken, ignoreEtag);
+
+        /// <inheritdoc/>
         public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values,
-            CancellationToken cancellationToken = default, bool ignoreEtag = false)
+            CancellationToken cancellationToken = default,
+            bool ignoreEtag = false)
         {
             IEnumerable<TItem> enumerable = values.ToList();
 
+            List<TItem> results = new();
+
             foreach (TItem value in enumerable)
             {
-                await UpdateAsync(value, cancellationToken, ignoreEtag);
+                results.Add(await UpdateAsync(value, false, cancellationToken, ignoreEtag));
             }
 
-            return enumerable;
+            Changes?.Invoke(this, new ChangeFeedItemArgs<TItem>(results));
+
+            return results;
         }
 
         /// <inheritdoc/>
@@ -228,16 +246,18 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             Items[id] = SerializeItem(item, Guid.NewGuid().ToString(), CurrentTs);
+
+            Changes?.Invoke(this , new ChangeFeedItemArgs<TItem>(DeserializeItem(Items[id])));
         }
 
         /// <inheritdoc/>
-        public ValueTask DeleteAsync(TItem value, CancellationToken cancellationToken = default)
-            => DeleteAsync(value.Id, value.PartitionKey, cancellationToken);
+        public ValueTask DeleteAsync(TItem value, CancellationToken cancellationToken = default) =>
+            DeleteAsync(value.Id, value.PartitionKey, cancellationToken);
 
         /// <inheritdoc/>
         public ValueTask DeleteAsync(string id, string partitionKeyValue = null,
-            CancellationToken cancellationToken = default)
-            => DeleteAsync(id, new PartitionKey(partitionKeyValue), cancellationToken);
+            CancellationToken cancellationToken = default) =>
+            DeleteAsync(id, new PartitionKey(partitionKeyValue), cancellationToken);
 
         /// <inheritdoc/>
         public async ValueTask DeleteAsync(string id, PartitionKey partitionKey,
