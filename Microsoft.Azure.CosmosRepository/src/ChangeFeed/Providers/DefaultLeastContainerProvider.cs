@@ -36,7 +36,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
                         client => client.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId))
                     .ConfigureAwait(false);
 
-
             Container container =
                 await database.CreateContainerIfNotExistsAsync(LeaseContainerName, LeastContainerPartitionKey).ConfigureAwait(false);
 
