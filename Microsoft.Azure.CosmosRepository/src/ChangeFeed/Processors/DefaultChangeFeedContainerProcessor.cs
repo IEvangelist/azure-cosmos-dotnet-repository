@@ -122,6 +122,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
         }
 
         public Task StopAsync() =>
-            _processor is not null ? _processor.StopAsync() : Task.CompletedTask;
+            _processor?.StopAsync() ?? Task.CompletedTask;
     }
 }
