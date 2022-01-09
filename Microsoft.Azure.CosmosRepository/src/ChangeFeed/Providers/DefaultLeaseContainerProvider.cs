@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
 {
-    class DefaultLeastContainerProvider : ILeaseContainerProvider
+    class DefaultLeaseContainerProvider : ILeaseContainerProvider
     {
         private readonly ICosmosClientProvider _cosmosClientProvider;
         private readonly Lazy<Task<Container>> _lazyContainer;
@@ -18,7 +18,8 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         private const string LeaseContainerName = "lease";
         private const string LeastContainerPartitionKey = "/id";
 
-        public DefaultLeastContainerProvider(ICosmosClientProvider cosmosClientProvider,
+        public DefaultLeaseContainerProvider(
+            ICosmosClientProvider cosmosClientProvider,
             IOptionsMonitor<RepositoryOptions> optionsMonitor)
         {
             _repositoryOptions = optionsMonitor.CurrentValue;
@@ -35,7 +36,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
                 await _cosmosClientProvider.UseClientAsync(
                         client => client.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId))
                     .ConfigureAwait(false);
-
 
             Container container =
                 await database.CreateContainerIfNotExistsAsync(LeaseContainerName, LeastContainerPartitionKey).ConfigureAwait(false);

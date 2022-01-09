@@ -13,30 +13,34 @@ using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
-namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
+namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 {
-    internal class DefaultChangeFeedContainerProcessor : IChangeFeedContainerProcessor
+    internal class DefaultContainerChangeFeedProcessor : IContainerChangeFeedProcessor
     {
         private readonly ICosmosContainerService _containerService;
         private readonly IReadOnlyList<Type> _itemTypes;
         private readonly ILeaseContainerProvider _leaseContainerProvider;
-        private readonly ILogger<DefaultChangeFeedContainerProcessor> _logger;
+        private readonly ChangeFeedOptions _changeFeedOptions;
+        private readonly ILogger<DefaultContainerChangeFeedProcessor> _logger;
         private readonly IServiceProvider _serviceProvider;
         private ChangeFeedProcessor _processor;
         private static readonly ConcurrentDictionary<Type, Type> Handlers = new();
 
-        public DefaultChangeFeedContainerProcessor(ICosmosContainerService containerService,
-            IReadOnlyList<Type> itemTypes, ILeaseContainerProvider leaseContainerProvider,
-            ILogger<DefaultChangeFeedContainerProcessor> logger,
+        public DefaultContainerChangeFeedProcessor(
+            ICosmosContainerService containerService,
+            IReadOnlyList<Type> itemTypes,
+            ILeaseContainerProvider leaseContainerProvider,
+            ChangeFeedOptions changeFeedOptions,
+            ILogger<DefaultContainerChangeFeedProcessor> logger,
             IServiceProvider serviceProvider)
         {
-            itemTypes.EnsureAllAreTypeOfIItem();
+            itemTypes.AreAllItems();
             _containerService = containerService;
             _itemTypes = itemTypes;
             _leaseContainerProvider = leaseContainerProvider;
+            _changeFeedOptions = changeFeedOptions;
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
@@ -49,7 +53,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
             _processor = itemContainer.GetChangeFeedProcessorBuilder<JObject>("cosmos-repository-pattern-processor",
                     (changes, token) => OnChanges(changes, token, itemContainer.Id))
                 .WithLeaseContainer(leaseContainer)
-                .WithInstanceName("?")
+                .WithInstanceName(_changeFeedOptions.InstanceName)
                 .WithErrorNotification((token, exception) => OnError(exception, itemContainer.Id))
                 .Build();
 
@@ -104,13 +108,29 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
 
             handlerType ??= Handlers[itemType];
 
-            //TODO: Do we want to resolve more than method for the (handlerType) multiple IItemChangeFeedProcessor<TItem> to process a change?
-            object response = handlerType.GetMethod("HandleAsync")?
-                .Invoke(_serviceProvider.GetRequiredService(handlerType), new[] {item, cancellationToken});
+            IEnumerable<object> handlers = _serviceProvider.GetServices(handlerType).ToList();
 
-            if (response is ValueTask valueTask)
+            _logger.LogDebug("Invoking IItemChangeFeedProcessor's ({ProcessorsCount}) for item type {ItemType}",
+                handlers.Count(), itemType);
+
+            foreach (object handler in handlers)
             {
-                await valueTask;
+                try
+                {
+                    object response = handlerType.GetMethod("HandleAsync")?
+                        .Invoke(handler, new[] {item, cancellationToken});
+
+                    if (response is ValueTask valueTask)
+                    {
+                        await valueTask;
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e,
+                        "Failed to handle change for item of type {ItemType} when invoking IItemChangeFeedProcessor {ProcessorTypeName}",
+                        itemType, handler.GetType().Name);
+                }
             }
         }
 
@@ -122,6 +142,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
         }
 
         public Task StopAsync() =>
-            _processor is not null ? _processor.StopAsync() : Task.CompletedTask;
+            _processor?.StopAsync() ?? Task.CompletedTask;
     }
 }

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.Processors;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed
@@ -13,11 +12,11 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
     class DefaultChangeFeedService : IChangeFeedService
     {
         private readonly IChangeFeedContainerProcessorProvider _changeFeedContainerProcessorProvider;
-        private IEnumerable<IChangeFeedContainerProcessor> _processors;
+        private IEnumerable<IContainerChangeFeedProcessor> _processors;
 
         public DefaultChangeFeedService(IChangeFeedContainerProcessorProvider changeFeedContainerProcessorProvider)
         {
-            _processors = new List<IChangeFeedContainerProcessor>();
+            _processors = new List<IContainerChangeFeedProcessor>();
             _changeFeedContainerProcessorProvider = changeFeedContainerProcessorProvider;
         }
 
@@ -29,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            foreach (IChangeFeedContainerProcessor processor in _processors)
+            foreach (IContainerChangeFeedProcessor processor in _processors)
             {
                 if (processor != null)
                 {

@@ -45,7 +45,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         private ItemOptions AddOptions(Type itemType)
         {
-            itemType.EnsureIsTypeOfIItem();
+            itemType.IsItem();
 
             string containerName = _containerNameProvider.GetContainerName(itemType);
             string partitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath(itemType);

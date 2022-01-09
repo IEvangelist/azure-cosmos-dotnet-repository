@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.Processors;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepository.Services;
@@ -21,19 +20,25 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         private readonly ILeaseContainerProvider _leaseContainerProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IChangeFeedOptionsProvider _changeFeedOptionsProvider;
 
-        public DefaultChangeFeedContainerProcessorProvider(IOptionsMonitor<RepositoryOptions> optionsMonitor,
-            ICosmosContainerService containerService, ILeaseContainerProvider leaseContainerProvider,
-            ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
+        public DefaultChangeFeedContainerProcessorProvider(
+            IOptionsMonitor<RepositoryOptions> optionsMonitor,
+            ICosmosContainerService containerService,
+            ILeaseContainerProvider leaseContainerProvider,
+            ILoggerFactory loggerFactory,
+            IServiceProvider serviceProvider,
+            IChangeFeedOptionsProvider changeFeedOptionsProvider)
         {
             _optionsMonitor = optionsMonitor;
             _containerService = containerService;
             _leaseContainerProvider = leaseContainerProvider;
             _loggerFactory = loggerFactory;
             _serviceProvider = serviceProvider;
+            _changeFeedOptionsProvider = changeFeedOptionsProvider;
         }
 
-        public IEnumerable<IChangeFeedContainerProcessor> GetProcessors()
+        public IEnumerable<IContainerChangeFeedProcessor> GetProcessors()
         {
             RepositoryOptions repositoryOptions = _optionsMonitor.CurrentValue;
 
@@ -42,12 +47,17 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
                 .Where(x => x.ChangeFeedOptions != null)
                 .GroupBy(x => x.Name);
 
-
             foreach (IGrouping<string, ContainerOptionsBuilder> container in containers)
             {
-                yield return new DefaultChangeFeedContainerProcessor(_containerService,
-                    container.Select(x => x.Type).ToList(), _leaseContainerProvider,
-                    _loggerFactory.CreateLogger<DefaultChangeFeedContainerProcessor>(), _serviceProvider);
+                List<Type> itemTypes = container.Select(x => x.Type).ToList();
+
+                yield return new DefaultContainerChangeFeedProcessor(
+                    _containerService,
+                    itemTypes,
+                    _leaseContainerProvider,
+                    _changeFeedOptionsProvider.GetOptionsForItems(itemTypes),
+                    _loggerFactory.CreateLogger<DefaultContainerChangeFeedProcessor>(),
+                    _serviceProvider);
             }
         }
     }

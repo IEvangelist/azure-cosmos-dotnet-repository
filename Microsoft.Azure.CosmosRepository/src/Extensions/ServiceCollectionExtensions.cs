@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
+using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Services;
@@ -74,7 +75,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<ICosmosThroughputProvider, DefaultCosmosThroughputProvider>()
                 .AddSingleton<IChangeFeedContainerProcessorProvider, DefaultChangeFeedContainerProcessorProvider>()
                 .AddSingleton<IChangeFeedService, DefaultChangeFeedService>()
-                .AddSingleton<ILeaseContainerProvider, DefaultLeastContainerProvider>();
+                .AddSingleton<ILeaseContainerProvider, DefaultLeaseContainerProvider>()
+                .AddSingleton<IChangeFeedOptionsProvider, DefaultChangeFeedOptionsProvider>();
 
             if (setupAction != default)
             {
@@ -90,7 +92,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services"></param>
         /// <param name="assemblies"></param>
         /// <returns></returns>
-        public static IServiceCollection AddCosmosRepositoryItemChangeFeedProcessors(this IServiceCollection services,
+        public static IServiceCollection AddCosmosRepositoryItemChangeFeedProcessors(
+            this IServiceCollection services,
             params Assembly[] assemblies)
         {
             services.Scan(scan => scan.FromAssemblies(assemblies)
@@ -123,7 +126,8 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
-                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
+                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
+                .AddSingleton(typeof(InMemoryChangeFeed<>));
 
             return services;
         }
