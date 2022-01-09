@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
@@ -16,18 +15,18 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
 {
     public class InMemoryChangeFeedTests
     {
-        private readonly TestItemProcessor _testItemProcessor;
+        private readonly TestItemChangeFeedProcessor _testItemChangeFeedProcessor;
         private readonly IRepository<TestItem> _testItemRepository;
 
         public InMemoryChangeFeedTests()
         {
             IServiceProvider provider = new ServiceCollection()
                 .AddInMemoryCosmosRepository()
-                .AddSingleton<IItemChangeFeedProcessor<TestItem>, TestItemProcessor>()
+                .AddSingleton<IItemChangeFeedProcessor<TestItem>, TestItemChangeFeedProcessor>()
                 .BuildServiceProvider();
 
             provider.GetRequiredService<InMemoryChangeFeed<TestItem>>().Setup();
-            _testItemProcessor = provider.GetRequiredService<IItemChangeFeedProcessor<TestItem>>() as TestItemProcessor;
+            _testItemChangeFeedProcessor = provider.GetRequiredService<IItemChangeFeedProcessor<TestItem>>() as TestItemChangeFeedProcessor;
             _testItemRepository = provider.GetRequiredService<IRepository<TestItem>>();
         }
 
@@ -41,7 +40,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
             await _testItemRepository.CreateAsync(item);
 
             //Assert
-            Assert.Equal(1, _testItemProcessor.InvocationCount);
+            Assert.Equal(1, _testItemChangeFeedProcessor.InvocationCount);
         }
 
         [Fact]
@@ -63,7 +62,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
             }
 
             //Assert
-            Assert.Equal(1, _testItemProcessor.InvocationCount);
+            Assert.Equal(1, _testItemChangeFeedProcessor.InvocationCount);
         }
 
         [Fact]
@@ -80,7 +79,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
             await _testItemRepository.CreateAsync(items);
 
             //Assert
-            Assert.Equal(items.Count, _testItemProcessor.InvocationCount);
+            Assert.Equal(items.Count, _testItemChangeFeedProcessor.InvocationCount);
         }
 
         [Fact]
@@ -93,7 +92,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
             await _testItemRepository.UpdateAsync(item);
 
             //Assert
-            Assert.Equal(1, _testItemProcessor.InvocationCount);
+            Assert.Equal(1, _testItemChangeFeedProcessor.InvocationCount);
         }
 
         [Fact]
@@ -108,7 +107,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
             await _testItemRepository.UpdateAsync(item);
 
             //Assert
-            Assert.Equal(2, _testItemProcessor.InvocationCount);
+            Assert.Equal(2, _testItemChangeFeedProcessor.InvocationCount);
         }
 
         [Fact]
@@ -128,7 +127,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
             await _testItemRepository.UpdateAsync(items);
 
             //Assert
-            Assert.Equal(5, _testItemProcessor.InvocationCount);
+            Assert.Equal(5, _testItemChangeFeedProcessor.InvocationCount);
         }
 
         [Fact]
@@ -143,23 +142,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
             await _testItemRepository.UpdateAsync(item.Id, builder => builder.Replace(x => x.Property, "propertyValue"));
 
             //Assert
-            Assert.Equal(2, _testItemProcessor.InvocationCount);
-            Assert.Contains(_testItemProcessor.ChangedItems, x => x.Property == "propertyValue");
+            Assert.Equal(2, _testItemChangeFeedProcessor.InvocationCount);
+            Assert.Contains(_testItemChangeFeedProcessor.ChangedItems, x => x.Property == "propertyValue");
         }
 
-    }
-
-    public class TestItemProcessor : IItemChangeFeedProcessor<TestItem>
-    {
-        public int InvocationCount { get; set; }
-
-        public List<TestItem> ChangedItems { get; } = new();
-
-        public async ValueTask HandleAsync(TestItem changedItem, CancellationToken cancellationToken)
-        {
-            await Task.CompletedTask;
-            ChangedItems.Add(changedItem);
-            InvocationCount++;
-        }
     }
 }

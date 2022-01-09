@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.Processors;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepository.Services;
@@ -36,7 +35,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
             _serviceProvider = serviceProvider;
         }
 
-        public IEnumerable<IChangeFeedContainerProcessor> GetProcessors()
+        public IEnumerable<IContainerChangeFeedProcessor> GetProcessors()
         {
             RepositoryOptions repositoryOptions = _optionsMonitor.CurrentValue;
 
@@ -47,11 +46,11 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
 
             foreach (IGrouping<string, ContainerOptionsBuilder> container in containers)
             {
-                yield return new DefaultChangeFeedContainerProcessor(
+                yield return new DefaultContainerChangeFeedProcessor(
                     _containerService,
                     container.Select(x => x.Type).ToList(),
                     _leaseContainerProvider,
-                    _loggerFactory.CreateLogger<DefaultChangeFeedContainerProcessor>(),
+                    _loggerFactory.CreateLogger<DefaultContainerChangeFeedProcessor>(),
                     _serviceProvider);
             }
         }

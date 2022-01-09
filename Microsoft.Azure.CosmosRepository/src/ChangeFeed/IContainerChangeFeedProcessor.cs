@@ -3,9 +3,9 @@
 
 using System.Threading.Tasks;
 
-namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
+namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 {
-    internal interface IChangeFeedContainerProcessor
+    internal interface IContainerChangeFeedProcessor
     {
         Task StartAsync();
 

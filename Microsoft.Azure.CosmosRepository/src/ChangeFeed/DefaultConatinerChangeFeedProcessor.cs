@@ -13,26 +13,25 @@ using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
-namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
+namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 {
-    internal class DefaultChangeFeedContainerProcessor : IChangeFeedContainerProcessor
+    internal class DefaultContainerChangeFeedProcessor : IContainerChangeFeedProcessor
     {
         private readonly ICosmosContainerService _containerService;
         private readonly IReadOnlyList<Type> _itemTypes;
         private readonly ILeaseContainerProvider _leaseContainerProvider;
-        private readonly ILogger<DefaultChangeFeedContainerProcessor> _logger;
+        private readonly ILogger<DefaultContainerChangeFeedProcessor> _logger;
         private readonly IServiceProvider _serviceProvider;
         private ChangeFeedProcessor _processor;
         private static readonly ConcurrentDictionary<Type, Type> Handlers = new();
 
-        public DefaultChangeFeedContainerProcessor(
+        public DefaultContainerChangeFeedProcessor(
             ICosmosContainerService containerService,
             IReadOnlyList<Type> itemTypes,
             ILeaseContainerProvider leaseContainerProvider,
-            ILogger<DefaultChangeFeedContainerProcessor> logger,
+            ILogger<DefaultContainerChangeFeedProcessor> logger,
             IServiceProvider serviceProvider)
         {
             itemTypes.AreAllItems();
@@ -106,13 +105,29 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
 
             handlerType ??= Handlers[itemType];
 
-            //TODO: Do we want to resolve more than method for the (handlerType) multiple IItemChangeFeedProcessor<TItem> to process a change?
-            object response = handlerType.GetMethod("HandleAsync")?
-                .Invoke(_serviceProvider.GetRequiredService(handlerType), new[] {item, cancellationToken});
+            IEnumerable<object> handlers = _serviceProvider.GetServices(handlerType).ToList();
 
-            if (response is ValueTask valueTask)
+            _logger.LogDebug("Invoking IItemChangeFeedProcessor's ({ProcessorsCount}) for item type {ItemType}",
+                handlers.Count(), itemType);
+
+            foreach (object handler in handlers)
             {
-                await valueTask;
+                try
+                {
+                    object response = handlerType.GetMethod("HandleAsync")?
+                        .Invoke(handler, new[] {item, cancellationToken});
+
+                    if (response is ValueTask valueTask)
+                    {
+                        await valueTask;
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e,
+                        "Failed to handle change for item of type {ItemType} when invoking IItemChangeFeedProcessor {ProcessorTypeName}",
+                        itemType, handler.GetType().Name);
+                }
             }
         }
 

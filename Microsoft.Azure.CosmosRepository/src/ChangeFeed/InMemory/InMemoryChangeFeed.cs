@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
 {
@@ -11,17 +12,18 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
     public class InMemoryChangeFeed<TItem> where TItem : class, IItem
     {
         private readonly IRepository<TItem> _repository;
-        private readonly IItemChangeFeedProcessor<TItem> _changeFeedProcessor;
+        private readonly IEnumerable<IItemChangeFeedProcessor<TItem>> _changeFeedProcessors;
 
         /// <summary>
         /// Creates an instance of an <see cref="InMemoryRepository{TItem}"/>
         /// </summary>
         /// <param name="repository">The instance of an <see cref="InMemoryRepository{TItem}"/> in which listen to changes</param>
-        /// <param name="changeFeedProcessor">The processor that will be invoked when changes occur</param>
-        public InMemoryChangeFeed(IRepository<TItem> repository, IItemChangeFeedProcessor<TItem> changeFeedProcessor)
+        /// <param name="changeFeedProcessors">The processor that will be invoked when changes occur</param>
+        public InMemoryChangeFeed(IRepository<TItem> repository,
+            IEnumerable<IItemChangeFeedProcessor<TItem>> changeFeedProcessors)
         {
             _repository = repository;
-            _changeFeedProcessor = changeFeedProcessor;
+            _changeFeedProcessors = changeFeedProcessors;
         }
 
         /// <summary>
@@ -36,8 +38,10 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
                 {
                     foreach (TItem changes in args.ItemChanges)
                     {
-                        //TODO: Again should this invoke more than one?
-                        _changeFeedProcessor.HandleAsync(changes, default).AsTask().Wait();
+                        foreach (IItemChangeFeedProcessor<TItem> itemChangeFeedProcessor in _changeFeedProcessors)
+                        {
+                            itemChangeFeedProcessor.HandleAsync(changes, default).AsTask().Wait();
+                        }
                     }
                 };
             }
