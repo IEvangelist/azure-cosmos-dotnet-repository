@@ -11,7 +11,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
     /// </summary>
     public interface IChangeFeedService
     {
-
         /// <summary>
         /// Starts all configured change feed processors.
         /// </summary>
