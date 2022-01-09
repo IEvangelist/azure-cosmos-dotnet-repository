@@ -47,9 +47,12 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
 
             foreach (IGrouping<string, ContainerOptionsBuilder> container in containers)
             {
-                yield return new DefaultChangeFeedContainerProcessor(_containerService,
-                    container.Select(x => x.Type).ToList(), _leaseContainerProvider,
-                    _loggerFactory.CreateLogger<DefaultChangeFeedContainerProcessor>(), _serviceProvider);
+                yield return new DefaultChangeFeedContainerProcessor(
+                    _containerService,
+                    container.Select(x => x.Type).ToList(),
+                    _leaseContainerProvider,
+                    _loggerFactory.CreateLogger<DefaultChangeFeedContainerProcessor>(),
+                    _serviceProvider);
             }
         }
     }
