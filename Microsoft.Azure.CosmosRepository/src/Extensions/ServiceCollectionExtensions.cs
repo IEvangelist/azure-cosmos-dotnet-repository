@@ -91,7 +91,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services"></param>
         /// <param name="assemblies"></param>
         /// <returns></returns>
-        public static IServiceCollection AddCosmosRepositoryItemChangeFeedProcessors(this IServiceCollection services,
+        public static IServiceCollection AddCosmosRepositoryItemChangeFeedProcessors(
+            this IServiceCollection services,
             params Assembly[] assemblies)
         {
             services.Scan(scan => scan.FromAssemblies(assemblies)
