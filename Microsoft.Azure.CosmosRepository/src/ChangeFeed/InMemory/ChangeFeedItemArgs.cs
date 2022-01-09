@@ -16,7 +16,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
 
         public ChangeFeedItemArgs(TItem item)
         {
-            ItemChanges = new[] {item};
+            ItemChanges = new[] { item };
         }
     }
 }
