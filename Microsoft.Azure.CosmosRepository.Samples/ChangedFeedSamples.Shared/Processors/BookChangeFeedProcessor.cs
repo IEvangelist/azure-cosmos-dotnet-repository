@@ -13,7 +13,8 @@ public class BookChangeFeedProcessor : IItemChangeFeedProcessor<Book>
     private readonly ILogger<BookChangeFeedProcessor> _logger;
     private readonly IRepository<BookByIdReference> _bookByIdReferenceRepository;
 
-    public BookChangeFeedProcessor(ILogger<BookChangeFeedProcessor> logger, IRepository<BookByIdReference> bookByIdReferenceRepository)
+    public BookChangeFeedProcessor(ILogger<BookChangeFeedProcessor> logger,
+        IRepository<BookByIdReference> bookByIdReferenceRepository)
     {
         _logger = logger;
         _bookByIdReferenceRepository = bookByIdReferenceRepository;
@@ -25,7 +26,8 @@ public class BookChangeFeedProcessor : IItemChangeFeedProcessor<Book>
 
         if (!book.HasBeenUpdated)
         {
-            await _bookByIdReferenceRepository.CreateAsync(new BookByIdReference(book.Id, book.Category),
+            await _bookByIdReferenceRepository
+                .CreateAsync(new BookByIdReference(book.Id, book.Category),
                 cancellationToken);
         }
 

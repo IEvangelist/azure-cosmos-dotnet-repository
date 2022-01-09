@@ -15,33 +15,34 @@ public static class BookRouteExtensions
     public static IEndpointRouteBuilder MapBookRoutes(this IEndpointRouteBuilder routes)
     {
         routes.MapPost("/api/books", CreateBook);
-
         routes.MapGet("/api/books", GetBooksForAuthor);
-
         routes.MapGet("/api/books/{id}", GetBookById);
-
         return routes;
     }
 
-    private static async Task<BookDto> CreateBook(CreateBookDto createBookDto, IRepository<Book> bookRepository)
+    private static async Task<BookDto> CreateBook(CreateBookDto createBookDto,
+        IRepository<Book> bookRepository)
     {
         Book book = createBookDto.ToBook();
-
         Book? createdBook = await bookRepository.CreateAsync(book);
 
         return createdBook.ToBookDto();
     }
 
-    private static async Task<IEnumerable<BookDto>> GetBooksForAuthor(HttpContext context, IRepository<Book> bookRepository, [FromQuery] string category)
+    private static async Task<IEnumerable<BookDto>> GetBooksForAuthor(HttpContext context,
+        IRepository<Book> bookRepository,
+        [FromQuery] string category)
     {
         IEnumerable<Book> books = await bookRepository.GetAsync(x => x.PartitionKey == category);
 
         return books.Select(x => x.ToBookDto());
     }
 
-    private static async Task<IResult> GetBookById(string id, IRepository<Book> bookRepository, IRepository<BookByIdReference> bookByIdReferenceRepository)
+    private static async Task<IResult> GetBookById(string id,
+        IRepository<Book> bookRepository,
+        IRepository<BookByIdReference> bookByIdReferenceRepository)
     {
-        string? category = null;
+        string? category;
 
         try
         {
@@ -53,7 +54,6 @@ public static class BookRouteExtensions
             Console.WriteLine(e);
             throw;
         }
-
 
         try
         {
