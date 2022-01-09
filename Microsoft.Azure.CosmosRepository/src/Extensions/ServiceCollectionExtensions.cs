@@ -75,7 +75,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<ICosmosThroughputProvider, DefaultCosmosThroughputProvider>()
                 .AddSingleton<IChangeFeedContainerProcessorProvider, DefaultChangeFeedContainerProcessorProvider>()
                 .AddSingleton<IChangeFeedService, DefaultChangeFeedService>()
-                .AddSingleton<ILeaseContainerProvider, DefaultLeastContainerProvider>();
+                .AddSingleton<ILeaseContainerProvider, DefaultLeaseContainerProvider>();
 
             if (setupAction != default)
             {

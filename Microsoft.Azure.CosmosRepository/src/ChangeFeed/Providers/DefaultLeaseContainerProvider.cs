@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
 {
-    class DefaultLeastContainerProvider : ILeaseContainerProvider
+    class DefaultLeaseContainerProvider : ILeaseContainerProvider
     {
         private readonly ICosmosClientProvider _cosmosClientProvider;
         private readonly Lazy<Task<Container>> _lazyContainer;
