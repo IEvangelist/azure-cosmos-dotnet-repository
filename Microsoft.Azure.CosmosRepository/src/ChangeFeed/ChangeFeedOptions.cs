@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 {
     /// <summary>
-    /// The options for monitoring the change feed
+    /// The options for monitoring the change feed.
     /// </summary>
     public class ChangeFeedOptions
     {
@@ -16,5 +16,13 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         {
             ItemType = itemType;
         }
+
+        /// <summary>
+        /// The instance name of the processor.
+        /// </summary>
+        public string InstanceName { get; set; } = "default";
+
+        internal bool IsTheSameAs(ChangeFeedOptions options) =>
+            options.InstanceName == InstanceName;
     }
 }

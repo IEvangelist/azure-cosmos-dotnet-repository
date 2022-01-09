@@ -24,6 +24,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
         private readonly IServiceProvider _serviceProvider;
         private readonly List<Type> _itemTypes = new() {typeof(TestItem), typeof(AnotherTestItem)};
         private readonly TestItemChangeFeedProcessor _testItemChangeFeedChangeFeedProcessor;
+        private readonly ChangeFeedOptions _changeFeedOptions = new(typeof(TestItem));
 
         public DefaultChangeFeedContainerProcessorTests()
         {
@@ -35,9 +36,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
         }
 
         private DefaultContainerChangeFeedProcessor CreateSut() =>
-            new DefaultContainerChangeFeedProcessor(_containerService.Object,
+            new(_containerService.Object,
                 _itemTypes,
                 _leaseContainerProvider.Object,
+                _changeFeedOptions,
                 new NullLogger<DefaultContainerChangeFeedProcessor>(),
                 _serviceProvider);
 

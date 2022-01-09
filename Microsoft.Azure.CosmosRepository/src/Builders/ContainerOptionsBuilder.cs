@@ -143,8 +143,9 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// <summary>
         /// Adds monitoring of the change feed for the given <see cref="IItem"/>
         /// </summary>
-        /// <param name="optionsActions">An action to configure the change feed.</param>
+        /// <param name="optionsActions">An action to configure the change feed for the given container.</param>
         /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+        /// <remarks>The options configured here are for the container, not just the <see cref="IItem"/> be aware if item's share a container they will share the same change feed options.</remarks>
         public ContainerOptionsBuilder WithChangeFeedMonitoring(Action<ChangeFeedOptions> optionsActions = null)
         {
             ChangeFeedOptions options = new(Type);

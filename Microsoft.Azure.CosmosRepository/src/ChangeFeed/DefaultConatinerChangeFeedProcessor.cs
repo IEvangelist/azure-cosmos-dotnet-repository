@@ -22,6 +22,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         private readonly ICosmosContainerService _containerService;
         private readonly IReadOnlyList<Type> _itemTypes;
         private readonly ILeaseContainerProvider _leaseContainerProvider;
+        private readonly ChangeFeedOptions _changeFeedOptions;
         private readonly ILogger<DefaultContainerChangeFeedProcessor> _logger;
         private readonly IServiceProvider _serviceProvider;
         private ChangeFeedProcessor _processor;
@@ -31,6 +32,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             ICosmosContainerService containerService,
             IReadOnlyList<Type> itemTypes,
             ILeaseContainerProvider leaseContainerProvider,
+            ChangeFeedOptions changeFeedOptions,
             ILogger<DefaultContainerChangeFeedProcessor> logger,
             IServiceProvider serviceProvider)
         {
@@ -38,6 +40,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             _containerService = containerService;
             _itemTypes = itemTypes;
             _leaseContainerProvider = leaseContainerProvider;
+            _changeFeedOptions = changeFeedOptions;
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
@@ -50,7 +53,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             _processor = itemContainer.GetChangeFeedProcessorBuilder<JObject>("cosmos-repository-pattern-processor",
                     (changes, token) => OnChanges(changes, token, itemContainer.Id))
                 .WithLeaseContainer(leaseContainer)
-                .WithInstanceName("?")
+                .WithInstanceName(_changeFeedOptions.InstanceName)
                 .WithErrorNotification((token, exception) => OnError(exception, itemContainer.Id))
                 .Build();
 
