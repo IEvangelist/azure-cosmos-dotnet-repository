@@ -20,7 +20,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
     internal class DefaultContainerChangeFeedProcessor : IContainerChangeFeedProcessor
     {
         private readonly ICosmosContainerService _containerService;
-        private readonly IReadOnlyList<Type> _itemTypes;
         private readonly ILeaseContainerProvider _leaseContainerProvider;
         private readonly ChangeFeedOptions _changeFeedOptions;
         private readonly ILogger<DefaultContainerChangeFeedProcessor> _logger;
@@ -38,16 +37,18 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         {
             itemTypes.AreAllItems();
             _containerService = containerService;
-            _itemTypes = itemTypes;
+            ItemTypes = itemTypes;
             _leaseContainerProvider = leaseContainerProvider;
             _changeFeedOptions = changeFeedOptions;
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
 
+        public IReadOnlyList<Type> ItemTypes { get; }
+
         public async Task StartAsync()
         {
-            Container itemContainer = await _containerService.GetContainerAsync(_itemTypes);
+            Container itemContainer = await _containerService.GetContainerAsync(ItemTypes);
             Container leaseContainer = await _leaseContainerProvider.GetLeaseContainerAsync();
 
             _processor = itemContainer.GetChangeFeedProcessorBuilder<JObject>("cosmos-repository-pattern-processor",
@@ -79,7 +80,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                     continue;
                 }
 
-                Type itemType = _itemTypes.FirstOrDefault(x => x.Name == type.Value<string>());
+                Type itemType = ItemTypes.FirstOrDefault(x => x.Name == type.Value<string>());
 
                 if (itemType is null)
                 {
