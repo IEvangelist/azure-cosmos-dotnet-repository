@@ -18,7 +18,8 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         private const string LeaseContainerName = "lease";
         private const string LeastContainerPartitionKey = "/id";
 
-        public DefaultLeastContainerProvider(ICosmosClientProvider cosmosClientProvider,
+        public DefaultLeaseContainerProvider(
+            ICosmosClientProvider cosmosClientProvider,
             IOptionsMonitor<RepositoryOptions> optionsMonitor)
         {
             _repositoryOptions = optionsMonitor.CurrentValue;
