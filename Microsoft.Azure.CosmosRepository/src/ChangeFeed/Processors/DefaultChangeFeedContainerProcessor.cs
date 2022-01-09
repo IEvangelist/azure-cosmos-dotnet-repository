@@ -28,8 +28,10 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
         private ChangeFeedProcessor _processor;
         private static readonly ConcurrentDictionary<Type, Type> Handlers = new();
 
-        public DefaultChangeFeedContainerProcessor(ICosmosContainerService containerService,
-            IReadOnlyList<Type> itemTypes, ILeaseContainerProvider leaseContainerProvider,
+        public DefaultChangeFeedContainerProcessor(
+            ICosmosContainerService containerService,
+            IReadOnlyList<Type> itemTypes,
+            ILeaseContainerProvider leaseContainerProvider,
             ILogger<DefaultChangeFeedContainerProcessor> logger,
             IServiceProvider serviceProvider)
         {
