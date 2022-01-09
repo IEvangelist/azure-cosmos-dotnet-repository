@@ -30,7 +30,8 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
 
             if (changeFeedOptions.All(x => x.IsTheSameAs(sample)) is false)
             {
-                throw new MissMatchedChangeFeedOptionsException($"The {nameof(ChangeFeedOptions)} for the given types are miss matched", items);
+                throw new MissMatchedChangeFeedOptionsException(
+                    $"The {nameof(ChangeFeedOptions)} for the given types are miss matched", items);
             }
 
             return sample;
