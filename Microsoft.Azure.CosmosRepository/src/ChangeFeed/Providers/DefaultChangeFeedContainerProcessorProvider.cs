@@ -42,7 +42,6 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
                 .Where(x => x.ChangeFeedOptions != null)
                 .GroupBy(x => x.Name);
 
-
             foreach (IGrouping<string, ContainerOptionsBuilder> container in containers)
             {
                 yield return new DefaultChangeFeedContainerProcessor(_containerService,
