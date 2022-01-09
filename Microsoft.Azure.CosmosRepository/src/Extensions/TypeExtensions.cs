@@ -8,18 +8,18 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
 {
     internal static class TypeExtensions
     {
-        public static void EnsureIsTypeOfIItem(this Type type)
+        public static void IsItem(this Type type)
         {
-            if(!typeof(IItem).IsAssignableFrom(type))
+            if (!typeof(IItem).IsAssignableFrom(type))
             {
                 throw new InvalidOperationException(
                     $"The type {type.FullName} does not implement {typeof(IItem).FullName}");
             }
         }
 
-        public static void EnsureAllAreTypeOfIItem(this IReadOnlyList<Type> types)
+        public static void AreAllItems(this IReadOnlyList<Type> types)
         {
-            foreach (Type type in types) type.EnsureIsTypeOfIItem();
+            foreach (Type type in types) type.IsItem();
         }
     }
 }

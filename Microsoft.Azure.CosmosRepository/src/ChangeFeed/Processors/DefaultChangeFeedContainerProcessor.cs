@@ -35,7 +35,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Processors
             ILogger<DefaultChangeFeedContainerProcessor> logger,
             IServiceProvider serviceProvider)
         {
-            itemTypes.EnsureAllAreTypeOfIItem();
+            itemTypes.AreAllItems();
             _containerService = containerService;
             _itemTypes = itemTypes;
             _leaseContainerProvider = leaseContainerProvider;
