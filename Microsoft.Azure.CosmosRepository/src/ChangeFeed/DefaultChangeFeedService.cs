@@ -23,7 +23,9 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _processors = _changeFeedContainerProcessorProvider.GetProcessors();
-            return Task.WhenAll(_processors.Select(x => x.StartAsync()));
+            return Task.WhenAll(
+                _processors.Select(
+                    x => x.StartAsync(cancellationToken)));
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
