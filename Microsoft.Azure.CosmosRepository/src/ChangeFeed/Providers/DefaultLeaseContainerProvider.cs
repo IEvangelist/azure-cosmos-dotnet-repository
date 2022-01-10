@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         public Task<Container> GetLeaseContainerAsync() =>
             _lazyContainer.Value;
 
-        private async Task<Container> BuildLeastContainer()
+        private async Task<Container> BuildLeaseContainer()
         {
             Database database =
                 await _cosmosClientProvider.UseClientAsync(
