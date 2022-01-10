@@ -22,7 +22,8 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         private readonly IServiceProvider _serviceProvider;
         private readonly IChangeFeedOptionsProvider _changeFeedOptionsProvider;
 
-        public DefaultChangeFeedContainerProcessorProvider(IOptionsMonitor<RepositoryOptions> optionsMonitor,
+        public DefaultChangeFeedContainerProcessorProvider(
+            IOptionsMonitor<RepositoryOptions> optionsMonitor,
             ICosmosContainerService containerService,
             ILeaseContainerProvider leaseContainerProvider,
             ILoggerFactory loggerFactory,
