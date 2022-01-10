@@ -39,7 +39,9 @@ IServiceProvider provider = services.BuildServiceProvider();
 
 IChangeFeedService changeFeedService = provider.GetRequiredService<IChangeFeedService>();
 
-await changeFeedService.StartAsync(default);
+CancellationTokenSource source = new();
+
+await changeFeedService.StartAsync(source.Token);
 
 IRepository<Book> bookRepository = provider.GetRequiredService<IRepository<Book>>();
 IRepository<BookByIdReference> bookByIdReferenceRepository =
@@ -59,4 +61,4 @@ Console.WriteLine($"Book category {bookByIdReference.Category}");
 Console.WriteLine("Press any key to stop");
 Console.ReadKey();
 
-await changeFeedService.StopAsync();
+source.Cancel();
