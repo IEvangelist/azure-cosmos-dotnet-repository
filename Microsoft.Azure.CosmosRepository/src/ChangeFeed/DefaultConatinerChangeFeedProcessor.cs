@@ -52,7 +52,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             Container leaseContainer = await _leaseContainerProvider.GetLeaseContainerAsync();
 
             _processor = itemContainer.GetChangeFeedProcessorBuilder<JObject>("cosmos-repository-pattern-processor",
-                    (changes, token) => OnChanges(changes, token, itemContainer.Id))
+                    (changes, token) => OnChangesAsync(changes, token, itemContainer.Id))
                 .WithLeaseContainer(leaseContainer)
                 .WithInstanceName(_changeFeedOptions.InstanceName)
                 .WithErrorNotification((token, exception) => OnError(exception, itemContainer.Id))
