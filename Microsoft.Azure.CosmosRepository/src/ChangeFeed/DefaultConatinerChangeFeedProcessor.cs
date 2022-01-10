@@ -121,25 +121,26 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             _logger.LogDebug("Invoking IItemChangeFeedProcessor's ({ProcessorsCount}) for item type {ItemType}",
                 handlers.Count(), itemType);
 
-            foreach (object handler in handlers)
-            {
-                try
+            await Task.WhenAll(
+                handlers.Select(hanlder => 
                 {
-                    object response = handlerType.GetMethod("HandleAsync")?
-                        .Invoke(handler, new[] { item, cancellationToken });
-
-                    if (response is ValueTask valueTask)
+                    try
                     {
-                        await valueTask;
+                        object response = handlerType.GetMethod("HandleAsync")?
+                            .Invoke(handler, new[] { item, cancellationToken });
+    
+                        if (response is ValueTask valueTask)
+                        {
+                            await valueTask;
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e,
-                        "Failed to handle change for item of type {ItemType} when invoking IItemChangeFeedProcessor {ProcessorTypeName}",
-                        itemType, handler.GetType().Name);
-                }
-            }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e,
+                            "Failed to handle change for item of type {ItemType} when invoking IItemChangeFeedProcessor {ProcessorTypeName}",
+                            itemType, handler.GetType().Name);
+                    }
+                }));
         }
 
         private Task OnErrorAsync(Exception exception, string containerName)
