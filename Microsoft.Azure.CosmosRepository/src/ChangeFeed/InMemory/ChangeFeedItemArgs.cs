@@ -9,14 +9,10 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
     {
         public IEnumerable<TItem> ItemChanges { get; private set; }
 
-        public ChangeFeedItemArgs(IEnumerable<TItem> itemChanges)
-        {
+        public ChangeFeedItemArgs(IEnumerable<TItem> itemChanges) =>
             ItemChanges = itemChanges;
-        }
 
-        public ChangeFeedItemArgs(TItem item)
-        {
+        public ChangeFeedItemArgs(TItem item) =>
             ItemChanges = new[] { item };
-        }
     }
 }
