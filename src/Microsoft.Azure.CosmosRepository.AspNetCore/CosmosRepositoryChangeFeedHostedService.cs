@@ -9,16 +9,14 @@ using Microsoft.Extensions.Hosting;
 namespace Microsoft.Azure.CosmosRepository.AspNetCore;
 
 /// <summary>
-/// A <see cref="BackgroundService"/> to start & stop the <see cref="IChangeFeedService"/>
+/// A <see cref="BackgroundService"/> to start and stop the <see cref="IChangeFeedService"/>
 /// </summary>
 public class CosmosRepositoryChangeFeedHostedService : BackgroundService
 {
     private readonly IChangeFeedService _changeFeedService;
 
-    internal CosmosRepositoryChangeFeedHostedService(IChangeFeedService changeFeedService)
-    {
+    internal CosmosRepositoryChangeFeedHostedService(IChangeFeedService changeFeedService) =>
         _changeFeedService = changeFeedService;
-    }
 
     /// <summary>
     /// Start's the <see cref="IChangeFeedService"/>

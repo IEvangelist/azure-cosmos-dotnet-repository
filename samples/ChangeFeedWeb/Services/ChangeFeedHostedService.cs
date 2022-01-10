@@ -18,6 +18,6 @@ public class ChangeFeedHostedService : BackgroundService
     {
         await _changeFeedService.StartAsync(stoppingToken);
 
-        stoppingToken.Register(() => _changeFeedService.StopAsync(stoppingToken).Wait(TimeSpan.FromSeconds(5)));
+        stoppingToken.Register(() => _changeFeedService.StopAsync().Wait(TimeSpan.FromSeconds(5)));
     }
 }

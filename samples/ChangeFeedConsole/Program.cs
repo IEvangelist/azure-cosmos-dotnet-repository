@@ -59,4 +59,4 @@ Console.WriteLine($"Book category {bookByIdReference.Category}");
 Console.WriteLine("Press any key to stop");
 Console.ReadKey();
 
-await changeFeedService.StopAsync(default);
+await changeFeedService.StopAsync();
