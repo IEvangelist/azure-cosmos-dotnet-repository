@@ -28,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
 
-        internal EventHandler<ChangeFeedItemArgs<TItem>> Changes { get; set; }
+        internal Action<ChangeFeedItemArgs<TItem>> Changes { get; set; }
 
         internal string SerializeItem(TItem item, string etag = null, long? ts = null)
         {
@@ -119,7 +119,7 @@ namespace Microsoft.Azure.CosmosRepository
                 results.Add(item);
             }
 
-            Changes?.Invoke(this, new ChangeFeedItemArgs<TItem>(results));
+            Changes?.Invoke(new ChangeFeedItemArgs<TItem>(results));
 
             return results;
         }
@@ -150,7 +150,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             if (raiseChanges)
             {
-                Changes?.Invoke(this, new ChangeFeedItemArgs<TItem>(value));
+                Changes?.Invoke(new ChangeFeedItemArgs<TItem>(value));
             }
 
             return value;
@@ -177,7 +177,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             if (raiseChanges)
             {
-                Changes?.Invoke(this, new ChangeFeedItemArgs<TItem>(item));
+                Changes?.Invoke(new ChangeFeedItemArgs<TItem>(item));
             }
 
             return item;
@@ -203,7 +203,7 @@ namespace Microsoft.Azure.CosmosRepository
                 results.Add(await UpdateAsync(value, false, cancellationToken, ignoreEtag));
             }
 
-            Changes?.Invoke(this, new ChangeFeedItemArgs<TItem>(results));
+            Changes?.Invoke(new ChangeFeedItemArgs<TItem>(results));
 
             return results;
         }
@@ -247,7 +247,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             Items[id] = SerializeItem(item, Guid.NewGuid().ToString(), CurrentTs);
 
-            Changes?.Invoke(this , new ChangeFeedItemArgs<TItem>(DeserializeItem(Items[id])));
+            Changes?.Invoke(new ChangeFeedItemArgs<TItem>(DeserializeItem(Items[id])));
         }
 
         /// <inheritdoc/>

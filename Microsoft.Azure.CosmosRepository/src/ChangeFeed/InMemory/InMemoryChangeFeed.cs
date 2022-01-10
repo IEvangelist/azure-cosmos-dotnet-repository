@@ -34,7 +34,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
         {
             if (_repository is InMemoryRepository<TItem> inMemoryRepository)
             {
-                inMemoryRepository.Changes += (_, args) =>
+                inMemoryRepository.Changes += (args) =>
                 {
                     foreach (TItem changes in args.ItemChanges)
                     {
