@@ -66,7 +66,9 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                 itemContainer.Id);
         }
 
-        internal async Task OnChanges(IReadOnlyCollection<JObject> changes, CancellationToken cancellationToken,
+        internal async Task OnChangesAsync(
+            IReadOnlyCollection<JObject> changes,
+            CancellationToken cancellationToken,
             string containerName)
         {
             _logger.LogDebug("Detected changes for container {ContainerName} total ({ChangesCount})",
