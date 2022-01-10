@@ -24,7 +24,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         {
             _repositoryOptions = optionsMonitor.CurrentValue;
             _cosmosClientProvider = cosmosClientProvider;
-            _lazyContainer = new Lazy<Task<Container>>(BuildLeastContainer);
+            _lazyContainer = new Lazy<Task<Container>>(BuildLeaseContainer);
         }
 
         public Task<Container> GetLeaseContainerAsync() =>
