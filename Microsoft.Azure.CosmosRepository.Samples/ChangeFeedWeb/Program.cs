@@ -3,6 +3,7 @@ using ChangedFeedSamples.Shared.Items;
 using ChangedFeedSamples.Shared.Processors;
 using ChangeFeedWeb.Routes;
 using ChangeFeedWeb.Services;
+using Microsoft.Azure.CosmosRepository.ChangeFeed;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ builder.Services.AddCosmosRepository(options =>
     });
 });
 
-builder.Services.AddCosmosRepositoryItemChangeFeedProcessorsFromAssemblyContainingType<BookChangeFeedProcessor>();
+builder.Services.AddSingleton<IItemChangeFeedProcessor<Book>, BookChangeFeedProcessor>();
 
 builder.Services.AddHostedService<ChangeFeedHostedService>();
 

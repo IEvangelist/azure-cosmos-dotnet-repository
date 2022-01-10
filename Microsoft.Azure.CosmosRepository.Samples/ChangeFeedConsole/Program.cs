@@ -1,4 +1,5 @@
 ﻿using ChangedFeedSamples.Shared.Items;
+using ChangedFeedSamples.Shared.Processors;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +33,7 @@ services.AddCosmosRepository(options =>
     });
 });
 
-services.AddCosmosRepositoryItemChangeFeedProcessors();
+services.AddSingleton<IItemChangeFeedProcessor<Book>, BookChangeFeedProcessor>();
 
 IServiceProvider provider = services.BuildServiceProvider();
 
