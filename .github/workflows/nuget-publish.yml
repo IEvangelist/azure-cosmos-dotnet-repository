@@ -41,9 +41,13 @@ jobs:
       run: |
         dotnet test --no-restore --verbosity normal
       
-    - name: Pack
+    - name: Pack Microsoft.Azure.CosmosRepository
       run: |
         dotnet pack ./src/Microsoft.Azure.CosmosRepository/Microsoft.Azure.CosmosRepository.csproj --output packages
+
+    - name: Pack Microsoft.Azure.CosmosRepository.AspNetCore
+      run: |
+        dotnet pack ./src/Microsoft.Azure.CosmosRepository.AspNetCore/Microsoft.Azure.CosmosRepository.AspNetCore.csproj --output packages
       
     - name: Publish Package
       run: |
