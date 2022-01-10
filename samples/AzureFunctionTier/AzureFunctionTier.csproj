@@ -8,7 +8,6 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.11" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Azure.CosmosRepository\src\Microsoft.Azure.CosmosRepository.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj" />
   </ItemGroup>
   <ItemGroup>
