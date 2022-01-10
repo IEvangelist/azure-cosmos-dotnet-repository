@@ -34,7 +34,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             {
                 if (processor is not null)
                 {
-                    await processor.StopAsync();
+                    await processor.StopAsync(cancellationToken);
                 }
             }
         }
