@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Company>Microsoft Corporation</Company>
+        <Product>IEvangelist Azure Cosmos Repository</Product>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Description>This client library enables client applications to connect to Azure Cosmos via a repository pattern around the official Azure Cosmos .NET SDK. Azure Cosmos is a globally distributed, multi-model database service. For more information, refer to http://azure.microsoft.com/services/cosmos-db/. </Description>
+        <Copyright>Copyright © IEvangelist. All rights reserved. Licensed under the MIT License.</Copyright>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd))</CurrentDate>
+        <ClientVersion Condition=" '$(IsPreview)' != 'true' ">$(ClientOfficialVersion)</ClientVersion>
+        <ClientVersion Condition=" '$(IsPreview)' == 'true' ">$(ClientPreviewVersion)</ClientVersion>
+        <VersionSuffix Condition=" '$(IsNightly)' == 'true' ">nightly-$(CurrentDate)</VersionSuffix>
+        <VersionSuffix Condition=" '$(IsPreview)' == 'true' ">preview</VersionSuffix>
+        <Version Condition=" '$(VersionSuffix)' == '' ">$(ClientVersion)</Version>
+        <Version Condition=" '$(VersionSuffix)' != '' ">$(ClientVersion)-$(VersionSuffix)</Version>
+        <FileVersion>$(ClientVersion)</FileVersion>
+        <Authors>IEvangelist,Mumby0168</Authors>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <AssemblyName>Microsoft.Azure.CosmosRepository</AssemblyName>
+        <Title>IEvangelist Azure Cosmos DB Repository Client library</Title>
+        <PackageId>IEvangelist.Azure.CosmosRepository.AspNetCore</PackageId>
+        <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureofficial;dotnetcore;netcore;netstandard</PackageTags>
+        <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
+        <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <ShippingScope>External</ShippingScope>
+        <SigningType>Product</SigningType>
+        <DebugType>portable</DebugType>
+        <IncludeSymbols>false</IncludeSymbols>
+        <IncludeSource>false</IncludeSource>
+        <RootNamespace>Microsoft.Azure.CosmosRepository.AspNetCore</RootNamespace>
+        <NoWarn>NU5125</NoWarn>
+        <Optimize Condition="'$(Configuration)'=='Release'">true</Optimize>
+        <RepositoryUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</RepositoryUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.22" />
+        <PackageReference Include="MinVer" Version="2.5.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Scrutor" Version="3.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
