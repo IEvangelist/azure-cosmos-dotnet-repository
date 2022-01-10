@@ -12,6 +12,10 @@ using System.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
+using System.Reflection;
+using Microsoft.Azure.CosmosRepository.ChangeFeed;
+using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
+using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Services;
 using Microsoft.Azure.CosmosRepository.Validators;
@@ -43,30 +47,36 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddOptions<RepositoryOptions>()
-                    .Configure<IConfiguration>(
-                (settings, configuration) =>
-                    configuration.GetSection(nameof(RepositoryOptions)).Bind(settings));
+                .Configure<IConfiguration>(
+                    (settings, configuration) =>
+                        configuration.GetSection(nameof(RepositoryOptions)).Bind(settings));
 
             services.AddLogging()
-                    .AddHttpClient()
-                    .AddSingleton(new CosmosClientOptionsManipulator(additionSetupAction))
-                    .AddSingleton<ICosmosClientOptionsProvider, DefaultCosmosClientOptionsProvider>()
-                    .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
-                    .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
-                    .AddSingleton<ICosmosPartitionKeyPathProvider, DefaultCosmosPartitionKeyPathProvider>()
-                    .AddSingleton<ICosmosContainerNameProvider, DefaultCosmosContainerNameProvider>()
-                    .AddSingleton<ICosmosUniqueKeyPolicyProvider, DefaultCosmosUniqueKeyPolicyProvider>()
-                    .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
-                    .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
-                    .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>()
-                    .AddSingleton<ICosmosQueryableProcessor, DefaultCosmosQueryableProcessor>()
-                    .AddSingleton<IRepositoryExpressionProvider, DefaultRepositoryExpressionProvider>()
-                    .AddSingleton<IRepositoryOptionsValidator, DefaultRepositoryOptionsValidator>()
-                    .AddSingleton<ICosmosContainerDefaultTimeToLiveProvider, DefaultCosmosContainerDefaultTimeToLiveProvider>()
-                    .AddSingleton<ICosmosContainerSyncContainerPropertiesProvider, DefaultContainerSyncContainerPropertiesProvider>()
-                    .AddSingleton<ICosmosContainerService, DefaultCosmosContainerService>()
-                    .AddSingleton<ICosmosContainerSyncService, DefaultCosmosContainerSyncService>()
-                    .AddSingleton<ICosmosThroughputProvider, DefaultCosmosThroughputProvider>();
+                .AddHttpClient()
+                .AddSingleton(new CosmosClientOptionsManipulator(additionSetupAction))
+                .AddSingleton<ICosmosClientOptionsProvider, DefaultCosmosClientOptionsProvider>()
+                .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
+                .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
+                .AddSingleton<ICosmosPartitionKeyPathProvider, DefaultCosmosPartitionKeyPathProvider>()
+                .AddSingleton<ICosmosContainerNameProvider, DefaultCosmosContainerNameProvider>()
+                .AddSingleton<ICosmosUniqueKeyPolicyProvider, DefaultCosmosUniqueKeyPolicyProvider>()
+                .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
+                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
+                .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>()
+                .AddSingleton<ICosmosQueryableProcessor, DefaultCosmosQueryableProcessor>()
+                .AddSingleton<IRepositoryExpressionProvider, DefaultRepositoryExpressionProvider>()
+                .AddSingleton<IRepositoryOptionsValidator, DefaultRepositoryOptionsValidator>()
+                .AddSingleton<ICosmosContainerDefaultTimeToLiveProvider,
+                    DefaultCosmosContainerDefaultTimeToLiveProvider>()
+                .AddSingleton<ICosmosContainerSyncContainerPropertiesProvider,
+                    DefaultContainerSyncContainerPropertiesProvider>()
+                .AddSingleton<ICosmosContainerService, DefaultCosmosContainerService>()
+                .AddSingleton<ICosmosContainerSyncService, DefaultCosmosContainerSyncService>()
+                .AddSingleton<ICosmosThroughputProvider, DefaultCosmosThroughputProvider>()
+                .AddSingleton<IChangeFeedContainerProcessorProvider, DefaultChangeFeedContainerProcessorProvider>()
+                .AddSingleton<IChangeFeedService, DefaultChangeFeedService>()
+                .AddSingleton<ILeaseContainerProvider, DefaultLeaseContainerProvider>()
+                .AddSingleton<IChangeFeedOptionsProvider, DefaultChangeFeedOptionsProvider>();
 
             if (setupAction != default)
             {
@@ -90,7 +100,8 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
-                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>();
+                .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
+                .AddSingleton(typeof(InMemoryChangeFeed<>));
 
             return services;
         }

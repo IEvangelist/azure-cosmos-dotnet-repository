@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using Microsoft.Azure.CosmosRepository.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
@@ -11,5 +12,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     interface ICosmosItemConfigurationProvider
     {
         ItemOptions GetOptions<TItem>() where TItem : IItem;
+
+        ItemOptions GetOptions(Type itemType);
     }
 }

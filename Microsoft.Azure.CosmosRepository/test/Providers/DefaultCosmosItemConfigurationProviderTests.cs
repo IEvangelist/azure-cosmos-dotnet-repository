@@ -33,12 +33,12 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             UniqueKeyPolicy uniqueKeyPolicy = new();
             ThroughputProperties throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(400);
 
-            _containerNameProvider.Setup(o => o.GetContainerName<Item1>()).Returns("a");
-            _partitionKeyPathProvider.Setup(o => o.GetPartitionKeyPath<Item1>()).Returns("/id");
-            _uniqueKeyPolicyProvider.Setup(o => o.GetUniqueKeyPolicy<Item1>()).Returns(uniqueKeyPolicy);
-            _defaultTimeToLiveProvider.Setup(o => o.GetDefaultTimeToLive<Item1>()).Returns(10);
-            _syncContainerPropertiesProvider.Setup(o => o.GetWhetherToSyncContainerProperties<Item1>()).Returns(true);
-            _throughputProvider.Setup(o => o.GetThroughputProperties<Item1>()).Returns(throughputProperties);
+            _containerNameProvider.Setup(o => o.GetContainerName(typeof(Item1))).Returns("a");
+            _partitionKeyPathProvider.Setup(o => o.GetPartitionKeyPath(typeof(Item1))).Returns("/id");
+            _uniqueKeyPolicyProvider.Setup(o => o.GetUniqueKeyPolicy(typeof(Item1))).Returns(uniqueKeyPolicy);
+            _defaultTimeToLiveProvider.Setup(o => o.GetDefaultTimeToLive(typeof(Item1))).Returns(10);
+            _syncContainerPropertiesProvider.Setup(o => o.GetWhetherToSyncContainerProperties(typeof(Item1))).Returns(true);
+            _throughputProvider.Setup(o => o.GetThroughputProperties(typeof(Item1))).Returns(throughputProperties);
 
             ItemOptions options = provider.GetOptions<Item1>();
 

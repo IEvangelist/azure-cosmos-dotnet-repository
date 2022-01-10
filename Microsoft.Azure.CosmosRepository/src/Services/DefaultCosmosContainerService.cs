@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Options;
@@ -33,11 +34,15 @@ namespace Microsoft.Azure.CosmosRepository.Services
             _logger = logger;
             _options = options?.Value;
         }
-        public async Task<Container> GetContainerAsync<TItem>(bool forceContainerSync = false) where TItem : IItem
+
+        public Task<Container> GetContainerAsync<TItem>(bool forceContainerSync = false) where TItem : IItem =>
+            GetContainerAsync(typeof(TItem), forceContainerSync);
+
+        private async Task<Container> GetContainerAsync(Type itemType, bool forceContainerSync = false)
         {
             try
             {
-                ItemOptions itemOptions = _cosmosItemConfigurationProvider.GetOptions<TItem>();
+                ItemOptions itemOptions = _cosmosItemConfigurationProvider.GetOptions(itemType);
 
                 Database database =
                     await _cosmosClientProvider.UseClientAsync(
@@ -77,6 +82,24 @@ namespace Microsoft.Azure.CosmosRepository.Services
                 _logger.LogError(ex, "Failed to get container with error {GetContainerError}", ex.Message);
                 throw;
             }
+        }
+
+        public Task<Container> GetContainerAsync(IReadOnlyList<Type> itemTypes)
+        {
+            if (itemTypes.Any() is false)
+            {
+                throw new InvalidOperationException("You must provided at least one item type to get a container for");
+            }
+
+            string containerName = _cosmosItemConfigurationProvider.GetOptions(itemTypes.First()).ContainerName;
+
+            if(itemTypes.Select(x => _cosmosItemConfigurationProvider.GetOptions(x)).All(x => x.ContainerName == containerName))
+            {
+                return GetContainerAsync(itemTypes.First());
+            }
+
+            throw new InvalidOperationException(
+                "The item types provided are not all configured to use the same container");
         }
     }
 }

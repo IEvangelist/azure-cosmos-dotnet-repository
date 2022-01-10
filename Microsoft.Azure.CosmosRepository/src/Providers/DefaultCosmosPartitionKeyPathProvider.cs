@@ -22,12 +22,14 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         }
 
         /// <inheritdoc />
-        public string GetPartitionKeyPath<TItem>() where TItem : IItem
+        public string GetPartitionKeyPath<TItem>() where TItem : IItem =>
+            GetPartitionKeyPath(typeof(TItem));
+
+        public string GetPartitionKeyPath(Type itemType)
         {
-            Type itemType = typeof(TItem);
             Type attributeType = typeof(PartitionKeyPathAttribute);
 
-            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions<TItem>();
+            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions(itemType);
 
             if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
             {

@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Linq;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Options;
@@ -15,7 +16,10 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         public DefaultContainerSyncContainerPropertiesProvider(IOptions<RepositoryOptions> options) => _options = options;
 
         /// <inheritdoc />
-        public bool GetWhetherToSyncContainerProperties<TItem>() where TItem : IItem
+        public bool GetWhetherToSyncContainerProperties<TItem>() where TItem : IItem =>
+            GetWhetherToSyncContainerProperties(typeof(TItem));
+
+        public bool GetWhetherToSyncContainerProperties(Type itemType)
         {
             RepositoryOptions repositoryOptions = _options.Value;
 
@@ -24,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                 return true;
             }
 
-            return repositoryOptions.GetContainerOptions<TItem>()?.SyncContainerProperties ?? false;
+            return repositoryOptions.GetContainerOptions(itemType)?.SyncContainerProperties ?? false;
         }
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.ChangeFeed;
 
 namespace Microsoft.Azure.CosmosRepository.Builders
 {
@@ -49,6 +50,8 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// </summary>
         /// <remarks>By default this uses a manual throughput reserved at 400 RU/s in line with the Cosmos SDK.</remarks>
         internal ThroughputProperties ThroughputProperties { get; private set; } = ThroughputProperties.CreateManualThroughput(400);
+
+        internal ChangeFeedOptions ChangeFeedOptions { get; private set; } = null;
 
         /// <summary>
         /// Sets the <see cref="ContainerDefaultTimeToLive"/> for a container.
@@ -134,6 +137,23 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             }
 
             ThroughputProperties = ThroughputProperties.CreateAutoscaleThroughput(maxAutoScaleThroughput);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds monitoring of the change feed for the given <see cref="IItem"/>
+        /// </summary>
+        /// <param name="optionsActions">An action to configure the change feed for the given container.</param>
+        /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+        /// <remarks>The options configured here are for the container, not just the <see cref="IItem"/> be aware if item's share a container they will share the same change feed options.</remarks>
+        public ContainerOptionsBuilder WithChangeFeedMonitoring(Action<ChangeFeedOptions> optionsActions = null)
+        {
+            ChangeFeedOptions options = new(Type);
+
+            optionsActions?.Invoke(options);
+
+            ChangeFeedOptions = options;
+
             return this;
         }
     }

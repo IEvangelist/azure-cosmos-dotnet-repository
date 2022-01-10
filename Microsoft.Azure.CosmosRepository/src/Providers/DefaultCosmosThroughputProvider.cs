@@ -18,16 +18,19 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             _options = options;
 
         /// <inheritdoc/>
-        public ThroughputProperties GetThroughputProperties<TItem>() where TItem : IItem
+        public ThroughputProperties GetThroughputProperties<TItem>() where TItem : IItem =>
+            GetThroughputProperties(typeof(TItem));
+
+        public ThroughputProperties GetThroughputProperties(Type itemType)
         {
-            ContainerOptionsBuilder currentItemsOptions = _options.Value.GetContainerOptions<TItem>();
+            ContainerOptionsBuilder currentItemsOptions = _options.Value.GetContainerOptions(itemType);
 
             if (currentItemsOptions is null)
             {
                 return ThroughputProperties.CreateManualThroughput(400);
             }
 
-            foreach (ContainerOptionsBuilder option in _options.Value.GetContainerSharedContainerOptions<TItem>())
+            foreach (ContainerOptionsBuilder option in _options.Value.GetContainerSharedContainerOptions(itemType))
             {
                 if (currentItemsOptions.ThroughputProperties.Throughput != null &&
                     option.ThroughputProperties.Throughput != currentItemsOptions.ThroughputProperties.Throughput)

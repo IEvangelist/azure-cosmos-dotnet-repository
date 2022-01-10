@@ -58,7 +58,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 
             ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/id", new(), ThroughputProperties.CreateManualThroughput(400));
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions(typeof(TestItemWithEtag))).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 
             ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400) ,5);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions(typeof(TestItemWithEtag))).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 
             ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions(typeof(TestItemWithEtag))).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -160,7 +160,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 
             ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, false);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions(typeof(TestItemWithEtag))).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -193,7 +193,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 
             ItemOptions itemOptions = new (typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(itemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions(typeof(TestItemWithEtag))).Returns(itemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -231,8 +231,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Services
 
             ItemOptions anotherTestItemOptions = new (typeof(AnotherTestItem), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400),5, true);
 
-            _itemConfigurationProvider.Setup(o => o.GetOptions<TestItemWithEtag>()).Returns(testItemOptions);
-            _itemConfigurationProvider.Setup(o => o.GetOptions<AnotherTestItem>()).Returns(anotherTestItemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions(typeof(TestItemWithEtag))).Returns(testItemOptions);
+            _itemConfigurationProvider.Setup(o => o.GetOptions(typeof(AnotherTestItem))).Returns(anotherTestItemOptions);
 
             _cosmosClient.Setup(o =>
                     o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))

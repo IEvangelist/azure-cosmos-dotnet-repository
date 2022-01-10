@@ -1,6 +1,7 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Azure.Core;
@@ -112,7 +113,10 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <typeparam name="TItem"></typeparam>
         /// <returns>null or <see cref="ContainerOptionsBuilder"/>.</returns>
         internal ContainerOptionsBuilder GetContainerOptions<TItem>() where TItem : IItem =>
-            ContainerOptions.FirstOrDefault(co => co.Type == typeof(TItem));
+            GetContainerOptions(typeof(TItem));
+
+        internal ContainerOptionsBuilder GetContainerOptions(Type itemType) =>
+            ContainerOptions.FirstOrDefault(co => co.Type == itemType);
 
         /// <summary>
         /// Gets container options for <see cref="IItem"/>s that share the same container.
@@ -122,6 +126,12 @@ namespace Microsoft.Azure.CosmosRepository.Options
         internal IEnumerable<ContainerOptionsBuilder> GetContainerSharedContainerOptions<TItem>() where TItem : IItem
         {
             ContainerOptionsBuilder containerOptionsBuilder = GetContainerOptions<TItem>();
+            return containerOptionsBuilder is not null ? ContainerOptions.Where(co => co.Name == containerOptionsBuilder.Name) : new List<ContainerOptionsBuilder>();
+        }
+
+        internal IEnumerable<ContainerOptionsBuilder> GetContainerSharedContainerOptions(Type itemType)
+        {
+            ContainerOptionsBuilder containerOptionsBuilder = GetContainerOptions(itemType);
             return containerOptionsBuilder is not null ? ContainerOptions.Where(co => co.Name == containerOptionsBuilder.Name) : new List<ContainerOptionsBuilder>();
         }
     }

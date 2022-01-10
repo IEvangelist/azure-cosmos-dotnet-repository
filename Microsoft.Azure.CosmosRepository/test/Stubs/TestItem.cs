@@ -10,5 +10,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Stubs
 {
     public class TestItem : FullItem
     {
+        public string Property { get; set; } = default!;
     }
 }
