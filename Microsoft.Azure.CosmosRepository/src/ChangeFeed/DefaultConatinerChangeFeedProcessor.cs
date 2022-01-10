@@ -124,7 +124,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                 try
                 {
                     object response = handlerType.GetMethod("HandleAsync")?
-                        .Invoke(handler, new[] {item, cancellationToken});
+                        .Invoke(handler, new[] { item, cancellationToken });
 
                     if (response is ValueTask valueTask)
                     {
