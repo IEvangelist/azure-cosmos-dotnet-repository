@@ -97,7 +97,10 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             }
         }
 
-        private async Task InvokeHandler(Type itemType, JObject instance, CancellationToken cancellationToken)
+        private async Task InvokeHandlerAsync(
+            Type itemType,
+            JObject instance,
+            CancellationToken cancellationToken)
         {
             object item = instance.ToObject(itemType);
 
