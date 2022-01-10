@@ -32,7 +32,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         {
             foreach (IContainerChangeFeedProcessor processor in _processors)
             {
-                if (processor != null)
+                if (processor is not null)
                 {
                     await processor.StopAsync();
                 }
