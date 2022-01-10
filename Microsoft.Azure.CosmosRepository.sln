@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30323.103
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepository", "Microsoft.Azure.CosmosRepository\src\Microsoft.Azure.CosmosRepository.csproj", "{82E2D15C-7E53-4B77-A90A-9BADF185D564}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepository", "src\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj", "{82E2D15C-7E53-4B77-A90A-9BADF185D564}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C0FBFA4F-43FF-4E65-AB29-44BDE556210A}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,31 +20,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTier", "Microsoft.Azure.CosmosRepository.Samples\ServiceTier\ServiceTier.csproj", "{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTier", "samples\ServiceTier\ServiceTier.csproj", "{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepositoryTests", "Microsoft.Azure.CosmosRepository\test\Microsoft.Azure.CosmosRepositoryTests.csproj", "{6287493F-E0CF-4F16-BF06-EA3AB501FA38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepositoryTests", "tests\Microsoft.Azure.CosmosRepositoryTests\Microsoft.Azure.CosmosRepositoryTests.csproj", "{6287493F-E0CF-4F16-BF06-EA3AB501FA38}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTier", "Microsoft.Azure.CosmosRepository.Samples\WebTier\WebTier.csproj", "{11385AFD-CEA1-47EB-847A-D29D2F929F74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTier", "samples\WebTier\WebTier.csproj", "{11385AFD-CEA1-47EB-847A-D29D2F929F74}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctionTier", "Microsoft.Azure.CosmosRepository.Samples\AzureFunctionTier\AzureFunctionTier.csproj", "{FD8C66BD-D45F-4D99-891B-0C490E2A8072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctionTier", "samples\AzureFunctionTier\AzureFunctionTier.csproj", "{FD8C66BD-D45F-4D99-891B-0C490E2A8072}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryWebTier", "Microsoft.Azure.CosmosRepository.Samples\InMemoryWebTier\InMemoryWebTier.csproj", "{1AED0820-CE1C-42F1-A1C1-44BCFEDB2AE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryWebTier", "samples\InMemoryWebTier\InMemoryWebTier.csproj", "{1AED0820-CE1C-42F1-A1C1-44BCFEDB2AE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTier.Integration.Tests", "Microsoft.Azure.CosmosRepository.Samples\WebTier.Integration.Tests\WebTier.Integration.Tests.csproj", "{DA869F40-C51B-47C8-A277-823CF2EB9F55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTier.Integration.Tests", "samples\WebTier.Integration.Tests\WebTier.Integration.Tests.csproj", "{DA869F40-C51B-47C8-A277-823CF2EB9F55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paging", "Microsoft.Azure.CosmosRepository.Samples\Paging\Paging.csproj", "{5AE38FCC-1FB7-479C-B672-8CC45095B5E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paging", "samples\Paging\Paging.csproj", "{5AE38FCC-1FB7-479C-B672-8CC45095B5E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptimisticConcurrencyControl", "Microsoft.Azure.CosmosRepository.Samples\OptimisticConcurrencyControl\OptimisticConcurrencyControl.csproj", "{ED06D554-7B62-4588-A61A-D4E855547DF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptimisticConcurrencyControl", "samples\OptimisticConcurrencyControl\OptimisticConcurrencyControl.csproj", "{ED06D554-7B62-4588-A61A-D4E855547DF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeFeedConsole", "Microsoft.Azure.CosmosRepository.Samples\ChangeFeedConsole\ChangeFeedConsole.csproj", "{C09F2BE0-1E3C-445A-886E-FBF806D0C9BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeFeedConsole", "samples\ChangeFeedConsole\ChangeFeedConsole.csproj", "{C09F2BE0-1E3C-445A-886E-FBF806D0C9BB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ChangeFeed", "ChangeFeed", "{9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangedFeedSamples.Shared", "Microsoft.Azure.CosmosRepository.Samples\ChangedFeedSamples.Shared\ChangedFeedSamples.Shared.csproj", "{9BB9074A-9478-41A3-A108-5E5775DB8353}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangedFeedSamples.Shared", "samples\ChangedFeedSamples.Shared\ChangedFeedSamples.Shared.csproj", "{9BB9074A-9478-41A3-A108-5E5775DB8353}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeFeedWeb", "Microsoft.Azure.CosmosRepository.Samples\ChangeFeedWeb\ChangeFeedWeb.csproj", "{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeFeedWeb", "samples\ChangeFeedWeb\ChangeFeedWeb.csproj", "{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

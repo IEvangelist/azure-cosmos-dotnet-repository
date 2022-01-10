@@ -43,7 +43,7 @@ jobs:
       
     - name: Pack
       run: |
-        dotnet pack ./Microsoft.Azure.CosmosRepository/src/Microsoft.Azure.CosmosRepository.csproj --output packages
+        dotnet pack ./src/Microsoft.Azure.CosmosRepository/Microsoft.Azure.CosmosRepository.csproj --output packages
       
     - name: Publish Package
       run: |
