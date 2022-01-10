@@ -93,7 +93,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                     continue;
                 }
 
-                await InvokeHandler(itemType, change, cancellationToken);
+                await InvokeHandlerAsync(itemType, change, cancellationToken);
             }
         }
 
