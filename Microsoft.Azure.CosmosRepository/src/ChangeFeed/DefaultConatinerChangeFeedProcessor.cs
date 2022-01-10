@@ -55,7 +55,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                     (changes, token) => OnChangesAsync(changes, token, itemContainer.Id))
                 .WithLeaseContainer(leaseContainer)
                 .WithInstanceName(_changeFeedOptions.InstanceName)
-                .WithErrorNotification((token, exception) => OnError(exception, itemContainer.Id))
+                .WithErrorNotification((token, exception) => OnErrorAsync(exception, itemContainer.Id))
                 .Build();
 
             _logger.LogInformation("Starting change feed processor for container {ContainerName}", itemContainer.Id);
