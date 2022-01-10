@@ -140,7 +140,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             }
         }
 
-        private Task OnError(Exception exception, string containerName)
+        private Task OnErrorAsync(Exception exception, string containerName)
         {
             _logger.LogError(exception, "Failed handling when handling changes detected from container {ContainerName}",
                 containerName);
