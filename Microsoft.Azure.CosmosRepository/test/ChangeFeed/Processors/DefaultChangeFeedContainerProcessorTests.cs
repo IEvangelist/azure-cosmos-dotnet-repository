@@ -54,7 +54,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
             List<JObject> changes = new() {JObject.FromObject(item)};
 
             //Act
-            await sut.OnChanges(changes, default, "test");
+            await sut.OnChangesAsync(changes, default, "test");
 
             //Assert
             Assert.Equal(1, _testItemChangeFeedChangeFeedProcessor.InvocationCount);
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
             List<JObject> changes = new() {JObject.FromObject(new {type = "IAmNotSetup"})};
 
             //Act
-            await sut.OnChanges(changes, default, "test");
+            await sut.OnChangesAsync(changes, default, "test");
 
             //Assert
             Assert.Equal(0, _testItemChangeFeedChangeFeedProcessor.InvocationCount);
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
             List<JObject> changes = new() {JObject.FromObject(new {id = "a"})};
 
             //Act
-            await sut.OnChanges(changes, default, "test");
+            await sut.OnChangesAsync(changes, default, "test");
 
             //Assert
             Assert.Equal(0, _testItemChangeFeedChangeFeedProcessor.InvocationCount);

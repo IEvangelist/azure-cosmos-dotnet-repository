@@ -46,7 +46,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 
         public IReadOnlyList<Type> ItemTypes { get; }
 
-        public async Task StartAsync()
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             Container itemContainer = await _containerService.GetContainerAsync(ItemTypes);
             Container leaseContainer = await _leaseContainerProvider.GetLeaseContainerAsync();
@@ -57,6 +57,8 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                 .WithInstanceName(_changeFeedOptions.InstanceName)
                 .WithErrorNotification((token, exception) => OnErrorAsync(exception, itemContainer.Id))
                 .Build();
+
+            cancellationToken.Register(() => StopAsync(cancellationToken));
 
             _logger.LogInformation("Starting change feed processor for container {ContainerName}", itemContainer.Id);
 
@@ -147,7 +149,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             return Task.CompletedTask;
         }
 
-        public Task StopAsync() =>
+        public Task StopAsync(CancellationToken cancellationToken = default) =>
             _processor?.StopAsync() ?? Task.CompletedTask;
     }
 }
