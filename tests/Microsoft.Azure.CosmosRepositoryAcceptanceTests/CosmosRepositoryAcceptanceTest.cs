@@ -20,7 +20,8 @@ public abstract class CosmosRepositoryAcceptanceTest
     protected readonly IRepository<Product> _productsRepository;
     protected readonly IRepository<Rating> _ratingsRepository;
 
-    protected EquivalencyAssertionOptions<Product> DefaultProductEquivalencyOptions(EquivalencyAssertionOptions<Product> options)
+    protected EquivalencyAssertionOptions<Product> DefaultProductEquivalencyOptions(
+        EquivalencyAssertionOptions<Product> options)
     {
         options.Excluding(x => x.Etag);
         options.Excluding(x => x.CreatedTimeUtc);
