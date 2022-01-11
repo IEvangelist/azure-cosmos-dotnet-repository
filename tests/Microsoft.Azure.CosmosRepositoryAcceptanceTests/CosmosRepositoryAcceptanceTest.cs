@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics;
 using FluentAssertions.Equivalency;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
@@ -36,7 +37,7 @@ public abstract class CosmosRepositoryAcceptanceTest
     protected CosmosRepositoryAcceptanceTest(Action<RepositoryOptions> builderOptions)
     {
         ConfigurationBuilder config = new();
-        config.AddEnvironmentVariables();
+        config.AddUserSecrets<CosmosRepositoryAcceptanceTest>();
 
         ServiceCollection services = new();
         services.AddSingleton<IConfiguration>(config.Build());
