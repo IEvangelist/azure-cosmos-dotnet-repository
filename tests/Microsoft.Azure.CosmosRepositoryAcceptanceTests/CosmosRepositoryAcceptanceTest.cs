@@ -8,9 +8,11 @@ using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Trait("Category", "Acceptance")]
 public abstract class CosmosRepositoryAcceptanceTest
 {
     private const string ProductsInfoContainer = "products-info";
