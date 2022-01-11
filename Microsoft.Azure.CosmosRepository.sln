@@ -46,6 +46,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangedFeedSamples.Shared",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeFeedWeb", "samples\ChangeFeedWeb\ChangeFeedWeb.csproj", "{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepository.AspNetCore", "src\Microsoft.Azure.CosmosRepository.AspNetCore\Microsoft.Azure.CosmosRepository.AspNetCore.csproj", "{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepository.AspNetCoreTests", "tests\Microsoft.Azure.CosmosRepository.AspNetCoreTests\Microsoft.Azure.CosmosRepository.AspNetCoreTests.csproj", "{CDF603BA-5474-45E9-BBA1-2D33CAD12062}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepositoryAcceptanceTests", "tests\Microsoft.Azure.CosmosRepositoryAcceptanceTests\Microsoft.Azure.CosmosRepositoryAcceptanceTests.csproj", "{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}"
 EndProject
 Global
@@ -102,10 +106,6 @@ Global
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

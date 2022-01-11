@@ -10,9 +10,9 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 {
     internal interface IContainerChangeFeedProcessor
     {
-        Task StartAsync(CancellationToken cancellationToken);
+        Task StartAsync();
 
-        Task StopAsync(CancellationToken cancellationToken);
+        Task StopAsync();
 
         public IReadOnlyList<Type> ItemTypes { get; }
     }
