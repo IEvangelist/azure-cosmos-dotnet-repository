@@ -37,6 +37,7 @@ public abstract class CosmosRepositoryAcceptanceTest
     {
         ConfigurationBuilder config = new();
         config.AddUserSecrets<CosmosRepositoryAcceptanceTest>();
+        config.AddEnvironmentVariables();
 
         ServiceCollection services = new();
         services.AddSingleton<IConfiguration>(config.Build());

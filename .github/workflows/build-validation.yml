@@ -32,5 +32,7 @@ jobs:
         dotnet build --configuration Release --no-restore
 
     - name: Test
+      env:
+        RepositoryOptions__ComsosConnectionString: $ {{ secrets.CosmosConnectionString }}
       run: |
         dotnet test --no-restore --verbosity normal
