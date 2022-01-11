@@ -21,8 +21,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         /// <summary>
         /// Stops all configured change feed processors.
         /// </summary>
-        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task StopAsync(CancellationToken cancellationToken);
+        Task StopAsync();
     }
 }

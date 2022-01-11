@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -23,18 +24,21 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _processors = _changeFeedContainerProcessorProvider.GetProcessors();
+
+            cancellationToken.Register(() => StopAsync().Wait(TimeSpan.FromSeconds(5)));
+
             return Task.WhenAll(
                 _processors.Select(
-                    x => x.StartAsync(cancellationToken)));
+                    x => x.StartAsync()));
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync()
         {
             foreach (IContainerChangeFeedProcessor processor in _processors)
             {
                 if (processor is not null)
                 {
-                    await processor.StopAsync(cancellationToken);
+                    await processor.StopAsync();
                 }
             }
         }
