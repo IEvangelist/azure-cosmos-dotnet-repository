@@ -52,7 +52,7 @@ public abstract class CosmosRepositoryAcceptanceTest
 
     protected static readonly Action<RepositoryOptions> DefaultTestRepositoryOptions = options =>
     {
-        options.DatabaseId = Environment.GetEnvironmentVariable("CosmosConnectionString");
+        options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
         options.ContainerPerItemType = true;
         options.DatabaseId = "cosmos-repository-acceptance-tests";
 
