@@ -36,7 +36,6 @@ public abstract class CosmosRepositoryAcceptanceTest
         config.AddUserSecrets<CosmosRepositoryAcceptanceTest>();
 
         ServiceCollection services = new();
-
         services.AddSingleton<IConfiguration>(config.Build());
         services.AddCosmosRepository(builderOptions);
 
