@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		.github\workflows\pr-validation.yml = .github\workflows\pr-validation.yml
 		README.md = README.md
+		.github\workflows\code-metrics.yml = .github\workflows\code-metrics.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTier", "samples\ServiceTier\ServiceTier.csproj", "{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}"
@@ -49,6 +50,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepository.AspNetCore", "src\Microsoft.Azure.CosmosRepository.AspNetCore\Microsoft.Azure.CosmosRepository.AspNetCore.csproj", "{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepository.AspNetCoreTests", "tests\Microsoft.Azure.CosmosRepository.AspNetCoreTests\Microsoft.Azure.CosmosRepository.AspNetCoreTests.csproj", "{CDF603BA-5474-45E9-BBA1-2D33CAD12062}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepositoryAcceptanceTests", "tests\Microsoft.Azure.CosmosRepositoryAcceptanceTests\Microsoft.Azure.CosmosRepositoryAcceptanceTests.csproj", "{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,12 +109,10 @@ Global
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

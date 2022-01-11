@@ -6,6 +6,12 @@ on:
     paths:
     - '**.cs'
     - '**.csproj'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'The reason for running the workflow'
+        required: true
+        default: 'Manual run'
 
 jobs:
   build:
@@ -32,5 +38,7 @@ jobs:
         dotnet build --configuration Release --no-restore
 
     - name: Test
+      env:
+        CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
       run: |
         dotnet test --no-restore --verbosity normal
