@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangedFeedSamples.Shared",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeFeedWeb", "samples\ChangeFeedWeb\ChangeFeedWeb.csproj", "{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepositoryAcceptanceTests", "tests\Microsoft.Azure.CosmosRepositoryAcceptanceTests\Microsoft.Azure.CosmosRepositoryAcceptanceTests.csproj", "{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,10 @@ Global
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
