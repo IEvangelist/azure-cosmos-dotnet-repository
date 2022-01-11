@@ -30,7 +30,7 @@ public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
 
         await _productsRepository.CreateAsync(product);
 
-        IEnumerable<Product> products = await _productsRepository.GetAsync(x => x.CategoryId == TechnologyCategoryId);
+        IEnumerable<Product> products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
 
         List<Product> productsList = products.ToList();
         productsList.Count.Should().Be(1);
