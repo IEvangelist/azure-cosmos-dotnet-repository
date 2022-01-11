@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
     /// <remarks>Please ensure this is called in conjunction with services.AddCosmosRepository(...)</remarks>
     public static IServiceCollection AddCosmosRepositoryChangeFeedHostedService(this IServiceCollection services)
     {
-        services.AddSingleton<CosmosRepositoryChangeFeedHostedService>();
+        services.AddHostedService<CosmosRepositoryChangeFeedHostedService>();
         return services;
     }
 

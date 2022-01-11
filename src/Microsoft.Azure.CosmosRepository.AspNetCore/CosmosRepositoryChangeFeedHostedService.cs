@@ -15,7 +15,11 @@ public class CosmosRepositoryChangeFeedHostedService : BackgroundService
 {
     private readonly IChangeFeedService _changeFeedService;
 
-    internal CosmosRepositoryChangeFeedHostedService(IChangeFeedService changeFeedService) =>
+    /// <summary>
+    /// Creates an instance of the <see cref="CosmosRepositoryChangeFeedHostedService"/>
+    /// </summary>
+    /// <param name="changeFeedService">The <see cref="IChangeFeedService"/> to start.</param>
+    public CosmosRepositoryChangeFeedHostedService(IChangeFeedService changeFeedService) =>
         _changeFeedService = changeFeedService;
 
     /// <summary>
