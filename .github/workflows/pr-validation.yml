@@ -32,7 +32,5 @@ jobs:
         dotnet build --no-restore
 
     - name: Test
-      env:
-        CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
       run: |
-        dotnet test --no-restore --verbosity normal
+        dotnet test --no-restore --verbosity normal --filter "Category!=Acceptance"

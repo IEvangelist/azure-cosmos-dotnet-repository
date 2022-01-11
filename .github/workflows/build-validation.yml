@@ -39,6 +39,6 @@ jobs:
 
     - name: Test
       env:
-        RepositoryOptions__ComsosConnectionString: $ {{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
       run: |
         dotnet test --no-restore --verbosity normal
