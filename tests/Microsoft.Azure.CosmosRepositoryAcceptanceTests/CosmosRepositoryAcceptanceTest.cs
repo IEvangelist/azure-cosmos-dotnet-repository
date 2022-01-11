@@ -36,7 +36,6 @@ public abstract class CosmosRepositoryAcceptanceTest
     protected CosmosRepositoryAcceptanceTest(Action<RepositoryOptions> builderOptions)
     {
         ConfigurationBuilder config = new();
-        config.AddUserSecrets<CosmosRepositoryAcceptanceTest>();
         config.AddEnvironmentVariables();
 
         ServiceCollection services = new();
