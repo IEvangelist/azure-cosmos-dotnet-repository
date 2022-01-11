@@ -11,6 +11,7 @@ using Xunit;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Trait("Category", "Acceptance")]
 public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
 {
     public RepositoryBasicsTests() : base(DefaultTestRepositoryOptions)
