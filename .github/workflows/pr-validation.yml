@@ -30,14 +30,9 @@ jobs:
     - name: Build
       run: |
         dotnet build --no-restore
-        
-    - name: Init User Secrets
-      working-directory: ./tests/Microsoft.Azure.CosmosRepositoryAcceptanceTests/
-      run: |
-        dotnet user-secrets init
 
     - name: Test
       env:
-        CosmosRepository__CosmosConnectionString: "${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}"
+        CosmosConnectionString: "${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}"
       run: |
         dotnet test --no-restore --verbosity normal

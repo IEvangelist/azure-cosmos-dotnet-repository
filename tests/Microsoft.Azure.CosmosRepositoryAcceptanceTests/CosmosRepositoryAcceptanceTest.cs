@@ -37,12 +37,12 @@ public abstract class CosmosRepositoryAcceptanceTest
     protected CosmosRepositoryAcceptanceTest(Action<RepositoryOptions> builderOptions)
     {
         ConfigurationBuilder config = new();
-        config.AddUserSecrets<CosmosRepositoryAcceptanceTest>();
         config.AddEnvironmentVariables();
 
         ServiceCollection services = new();
         services.AddSingleton<IConfiguration>(config.Build());
         services.AddCosmosRepository(builderOptions);
+
 
         ServiceProvider provider = services.BuildServiceProvider();
 
@@ -52,6 +52,7 @@ public abstract class CosmosRepositoryAcceptanceTest
 
     protected static readonly Action<RepositoryOptions> DefaultTestRepositoryOptions = options =>
     {
+        options.DatabaseId = Environment.GetEnvironmentVariable("CosmosConnectionString");
         options.ContainerPerItemType = true;
         options.DatabaseId = "cosmos-repository-acceptance-tests";
 
