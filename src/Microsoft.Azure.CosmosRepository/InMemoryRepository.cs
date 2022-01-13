@@ -17,6 +17,8 @@ using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Paging;
+using Microsoft.Azure.CosmosRepository.Specification;
+using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -335,6 +337,7 @@ namespace Microsoft.Azure.CosmosRepository
             int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
+
             IEnumerable<TItem> filteredItems = Items.Values.Select(DeserializeItem)
                 .Where(predicate.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
             IEnumerable<TItem> items = filteredItems.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
@@ -345,6 +348,29 @@ namespace Microsoft.Azure.CosmosRepository
                 items.ToList().AsReadOnly(),
                 0);
         }
+
+        public async ValueTask<IPageQueryResult<TItem>> PageAsync(ISpecification<TItem> specification, CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+
+            IQueryable<TItem> query = Items.Values.Select(DeserializeItem).AsQueryable()
+                .Where(item => item.Type == typeof(TItem).Name);
+
+            int pageSize = specification.PageSize;
+            ISpecificationEvaluator specificationEvaluator = new SpecificationEvaluator();
+            query = specificationEvaluator.GetQuery(query, specification);
+
+            int countResponse =query.Count();
+
+            return new PageQueryResult<TItem>(
+                countResponse,
+                specification.PageNumber,
+                specification.PageSize,
+                query.ToList().AsReadOnly(),
+                0,
+                "");
+        }
+
 
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
         private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);

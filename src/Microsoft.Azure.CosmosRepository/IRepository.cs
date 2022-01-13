@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Paging;
+using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -264,6 +265,18 @@ namespace Microsoft.Azure.CosmosRepository
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
             string continuationToken = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Offers a load more paging implementation for infinite scroll scenarios.
+        /// Allows for efficient paging making use of cosmos DBs continuation tokens, making this implementation cost effective.
+        /// </summary>
+        /// <param name="specification">A specification used to filtering, ordering and paging0<see cref="IItem"/>s</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
+        /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
+        ValueTask<IPageQueryResult<TItem>> PageAsync(
+            ISpecification<TItem> specification,
             CancellationToken cancellationToken = default);
 
         /// <summary>

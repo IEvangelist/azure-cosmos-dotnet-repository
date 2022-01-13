@@ -15,6 +15,7 @@ using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Providers;
+using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -32,7 +33,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         readonly RepositoryOptions _repositoryOptions = new();
         readonly Mock<Container> _container = new();
         readonly IRepositoryExpressionProvider _expressionProvider = new MockExpressionProvider();
-
+        readonly ISpecificationEvaluator _specificationEvaluator = new SpecificationEvaluator();
         public DefaultRepositoryTests()
         {
             _options.Setup(o => o.CurrentValue).Returns(_repositoryOptions);
@@ -43,14 +44,16 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 _containerProviderForTestItemWithETag.Object,
                 new NullLogger<DefaultRepository<TestItemWithEtag>>(),
                 _queryableProcessor.Object,
-                _expressionProvider);
+                _expressionProvider,
+                _specificationEvaluator);
 
         private DefaultRepository<TestItem> RepositoryForItemWithoutETag =>
             new(_options.Object,
                 _containerProviderForTestItem.Object,
                 new NullLogger<DefaultRepository<TestItem>>(),
                 _queryableProcessor.Object,
-                _expressionProvider);
+                _expressionProvider,
+                _specificationEvaluator);
 
         [Fact]
         public async Task GetAsyncGivenExpressionQueriesContainerCorrectly()

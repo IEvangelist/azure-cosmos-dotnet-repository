@@ -14,6 +14,7 @@ using Xunit;
 using Microsoft.Azure.CosmosRepositoryTests.Extensions;
 using Microsoft.Azure.CosmosRepository.Paging;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Microsoft.Azure.CosmosRepositoryTests
 {
@@ -1020,6 +1021,76 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.True(dogs.HasNextPage);
             Assert.Equal(3, dogs.NextPageNumber);
             Assert.Equal(3, dogs.TotalPages);
+        }
+
+        [Fact]
+        public async Task PageAsync_SpecificationThatDoesNotMatch_ReturnsEmptyList()
+        {
+            //Arrange
+            Dog dog1 = new("cocker spaniel");
+            Dog dog2 = new("cocker spaniel");
+            Dog dog3 = new("cocker spaniel");
+            _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
+            _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
+            _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+            int pageSize = 2;
+            int pageNumber = 2;
+
+            DogSpecification specification = new("golden retriever", 2, 2);
+
+            //Act
+            IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize);
+
+            //Assert
+            List<Dog> enumerable = dogs.Items.ToList();
+            Assert.False(enumerable.Any());
+        }
+
+        [Fact]
+        public async Task PageAsync_SpecificationThatDoesMatch_ReturnsItemInList()
+        {
+            //Arrange
+            Dog dog1 = new("cocker spaniel");
+            Dog dog2 = new("cocker spaniel");
+            Dog dog3 = new("cocker spaniel");
+            Dog dog4 = new("cocker spaniel");
+            Dog dog5 = new("cocker spaniel");
+            Dog dog6 = new("cocker spaniel");
+            Dog dog7 = new("golden retriever");
+            _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
+            _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
+            _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+            _dogRepository.Items.TryAddAsJson(dog4.Id, dog4);
+            _dogRepository.Items.TryAddAsJson(dog5.Id, dog5);
+            _dogRepository.Items.TryAddAsJson(dog6.Id, dog6);
+            _dogRepository.Items.TryAddAsJson(dog7.Id, dog7);
+            int pageSize = 2;
+            int pageNumber = 2;
+            DogSpecification specification = new ("cocker spaniel", 2, 2);
+
+            List<Dog> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
+                                                         .Where(d => d.Breed == "cocker spaniel")
+                                                         .Skip(pageSize * (pageNumber - 1))
+                                                         .Take(pageSize)
+                                                         .ToList();
+
+            //Act
+            IPage<Dog> dogs = await _dogRepository.PageAsync(specification);
+
+            //Assert
+            List<Dog> enumerable = dogs.Items.ToList();
+            Assert.True(enumerable.Any());
+            Assert.Equal(expectedList, enumerable, new DogComparer());
+        }
+
+        internal class DogSpecification : BaseSpecification<Dog>
+        {
+            internal DogSpecification(string breed, int take, int skip)
+            {
+                Query.Where(d => d.Breed == breed);
+                Query.PageSize(take);
+                Query.PageNumber(skip);
+            }
         }
     }
 }
