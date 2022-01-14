@@ -3,7 +3,7 @@
 This package wraps the [NuGet: Microsoft.Azure.Cosmos package](https://www.nuget.org/packages/Microsoft.Azure.Cosmos),
 exposing a simple dependency-injection enabled `IRepository<T>` interface.
 
-![Cosmos Repository](..\CosmosRepository.png)
+![Cosmos Repository](https://raw.githubusercontent.com/IEvangelist/azure-cosmos-dotnet-repository/main/CosmosRepository.png)
 
 The repository is responsible for all of the create, read, update, and delete (CRUD) operations on objects `where T : Item`. The `Item` type adds
 several properties, one which is a globally unique identifier defined as:
@@ -408,7 +408,7 @@ Visit the `Microsoft.Azure.CosmosRepository.Samples` [directory](https://github.
 - [Paging](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/Paging)
 ## Deep-dive video
 
-[![A deep dive into the Azure Cosmos DB repository pattern NET SDK](../images/deep-dive-talk.png)](https://www.youtube.com/watch?v=izdnmBrTweA)
+[![A deep dive into the Azure Cosmos DB repository pattern NET SDK](https://raw.githubusercontent.com/IEvangelist/azure-cosmos-dotnet-repository/main/images/deep-dive-talk.png)](https://www.youtube.com/watch?v=izdnmBrTweA)
 
 ## Discord
 
