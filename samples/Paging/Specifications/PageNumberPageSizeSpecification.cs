@@ -10,17 +10,12 @@ using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Paging.Specifications
 {
-    internal class PageNumberPageSizeSpecification : BaseSpecification<Person>
+    internal class PageNumberPageSizeSpecificationImplementation : PageNumberPageSizeSpecification<Person>
     {
-        public PageNumberPageSizeSpecification(int pageNumber, int pageSize)
+        public PageNumberPageSizeSpecificationImplementation(int pageNumber, int pageSize):
+            base(pageNumber, pageSize)
         {
-            Query.PageSize(pageSize);
-            Query.PageNumber(pageNumber);   
-        }
 
-        internal void NextPage()
-        {
-            Query.PageNumber(PageNumber.Value + 1);
         }
     }
 }

@@ -342,24 +342,6 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<int> CountAsync(
-            ISpecification<TItem> specification,
-            CancellationToken cancellationToken = default)
-        {
-            Container container =
-                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
-
-            IQueryable<TItem> query =
-                container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build<TItem>(null));
-
-            query = _specificationEvaluator.GetQuery(query, specification, true);
-            TryLogDebugDetails(_logger, () => $"Read: {query}");
-
-            return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
-        }
-
-        /// <inheritdoc/>
         public async ValueTask<IPage<TItem>> PageAsync(
             Expression<Func<TItem, bool>> predicate = null,
             int pageSize = 25,
@@ -417,7 +399,8 @@ namespace Microsoft.Azure.CosmosRepository
                 result.Charge + countResponse.RequestCharge);
         }
 
-        public async ValueTask<IPageQueryResult<TItem>> PageAsync(ISpecification<TItem> specification, CancellationToken cancellationToken = default)
+        public async ValueTask<TResult> GetAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
+            where TResult : IQueryResult<TItem>
         {
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
@@ -432,22 +415,14 @@ namespace Microsoft.Azure.CosmosRepository
                     container.GetItemLinqQueryable<TItem>(requestOptions: options,continuationToken: specification.ContinutationToken)
                 .Where(_repositoryExpressionProvider.Build<TItem>(null));
 
-            int countResponse =
-             await CountAsync(specification, cancellationToken).ConfigureAwait(false);
+            IQueryable<TItem> itemQuery= _specificationEvaluator.GetQuery(query, specification ,evaluateCriteriaOnly: false);
+            IQueryable<TItem> countQuery = _specificationEvaluator.GetQuery(query, specification, evaluateCriteriaOnly: true);
 
-            query = _specificationEvaluator.GetQuery(query, specification);
+            Response<int> count = await countQuery.CountAsync().ConfigureAwait(false);
 
+            (List<TItem> Items, double Charge, string ContinuationToken) result = await GetAllItemsAsync(itemQuery, specification.PageSize, cancellationToken).ConfigureAwait(false);
 
-            (List<TItem> Items, double Charge, string ContinuationToken) result = await GetAllItemsAsync(query, specification.PageSize, cancellationToken).ConfigureAwait(false);
-
-
-            return new PageQueryResult<TItem>(
-                countResponse,
-                specification.PageNumber,
-                specification.PageSize,
-                result.Items.AsReadOnly(),
-                result.Charge,
-                result.ContinuationToken);
+            return specification.PostProcessingAction(result.Items.AsReadOnly(), count.Resource, result.Charge + count.RequestCharge, result.ContinuationToken);
         }
 
         static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)

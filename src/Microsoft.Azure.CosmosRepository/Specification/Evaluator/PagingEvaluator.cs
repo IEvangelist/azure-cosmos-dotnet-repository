@@ -26,12 +26,15 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
         /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="query"></param>
         /// <param name="specification"></param>
         /// <returns></returns>
-        public IQueryable<T> GetQuery<T>(IQueryable<T> query, ISpecification<T> specification) where T : IItem
+        public IQueryable<T> GetQuery<T, TResult>(IQueryable<T> query, ISpecification<T,TResult> specification)
+            where T : IItem
+            where TResult : IQueryResult<T>
         {
-            if(specification.UseContinutationToken)
+            if (specification.UseContinutationToken)
             {
                 return query;
             }          
@@ -41,10 +44,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
                 query = query.Skip(specification.PageSize * (specification.PageNumber.Value - 1));
             }
 
-            if(specification == null)
-            {
-                query = query.Take(specification.PageSize);
-            }
+            query = query.Take(specification.PageSize);
 
             return query;
         }

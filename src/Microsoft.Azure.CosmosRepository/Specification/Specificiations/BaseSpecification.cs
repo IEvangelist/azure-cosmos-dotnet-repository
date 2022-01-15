@@ -7,20 +7,21 @@ using System.Linq.Expressions;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
-    /// <inheritdoc cref="ISpecification{T}"/>
-    public abstract class BaseSpecification<T> : ISpecification<T>
+    /// <inheritdoc cref="ISpecification{T,TResult}"/>
+    public abstract class BaseSpecification<T,TResult> : ISpecification<T, TResult>
         where T : IItem
+        where TResult : IQueryResult<T>
     {
         /// <summary>
         /// 
         /// </summary>
-        protected virtual ISpecificationBuilder<T> Query { get; }
+        protected virtual ISpecificationBuilder<T, TResult> Query { get; }
         /// <summary>
         /// Initialize specificaiton and add filters later
         /// </summary>
         public BaseSpecification()
         {
-            Query = new SpecificationBuilder<T>(this);
+            Query = new SpecificationBuilder<T, TResult>(this);
 
         }
         /// <summary>
@@ -29,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <param name="filters"></param>
         public BaseSpecification(Expression<Func<T, bool>>[] filters)
         {
-            Query = new SpecificationBuilder<T>(this);
+            Query = new SpecificationBuilder<T, TResult>(this);
             foreach(Expression<Func<T, bool>> filter in filters)
             {
                 Query.Where(filter);
@@ -46,6 +47,10 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <inheritdoc/>
         public int PageSize { get; internal set; } = 25;
         /// <inheritdoc/>
-        public bool UseContinutationToken { get; internal set; } = true;
+        public bool UseContinutationToken { get; internal set; } = false;
+
+        /// <inheritdoc/>
+        public abstract TResult PostProcessingAction(IReadOnlyList<T> queryResult, int totalCount, double charge, string continuationToken);
+
     }
 }

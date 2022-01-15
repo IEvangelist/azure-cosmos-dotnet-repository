@@ -21,10 +21,13 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
         /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="query"></param>
         /// <param name="specification"></param>
         /// <returns></returns>
-        IQueryable<T> GetQuery<T>(IQueryable<T> query, ISpecification<T> specification) where T : IItem;
+        IQueryable<T> GetQuery<T, TResult>(IQueryable<T> query, ISpecification<T, TResult> specification)
+            where T : IItem
+            where TResult : IQueryResult<T>;
 
     }
 }

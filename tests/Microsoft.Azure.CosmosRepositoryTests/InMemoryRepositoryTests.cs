@@ -1075,7 +1075,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                                                          .ToList();
 
             //Act
-            IPage<Dog> dogs = await _dogRepository.PageAsync(specification);
+            IPage<Dog> dogs = await _dogRepository.GetAsync(specification);
 
             //Assert
             List<Dog> enumerable = dogs.Items.ToList();
@@ -1083,13 +1083,13 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(expectedList, enumerable, new DogComparer());
         }
 
-        internal class DogSpecification : BaseSpecification<Dog>
+        internal class DogSpecification : PageNumberPageSizeSpecification<Dog>
         {
-            internal DogSpecification(string breed, int take, int skip)
+            internal DogSpecification(string breed, int pageNumber, int pageSize)
             {
                 Query.Where(d => d.Breed == breed);
-                Query.PageSize(take);
-                Query.PageNumber(skip);
+                Query.PageSize(pageNumber);
+                Query.PageNumber(pageSize);
             }
         }
     }

@@ -7,9 +7,10 @@ using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
-    /// <inheritdoc cref="ISpecificationBuilder{T}"/>
-    public interface IOrderedSpecificationBuilder<T> : ISpecificationBuilder<T>
+    /// <inheritdoc cref="ISpecificationBuilder{T, TResult}"/>
+    public interface IOrderedSpecificationBuilder<T, TResult> : ISpecificationBuilder<T, TResult>
         where T : IItem
+        where TResult : IQueryResult<T>
     {
     }
 }

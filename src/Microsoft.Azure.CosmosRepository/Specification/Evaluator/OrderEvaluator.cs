@@ -15,7 +15,9 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
 
         public bool IsCriteriaEvaluator { get; } = false;
 
-        public IQueryable<T> GetQuery<T>(IQueryable<T> query, ISpecification<T> specification) where T : IItem
+        public IQueryable<T> GetQuery<T, TResult>(IQueryable<T> query, ISpecification<T, TResult> specification)
+            where T : IItem
+            where TResult : IQueryResult<T>
         {
             if (specification.OrderExpressions != null)
             {

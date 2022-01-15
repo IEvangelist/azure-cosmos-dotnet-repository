@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Bogus;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
+using Microsoft.Azure.CosmosRepository.Specification;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Paging.Specifications;
@@ -13,7 +14,7 @@ ConfigurationBuilder configuration = new();
 
 ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =>
     {
-        options.CosmosConnectionString = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+        options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
         options.DatabaseId = "paging-db";
         options.ContainerPerItemType = true;
     })
@@ -24,9 +25,13 @@ IRepository<Person> repository = provider.GetRequiredService<IRepository<Person>
 
 await SeedAsync();
 
+Console.WriteLine("Basic paging");
 await BasicPageAsync();
+Console.WriteLine("Basic continuation token");
 await BasicScrollingAsync();
+Console.WriteLine("Specification paging");
 await BasicSpecificationPageAsync();
+Console.WriteLine("Specification continuation token");
 await BasicSpecificationScrollingAsync();
 
 async Task BasicPageAsync()
@@ -49,8 +54,8 @@ async Task BasicPageAsync()
 async Task BasicSpecificationPageAsync()
 {
     double totalCharge = 0;
-    PageNumberPageSizeSpecification specification = new (1, 25);
-    IPageQueryResult<Person> page = await repository.PageAsync(specification);
+    PageNumberPageSizeSpecification<Person> specification = new (1, 25);
+    IPageQueryResult<Person> page = await repository.GetAsync(specification);
     while (page.HasNextPage)
     {
         foreach (Person person in page.Items)
@@ -59,7 +64,7 @@ async Task BasicSpecificationPageAsync()
         }
         totalCharge += page.Charge;
         specification.NextPage();
-        page = await repository.PageAsync(specification);
+        page = await repository.GetAsync(specification);
         Console.WriteLine($"Get page {page.PageNumber} 25 results cost {page.Charge}");
     }
     Console.WriteLine($"Total Charge {totalCharge} RU's");
@@ -108,10 +113,10 @@ async Task BasicSpecificationScrollingAsync()
 {
     double totalCharge = 0;
 
-    ContinuationTokenSpecification specification = new(null,pageSize: 25);
-    IPageQueryResult<Person> page = await repository.PageAsync(specification);
+    ContinuationTokenSpecificationImplementation specification = new(null,pageSize: 25);
+    IPage<Person> page = await repository.GetAsync(specification);
     specification.UpdateContinutationToken(page.Continuation);
-    var totalItems = 0;
+    int totalItems = 0;
     while(totalItems < page.Total)
     {
         foreach (Person person in page.Items)
@@ -122,7 +127,7 @@ async Task BasicSpecificationScrollingAsync()
         totalCharge += page.Charge;
         Console.WriteLine($"First 25 results cost {page.Charge}");
         specification.UpdateContinutationToken(page.Continuation);
-        page = await repository.PageAsync(specification);
+        page = await repository.GetAsync(specification);
     }
 
     Console.WriteLine($"Last 50 results cost {page.Charge}");

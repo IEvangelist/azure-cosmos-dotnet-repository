@@ -8,17 +8,18 @@ using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
-    /// <inheritdoc cref="IOrderedSpecificationBuilder{T}"/>
-    public class OrderedSpecificationBuilder<T> : IOrderedSpecificationBuilder<T>
+    /// <inheritdoc cref="IOrderedSpecificationBuilder{T, TResult}"/>
+    public class OrderedSpecificationBuilder<T, TResult> : IOrderedSpecificationBuilder<T, TResult>
         where T : IItem
+        where TResult : IQueryResult<T>
     {
         /// <inheritdoc/>
-        public BaseSpecification<T> Specification { get; }
+        public BaseSpecification<T,TResult> Specification { get; }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="specification"></param>
-        public OrderedSpecificationBuilder(BaseSpecification<T> specification)
+        public OrderedSpecificationBuilder(BaseSpecification<T, TResult> specification)
         {
             Specification = specification;
         }
@@ -33,13 +34,15 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// Adds a ThenBy expression to the existing order expression
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="orderBuilder"></param>
         /// <param name="orderExpression"></param>
         /// <returns></returns>
-        public static IOrderedSpecificationBuilder<T> ThenBy<T>(
-            this IOrderedSpecificationBuilder<T> orderBuilder,
+        public static IOrderedSpecificationBuilder<T, TResult> ThenBy<T, TResult>(
+            this IOrderedSpecificationBuilder<T, TResult> orderBuilder,
             Expression<Func<T, object>> orderExpression)
             where T: IItem
+            where TResult: IQueryResult<T>
         {
             ((List<OrderExpressionInfo<T>>)orderBuilder.Specification.OrderExpressions)
                 .Add(new OrderExpressionInfo<T>(orderExpression, OrderTypeEnum.ThenBy));
@@ -49,13 +52,15 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// Adds a ThenByDescending expression to the existing order expression
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="orderBuilder"></param>
         /// <param name="orderExpression"></param>
         /// <returns></returns>
-        public static IOrderedSpecificationBuilder<T> ThenByDescending<T>(
-            this IOrderedSpecificationBuilder<T> orderBuilder,
+        public static IOrderedSpecificationBuilder<T, TResult> ThenByDescending<T, TResult>(
+            this IOrderedSpecificationBuilder<T, TResult> orderBuilder,
             Expression<Func<T, object>> orderExpression)
             where T : IItem
+            where TResult : IQueryResult<T>
         {
             ((List<OrderExpressionInfo<T>>)orderBuilder.Specification.OrderExpressions)
                 .Add(new OrderExpressionInfo<T>(orderExpression, OrderTypeEnum.ThenByDescending));

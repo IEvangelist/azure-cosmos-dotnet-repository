@@ -349,7 +349,8 @@ namespace Microsoft.Azure.CosmosRepository
                 0);
         }
 
-        public async ValueTask<IPageQueryResult<TItem>> PageAsync(ISpecification<TItem> specification, CancellationToken cancellationToken = default)
+        public async ValueTask<TResult> GetAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
+            where TResult : IQueryResult<TItem>
         {
             await Task.CompletedTask;
 
@@ -361,14 +362,7 @@ namespace Microsoft.Azure.CosmosRepository
             query = specificationEvaluator.GetQuery(query, specification);
 
             int countResponse =query.Count();
-
-            return new PageQueryResult<TItem>(
-                countResponse,
-                specification.PageNumber,
-                specification.PageSize,
-                query.ToList().AsReadOnly(),
-                0,
-                "");
+            return specificationEvaluator.GetResult(query.ToList().AsReadOnly(), specification, countResponse, 0, "");
         }
 
 

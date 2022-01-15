@@ -10,12 +10,11 @@ using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Paging.Specifications
 {
-    internal class ContinuationTokenSpecification : BaseSpecification<Person>
+    internal class ContinuationTokenSpecificationImplementation : ContinuationTokenSpecification<Person>
     {
-        public ContinuationTokenSpecification(string continutationToken, int pageSize)
+        public ContinuationTokenSpecificationImplementation(string continutationToken, int pageSize):
+            base(continutationToken, pageSize)
         {
-            Query.ContinutationToken(continutationToken);
-            Query.PageSize(pageSize);
         }
 
         internal void UpdateContinutationToken(string continuationToken)
