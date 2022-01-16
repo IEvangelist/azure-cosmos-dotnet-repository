@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
 public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
 {
-    public RepositoryBasicsTests() : base(DefaultTestRepositoryOptions)
+    public RepositoryBasicsTests(ITestOutputHelper testOutputHelper) : base(DefaultTestRepositoryOptions,
+        testOutputHelper)
     {
     }
 
