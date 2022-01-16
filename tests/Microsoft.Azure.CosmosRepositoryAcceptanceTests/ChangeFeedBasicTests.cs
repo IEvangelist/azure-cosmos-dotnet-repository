@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosRepository;
@@ -26,7 +28,7 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
             builder.WithContainer(ProductsInfoContainer);
             builder.WithPartitionKey(DefaultPartitionKey);
             builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(10));
-            builder.WithChangeFeedMonitoring();
+            builder.WithChangeFeedMonitoring(feedOptions => feedOptions.PollInterval = TimeSpan.FromSeconds(1));
         });
 
         options.ContainerBuilder.Configure<RatingByCategory>(builder =>
@@ -49,32 +51,35 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
     [Fact]
     public async Task Create_Rating_For_Product_Is_Replicated_To_Be_Partitioned_By_Category()
     {
-        StockInformation stockInformation = new(5, DateTime.UtcNow);
-
-        Product product = new(
-            "Samsung TV",
-            TechnologyCategoryId,
-            500,
-            stockInformation);
-
-        await _productsRepository.CreateAsync(product);
-
-        Rating tvRating = new(
-            product.Id,
-            3,
-            "Very good product",
-            product.CategoryId);
-
-        await _ratingsRepository.CreateAsync(tvRating);
-
-        await _changeFeedService.StartAsync(default);
-
-        await Task.Delay(10000);
-
         try
         {
-            bool result = await _ratingsByCategoryRepository.ExistsAsync(tvRating.Id, TechnologyCategoryId);
-            result.Should().BeTrue();
+            await _changeFeedService.StartAsync(default);
+
+            StockInformation stockInformation = new(5, DateTime.UtcNow);
+
+            Product product = new(
+                "Samsung TV",
+                TechnologyCategoryId,
+                500,
+                stockInformation);
+
+            await _productsRepository.CreateAsync(product);
+
+            Rating tvRating = new(
+                product.Id,
+                3,
+                "Very good product",
+                product.CategoryId);
+
+            await _ratingsRepository.CreateAsync(tvRating);
+
+            await WaitFor(1);
+
+            IEnumerable<RatingByCategory> results = await _ratingsByCategoryRepository
+                .GetAsync(x => x.PartitionKey == TechnologyCategoryId &&
+                               x.ProductId == product.Id);
+
+            results.Count().Should().Be(1);
         }
         finally
         {

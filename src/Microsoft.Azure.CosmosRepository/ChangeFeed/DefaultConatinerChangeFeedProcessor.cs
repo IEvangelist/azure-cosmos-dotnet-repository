@@ -51,12 +51,19 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             Container itemContainer = await _containerService.GetContainerAsync(ItemTypes);
             Container leaseContainer = await _leaseContainerProvider.GetLeaseContainerAsync();
 
-            _processor = itemContainer.GetChangeFeedProcessorBuilder<JObject>("cosmos-repository-pattern-processor",
+            ChangeFeedProcessorBuilder builder = itemContainer
+                .GetChangeFeedProcessorBuilder<JObject>("cosmos-repository-pattern-processor",
                     (changes, token) => OnChangesAsync(changes, token, itemContainer.Id))
                 .WithLeaseContainer(leaseContainer)
                 .WithInstanceName(_changeFeedOptions.InstanceName)
-                .WithErrorNotification((token, exception) => OnErrorAsync(exception, itemContainer.Id))
-                .Build();
+                .WithErrorNotification((token, exception) => OnErrorAsync(exception, itemContainer.Id));
+
+            if (_changeFeedOptions.PollInterval != null)
+            {
+                builder.WithPollInterval(_changeFeedOptions.PollInterval.Value);
+            }
+
+            _processor = builder.Build();
 
             _logger.LogInformation("Starting change feed processor for container {ContainerName}", itemContainer.Id);
 

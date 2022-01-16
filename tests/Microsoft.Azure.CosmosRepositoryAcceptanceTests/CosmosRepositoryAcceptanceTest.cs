@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 using FluentAssertions.Equivalency;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
@@ -38,19 +39,28 @@ public abstract class CosmosRepositoryAcceptanceTest
         return options;
     }
 
-    protected CosmosRepositoryAcceptanceTest(Action<RepositoryOptions> builderOptions, ITestOutputHelper testOutputHelper)
+    protected CosmosRepositoryAcceptanceTest(Action<RepositoryOptions> builderOptions,
+        ITestOutputHelper testOutputHelper)
     {
         ConfigurationBuilder config = new();
         config.AddEnvironmentVariables();
 
+        IConfiguration builtConfig = config.Build();
+
         ServiceCollection services = new();
-        services.AddSingleton<IConfiguration>(config.Build());
+        services.AddSingleton(builtConfig);
         services.AddCosmosRepository(builderOptions);
-        services.AddCosmosRepositoryItemChangeFeedProcessors();
+        services.AddCosmosRepositoryItemChangeFeedProcessors(typeof(CosmosRepositoryAcceptanceTest).Assembly);
 
         services.AddLogging(options =>
         {
-            options.AddXUnit(testOutputHelper);
+            options.ClearProviders();
+            options.AddXUnit(testOutputHelper, loggerOptions =>
+            {
+                loggerOptions.Filter = (s, _) =>
+                    s is null || !s.StartsWith("System.Net");
+            });
+
             options.SetMinimumLevel(LogLevel.Debug);
         });
 
@@ -58,6 +68,17 @@ public abstract class CosmosRepositoryAcceptanceTest
 
         _productsRepository = _provider.GetRequiredService<IRepository<Product>>();
         _ratingsRepository = _provider.GetRequiredService<IRepository<Rating>>();
+    }
+
+    protected static async Task WaitFor(int seconds)
+    {
+        int counter = 0;
+
+        while (counter < seconds)
+        {
+            counter++;
+            await Task.Delay(3000);
+        }
     }
 
     protected static readonly Action<RepositoryOptions> DefaultTestRepositoryOptions = options =>
