@@ -21,7 +21,7 @@ app.MapGet("/", () =>
 app.Run();
 ```
 
-The default partitioning strategy is simple all `IItem`'s will be in a single logical partition split by there unique IDs, which default to a GUID. This in small applications is often ample. A simple rule of thumb for this would be do you see yourself spanning over a physical partition? If no then this option _could_ be the way to go. However, in any scenarios where you are making an application that may grow in size, complexity or scale. It may be best to look at taking a bit more control over your partitioning strategy.
+The default partitioning strategy is simple, all `IItem`'s will be in a single logical partition split by there unique IDs. Which default to a GUID. This in small applications is often ample. A simple rule of thumb for whether or not this would be okay for you would be, do you see yourself spanning over a physical partition? If no then this option _could_ be the way to go. However, in any scenarios where you are making an application that may grow in size, complexity or scale. It may be best to look at taking a bit more control over your partitioning strategy.
 
 > This strategy is also demonstrated in the [`WebTier`](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/WebTier) sample application.
 
