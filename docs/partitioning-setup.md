@@ -87,7 +87,7 @@ app.Run();
 
 #### Inventory Example
 
-The below example shows how two or more `IItem` types can share a container and a partitioning strategy. This define a `Stock` item which might hold the name, price, size and maybe weight of a piece of `Stock`. This is partitioned by the `/stockReferenceNumber`. The `StockRecord` item is a collection of `StockRecord`'s, this might be when a piece of stock was added or removed from the inventory, when this occurred and maybe a reason why. This is stored in the _same_ container as the `Stock`'s history that is recording. It also shares the same partitioning strategy. In the example below it means that all `Stock` and it's `StockRecord`'s are stored in the same logical partition in Cosmos DB.
+The below example shows how two or more `IItem` types can share a container and a partitioning strategy. This defines a `Stock` item that might hold the name, price, size, and maybe weight. This is partitioned by the `/stockReferenceNumber`. The `StockRecord` item is a collection of `StockRecord`'s. This record represents when a piece of stock was added or removed from the inventory, when this occurred, and maybe a reason why. This is stored in the _same_ container as the `Stock` item whose history it is recording. It also shares the same partitioning strategy. In the example below it means that all `Stock` and its `StockRecord`'s are stored in the same logical partition in Cosmos DB.
  
 ```csharp
 using Microsoft.Azure.CosmosRepository;
