@@ -11,8 +11,7 @@ namespace Microsoft.Azure.CosmosRepository.Logging
         //15_000 - 15_100 Debug Events
         public static readonly EventId CosmosItemRead = new(
             15_001,
-            nameof(CosmosItemRead)
-        );
+            nameof(CosmosItemRead));
 
         //15_101 - 15_200 Info Events
         public static readonly EventId CosmosPointReadStarted = new(
@@ -24,11 +23,11 @@ namespace Microsoft.Azure.CosmosRepository.Logging
             nameof(CosmosPointReadExecuted));
 
         public static readonly EventId CosmosQueryConstructed = new(
-            15_102,
+            15_103,
             nameof(CosmosQueryConstructed));
 
         public static readonly EventId CosmosQueryExecuted = new(
-            15_103,
+            15_104,
             nameof(CosmosQueryExecuted));
     }
 }
