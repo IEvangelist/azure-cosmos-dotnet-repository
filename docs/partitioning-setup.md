@@ -6,7 +6,7 @@ Partitioning is a huge part of Cosmos DB. There are many different strategies yo
 
 Adding the Azure Cosmos Repository with no real configuration, like below. Will result in a simple strategy being assumed on your behalf. This will leave the option's configured in there default state. This means a property called `ContainerPerItemType` is set to false. This means that the Azure Cosmos Repository will store _all_ `IItem`'s in the same container, setting all the `IItem`'s within to use the partition key `/id`.
 
-```c#
+```csharp
 using Microsoft.Azure.CosmosRepository;
 
 var builder = WebApplication.CreateBuilder(args);
