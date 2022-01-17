@@ -1,0 +1,47 @@
+// Copyright (c) IEvangelist. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
+using Microsoft.Extensions.Logging;
+
+namespace Microsoft.Azure.CosmosRepository.Logging
+{
+    internal static class LoggerMessageDefinitions
+    {
+        //Debug Definitions
+        internal static readonly Action<ILogger, string, Exception> ItemRead = LoggerMessage.Define<string>(
+            LogLevel.Information,
+            EventIds.CosmosItemRead,
+            "Cosmos item read {CosmosItemJson}"
+        );
+
+        // Info Definitions
+        internal static readonly Action<ILogger, string, string, string, Exception> PointReadStarted =
+            LoggerMessage.Define<string, string, string>(
+                LogLevel.Information,
+                EventIds.CosmosPointReadStarted,
+                "Point read started for item type {CosmosItemType} with id {CosmosItemId} and partitionKey {CosmosItemPartitionKey}"
+            );
+
+        internal static readonly Action<ILogger, string, double, Exception> PointReadExecuted =
+            LoggerMessage.Define<string, double>(
+                LogLevel.Information,
+                EventIds.CosmosPointReadExecuted,
+                "Point read executed for item type {CosmosItemType} total RU cost {CosmosOperationRUCharge}"
+            );
+
+        internal static readonly Action<ILogger, string, string, Exception> QueryConstructed =
+            LoggerMessage.Define<string, string>(
+                LogLevel.Information,
+                EventIds.CosmosQueryConstructed,
+                "Cosmos query constructed for item type {CosmosItemType}: {CosmosQuery}"
+            );
+
+        internal static readonly Action<ILogger, string, double, string, Exception> QueryExecuted =
+            LoggerMessage.Define<string, double, string>(
+                LogLevel.Information,
+                EventIds.CosmosQueryExecuted,
+                "Cosmos query executed for item type {CosmosItemType} with a charge of {CosmosOperationRUCharge} RUs Query: {CosmosQuery}"
+            );
+    }
+}

@@ -75,7 +75,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 .Returns(queryable);
 
             _queryableProcessor.Setup(o => o.IterateAsync(queryable, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(items);
+                .ReturnsAsync((items, 0));
 
             //Act
             IEnumerable<TestItemWithEtag> result = await RepositoryForItemWithETag.GetAsync(predicate);
