@@ -23,13 +23,20 @@ namespace Microsoft.Azure.CosmosRepository.Logging
             string partitionKey) where TItem : IItem =>
             LoggerMessageDefinitions.PointReadStarted(logger, typeof(TItem).Name, id, partitionKey, null);
 
-        public static void LogPointReadExecuted<TItem>(this ILogger logger, double ruCharge) where TItem : IItem =>
+        public static void LogPointReadExecuted<TItem>(
+            this ILogger logger,
+            double ruCharge) where TItem : IItem =>
             LoggerMessageDefinitions.PointReadExecuted(logger, typeof(TItem).Name, ruCharge, null);
 
-        public static void LogQueryConstructed<TItem>(this ILogger logger, IQueryable<TItem> queryable) where TItem : IItem =>
+        public static void LogQueryConstructed<TItem>(
+            this ILogger logger,
+            IQueryable<TItem> queryable) where TItem : IItem =>
             LoggerMessageDefinitions.QueryConstructed(logger, typeof(TItem).Name, queryable.ToString(), null);
 
-        public static void LogQueryExecuted<TItem>(this ILogger logger, IQueryable<TItem> queryable, double charge) where TItem : IItem =>
+        public static void LogQueryExecuted<TItem>(
+            this ILogger logger,
+            IQueryable<TItem> queryable,
+            double charge) where TItem : IItem =>
             LoggerMessageDefinitions.QueryExecuted(logger, typeof(TItem).Name, charge, queryable.ToString(), null);
     }
 }
