@@ -20,17 +20,17 @@ public class BookChangeFeedProcessor : IItemChangeFeedProcessor<Book>
         _bookByIdReferenceRepository = bookByIdReferenceRepository;
     }
 
-    public async ValueTask HandleAsync(Book book, CancellationToken cancellationToken)
+    public async ValueTask HandleAsync(Book rating, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Change detected for book with ID: {BookId}", book.Id);
+        _logger.LogInformation("Change detected for book with ID: {BookId}", rating.Id);
 
-        if (!book.HasBeenUpdated)
+        if (!rating.HasBeenUpdated)
         {
             await _bookByIdReferenceRepository
-                .CreateAsync(new BookByIdReference(book.Id, book.Category),
+                .CreateAsync(new BookByIdReference(rating.Id, rating.Category),
                 cancellationToken);
         }
 
-        _logger.LogInformation("Processed change for book with ID: {BookId}", book.Id);
+        _logger.LogInformation("Processed change for book with ID: {BookId}", rating.Id);
     }
 }

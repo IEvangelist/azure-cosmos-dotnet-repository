@@ -22,7 +22,13 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         /// </summary>
         public string InstanceName { get; set; } = "default";
 
+        /// <summary>
+        /// The poll interval to query the change feed processor
+        /// </summary>
+        public TimeSpan? PollInterval { get; set; }
+
         internal bool IsTheSameAs(ChangeFeedOptions options) =>
-            options.InstanceName == InstanceName;
+            options.InstanceName == InstanceName &&
+            options.PollInterval == PollInterval;
     }
 }

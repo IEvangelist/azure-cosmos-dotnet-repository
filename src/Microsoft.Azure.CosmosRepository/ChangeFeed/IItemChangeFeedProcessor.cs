@@ -15,9 +15,9 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         /// <summary>
         /// Handles the changes for the given <see cref="IItem"/>.
         /// </summary>
-        /// <param name="changedItem">The <see cref="IItem"/> that has changed.</param>
+        /// <param name="rating">The <see cref="IItem"/> that has changed.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>The <see cref="ValueTask"/> representing the asynchronous operation.</returns>
-        ValueTask HandleAsync(TItem changedItem, CancellationToken cancellationToken);
+        ValueTask HandleAsync(TItem rating, CancellationToken cancellationToken);
     }
 }

@@ -15,10 +15,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed
 
         public List<TestItem> ChangedItems { get; } = new();
 
-        public async ValueTask HandleAsync(TestItem changedItem, CancellationToken cancellationToken)
+        public async ValueTask HandleAsync(TestItem rating, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
-            ChangedItems.Add(changedItem);
+            ChangedItems.Add(rating);
             InvocationCount++;
         }
     }

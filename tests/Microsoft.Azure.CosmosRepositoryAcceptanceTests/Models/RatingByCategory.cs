@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 
-public sealed class Rating : FullItem
+public class RatingByCategory : FullItem
 {
     public string ProductId { get; }
 
@@ -20,20 +20,20 @@ public sealed class Rating : FullItem
     protected override string GetPartitionKeyValue() =>
         PartitionKey;
 
-    public Rating(string productId, int stars, string text, string categoryId)
+    public RatingByCategory(string productId, int stars, string text, string categoryId)
     {
         ProductId = productId;
-        PartitionKey = productId;
+        PartitionKey = categoryId;
         Stars = stars;
         Text = text;
         CategoryId = categoryId;
     }
 
     [JsonConstructor]
-    protected Rating(string productId, string partitionKey, int stars, string text, string categoryId)
+    protected RatingByCategory(string productId, string partitionKey, int stars, string text, string categoryId)
     {
         ProductId = productId;
-        PartitionKey = partitionKey;
+        PartitionKey = categoryId;
         Stars = stars;
         Text = text;
         CategoryId = categoryId;
