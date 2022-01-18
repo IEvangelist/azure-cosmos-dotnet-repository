@@ -2,7 +2,6 @@
 
 Console.WriteLine("Starting to query all databases from cosmos account");
 
-
 CosmosClient client = new(
     Environment.GetEnvironmentVariable("CosmosConnectionString"));
 
