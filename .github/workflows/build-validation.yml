@@ -6,6 +6,7 @@ on:
     paths:
     - '**.cs'
     - '**.csproj'
+    - "**.yml"
   workflow_dispatch:
     inputs:
       reason:
@@ -19,32 +20,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  pre-test:
-    name: pre-test
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: |
-            3.1.402
-            6.0.x
-  
-      - name: Install dependencies
-        working-directory: ./tools/CosmosTestHelper
-        run: dotnet restore
-        
-      - name: Prune databases
-        working-directory: ./tools/CosmosTestHelper
-        env:
-          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-        run: dotnet run
-
   build:
     name: build-${{matrix.os}}
-    needs: pre-test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -89,6 +66,12 @@ jobs:
       - name: Build
         run: |
           dotnet build --configuration Release --no-restore
+
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
 
       - name: Test
         env:
