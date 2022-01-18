@@ -141,6 +141,19 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         }
 
         /// <summary>
+        /// When your Cosmos DB resource is
+        /// <a href="https://docs.microsoft.com/azure/cosmos-db/serverless?WC.m_id=dapine">
+        /// configured for serverless</a>, your containers must explicitly set
+        /// serverless <see cref="ThroughputProperties"/>.
+        /// </summary>
+        /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
+        public ContainerOptionsBuilder WithServerlessThroughput()
+        {
+            ThroughputProperties = null;
+            return this;
+        }
+
+        /// <summary>
         /// Adds monitoring of the change feed for the given <see cref="IItem"/>
         /// </summary>
         /// <param name="optionsActions">An action to configure the change feed for the given container.</param>

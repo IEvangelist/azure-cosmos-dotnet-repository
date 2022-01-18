@@ -73,5 +73,16 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             Assert.Contains("500", exception.Message);
             Assert.Contains("700", exception.Message);
         }
+
+        [Fact]
+        public void GetThroughputPropertiesContainerWithServerlessConfiguration()
+        {
+            _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(
+                builder => builder.WithServerlessThroughput());
+
+            ThroughputProperties throughputProperties = _provider.GetThroughputProperties<AnotherTestItem>();
+
+            Assert.Null(throughputProperties);
+        }
     }
 }
