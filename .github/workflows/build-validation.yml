@@ -44,6 +44,7 @@ jobs:
 
   build:
     name: build-${{matrix.os}}
+    needs: pre-test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
