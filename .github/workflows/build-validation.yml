@@ -12,8 +12,36 @@ on:
         description: 'The reason for running the workflow'
         required: true
         default: 'Manual run'
+       
+# Only one instance of this build at a time. 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  pre-test:
+    name: pre-test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            3.1.402
+            6.0.x
+  
+      - name: Install dependencies
+        working-directory: ./tools/CosmosTestHelper
+        run: dotnet restore
+        
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
+
   build:
     name: build-${{matrix.os}}
     runs-on: ${{ matrix.os }}
@@ -40,5 +68,6 @@ jobs:
     - name: Test
       env:
         CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        OperatingSystemKey: ${{ martix.os }}
       run: |
         dotnet test --no-restore --verbosity normal

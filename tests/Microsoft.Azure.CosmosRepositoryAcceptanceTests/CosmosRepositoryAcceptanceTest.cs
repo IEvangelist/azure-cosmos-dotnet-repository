@@ -83,9 +83,12 @@ public abstract class CosmosRepositoryAcceptanceTest
 
     protected static readonly Action<RepositoryOptions> DefaultTestRepositoryOptions = options =>
     {
+        string os = Environment.GetEnvironmentVariable("OperatingSystemKey") ??
+                    Environment.OSVersion.Platform.ToString().ToLower();
+
         options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
         options.ContainerPerItemType = true;
-        options.DatabaseId = "cosmos-repository-acceptance-tests";
+        options.DatabaseId = $"cosmos-repository-acceptance-tests-{os}";
 
         ConfigureProducts(options);
         ConfigureRatings(options);
