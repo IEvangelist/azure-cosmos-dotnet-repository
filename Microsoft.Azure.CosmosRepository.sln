@@ -53,6 +53,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepositoryAcceptanceTests", "tests\Microsoft.Azure.CosmosRepositoryAcceptanceTests\Microsoft.Azure.CosmosRepositoryAcceptanceTests.csproj", "{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{8704E3AA-99EC-4D9A-AB6B-4AC72D0207E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosTestHelper", "tools\CosmosTestHelper\CosmosTestHelper.csproj", "{86B938CF-7671-4B66-B831-C9EB6D73FD85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +117,10 @@ Global
 		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86B938CF-7671-4B66-B831-C9EB6D73FD85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86B938CF-7671-4B66-B831-C9EB6D73FD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86B938CF-7671-4B66-B831-C9EB6D73FD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86B938CF-7671-4B66-B831-C9EB6D73FD85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,6 +137,7 @@ Global
 		{C09F2BE0-1E3C-445A-886E-FBF806D0C9BB} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
 		{9BB9074A-9478-41A3-A108-5E5775DB8353} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
+		{86B938CF-7671-4B66-B831-C9EB6D73FD85} = {8704E3AA-99EC-4D9A-AB6B-4AC72D0207E0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6AAE7641-B62C-48BA-8FE6-0F819E5B45EF}
