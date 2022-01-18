@@ -68,6 +68,5 @@ jobs:
     - name: Test
       env:
         CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-        OperatingSystemKey: ${{ martix.os }}
       run: |
         dotnet test --no-restore --verbosity normal
