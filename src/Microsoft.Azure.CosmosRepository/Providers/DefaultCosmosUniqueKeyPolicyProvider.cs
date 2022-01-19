@@ -23,17 +23,19 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
             Dictionary<string, List<string>> keyNameToPathsMap = new();
 
-            foreach (UniqueKeyAttribute uniqueKey in itemType.GetProperties()
+            foreach ((UniqueKeyAttribute uniqueKey, string propertyName) in itemType.GetProperties()
                          .Where(x => Attribute.IsDefined(x, attributeType))
-                         .Select(x => x.GetCustomAttribute<UniqueKeyAttribute>()))
+                         .Select(x => (x.GetCustomAttribute<UniqueKeyAttribute>(), x.Name)))
             {
+                string propertyValue = uniqueKey.PropertyPath ?? $"/{propertyName}";
+
                 if (keyNameToPathsMap.ContainsKey(uniqueKey.KeyName))
                 {
-                    keyNameToPathsMap[uniqueKey.KeyName].Add(uniqueKey.PropertyPath);
+                    keyNameToPathsMap[uniqueKey.KeyName].Add(propertyValue);
                     continue;
                 }
 
-                keyNameToPathsMap[uniqueKey.KeyName] = new List<string> {uniqueKey.PropertyPath};
+                keyNameToPathsMap[uniqueKey.KeyName] = new List<string> {propertyValue};
             }
 
             if (!keyNameToPathsMap.Any())
