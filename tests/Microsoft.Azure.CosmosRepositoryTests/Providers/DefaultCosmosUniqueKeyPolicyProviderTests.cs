@@ -57,6 +57,15 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
             Assert.Null(policy);
         }
+
+        [Fact]
+        public void CosmosUniqueKeyPolicyProviderCorrectlyGetsOneUniqueKeyAndPropertyPath()
+        {
+            ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
+
+            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass5>();
+            Assert.Equal("/name", policy.UniqueKeys.Single().Paths.Single());
+        }
     }
 
     public class SomeInterestingClass : Item
@@ -97,6 +106,16 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
         public string HouseNumber { get; set; } = "1";
 
+        public string Name { get; set; } = "John";
+    }
+
+    public class SomeInterestingClass5 : Item
+    {
+        public string Street { get; set; } = "Street1";
+
+        public string HouseNumber { get; set; } = "1";
+
+        [UniqueKey(propertyPath: "/name")]
         public string Name { get; set; } = "John";
     }
 }
