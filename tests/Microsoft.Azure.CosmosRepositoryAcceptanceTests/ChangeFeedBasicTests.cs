@@ -16,6 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Trait("Type", "Functional")]
 public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
 {
     private static readonly Action<RepositoryOptions> ChangeFeedTestOptions = options =>
