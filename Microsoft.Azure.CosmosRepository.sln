@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30323.103
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32002.185
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepository", "src\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj", "{82E2D15C-7E53-4B77-A90A-9BADF185D564}"
 EndProject
@@ -12,13 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		.github\ISSUE_TEMPLATE\bug_report.md = .github\ISSUE_TEMPLATE\bug_report.md
 		.github\workflows\build-validation.yml = .github\workflows\build-validation.yml
+		.github\workflows\code-metrics.yml = .github\workflows\code-metrics.yml
 		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
 		CosmosRepository.png = CosmosRepository.png
 		.github\ISSUE_TEMPLATE\feature_request.md = .github\ISSUE_TEMPLATE\feature_request.md
 		LICENSE = LICENSE
 		.github\workflows\pr-validation.yml = .github\workflows\pr-validation.yml
 		README.md = README.md
-		.github\workflows\code-metrics.yml = .github\workflows\code-metrics.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTier", "samples\ServiceTier\ServiceTier.csproj", "{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}"
@@ -31,31 +31,31 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctionTier", "sample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryWebTier", "samples\InMemoryWebTier\InMemoryWebTier.csproj", "{1AED0820-CE1C-42F1-A1C1-44BCFEDB2AE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InMemoryWebTier", "samples\InMemoryWebTier\InMemoryWebTier.csproj", "{1AED0820-CE1C-42F1-A1C1-44BCFEDB2AE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTier.Integration.Tests", "samples\WebTier.Integration.Tests\WebTier.Integration.Tests.csproj", "{DA869F40-C51B-47C8-A277-823CF2EB9F55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTier.Integration.Tests", "samples\WebTier.Integration.Tests\WebTier.Integration.Tests.csproj", "{DA869F40-C51B-47C8-A277-823CF2EB9F55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paging", "samples\Paging\Paging.csproj", "{5AE38FCC-1FB7-479C-B672-8CC45095B5E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Paging", "samples\Paging\Paging.csproj", "{5AE38FCC-1FB7-479C-B672-8CC45095B5E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptimisticConcurrencyControl", "samples\OptimisticConcurrencyControl\OptimisticConcurrencyControl.csproj", "{ED06D554-7B62-4588-A61A-D4E855547DF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OptimisticConcurrencyControl", "samples\OptimisticConcurrencyControl\OptimisticConcurrencyControl.csproj", "{ED06D554-7B62-4588-A61A-D4E855547DF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeFeedConsole", "samples\ChangeFeedConsole\ChangeFeedConsole.csproj", "{C09F2BE0-1E3C-445A-886E-FBF806D0C9BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeFeedConsole", "samples\ChangeFeedConsole\ChangeFeedConsole.csproj", "{C09F2BE0-1E3C-445A-886E-FBF806D0C9BB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ChangeFeed", "ChangeFeed", "{9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangedFeedSamples.Shared", "samples\ChangedFeedSamples.Shared\ChangedFeedSamples.Shared.csproj", "{9BB9074A-9478-41A3-A108-5E5775DB8353}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangedFeedSamples.Shared", "samples\ChangedFeedSamples.Shared\ChangedFeedSamples.Shared.csproj", "{9BB9074A-9478-41A3-A108-5E5775DB8353}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeFeedWeb", "samples\ChangeFeedWeb\ChangeFeedWeb.csproj", "{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeFeedWeb", "samples\ChangeFeedWeb\ChangeFeedWeb.csproj", "{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepository.AspNetCore", "src\Microsoft.Azure.CosmosRepository.AspNetCore\Microsoft.Azure.CosmosRepository.AspNetCore.csproj", "{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepository.AspNetCore", "src\Microsoft.Azure.CosmosRepository.AspNetCore\Microsoft.Azure.CosmosRepository.AspNetCore.csproj", "{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepository.AspNetCoreTests", "tests\Microsoft.Azure.CosmosRepository.AspNetCoreTests\Microsoft.Azure.CosmosRepository.AspNetCoreTests.csproj", "{CDF603BA-5474-45E9-BBA1-2D33CAD12062}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepository.AspNetCoreTests", "tests\Microsoft.Azure.CosmosRepository.AspNetCoreTests\Microsoft.Azure.CosmosRepository.AspNetCoreTests.csproj", "{CDF603BA-5474-45E9-BBA1-2D33CAD12062}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepositoryAcceptanceTests", "tests\Microsoft.Azure.CosmosRepositoryAcceptanceTests\Microsoft.Azure.CosmosRepositoryAcceptanceTests.csproj", "{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosRepositoryAcceptanceTests", "tests\Microsoft.Azure.CosmosRepositoryAcceptanceTests\Microsoft.Azure.CosmosRepositoryAcceptanceTests.csproj", "{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{8704E3AA-99EC-4D9A-AB6B-4AC72D0207E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosTestHelper", "tools\CosmosTestHelper\CosmosTestHelper.csproj", "{86B938CF-7671-4B66-B831-C9EB6D73FD85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTestHelper", "tools\CosmosTestHelper\CosmosTestHelper.csproj", "{86B938CF-7671-4B66-B831-C9EB6D73FD85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,10 +113,16 @@ Global
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDF603BA-5474-45E9-BBA1-2D33CAD12062}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{86B938CF-7671-4B66-B831-C9EB6D73FD85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{86B938CF-7671-4B66-B831-C9EB6D73FD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86B938CF-7671-4B66-B831-C9EB6D73FD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -133,8 +139,8 @@ Global
 		{DA869F40-C51B-47C8-A277-823CF2EB9F55} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 		{5AE38FCC-1FB7-479C-B672-8CC45095B5E7} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 		{ED06D554-7B62-4588-A61A-D4E855547DF2} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
-		{9BC98AA9-78A9-4AAA-998C-461CC09DFFDE} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 		{C09F2BE0-1E3C-445A-886E-FBF806D0C9BB} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
+		{9BC98AA9-78A9-4AAA-998C-461CC09DFFDE} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 		{9BB9074A-9478-41A3-A108-5E5775DB8353} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
 		{86B938CF-7671-4B66-B831-C9EB6D73FD85} = {8704E3AA-99EC-4D9A-AB6B-4AC72D0207E0}
