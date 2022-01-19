@@ -17,6 +17,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Trait("Category", "Acceptance")]
 [Trait("Type", "Container")]
 public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
 {

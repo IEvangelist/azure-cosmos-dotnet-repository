@@ -17,7 +17,6 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
-[Trait("Category", "Acceptance")]
 public abstract class CosmosRepositoryAcceptanceTest
 {
     protected const string ProductsInfoContainer = "products-info";
