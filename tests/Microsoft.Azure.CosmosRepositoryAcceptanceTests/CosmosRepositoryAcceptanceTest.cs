@@ -9,6 +9,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -140,6 +141,25 @@ public abstract class CosmosRepositoryAcceptanceTest
             builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(10));
         });
     };
+
+
+    protected static async Task<ContainerProperties?> DeleteDatabaseIfExists(string dbName, CosmosClient client)
+    {
+        FeedIterator<DatabaseProperties> containerQueryIterator = client.GetDatabaseQueryIterator<DatabaseProperties>("SELECT * FROM c");
+
+        while (containerQueryIterator.HasMoreResults)
+        {
+            foreach (DatabaseProperties database in await containerQueryIterator.ReadNextAsync())
+            {
+                if (database.Id == dbName)
+                {
+                    await client.GetDatabase(dbName).DeleteAsync();
+                }
+            }
+        }
+
+        return null;
+    }
 
     protected static async Task<ContainerProperties?> GetContainerProperties(Database database, string containerName)
     {

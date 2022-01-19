@@ -16,13 +16,24 @@ namespace Microsoft.Azure.CosmosRepository.Attributes
         /// <summary>
         /// Gets the key name that represents the unique key.
         /// </summary>
-        public string KeyName { get; } = "uniqueKey";
+        /// <remarks>This is the unique name to match a set of paths on</remarks>
+        public string KeyName { get; }
+
+        /// <summary>
+        /// The property path to use for the key
+        /// </summary>
+        public string PropertyPath { get; set; }
 
         /// <summary>
         /// Constructor accepting the <paramref name="keyName"/> for a given <see cref="IItem"/>'s property.
         /// </summary>
         /// <param name="keyName"></param>
-        public UniqueKeyAttribute(string keyName) =>
-            KeyName = keyName ?? throw new ArgumentNullException(nameof(keyName), "A keyname is required.");
+        /// <param name="propertyPath">The property path to match for the constraint</param>
+        /// <remarks>If the propertyPath is null the name of the property this is defined will be used.</remarks>
+        public UniqueKeyAttribute(string keyName = null, string propertyPath = null)
+        {
+            KeyName = keyName ?? "onlyUniqueKey";
+            PropertyPath = propertyPath;
+        }
     }
 }

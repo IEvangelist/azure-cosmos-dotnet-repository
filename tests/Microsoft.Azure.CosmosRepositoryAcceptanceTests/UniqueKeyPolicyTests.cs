@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.Cosmos;
@@ -16,11 +17,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
-
 [Trait("Type", "Container")]
 public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
 {
-
     private static readonly string UniquePolicyDb = BuildDatabaseName("unique-key-tests");
     private static readonly string UniqueKeyPolicyContainerName = "unique-key";
 
@@ -31,7 +30,9 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
         options.ContainerPerItemType = true;
         options.ContainerBuilder.Configure<UniqueKeyPolicyItem>(builder =>
         {
-            builder.WithContainer(UniqueKeyPolicyContainerName);
+            builder
+                .WithContainer(UniqueKeyPolicyContainerName)
+                .WithPartitionKey("/county");
         });
     }
 
@@ -44,42 +45,48 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
     public async Task Startup_ContainerWithUniqueKeyPolicy_CreatesContainerCorrectly()
     {
         //Arrange
-        IRepository<UniqueKeyPolicyItem> uniqueKeyItemRepository = _provider.GetRequiredService<IRepository<UniqueKeyPolicyItem>>();
         ICosmosClientProvider clientProvider = _provider.GetRequiredService<ICosmosClientProvider>();
+        IRepository<UniqueKeyPolicyItem> uniqueKeyItemRepository =
+            _provider.GetRequiredService<IRepository<UniqueKeyPolicyItem>>();
+        await clientProvider.UseClientAsync(x => DeleteDatabaseIfExists(UniquePolicyDb, x));
 
-        Database? database = null;
+        //Act
+        Database database = await clientProvider.UseClientAsync(x => Task.FromResult(x.GetDatabase(UniquePolicyDb)));
 
-        try
-        {
-            //Act
-            database = await clientProvider.UseClientAsync(x => Task.FromResult(x.GetDatabase(UniquePolicyDb)));
+        UniqueKeyPolicyItem bobInYorkshire = new("bob", 22, "Yorkshire", "Red");
+        UniqueKeyPolicyItem bobInDerbyshire = new("bob", 22, "Derbyshire", "Yellow");
+        UniqueKeyPolicyItem cannotHaveAnotherBobInYorkshire = new("bob", 22, "Derbyshire", "Green");
+        UniqueKeyPolicyItem jeffFromYorkshireCannotLikeRedAsWell = new("jeff", 40, "Yorkshire", "Red");
 
-            UniqueKeyPolicyItem uniqueItem1 = new("bob", 10);
-            UniqueKeyPolicyItem uniqueItem2 = new("gil", 11);
-            UniqueKeyPolicyItem uniqueItem3 = new("bob", 11);
-            UniqueKeyPolicyItem dupeItem = new("bob", 10);
+        await uniqueKeyItemRepository.CreateAsync(bobInYorkshire);
+        await uniqueKeyItemRepository.CreateAsync(bobInDerbyshire);
 
-            await uniqueKeyItemRepository.CreateAsync(uniqueItem1);
-            await uniqueKeyItemRepository.CreateAsync(uniqueItem2);
-            await uniqueKeyItemRepository.CreateAsync(uniqueItem3);
 
-            //Assert
+        //Assert
+        ContainerProperties? properties = await GetContainerProperties(database, UniqueKeyPolicyContainerName);
+        properties.Should().NotBeNull();
+        properties!.UniqueKeyPolicy.UniqueKeys.Count.Should().Be(2);
+        properties.UniqueKeyPolicy.UniqueKeys
+            .Count(x =>
+                x.Paths.Contains("/firstName") &&
+                x.Paths.Contains("/age") &&
+                x.Paths.Count is 2)
+            .Should()
+            .Be(1);
 
-            ContainerProperties? properties = await GetContainerProperties(database, UniqueKeyPolicyContainerName);
-            properties.Should().NotBeNull();
-            properties!.UniqueKeyPolicy.UniqueKeys.Count.Should().Be(1);
-            UniqueKey keys = properties.UniqueKeyPolicy.UniqueKeys.First();
-            keys.Paths.Should().Contain("/firstName");
-            keys.Paths.Should().Contain("/age");
+        properties.UniqueKeyPolicy.UniqueKeys
+            .Count(x =>
+                x.Paths.Contains("/favouriteColor") &&
+                x.Paths.Count is 1)
+            .Should()
+            .Be(1);
 
-            await Assert.ThrowsAsync<CosmosException>(() => uniqueKeyItemRepository.CreateAsync(dupeItem).AsTask());
-        }
-        finally
-        {
-            if (database != null)
-            {
-                await database.DeleteAsync();
-            }
-        }
+        CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() =>
+            uniqueKeyItemRepository.CreateAsync(cannotHaveAnotherBobInYorkshire).AsTask());
+        ex.StatusCode.Should().Be(HttpStatusCode.Conflict);
+
+        ex = await Assert.ThrowsAsync<CosmosException>(() =>
+            uniqueKeyItemRepository.CreateAsync(jeffFromYorkshireCannotLikeRedAsWell).AsTask());
+        ex.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 }
