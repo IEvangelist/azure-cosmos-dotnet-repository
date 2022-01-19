@@ -37,9 +37,9 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             }
         }
         /// <inheritdoc/>
-        public IEnumerable<WhereExpressionInfo<T>> WhereExpressions { get; } = new List<WhereExpressionInfo<T>>();
+        public IReadOnlyList<WhereExpressionInfo<T>> WhereExpressions { get; } = new List<WhereExpressionInfo<T>>();
         /// <inheritdoc/>
-        public IEnumerable<OrderExpressionInfo<T>> OrderExpressions { get; } = new List<OrderExpressionInfo<T>>();
+        public IReadOnlyList<OrderExpressionInfo<T>> OrderExpressions { get; } = new List<OrderExpressionInfo<T>>();
         /// <inheritdoc/>
         public string ContinutationToken { get; internal set; } = null;
         /// <inheritdoc/>

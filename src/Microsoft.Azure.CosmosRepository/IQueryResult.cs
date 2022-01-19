@@ -10,13 +10,13 @@ namespace Microsoft.Azure.CosmosRepository
     /// <summary>
     /// Represent a full set of data from a cosmos query
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IQueryResult<out T> where T : IItem
+    /// <typeparam name="TItem"></typeparam>
+    public interface IQueryResult<out TItem> where TItem : IItem
     {
         /// <summary>
         /// The items that are in the current page.
         /// </summary>
-        IReadOnlyList<T> Items { get; }
+        IReadOnlyList<TItem> Items { get; }
 
         /// <summary>
         /// The amount of RU's the given query cost.

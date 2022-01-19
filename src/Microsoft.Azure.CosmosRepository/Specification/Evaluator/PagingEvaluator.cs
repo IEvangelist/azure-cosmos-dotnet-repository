@@ -21,7 +21,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
         /// <summary>
         /// 
         /// </summary>
-        public bool IsCriteriaEvaluator { get; } = false;
+        public bool IsFilterEvaluator { get; } = false;
         /// <summary>
         /// 
         /// </summary>
@@ -34,6 +34,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
             where T : IItem
             where TResult : IQueryResult<T>
         {
+
             if (specification.UseContinutationToken)
             {
                 return query;
@@ -43,7 +44,6 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
             {
                 query = query.Skip(specification.PageSize * (specification.PageNumber.Value - 1));
             }
-
             query = query.Take(specification.PageSize);
 
             return query;

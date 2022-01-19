@@ -16,19 +16,19 @@ namespace Microsoft.Azure.CosmosRepository.Specification
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class PageNumberPageSizeSpecification<T> : BaseSpecification<T, IPageQueryResult<T>>
+    public class OffsetByPageNumberSpecification<T> : BaseSpecification<T, IPageQueryResult<T>>
         where T : IItem
     {
         /// <summary>
         /// 
         /// </summary>
-        public PageNumberPageSizeSpecification() { }
+        public OffsetByPageNumberSpecification() { }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
-        public PageNumberPageSizeSpecification(int pageNumber, int pageSize)
+        public OffsetByPageNumberSpecification(int pageNumber, int pageSize)
         {
             Query.PageSize(pageSize);
             Query.PageNumber(pageNumber);

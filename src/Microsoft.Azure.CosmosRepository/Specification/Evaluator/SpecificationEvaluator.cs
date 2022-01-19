@@ -26,7 +26,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
             where T : IItem
             where TResult : IQueryResult<T>
         {
-            IEnumerable<IEvaluator> evaluators = evaluateCriteriaOnly ? this.evaluators.Where(e => e.IsCriteriaEvaluator).ToList() : this.evaluators;
+            IEnumerable<IEvaluator> evaluators = evaluateCriteriaOnly ? this.evaluators.Where(e => e.IsFilterEvaluator).ToList() : this.evaluators;
 
             foreach(IEvaluator evaluator in evaluators)
             {

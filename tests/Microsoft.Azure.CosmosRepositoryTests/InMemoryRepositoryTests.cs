@@ -1083,7 +1083,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(expectedList, enumerable, new DogComparer());
         }
 
-        internal class DogSpecification : PageNumberPageSizeSpecification<Dog>
+        internal class DogSpecification : OffsetByPageNumberSpecification<Dog>
         {
             internal DogSpecification(string breed, int pageNumber, int pageSize)
             {

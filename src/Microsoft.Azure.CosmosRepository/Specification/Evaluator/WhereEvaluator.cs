@@ -21,7 +21,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
         /// <summary>
         /// 
         /// </summary>
-        public bool IsCriteriaEvaluator { get; } = true;
+        public bool IsFilterEvaluator { get; } = true;
         /// <summary>
         /// 
         /// </summary>

@@ -17,20 +17,20 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         where TResult : IQueryResult<T>
     {
         /// <summary>
-        /// The collection of filters.
+        /// The collection of filter expressions used for filtering queries.
         /// </summary>
-        IEnumerable<WhereExpressionInfo<T>> WhereExpressions { get; }
+        IReadOnlyList<WhereExpressionInfo<T>> WhereExpressions { get; }
         /// <summary>
-        /// A collection of expressions used for sorting 
+        /// A collection of expressions used for sorting.
         /// </summary>
-        IEnumerable<OrderExpressionInfo<T>> OrderExpressions { get; }
+        IReadOnlyList<OrderExpressionInfo<T>> OrderExpressions { get; }
         /// <summary>
-        /// Processing for updating the query result before returning it from the repository
+        /// Processing for updating the query result before returning it from the repository. Given the methods input it should generate the specified TResult />
         /// </summary>
         TResult PostProcessingAction(IReadOnlyList<T> queryResult, int totalCount, double charge, string continuationToken);
 
         /// <summary>
-        /// Continutation token used for paging in cosmos. If specificed PageNumber will be ignored
+        /// Continutation token used for paging in cosmos. Must set <see cref="UseContinutationToken"/> for continuation token to be applicable
         /// </summary>
         string ContinutationToken { get; }
         /// <summary>

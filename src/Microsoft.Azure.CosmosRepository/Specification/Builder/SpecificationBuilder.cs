@@ -38,7 +38,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             where T : IItem
             where TResult : IQueryResult<T>
 
-        {
+        {     
             ((List<WhereExpressionInfo<T>>)specificationBuilder.Specification.WhereExpressions).Add(new WhereExpressionInfo<T>(criteria));
 
             return specificationBuilder;

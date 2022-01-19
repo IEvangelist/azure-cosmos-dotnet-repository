@@ -14,11 +14,11 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
     public interface IEvaluator
     {
         /// <summary>
-        /// 
+        /// Defines if the evaluator is used for filtering the results. Evaluators that are not used for filtering are better to ignore when doing things like a Count.
         /// </summary>
-        bool IsCriteriaEvaluator { get; }
+        bool IsFilterEvaluator { get; }
         /// <summary>
-        /// 
+        /// Evaluates something in the specification and then adds it to an <see cref="IQueryable"/> and returns the updated <see cref="IQueryable"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>

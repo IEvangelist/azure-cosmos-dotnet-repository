@@ -13,12 +13,18 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
         private OrderEvaluator() { }
         public static OrderEvaluator Instance { get; } = new OrderEvaluator();
 
-        public bool IsCriteriaEvaluator { get; } = false;
+        public bool IsFilterEvaluator { get; } = false;
 
         public IQueryable<T> GetQuery<T, TResult>(IQueryable<T> query, ISpecification<T, TResult> specification)
             where T : IItem
             where TResult : IQueryResult<T>
         {
+            if(specification.ContinutationToken != null && specification.ContinutationToken != "")
+            {
+                //Ordering is handled with the token
+                return query;
+            }
+
             if (specification.OrderExpressions != null)
             {
                 if (specification.OrderExpressions.Count(x => x.OrderType == OrderTypeEnum.OrderBy
@@ -30,22 +36,14 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
                 IOrderedQueryable<T> orderedQuery = null;
                 foreach (OrderExpressionInfo<T> orderExpression in specification.OrderExpressions)
                 {
-                    if (orderExpression.OrderType == OrderTypeEnum.OrderBy)
+                    orderedQuery = orderExpression.OrderType switch
                     {
-                        orderedQuery = query.OrderBy(orderExpression.KeySelector);
-                    }
-                    else if (orderExpression.OrderType == OrderTypeEnum.OrderByDescending)
-                    {
-                        orderedQuery = query.OrderByDescending(orderExpression.KeySelector);
-                    }
-                    else if (orderExpression.OrderType == OrderTypeEnum.ThenBy)
-                    {
-                        orderedQuery = orderedQuery.ThenBy(orderExpression.KeySelector);
-                    }
-                    else if (orderExpression.OrderType == OrderTypeEnum.ThenByDescending)
-                    {
-                        orderedQuery = orderedQuery.ThenByDescending(orderExpression.KeySelector);
-                    }
+                        OrderTypeEnum.OrderBy => query.OrderBy(orderExpression.KeySelector),
+                        OrderTypeEnum.OrderByDescending => query.OrderByDescending(orderExpression.KeySelector),
+                        OrderTypeEnum.ThenBy => orderedQuery.ThenBy(orderExpression.KeySelector),
+                        OrderTypeEnum.ThenByDescending => orderedQuery.ThenByDescending(orderExpression.KeySelector),
+                        _ => throw new NotImplementedException("Unknown value of OrderTypeEnum")
+                    };
                 }
 
                 if (orderedQuery != null)

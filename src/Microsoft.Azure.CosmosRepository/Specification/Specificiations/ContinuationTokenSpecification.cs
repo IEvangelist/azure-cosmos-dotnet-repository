@@ -13,14 +13,21 @@ using Microsoft.Azure.CosmosRepository.Specification;
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
     /// <summary>
-    /// 
+    /// A specification implementation used for paging with continuation token
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ContinuationTokenSpecification<T> : BaseSpecification<T, IPage<T>>
-        where T : IItem
+    /// <typeparam name="TItem"></typeparam>
+    public class ContinuationTokenSpecification<TItem> : BaseSpecification<TItem, IPage<TItem>>
+        where TItem : IItem
     {
         /// <summary>
-        /// 
+        /// Default ctor to set all parameters yourself
+        /// </summary>
+        public ContinuationTokenSpecification()
+        {
+            UseContinutationToken = true;   
+        }
+        /// <summary>
+        /// Ctor for specifiying the token and page size
         /// </summary>
         /// <param name="continutationToken"></param>
         /// <param name="pageSize"></param>
@@ -30,24 +37,26 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             Query.ContinutationToken(continutationToken);
             Query.PageSize(pageSize);
         }
-
-        internal void UpdateContinutationToken(string continuationToken)
+        /// <summary>
+        /// When scrolling through multiple pages reuse the same specification and use this method to update the continuation token
+        /// </summary>
+        /// <param name="continuationToken"></param>
+        public void UpdateContinutationToken(string continuationToken)
         {
             Query.ContinutationToken(continuationToken);
         }
 
         /// <summary>
-        /// 
+        /// Return 
         /// </summary>
         /// <param name="queryResult"></param>
         /// <param name="totalCount"></param>
         /// <param name="charge"></param>
         /// <param name="continuationToken"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public override IPage<T> PostProcessingAction(IReadOnlyList<T> queryResult, int totalCount, double charge, string continuationToken)
+        public override IPage<TItem> PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge, string continuationToken)
         {
-            return new Page<T>(totalCount, PageSize, queryResult, charge, continuationToken);
+            return new Page<TItem>(totalCount, PageSize, queryResult, charge, continuationToken);
         }
     }
 }

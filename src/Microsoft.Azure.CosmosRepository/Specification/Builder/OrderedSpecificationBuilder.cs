@@ -32,6 +32,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
 
         /// <summary>
         /// Adds a ThenBy expression to the existing order expression
+        /// All ThenBy expressions requires a composite index that matched the ordering clause
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>
@@ -50,6 +51,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         }
         /// <summary>
         /// Adds a ThenByDescending expression to the existing order expression
+        /// All ThenByDescending expressions requires a composite index that matched the ordering clause
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>
