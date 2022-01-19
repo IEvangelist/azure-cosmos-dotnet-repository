@@ -46,7 +46,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                 UniqueKey uniqueKey = new();
                 foreach (PropertyInfo property in properties)
                 {
-                    uniqueKey.Paths.Add($"/{property.Name}");
+                    uniqueKey.Paths.Add($"/{keyName}");
                 }
                 policy.UniqueKeys.Add(uniqueKey);
             }

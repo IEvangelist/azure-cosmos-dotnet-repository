@@ -42,7 +42,7 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
     private readonly IRepository<RatingByCategory> _ratingsByCategoryRepository;
     private readonly IChangeFeedService _changeFeedService;
 
-    public ChangeFeedBasicTests(ITestOutputHelper testOutputHelper) : base(ChangeFeedTestOptions, testOutputHelper)
+    public ChangeFeedBasicTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, ChangeFeedTestOptions)
     {
         _ratingsByCategoryRepository = _provider.GetRequiredService<IRepository<RatingByCategory>>();
         _changeFeedService = _provider.GetRequiredService<IChangeFeedService>();
