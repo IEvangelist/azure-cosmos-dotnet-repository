@@ -1,7 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Runtime;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Attributes;
 
