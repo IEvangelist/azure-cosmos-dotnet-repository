@@ -43,10 +43,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.23.0"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.17"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.17"/>
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.17"/>
+        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.23.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.17" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.17" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.17" />
         <PackageReference Include="MinVer" Version="2.5.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -54,9 +54,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryAcceptanceTests"/>
-        <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryTests"/>
-        <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
+        <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryAcceptanceTests" />
+        <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryTests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -64,7 +64,7 @@
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>
-        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

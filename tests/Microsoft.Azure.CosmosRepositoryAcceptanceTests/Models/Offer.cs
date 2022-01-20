@@ -31,9 +31,9 @@ public class BuyOneGetOneFreeOffer : Offer
     }
 }
 
-public class BuyOneGetOneHalfPriceOffer : Offer
+public class DiscountOf20Percent : Offer
 {
-    public BuyOneGetOneHalfPriceOffer(string createdBy) : base(nameof(BuyOneGetOneHalfPriceOffer), createdBy)
+    public DiscountOf20Percent(string createdBy) : base(nameof(DiscountOf20Percent), createdBy)
     {
     }
 }

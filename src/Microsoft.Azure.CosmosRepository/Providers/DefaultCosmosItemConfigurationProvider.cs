@@ -11,14 +11,15 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 {
     class DefaultCosmosItemConfigurationProvider : ICosmosItemConfigurationProvider
     {
-        private static readonly ConcurrentDictionary<Type, ItemOptions> _itemOptionsMap = new();
+        private static readonly ConcurrentDictionary<Type, ItemConfiguration> _itemOptionsMap = new();
 
         private readonly ICosmosContainerNameProvider _containerNameProvider;
         private readonly ICosmosPartitionKeyPathProvider _cosmosPartitionKeyPathProvider;
         private readonly ICosmosUniqueKeyPolicyProvider _cosmosUniqueKeyPolicyProvider;
         private readonly ICosmosContainerDefaultTimeToLiveProvider _containerDefaultTimeToLiveProvider;
         private readonly ICosmosContainerSyncContainerPropertiesProvider _syncContainerPropertiesProvider;
-        readonly ICosmosThroughputProvider _cosmosThroughputProvider;
+        private readonly ICosmosThroughputProvider _cosmosThroughputProvider;
+        private readonly ICosmosStrictTypeCheckingProvider _cosmosStrictTypeCheckingProvider;
 
         public DefaultCosmosItemConfigurationProvider(
             ICosmosContainerNameProvider containerNameProvider,
@@ -26,7 +27,8 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             ICosmosUniqueKeyPolicyProvider cosmosUniqueKeyPolicyProvider,
             ICosmosContainerDefaultTimeToLiveProvider containerDefaultTimeToLiveProvider,
             ICosmosContainerSyncContainerPropertiesProvider syncContainerPropertiesProvider,
-            ICosmosThroughputProvider cosmosThroughputProvider)
+            ICosmosThroughputProvider cosmosThroughputProvider,
+            ICosmosStrictTypeCheckingProvider cosmosStrictTypeCheckingProvider)
         {
             _containerNameProvider = containerNameProvider;
             _cosmosPartitionKeyPathProvider = cosmosPartitionKeyPathProvider;
@@ -34,16 +36,17 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             _containerDefaultTimeToLiveProvider = containerDefaultTimeToLiveProvider;
             _syncContainerPropertiesProvider = syncContainerPropertiesProvider;
             _cosmosThroughputProvider = cosmosThroughputProvider;
+            _cosmosStrictTypeCheckingProvider = cosmosStrictTypeCheckingProvider;
         }
 
-        public ItemOptions GetOptions<TItem>() where TItem : IItem =>
-            GetOptions(typeof(TItem));
+        public ItemConfiguration GetItemConfiguration<TItem>() where TItem : IItem =>
+            GetItemConfiguration(typeof(TItem));
 
-        public ItemOptions GetOptions(Type itemType) =>
+        public ItemConfiguration GetItemConfiguration(Type itemType) =>
             _itemOptionsMap.GetOrAdd(itemType, AddOptions(itemType));
 
 
-        private ItemOptions AddOptions(Type itemType)
+        private ItemConfiguration AddOptions(Type itemType)
         {
             itemType.IsItem();
 
@@ -53,14 +56,17 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             int timeToLive = _containerDefaultTimeToLiveProvider.GetDefaultTimeToLive(itemType);
             bool sync = _syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties(itemType);
             ThroughputProperties throughputProperties = _cosmosThroughputProvider.GetThroughputProperties(itemType);
+            bool useStrictTypeChecking = _cosmosStrictTypeCheckingProvider.UseStrictTypeChecking(itemType);
 
-            return new(itemType,
+            return new(
+                itemType,
                 containerName,
                 partitionKeyPath,
                 uniqueKeyPolicy,
                 throughputProperties,
                 timeToLive,
-                sync);
+                sync,
+                useStrictTypeChecking: useStrictTypeChecking);
         }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
+using Microsoft.Azure.CosmosRepository.Services;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -21,7 +22,7 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 [Trait("Type", "Container")]
 public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
 {
-    private static readonly string UniquePolicyDb = BuildDatabaseName("unique-key-tests");
+    private static readonly string UniquePolicyDb = "unique-key-tests";
     private static readonly string UniqueKeyPolicyContainerName = "unique-key";
 
     private static void UniqueKeyOptionsBuilder(RepositoryOptions options)
@@ -51,7 +52,7 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
         await clientProvider.UseClientAsync(x => DeleteDatabaseIfExists(UniquePolicyDb, x));
 
         //Act
-        Database database = await clientProvider.UseClientAsync(x => Task.FromResult(x.GetDatabase(UniquePolicyDb)));
+        Database database = await clientProvider.UseClientAsync(x => x.CreateDatabaseIfNotExistsAsync(UniquePolicyDb));
 
         UniqueKeyPolicyItem bobInYorkshire = new("bob", 22, "Yorkshire", "Red");
         UniqueKeyPolicyItem bobInDerbyshire = new("bob", 22, "Derbyshire", "Yellow");
