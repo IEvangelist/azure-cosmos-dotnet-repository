@@ -21,34 +21,40 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         {
             Type attributeType = typeof(UniqueKeyAttribute);
 
-            Dictionary<string, HashSet<PropertyInfo>> keyNamesToPropertyMap = new();
-            foreach ((PropertyInfo property, string keyName) in
-                     itemType.GetProperties()
-                         .Where(p => Attribute.IsDefined(p, attributeType))
-                         .Select(p => (Property: p, p.GetCustomAttribute<UniqueKeyAttribute>().KeyName)))
+            Dictionary<string, List<string>> keyNameToPathsMap = new();
+
+            foreach ((UniqueKeyAttribute uniqueKey, string propertyName) in itemType.GetProperties()
+                         .Where(x => Attribute.IsDefined(x, attributeType))
+                         .Select(x => (x.GetCustomAttribute<UniqueKeyAttribute>(), x.Name)))
             {
-                if (!keyNamesToPropertyMap.ContainsKey(keyName))
+                string propertyValue = uniqueKey.PropertyPath ?? $"/{propertyName}";
+
+                if (keyNameToPathsMap.ContainsKey(uniqueKey.KeyName))
                 {
-                    keyNamesToPropertyMap.Add(keyName, new HashSet<PropertyInfo>());
+                    keyNameToPathsMap[uniqueKey.KeyName].Add(propertyValue);
+                    continue;
                 }
-                keyNamesToPropertyMap[keyName].Add(property);
+
+                keyNameToPathsMap[uniqueKey.KeyName] = new List<string> {propertyValue};
             }
 
-            if (keyNamesToPropertyMap.Count == 0)
+            if (!keyNameToPathsMap.Any())
             {
                 return null;
             }
 
             UniqueKeyPolicy policy = new();
-            foreach ((string keyName, HashSet<PropertyInfo> properties) in
-                     keyNamesToPropertyMap.Select(kvp => (kvp.Key, kvp.Value)))
+
+            foreach (KeyValuePair<string, List<string>> keyNameToPaths in keyNameToPathsMap)
             {
-                UniqueKey uniqueKey = new();
-                foreach (PropertyInfo property in properties)
+                UniqueKey key = new();
+
+                foreach (string path in keyNameToPaths.Value)
                 {
-                    uniqueKey.Paths.Add($"/{property.Name}");
+                    key.Paths.Add(path);
                 }
-                policy.UniqueKeys.Add(uniqueKey);
+
+                policy.UniqueKeys.Add(key);
             }
 
             return policy;

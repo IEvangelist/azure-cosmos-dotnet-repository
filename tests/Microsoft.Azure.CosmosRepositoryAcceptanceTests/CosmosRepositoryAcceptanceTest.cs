@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions.Equivalency;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
@@ -17,7 +17,6 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
-[Trait("Category", "Acceptance")]
 public abstract class CosmosRepositoryAcceptanceTest
 {
     protected const string ProductsInfoContainer = "products-info";
@@ -39,8 +38,9 @@ public abstract class CosmosRepositoryAcceptanceTest
         return options;
     }
 
-    protected CosmosRepositoryAcceptanceTest(Action<RepositoryOptions> builderOptions,
-        ITestOutputHelper testOutputHelper)
+    protected CosmosRepositoryAcceptanceTest(
+        ITestOutputHelper testOutputHelper,
+        Action<RepositoryOptions>? builderOptions = null)
     {
         ConfigurationBuilder config = new();
         config.AddEnvironmentVariables();
@@ -49,7 +49,12 @@ public abstract class CosmosRepositoryAcceptanceTest
 
         ServiceCollection services = new();
         services.AddSingleton(builtConfig);
-        services.AddCosmosRepository(builderOptions);
+
+        if (builderOptions is not null)
+        {
+            services.AddCosmosRepository(builderOptions);
+        }
+
         services.AddCosmosRepositoryItemChangeFeedProcessors(typeof(CosmosRepositoryAcceptanceTest).Assembly);
 
         services.AddLogging(options =>
@@ -81,20 +86,34 @@ public abstract class CosmosRepositoryAcceptanceTest
         }
     }
 
+    protected static string BuildDatabaseName(string prefix)
+    {
+        string os = Environment.GetEnvironmentVariable("OperatingSystemKey") ??
+                    Environment.OSVersion.Platform.ToString().ToLower();
+
+        return $"{prefix}-{os}";
+    }
+
+    protected static string GetCosmosConnectionString() =>
+        Environment.GetEnvironmentVariable("CosmosConnectionString")!;
+
     protected static readonly Action<RepositoryOptions> DefaultTestRepositoryOptions = options =>
     {
-        ConfigureDatabaseSettings(options);
+        options.CosmosConnectionString = GetCosmosConnectionString();
+        options.ContainerPerItemType = true;
+        options.DatabaseId = BuildDatabaseName("cosmos-repository-acceptance-tests");
+
         ConfigureProducts(options);
         ConfigureRatings(options);
+
         ConfigureProducts(options);
     };
 
     protected static readonly Action<RepositoryOptions> ConfigureDatabaseSettings = options =>
     {
-        string os = Environment.OSVersion.Platform.ToString().ToLower();
         options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
         options.ContainerPerItemType = true;
-        options.DatabaseId = $"cosmos-repository-acceptance-tests-{os}";
+        options.DatabaseId = "cosmos-repository-acceptance-tests";
 
         ConfigureProducts(options);
     };
@@ -118,4 +137,42 @@ public abstract class CosmosRepositoryAcceptanceTest
             builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(10));
         });
     };
+
+
+    protected static async Task<ContainerProperties?> DeleteDatabaseIfExists(string dbName, CosmosClient client)
+    {
+        FeedIterator<DatabaseProperties> containerQueryIterator = client.GetDatabaseQueryIterator<DatabaseProperties>("SELECT * FROM c");
+
+        while (containerQueryIterator.HasMoreResults)
+        {
+            foreach (DatabaseProperties database in await containerQueryIterator.ReadNextAsync())
+            {
+                if (database.Id == dbName)
+                {
+                    await client.GetDatabase(dbName).DeleteAsync();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected static async Task<ContainerProperties?> GetContainerProperties(Database database, string containerName)
+    {
+        FeedIterator<ContainerProperties>? containerQueryIterator =
+            database.GetContainerQueryIterator<ContainerProperties>("SELECT * FROM c");
+
+        while (containerQueryIterator.HasMoreResults)
+        {
+            foreach (ContainerProperties container in await containerQueryIterator.ReadNextAsync())
+            {
+                if (container.Id == containerName)
+                {
+                    return container;
+                }
+            }
+        }
+
+        return null;
+    }
 }

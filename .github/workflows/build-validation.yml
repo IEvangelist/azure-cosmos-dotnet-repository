@@ -73,10 +73,22 @@ jobs:
           CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
         run: dotnet run
 
-      - name: Test
+      - name: Test Functions
         env:
           CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
         run: |
-          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance"
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type!=Container"
+          
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
+
+      - name: Test Container Creation
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: |
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=Container"
         
   
