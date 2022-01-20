@@ -68,8 +68,7 @@ public class DisabledStrictTypeCheckingTests : CosmosRepositoryAcceptanceTest
         try
         {
             //Arrange
-            await GetClient().UseClientAsync(x =>
-                DeleteDatabaseIfExists(OffersDatabaseName, x));
+            await GetClient().UseClientAsync(PruneDatabases);
             IRepository<DisabledOffer> offersRepository =
                 _provider.GetRequiredService<IRepository<DisabledOffer>>();
             IRepository<BuyOneGetOneFreeOffer> buyOneGetOneFreeOffersRepository =
@@ -98,8 +97,7 @@ public class DisabledStrictTypeCheckingTests : CosmosRepositoryAcceptanceTest
         }
         finally
         {
-            await GetClient().UseClientAsync(x =>
-                DeleteDatabaseIfExists(OffersDatabaseName, x));
+            await GetClient().UseClientAsync(PruneDatabases);
         }
     }
 

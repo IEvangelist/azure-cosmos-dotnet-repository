@@ -136,7 +136,7 @@ public abstract class CosmosRepositoryAcceptanceTest
     };
 
 
-    protected async Task<ContainerProperties?> DeleteDatabaseIfExists(string dbName, CosmosClient client)
+    protected async Task<ContainerProperties?> PruneDatabases(CosmosClient client)
     {
         FeedIterator<DatabaseProperties> containerQueryIterator =
             client.GetDatabaseQueryIterator<DatabaseProperties>("SELECT * FROM c");
@@ -145,11 +145,8 @@ public abstract class CosmosRepositoryAcceptanceTest
         {
             foreach (DatabaseProperties database in await containerQueryIterator.ReadNextAsync())
             {
-                if (database.Id == dbName)
-                {
-                    _logger.LogInformation("Deleting database {DatabaseName}", dbName);
-                    await client.GetDatabase(dbName).DeleteAsync();
-                }
+                _logger.LogInformation("Deleting database {DatabaseName}", database.Id);
+                await client.GetDatabase(database.Id).DeleteAsync();
             }
         }
 

@@ -25,8 +25,7 @@ public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
     {
         try
         {
-            await GetClient().UseClientAsync(x =>
-                DeleteDatabaseIfExists(ProductsDatabase, x));
+            await GetClient().UseClientAsync(PruneDatabases);
 
             StockInformation stockInformation = new(5, DateTime.UtcNow);
 
@@ -59,8 +58,7 @@ public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
         }
         finally
         {
-            await GetClient().UseClientAsync(x =>
-                DeleteDatabaseIfExists(ProductsDatabase, x));
+            await GetClient().UseClientAsync(PruneDatabases);
         }
     }
 }
