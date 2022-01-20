@@ -8,7 +8,6 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 
 public class UniqueKeyPolicyItem : Item
 {
-
     [UniqueKey(propertyPath: "/firstName")]
     public string FirstName { get; set; }
 
