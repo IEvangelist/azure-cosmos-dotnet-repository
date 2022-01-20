@@ -75,5 +75,75 @@ catch (CosmosException e) when (e.StatusCode is HttpStatusCode.Conflict)
 
 ```
 
-## Multiple Key Policies Example
+> The fact that these key policies are scoped to a single partition key range is very important! You can read more on this on the [Official Cosmos DB Docs](https://docs.microsoft.com/en-us/azure/cosmos-db/unique-keys).
 
+## Multiple Key Policies Example
+It is also possible in Cosmos DB to define multiple unique key policies for a single partition key range. It is possible to extend the above example by adding a policy that we cannot have people in the same county with the same favourite colour either. This can be implemented by adding another `[UniqueKey]` attribute onto the `FavouriteColour` property.
+
+> Pay attention to the fact when defining the `[UniqueKey]` attributes we are grouping paths to different key names. This allows the policies to split. One for name and age and another for the favourite colour.
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
+
+namespace Sample.Models
+
+public class Person : Item
+{
+    [UniqueKey(keyName: "nameAndAgePolicyKeyName", propertyPath: "/firstName")]
+    public string FirstName { get; set; }
+
+    [UniqueKey(keyName: "nameAndAgePolicyKeyName", propertyPath: "/age")]
+    public int Age { get; set; }
+
+    public string County { get; set; }
+
+    [UniqueKey(keyName: "favouriteColorPolicyKeyName", propertyPath: "/favouriteColor")]
+    public string FavouriteColor  { get; set; }
+
+    protected override string GetPartitionKeyValue() => 
+        County;
+
+    public UniqueKeyPolicyItem(
+        string firstName, 
+        int age, 
+        string county, 
+        string favouriteColor)
+    {
+        FirstName = firstName;
+        Age = age;
+        County = county;
+        FavouriteColor = favouriteColor;
+    }
+}
+```
+
+This defines two 3 unique keys split across 2 separate policies two paths are under the `nameAndAgePolicyKeyName` policy and one path is under the `favouriteColorPolicyKeyName` policy. See the example below when validation would occur in this example.
+
+```csharp
+
+IRepository<Person> repository = _serviceProvider.GetRequiredService<IRepository<Person>>();
+
+Person bobInYorkshire = new Person("bob", 20, "Yorkshire", "Blue");
+repository.CreateAsync(bobInYorkshire);
+
+// This is in a different partition key range, so we can have another bob with the age of 20.
+Person bobInMerseyside = new Person("bob", 20, "Merseyside", "Green");
+repository.CreateAsync(bobInYorkshire);
+
+// This is bob with a different age in Yorkshire so this does not violate the policy.
+Person bobInMerseyside = new Person("bob", 20, "Merseyside", "Red");
+repository.CreateAsync(bobInYorkshire);
+
+try
+{
+    //Fred does have a unique name and age, but he cannot also as Yellow as his favourite color.
+    Person bobInYorkshire = new Person("fred", 30, "Yorkshire", "Yellow");
+    repository.CreateAsync(bobInYorkshire);
+}
+catch (CosmosException e) when (e.StatusCode is HttpStatusCode.Conflict)
+{
+    //This is a violation of the key!
+}
+
+```
