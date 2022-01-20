@@ -12,10 +12,11 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Trait("Category", "Acceptance")]
+[Trait("Type", "Functional")]
 public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
 {
-    public RepositoryBasicsTests(ITestOutputHelper testOutputHelper) : base(DefaultTestRepositoryOptions,
-        testOutputHelper)
+    public RepositoryBasicsTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, DefaultTestRepositoryOptions)
     {
     }
 

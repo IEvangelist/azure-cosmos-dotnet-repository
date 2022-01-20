@@ -16,6 +16,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Trait("Category", "Acceptance")]
+[Trait("Type", "Functional")]
 public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
 {
     private static readonly Action<RepositoryOptions> ChangeFeedTestOptions = options =>
@@ -42,7 +44,7 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
     private readonly IRepository<RatingByCategory> _ratingsByCategoryRepository;
     private readonly IChangeFeedService _changeFeedService;
 
-    public ChangeFeedBasicTests(ITestOutputHelper testOutputHelper) : base(ChangeFeedTestOptions, testOutputHelper)
+    public ChangeFeedBasicTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, ChangeFeedTestOptions)
     {
         _ratingsByCategoryRepository = _provider.GetRequiredService<IRepository<RatingByCategory>>();
         _changeFeedService = _provider.GetRequiredService<IChangeFeedService>();

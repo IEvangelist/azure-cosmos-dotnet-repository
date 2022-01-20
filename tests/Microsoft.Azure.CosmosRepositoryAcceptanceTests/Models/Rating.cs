@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 
-public sealed class Rating : FullItem
+public class Rating : FullItem
 {
     public string ProductId { get; }
 
