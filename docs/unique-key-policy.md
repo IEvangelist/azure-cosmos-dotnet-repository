@@ -48,7 +48,6 @@ public class Person : Item
 Adding to the above example the code below shows when a violation in this policy should occur should occur.
 
 ```csharp
-
 IRepository<Person> repository = _serviceProvider.GetRequiredService<IRepository<Person>>();
 
 Person bobInYorkshire = new Person("bob", 20, "Yorkshire", "Blue");
@@ -72,7 +71,6 @@ catch (CosmosException e) when (e.StatusCode is HttpStatusCode.Conflict)
 {
     //This is a violation of the key!
 }
-
 ```
 
 > The fact that these key policies are scoped to a single partition key range is very important! You can read more on this on the [Official Cosmos DB Docs](https://docs.microsoft.com/en-us/azure/cosmos-db/unique-keys).
@@ -145,5 +143,4 @@ catch (CosmosException e) when (e.StatusCode is HttpStatusCode.Conflict)
 {
     //This is a violation of the key!
 }
-
 ```
