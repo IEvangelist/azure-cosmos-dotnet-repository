@@ -55,6 +55,7 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
     {
         try
         {
+            await GetClient().UseClientAsync(PruneDatabases);
             await _changeFeedService.StartAsync(default);
 
             StockInformation stockInformation = new(5, DateTime.UtcNow);
@@ -86,6 +87,7 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
         finally
         {
             await _changeFeedService.StopAsync();
+            await GetClient().UseClientAsync(PruneDatabases);
         }
     }
 }
