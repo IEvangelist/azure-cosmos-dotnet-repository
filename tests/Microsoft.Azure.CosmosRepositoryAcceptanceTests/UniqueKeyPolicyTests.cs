@@ -61,7 +61,6 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
         await uniqueKeyItemRepository.CreateAsync(bobInYorkshire);
         await uniqueKeyItemRepository.CreateAsync(bobInDerbyshire);
 
-
         //Assert
         ContainerProperties? properties = await GetContainerProperties(database, UniqueKeyPolicyContainerName);
         properties.Should().NotBeNull();
