@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
     - '!./CODE_METRICS.md' # ignore this file
-    - '!./docs/**'
+    - '!docs/**'
     
   workflow_dispatch:
     inputs:

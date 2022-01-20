@@ -7,7 +7,7 @@ on:
     - '**.cs'
     - '**.csproj'
     - "**.yml"
-    - '!./docs/**'
+    - '!docs/**'
   workflow_dispatch:
     inputs:
       reason:
