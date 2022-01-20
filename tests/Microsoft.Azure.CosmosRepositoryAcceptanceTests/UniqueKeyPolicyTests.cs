@@ -37,7 +37,6 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
         });
     }
 
-
     public ContainerCreationTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, UniqueKeyOptionsBuilder)
     {
     }
