@@ -58,8 +58,8 @@ Person bobInMerseyside = new Person("bob", 20, "Merseyside", "Green");
 repository.CreateAsync(bobInYorkshire);
 
 // This is bob with a different age in Yorkshire so this does not violate the policy.
-Person bobInMerseyside = new Person("bob", 20, "Merseyside", "Red");
-repository.CreateAsync(bobInYorkshire);
+Person bobInYorkshireWhoIs22 = new Person("bob", 22, "Yorkshire", "Red");
+repository.CreateAsync(bobInYorkshireWhoIs22);
 
 try
 {
@@ -130,14 +130,14 @@ Person bobInMerseyside = new Person("bob", 20, "Merseyside", "Green");
 repository.CreateAsync(bobInYorkshire);
 
 // This is bob with a different age in Yorkshire so this does not violate the policy.
-Person bobInMerseyside = new Person("bob", 20, "Merseyside", "Red");
-repository.CreateAsync(bobInYorkshire);
+Person bobInYorkshireWhoIs22 = new Person("bob", 22, "Yorkshire", "Red");
+repository.CreateAsync(bobInYorkshireWhoIs22);
 
 try
 {
-    //Fred does have a unique name and age, but he cannot also as Yellow as his favourite color.
-    Person bobInYorkshire = new Person("fred", 30, "Yorkshire", "Yellow");
-    repository.CreateAsync(bobInYorkshire);
+    //Fred does have a unique name and age, but he cannot also as Red as his favourite color.
+    Person fredInYorkshireWhoAlsoLikeRed = new Person("fred", 30, "Yorkshire", "Red");
+    repository.CreateAsync(fredInYorkshireWhoAlsoLikeRed);
 }
 catch (CosmosException e) when (e.StatusCode is HttpStatusCode.Conflict)
 {
