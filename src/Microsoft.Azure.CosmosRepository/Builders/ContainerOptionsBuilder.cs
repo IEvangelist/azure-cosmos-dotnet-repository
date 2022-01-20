@@ -175,7 +175,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// <summary>
         /// Configures the given <see cref="IItem"/>'s queries to not check for the Type field.
         /// </summary>
-        /// <remarks>This is useful in scenarios where you have a base type that will deserialize into sub types.</remarks>
+        /// <remarks>This is useful in scenarios where you have a sub types that will deserialize into a base type.</remarks>
         /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
         public ContainerOptionsBuilder WithoutStrictTypeChecking()
         {
