@@ -3,12 +3,15 @@
 This package wraps the [NuGet: Microsoft.Azure.Cosmos package](https://www.nuget.org/packages/Microsoft.Azure.Cosmos),
 exposing a simple dependency-injection enabled `IRepository<T>` interface.
 
-We are working hard to add extensive documentation here is the current list of what we currently have:
-* [Partitioning Setup](./partitioning-setup.md)
-* [Unique Keys](./unique-keys-policy.md)
-* [Logging](./logging.md)
+## Index
+
+* [Partitioning Setup](https://ievangelist.github.io/azure-cosmos-dotnet-repository/partitioning-setup.html)
+* [Unique Keys](https://ievangelist.github.io/azure-cosmos-dotnet-repository/unique-key-policy.html)
+* [Logging](https://ievangelist.github.io/azure-cosmos-dotnet-repository/logging.html)
 
 ![Cosmos Repository](https://raw.githubusercontent.com/IEvangelist/azure-cosmos-dotnet-repository/main/CosmosRepository.png)
+
+## Overview
 
 The repository is responsible for all of the create, read, update, and delete (CRUD) operations on objects `where T : Item`. The `Item` type adds
 several properties, one which is a globally unique identifier defined as:

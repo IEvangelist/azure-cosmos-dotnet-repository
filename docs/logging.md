@@ -1,3 +1,7 @@
+---
+layout: doc
+---
+
 # Logging
 
 The Azure Cosmos Repository follows the [high performance logging guidelines](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/loggermessage?view=aspnetcore-6.0) making use of `LoggerMessage` throughout the library.

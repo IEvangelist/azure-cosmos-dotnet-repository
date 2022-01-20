@@ -57,6 +57,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{8704E3AA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTestHelper", "tools\CosmosTestHelper\CosmosTestHelper.csproj", "{86B938CF-7671-4B66-B831-C9EB6D73FD85}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{20A7D96E-C6D7-4AA1-B714-3C754941AA6D}"
+	ProjectSection(SolutionItems) = preProject
+		docs\_config.yml = docs\_config.yml
+		docs\index.md = docs\index.md
+		docs\logging.md = docs\logging.md
+		docs\partitioning-setup.md = docs\partitioning-setup.md
+		docs\unique-key-policy.md = docs\unique-key-policy.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +153,7 @@ Global
 		{9BB9074A-9478-41A3-A108-5E5775DB8353} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
 		{86B938CF-7671-4B66-B831-C9EB6D73FD85} = {8704E3AA-99EC-4D9A-AB6B-4AC72D0207E0}
+		{20A7D96E-C6D7-4AA1-B714-3C754941AA6D} = {C0FBFA4F-43FF-4E65-AB29-44BDE556210A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6AAE7641-B62C-48BA-8FE6-0F819E5B45EF}

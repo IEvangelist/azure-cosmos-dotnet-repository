@@ -1,1 +1,7 @@
 theme: jekyll-theme-cayman
+remote_theme: Bilal2453/cayman-docs
+navigation:
+  name_over_title: true
+  strip_par: true
+  sanitize: true
+  h_max: 3

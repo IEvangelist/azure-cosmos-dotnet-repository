@@ -1,3 +1,7 @@
+---
+layout: doc
+---
+
 # Unique Key Policies
 
 Azure Cosmos DB provides the ability to define a set of properties on your JSON item that can be combined to form a unique key for a given partition. These are defined in the form of unique key policies. You can define multiple policies for the same partition key.
