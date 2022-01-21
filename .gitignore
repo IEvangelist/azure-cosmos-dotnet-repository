@@ -332,3 +332,4 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+docs/.hugo_build.lock
