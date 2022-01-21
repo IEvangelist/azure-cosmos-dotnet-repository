@@ -1,4 +1,4 @@
-baseURL = "/"
+baseURL = "https://ievangelist.github.io/azure-cosmos-dotnet-repository/"
 languageCode = "en-US"
 defaultContentLanguage = "en"
 theme = "hugo-theme-learn"
