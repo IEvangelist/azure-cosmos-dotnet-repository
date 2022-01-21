@@ -1,0 +1,295 @@
+<!doctype html><html lang=en class="js csstransforms3d">
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=description content="Azure Cosmos DB Repository-Pattern .NET SDK">
+<meta name=author content="David Pine">
+<link rel="shortcut icon" href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
+<link rel=icon href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
+<title>Unique Keys :: Azure Cosmos DB Repository-Pattern .NET SDK</title>
+<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1642798160 rel=stylesheet>
+<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1642798160></script>
+<style>:root #header+#content>#left>#rlblock_left{display:none!important}</style>
+</head>
+<body data-url=/azure-cosmos-dotnet-repository/1-getting-started/unique-keys/>
+<nav id=sidebar class=showVisitedLinks>
+<div id=header-wrapper>
+<div id=header>
+<a href=/>
+<img src=/images/logo.png style=max-height:90%;max-width:90% alt=Logo>
+</a>
+<h4 style=margin-top:0>
+<a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository target=_blank id=my-site><i class="fas fa-code"></i>&nbsp;Cosmos DB</a>
+</h3>
+</div>
+<div class=searchbox>
+<label for=search-by><i class="fas fa-search"></i></label>
+<input data-search-input id=search-by type=search placeholder=Search...>
+<span data-search-clear><i class="fas fa-times"></i></span>
+</div>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1642798160></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1642798160></script>
+<script type=text/javascript>var baseurl="https://ievangelist.github.io/azure-cosmos-dotnet-repository/"</script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1642798160></script>
+</div>
+<div class=highlightable>
+<ul class=topics>
+<li data-nav-id title="Getting Started" class="dd-item
+parent">
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/>
+<b>1. </b>Getting Started
+<i class="fas fa-check read-icon"></i>
+</a>
+<ul>
+<li data-nav-id title=Logging class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/logging/>
+Logging
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title=Partitioning class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/partioning/>
+Partitioning
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title="Unique Keys" class="dd-item
+parent
+active">
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/unique-keys/>
+Unique Keys
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+</ul>
+</li>
+</ul>
+<section id=shortcuts>
+<h3>More</h3>
+<ul>
+<li>
+<a class=padding href=https://ievangelist.github.io/azure-cosmos-dotnet-repository/><i class="fab fa-github"></i> Github Repository</a>
+</li>
+<li>
+<a class=padding href=https://ievangelist.github.io/azure-cosmos-dotnet-repository/><i class="fab fa-twitter"></i> Follow @davidpine7</a>
+</li>
+</ul>
+</section>
+<section id=prefooter>
+<hr>
+<ul>
+<li><a class=padding href=# data-clear-history-toggle><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+</ul>
+</section>
+<section id=footer>
+<p>Built with <a href=https://github.com/matcornic/hugo-theme-learn><i class="fas fa-heart"></i></a> from <a href=https://getgrav.org>Grav</a> and <a href=https://gohugo.io/>Hugo</a></p>
+</section>
+</div>
+</nav>
+<section id=body>
+<div id=overlay></div>
+<div class="padding highlightable">
+<div>
+<div id=top-bar>
+<div id=top-github-link>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository1-getting-started/unique-keys/_index.md target=blank>
+<i class="fas fa-code-branch"></i>
+<span id=top-github-link-text>Edit this page</span>
+</a>
+</div>
+<div id=breadcrumbs itemscope itemtype=http://data-vocabulary.org/Breadcrumb>
+<span id=sidebar-toggle-span>
+<a href=# id=sidebar-toggle data-sidebar-toggle>
+<i class="fas fa-bars"></i>
+</a>
+</span>
+<span id=toc-menu><i class="fas fa-list-alt"></i></span>
+<span class=links>
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/1-getting-started/>Getting Started</a> > Unique Keys
+</span>
+</div>
+<div class=progress>
+<div class=wrapper>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#explanation-of-unique-keys>Explanation of Unique Keys</a></li>
+<li><a href=#single-key-policy-example>Single Key Policy Example</a></li>
+<li><a href=#multiple-key-policies-example>Multiple Key Policies Example</a></li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+</div>
+<div id=head-tags>
+</div>
+<div id=body-inner>
+<h1>
+Unique Keys
+</h1>
+<h1 id=unique-key-policies>Unique Key Policies</h1>
+<p>Azure Cosmos DB provides the ability to define a set of properties on your JSON item that can be combined to form a unique key for a given partition. These are defined in the form of unique key policies. You can define multiple policies for the same partition key.</p>
+<h2 id=explanation-of-unique-keys>Explanation of Unique Keys</h2>
+<p>This is better explained with an example. Let&rsquo;s for example say we are storing people in a Cosmos container. The people items are partitioned by by the county that they live in. So the partition key would be <code>/county</code>. Let&rsquo;s say for example we can&rsquo;t have a person with the same name and age in a county. This means that we need to build up a unique key based on the person&rsquo;s name and age.</p>
+<h2 id=single-key-policy-example>Single Key Policy Example</h2>
+<p>In order to do this in the Azure Cosmos Repository you could define a class as below. This class decorates properties with attributes <code>[UniqueKey]</code> to define properties as unique keys.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+<span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository.Attributes;
+
+<span style=color:#66d9ef>namespace</span> Sample.Models
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span> : Item
+{
+<span style=color:#a6e22e>    [UniqueKey(propertyPath: &#34;/firstName&#34;)]</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> FirstName { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+<span style=color:#a6e22e>
+</span><span style=color:#a6e22e>    [UniqueKey(propertyPath: &#34;/age&#34;)]</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>int</span> Age { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> County { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> FavouriteColor  { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>string</span> GetPartitionKeyValue() =&gt; 
+        County;
+
+    <span style=color:#66d9ef>public</span> UniqueKeyPolicyItem(
+        <span style=color:#66d9ef>string</span> firstName, 
+        <span style=color:#66d9ef>int</span> age, 
+        <span style=color:#66d9ef>string</span> county, 
+        <span style=color:#66d9ef>string</span> favouriteColor)
+    {
+        FirstName = firstName;
+        Age = age;
+        County = county;
+        FavouriteColor = favouriteColor;
+    }
+}
+</code></pre></div><p>Adding to the above example the code below shows when a violation in this policy should occur should occur.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>IRepository&lt;Person&gt; repository = <span style=color:#ae81ff>_</span>serviceProvider.GetRequiredService&lt;IRepository&lt;Person&gt;&gt;();
+
+Person bobInYorkshire = <span style=color:#66d9ef>new</span> Person(<span style=color:#e6db74>&#34;bob&#34;</span>, <span style=color:#ae81ff>20</span>, <span style=color:#e6db74>&#34;Yorkshire&#34;</span>, <span style=color:#e6db74>&#34;Blue&#34;</span>);
+repository.CreateAsync(bobInYorkshire);
+
+<span style=color:#75715e>// This is in a different partition key range, so we can have another bob with the age of 20.
+</span><span style=color:#75715e></span>Person bobInMerseyside = <span style=color:#66d9ef>new</span> Person(<span style=color:#e6db74>&#34;bob&#34;</span>, <span style=color:#ae81ff>20</span>, <span style=color:#e6db74>&#34;Merseyside&#34;</span>, <span style=color:#e6db74>&#34;Green&#34;</span>);
+repository.CreateAsync(bobInYorkshire);
+
+<span style=color:#75715e>// This is bob with a different age in Yorkshire so this does not violate the policy.
+</span><span style=color:#75715e></span>Person bobInYorkshireWhoIs22 = <span style=color:#66d9ef>new</span> Person(<span style=color:#e6db74>&#34;bob&#34;</span>, <span style=color:#ae81ff>22</span>, <span style=color:#e6db74>&#34;Yorkshire&#34;</span>, <span style=color:#e6db74>&#34;Red&#34;</span>);
+repository.CreateAsync(bobInYorkshireWhoIs22);
+
+<span style=color:#66d9ef>try</span>
+{
+    <span style=color:#75715e>//Adding another bob in Yorkshire violates the key.
+</span><span style=color:#75715e></span>    Person bobInYorkshire = <span style=color:#66d9ef>new</span> Person(<span style=color:#e6db74>&#34;bob&#34;</span>, <span style=color:#ae81ff>20</span>, <span style=color:#e6db74>&#34;Yorkshire&#34;</span>, <span style=color:#e6db74>&#34;Yellow&#34;</span>);
+    repository.CreateAsync(bobInYorkshire);
+}
+<span style=color:#66d9ef>catch</span> (CosmosException e) when (e.StatusCode <span style=color:#66d9ef>is</span> HttpStatusCode.Conflict)
+{
+    <span style=color:#75715e>//This is a violation of the key!
+</span><span style=color:#75715e></span>}
+</code></pre></div><blockquote>
+<p>The fact that these key policies are scoped to a single partition key range is very important! You can read more on this on the <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/unique-keys>Official Cosmos DB Docs</a>.</p>
+</blockquote>
+<h2 id=multiple-key-policies-example>Multiple Key Policies Example</h2>
+<p>It is also possible in Cosmos DB to define multiple unique key policies for a single partition key range. It is possible to extend the above example by adding a policy that we cannot have people in the same county with the same favourite colour either. This can be implemented by adding another <code>[UniqueKey]</code> attribute onto the <code>FavouriteColour</code> property.</p>
+<blockquote>
+<p>Pay attention to the fact when defining the <code>[UniqueKey]</code> attributes we are grouping paths to different key names. This allows the policies to split. One for name and age and another for the favourite colour.</p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+<span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository.Attributes;
+
+<span style=color:#66d9ef>namespace</span> Sample.Models
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span> : Item
+{
+<span style=color:#a6e22e>    [UniqueKey(keyName: &#34;nameAndAgePolicyKeyName&#34;, propertyPath: &#34;/firstName&#34;)]</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> FirstName { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+<span style=color:#a6e22e>
+</span><span style=color:#a6e22e>    [UniqueKey(keyName: &#34;nameAndAgePolicyKeyName&#34;, propertyPath: &#34;/age&#34;)]</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>int</span> Age { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> County { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+<span style=color:#a6e22e>
+</span><span style=color:#a6e22e>    [UniqueKey(keyName: &#34;favouriteColorPolicyKeyName&#34;, propertyPath: &#34;/favouriteColor&#34;)]</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> FavouriteColor  { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>string</span> GetPartitionKeyValue() =&gt; 
+        County;
+
+    <span style=color:#66d9ef>public</span> UniqueKeyPolicyItem(
+        <span style=color:#66d9ef>string</span> firstName, 
+        <span style=color:#66d9ef>int</span> age, 
+        <span style=color:#66d9ef>string</span> county, 
+        <span style=color:#66d9ef>string</span> favouriteColor)
+    {
+        FirstName = firstName;
+        Age = age;
+        County = county;
+        FavouriteColor = favouriteColor;
+    }
+}
+</code></pre></div><p>This defines two 3 unique keys split across 2 separate policies two paths are under the <code>nameAndAgePolicyKeyName</code> policy and one path is under the <code>favouriteColorPolicyKeyName</code> policy. See the example below when validation would occur in this example.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>
+IRepository&lt;Person&gt; repository = <span style=color:#ae81ff>_</span>serviceProvider.GetRequiredService&lt;IRepository&lt;Person&gt;&gt;();
+
+Person bobInYorkshire = <span style=color:#66d9ef>new</span> Person(<span style=color:#e6db74>&#34;bob&#34;</span>, <span style=color:#ae81ff>20</span>, <span style=color:#e6db74>&#34;Yorkshire&#34;</span>, <span style=color:#e6db74>&#34;Blue&#34;</span>);
+repository.CreateAsync(bobInYorkshire);
+
+<span style=color:#75715e>// This is in a different partition key range, so we can have another bob with the age of 20.
+</span><span style=color:#75715e></span>Person bobInMerseyside = <span style=color:#66d9ef>new</span> Person(<span style=color:#e6db74>&#34;bob&#34;</span>, <span style=color:#ae81ff>20</span>, <span style=color:#e6db74>&#34;Merseyside&#34;</span>, <span style=color:#e6db74>&#34;Green&#34;</span>);
+repository.CreateAsync(bobInYorkshire);
+
+<span style=color:#75715e>// This is bob with a different age in Yorkshire so this does not violate the policy.
+</span><span style=color:#75715e></span>Person bobInYorkshireWhoIs22 = <span style=color:#66d9ef>new</span> Person(<span style=color:#e6db74>&#34;bob&#34;</span>, <span style=color:#ae81ff>22</span>, <span style=color:#e6db74>&#34;Yorkshire&#34;</span>, <span style=color:#e6db74>&#34;Red&#34;</span>);
+repository.CreateAsync(bobInYorkshireWhoIs22);
+
+<span style=color:#66d9ef>try</span>
+{
+    <span style=color:#75715e>//Fred does have a unique name and age, but he cannot also as Red as his favourite color.
+</span><span style=color:#75715e></span>    Person fredInYorkshireWhoAlsoLikeRed = <span style=color:#66d9ef>new</span> Person(<span style=color:#e6db74>&#34;fred&#34;</span>, <span style=color:#ae81ff>30</span>, <span style=color:#e6db74>&#34;Yorkshire&#34;</span>, <span style=color:#e6db74>&#34;Red&#34;</span>);
+    repository.CreateAsync(fredInYorkshireWhoAlsoLikeRed);
+}
+<span style=color:#66d9ef>catch</span> (CosmosException e) when (e.StatusCode <span style=color:#66d9ef>is</span> HttpStatusCode.Conflict)
+{
+    <span style=color:#75715e>//This is a violation of the key!
+</span><span style=color:#75715e></span>}
+</code></pre></div>
+<footer class=footline>
+</footer>
+</div>
+</div>
+<div id=navigation>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/1-getting-started/partioning/ title=Partitioning> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/logging/ title=Logging style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+</div>
+</section>
+<div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
+<div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
+</div>
+<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1642798160></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/learn.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/mermaid/mermaid.js?1642798160></script>
+<script>mermaid.initialize({startOnLoad:!0})</script>
+</body>
+</html>

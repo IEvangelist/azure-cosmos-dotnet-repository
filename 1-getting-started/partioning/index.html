@@ -1,0 +1,286 @@
+<!doctype html><html lang=en class="js csstransforms3d">
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=description content="Azure Cosmos DB Repository-Pattern .NET SDK">
+<meta name=author content="David Pine">
+<link rel="shortcut icon" href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
+<link rel=icon href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
+<title>Partitioning :: Azure Cosmos DB Repository-Pattern .NET SDK</title>
+<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1642798160 rel=stylesheet>
+<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1642798160></script>
+<style>:root #header+#content>#left>#rlblock_left{display:none!important}</style>
+</head>
+<body data-url=/azure-cosmos-dotnet-repository/1-getting-started/partioning/>
+<nav id=sidebar class=showVisitedLinks>
+<div id=header-wrapper>
+<div id=header>
+<a href=/>
+<img src=/images/logo.png style=max-height:90%;max-width:90% alt=Logo>
+</a>
+<h4 style=margin-top:0>
+<a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository target=_blank id=my-site><i class="fas fa-code"></i>&nbsp;Cosmos DB</a>
+</h3>
+</div>
+<div class=searchbox>
+<label for=search-by><i class="fas fa-search"></i></label>
+<input data-search-input id=search-by type=search placeholder=Search...>
+<span data-search-clear><i class="fas fa-times"></i></span>
+</div>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1642798160></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1642798160></script>
+<script type=text/javascript>var baseurl="https://ievangelist.github.io/azure-cosmos-dotnet-repository/"</script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1642798160></script>
+</div>
+<div class=highlightable>
+<ul class=topics>
+<li data-nav-id title="Getting Started" class="dd-item
+parent">
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/>
+<b>1. </b>Getting Started
+<i class="fas fa-check read-icon"></i>
+</a>
+<ul>
+<li data-nav-id title=Logging class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/logging/>
+Logging
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title=Partitioning class="dd-item
+parent
+active">
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/partioning/>
+Partitioning
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title="Unique Keys" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/unique-keys/>
+Unique Keys
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+</ul>
+</li>
+</ul>
+<section id=shortcuts>
+<h3>More</h3>
+<ul>
+<li>
+<a class=padding href=https://ievangelist.github.io/azure-cosmos-dotnet-repository/><i class="fab fa-github"></i> Github Repository</a>
+</li>
+<li>
+<a class=padding href=https://ievangelist.github.io/azure-cosmos-dotnet-repository/><i class="fab fa-twitter"></i> Follow @davidpine7</a>
+</li>
+</ul>
+</section>
+<section id=prefooter>
+<hr>
+<ul>
+<li><a class=padding href=# data-clear-history-toggle><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+</ul>
+</section>
+<section id=footer>
+<p>Built with <a href=https://github.com/matcornic/hugo-theme-learn><i class="fas fa-heart"></i></a> from <a href=https://getgrav.org>Grav</a> and <a href=https://gohugo.io/>Hugo</a></p>
+</section>
+</div>
+</nav>
+<section id=body>
+<div id=overlay></div>
+<div class="padding highlightable">
+<div>
+<div id=top-bar>
+<div id=top-github-link>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository1-getting-started/partioning/_index.md target=blank>
+<i class="fas fa-code-branch"></i>
+<span id=top-github-link-text>Edit this page</span>
+</a>
+</div>
+<div id=breadcrumbs itemscope itemtype=http://data-vocabulary.org/Breadcrumb>
+<span id=sidebar-toggle-span>
+<a href=# id=sidebar-toggle data-sidebar-toggle>
+<i class="fas fa-bars"></i>
+</a>
+</span>
+<span id=toc-menu><i class="fas fa-list-alt"></i></span>
+<span class=links>
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/1-getting-started/>Getting Started</a> > Partitioning
+</span>
+</div>
+<div class=progress>
+<div class=wrapper>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#default-strategy>Default Strategy</a></li>
+<li><a href=#taking-control>Taking Control</a>
+<ul>
+<li><a href=#the-iitem-container-builder>The <code>IItem</code> Container Builder</a></li>
+<li><a href=#attribute-usage>Attribute usage</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+</div>
+<div id=head-tags>
+</div>
+<div id=body-inner>
+<h1>
+Partitioning
+</h1>
+<h1 id=partitioning>Partitioning</h1>
+<p>Partitioning is a huge part of Cosmos DB. There are many different strategies you may want to take. Such as, splitting different types of item&rsquo;s across containers, sharing some <code>IItem</code>&rsquo;s in one container and not others and finally, in some cases, even putting all <code>IItem</code> types in a single container.</p>
+<h2 id=default-strategy>Default Strategy</h2>
+<p>Adding the Azure Cosmos Repository with no real configuration, like below. Will result in a simple strategy being assumed on your behalf. This will leave the option&rsquo;s configured in there default state. This means a property called <code>ContainerPerItemType</code> is set to false. This means that the Azure Cosmos Repository will store <em>all</em> <code>IItem</code>&rsquo;s in the same container, setting all the <code>IItem</code>&rsquo;s within to use the partition key <code>/id</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+
+<span style=color:#66d9ef>var</span> builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository();
+
+<span style=color:#66d9ef>var</span> app = builder.Build();
+
+app.MapGet(<span style=color:#e6db74>&#34;/&#34;</span>, () =&gt; 
+    <span style=color:#e6db74>&#34;Default Cosmos Repository Partitioning Strategy&#34;</span>);
+
+app.Run();
+</code></pre></div><p>The default partitioning strategy is simple, all <code>IItem</code>&rsquo;s will be in a single logical partition split by there unique IDs. Which default to a GUID. This in small applications is often ample. A simple rule of thumb for whether or not this would be okay for you would be, do you see yourself spanning over a physical partition? If no then this option <em>could</em> be the way to go. However, in any scenarios where you are making an application that may grow in size, complexity or scale. It may be best to look at taking a bit more control over your partitioning strategy.</p>
+<blockquote>
+<p>This strategy is also demonstrated in the <a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/WebTier><code>WebTier</code></a> sample application.</p>
+</blockquote>
+<h2 id=taking-control>Taking Control</h2>
+<p>The next configuration allows you to take more control over the partitioning strategy. The first thing to do is to set the <code>ContainerPerItemType</code> equal to <code>true</code>. This can be done like in the example below. Once this field has been set, then you need to define which container each <code>IItem</code> should be placed into and also what partition key it should use. There are currently 2 methods to do this in the Azure Cosmos Repository.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+
+<span style=color:#66d9ef>var</span> builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository(options =&gt; 
+{
+    options.ContainerPerItemType = <span style=color:#66d9ef>true</span>;
+});
+
+<span style=color:#66d9ef>var</span> app = builder.Build();
+
+app.MapGet(<span style=color:#e6db74>&#34;/&#34;</span>, () =&gt; 
+    <span style=color:#e6db74>&#34;Custom Cosmos Repository Partitioning Strategy&#34;</span>);
+
+app.Run();
+</code></pre></div><h3 id=the-iitem-container-builder>The <code>IItem</code> Container Builder</h3>
+<p>The first option that you have to configure <code>IItem</code>&rsquo;s container options is to use the <code>IItemContainerBuilder</code> which you can access via the <code>RepositoryOptions</code>. See the examples below.</p>
+<h4 id=customer-order-system-example>Customer Order System Example</h4>
+<p>In the below example we have two <code>IItem</code> types defined. One is the <code>Customer</code> item which is configured to be stored in the <code>customers</code> container, partitioned by <code>/emailAddress</code>. The second is the <code>Order</code> item, partitioned by <code>/customerId</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+
+<span style=color:#66d9ef>var</span> builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository(options =&gt; 
+{
+    options.ContainerPerItemType = <span style=color:#66d9ef>true</span>;
+
+    options.ContainerBuilder.Configure&lt;Customer&gt;(userContainerOptions =&gt; 
+    {    
+        userContainerOptions.WithContainer(<span style=color:#e6db74>&#34;customer&#34;</span>)
+        userContainerOptions.WithPartitionKey(<span style=color:#e6db74>&#34;/emailAddress&#34;</span>)
+    });
+
+    options.ContainerBuilder.Configure&lt;Order&gt;(orderContainerOptions =&gt; 
+    {    
+        orderContainerOptions.WithContainer(<span style=color:#e6db74>&#34;orders&#34;</span>)
+        orderContainerOptions.WithPartitionKey(<span style=color:#e6db74>&#34;/customerId&#34;</span>)
+    });
+});
+
+<span style=color:#66d9ef>var</span> app = builder.Build();
+
+app.MapGet(<span style=color:#e6db74>&#34;/&#34;</span>, () =&gt; 
+    <span style=color:#e6db74>&#34;Sample e-commerce Partitioning Strategy&#34;</span>);
+
+app.Run();
+</code></pre></div><h4 id=inventory-example>Inventory Example</h4>
+<p>The below example shows how two or more <code>IItem</code> types can share a container and a partitioning strategy. This defines a <code>Stock</code> item that might hold the name, price, size, and maybe weight. This is partitioned by the <code>/stockReferenceNumber</code>. The <code>StockRecord</code> item is a collection of <code>StockRecord</code>&rsquo;s. This record represents when a piece of stock was added or removed from the inventory, when this occurred, and maybe a reason why. This is stored in the <em>same</em> container as the <code>Stock</code> item whose history it is recording. It also shares the same partitioning strategy. In the example below it means that all <code>Stock</code> and its <code>StockRecord</code>&rsquo;s are stored in the same logical partition in Cosmos DB.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+
+<span style=color:#66d9ef>var</span> builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository(options =&gt; 
+{
+    options.ContainerPerItemType = <span style=color:#66d9ef>true</span>;
+
+    options.ContainerBuilder.Configure&lt;Stock&gt;(userContainerOptions =&gt; 
+    {    
+        userContainerOptions.WithContainer(<span style=color:#e6db74>&#34;stock&#34;</span>)
+        userContainerOptions.WithPartitionKey(<span style=color:#e6db74>&#34;/stockReferenceNumber&#34;</span>)
+    });
+
+    options.ContainerBuilder.Configure&lt;StockRecord&gt;(orderContainerOptions =&gt; 
+    {    
+        orderContainerOptions.WithContainer(<span style=color:#e6db74>&#34;stock&#34;</span>)
+        orderContainerOptions.WithPartitionKey(<span style=color:#e6db74>&#34;/stockReferenceNumber&#34;</span>)
+    });
+});
+
+<span style=color:#66d9ef>var</span> app = builder.Build();
+
+app.MapGet(<span style=color:#e6db74>&#34;/&#34;</span>, () =&gt; 
+    <span style=color:#e6db74>&#34;Sample Inventory Partitioning Strategy&#34;</span>);
+
+app.Run();
+</code></pre></div><h3 id=attribute-usage>Attribute usage</h3>
+<p>Another option to configure a partitioning strategy is to use attributes to decorate your <code>IItem</code> types. See the examples below.</p>
+<h4 id=customer-partitioning-strategy><code>Customer</code> Partitioning Strategy</h4>
+<p>The example below show&rsquo;s how you can achieve a custom partitioning strategy using attributes.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository.Attributes;
+<span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+<span style=color:#a6e22e>
+</span><span style=color:#a6e22e>[Container(&#34;customers&#34;)]</span>
+<span style=color:#a6e22e>[PartitionKeyPath(&#34;/emailAddress&#34;)]</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Customer</span> : FullItem
+{
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> EmailAddress { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>string</span> GetPartitionKeyValue() =&gt; 
+        EmailAddress; 
+}
+</code></pre></div><blockquote>
+<p>Note the <code>override</code> of the <code>GetPartitionKeyValue</code> method. This is required to tell the library which property to get your partition key value from.</p>
+</blockquote>
+<footer class=footline>
+</footer>
+</div>
+</div>
+<div id=navigation>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/1-getting-started/logging/ title=Logging> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/unique-keys/ title="Unique Keys" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+</div>
+</section>
+<div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
+<div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
+</div>
+<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1642798160></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/learn.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/mermaid/mermaid.js?1642798160></script>
+<script>mermaid.initialize({startOnLoad:!0})</script>
+</body>
+</html>

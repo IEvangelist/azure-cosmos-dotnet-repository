@@ -1,0 +1,329 @@
+<!doctype html><html lang=en class="js csstransforms3d">
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=description content="Azure Cosmos DB Repository-Pattern .NET SDK">
+<meta name=author content="David Pine">
+<link rel="shortcut icon" href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
+<link rel=icon href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
+<title>Getting Started :: Azure Cosmos DB Repository-Pattern .NET SDK</title>
+<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1642798160 rel=stylesheet>
+<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1642798160></script>
+<style>:root #header+#content>#left>#rlblock_left{display:none!important}</style>
+</head>
+<body data-url=/azure-cosmos-dotnet-repository/1-getting-started/>
+<nav id=sidebar class=showVisitedLinks>
+<div id=header-wrapper>
+<div id=header>
+<a href=/>
+<img src=/images/logo.png style=max-height:90%;max-width:90% alt=Logo>
+</a>
+<h4 style=margin-top:0>
+<a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository target=_blank id=my-site><i class="fas fa-code"></i>&nbsp;Cosmos DB</a>
+</h3>
+</div>
+<div class=searchbox>
+<label for=search-by><i class="fas fa-search"></i></label>
+<input data-search-input id=search-by type=search placeholder=Search...>
+<span data-search-clear><i class="fas fa-times"></i></span>
+</div>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1642798160></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1642798160></script>
+<script type=text/javascript>var baseurl="https://ievangelist.github.io/azure-cosmos-dotnet-repository/"</script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1642798160></script>
+</div>
+<div class=highlightable>
+<ul class=topics>
+<li data-nav-id title="Getting Started" class="dd-item
+parent
+active">
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/>
+<b>1. </b>Getting Started
+<i class="fas fa-check read-icon"></i>
+</a>
+<ul>
+<li data-nav-id title=Logging class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/logging/>
+Logging
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title=Partitioning class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/partioning/>
+Partitioning
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title="Unique Keys" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/unique-keys/>
+Unique Keys
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+</ul>
+</li>
+</ul>
+<section id=shortcuts>
+<h3>More</h3>
+<ul>
+<li>
+<a class=padding href=https://ievangelist.github.io/azure-cosmos-dotnet-repository/><i class="fab fa-github"></i> Github Repository</a>
+</li>
+<li>
+<a class=padding href=https://ievangelist.github.io/azure-cosmos-dotnet-repository/><i class="fab fa-twitter"></i> Follow @davidpine7</a>
+</li>
+</ul>
+</section>
+<section id=prefooter>
+<hr>
+<ul>
+<li><a class=padding href=# data-clear-history-toggle><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+</ul>
+</section>
+<section id=footer>
+<p>Built with <a href=https://github.com/matcornic/hugo-theme-learn><i class="fas fa-heart"></i></a> from <a href=https://getgrav.org>Grav</a> and <a href=https://gohugo.io/>Hugo</a></p>
+</section>
+</div>
+</nav>
+<section id=body>
+<div id=overlay></div>
+<div class="padding highlightable">
+<div>
+<div id=top-bar>
+<div id=top-github-link>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository1-getting-started/_index.md target=blank>
+<i class="fas fa-code-branch"></i>
+<span id=top-github-link-text>Edit this page</span>
+</a>
+</div>
+<div id=breadcrumbs itemscope itemtype=http://data-vocabulary.org/Breadcrumb>
+<span id=sidebar-toggle-span>
+<a href=# id=sidebar-toggle data-sidebar-toggle>
+<i class="fas fa-bars"></i>
+</a>
+</span>
+<span class=links>
+<a href=/azure-cosmos-dotnet-repository/></a> > Getting Started
+</span>
+</div>
+</div>
+</div>
+<div id=head-tags>
+</div>
+<div id=chapter>
+<div id=body-inner>
+<h1 id=getting-started>Getting Started</h1>
+<ol>
+<li>
+<p>Create an Azure Cosmos DB SQL resource.</p>
+</li>
+<li>
+<p>Obtain the resource connection string from the <strong>Keys</strong> blade, be sure to get a connection string and not the key - these are different. The connection string is a compound key and endpoint URL.</p>
+</li>
+<li>
+<p>Call <code>AddCosmosRepository</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> ConfigureServices(IServiceCollection services)
+{
+    services.AddCosmosRepository();
+}
+</code></pre></div><p>The optional <code>setupAction</code> allows consumers to manually configure the <code>RepositoryOptions</code> object:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> ConfigureServices(IServiceCollection services)
+{
+    services.AddCosmosRepository(
+        options =&gt;
+        {
+            options.CosmosConnectionString = <span style=color:#e6db74>&#34;&lt; connection string &gt;&#34;</span>;
+            options.ContainerId = <span style=color:#e6db74>&#34;data-store&#34;</span>;
+            options.DatabaseId = <span style=color:#e6db74>&#34;samples&#34;</span>;
+        });
+}
+</code></pre></div></li>
+<li>
+<p>Define your object graph, objects must inherit <code>Item</code>, for example:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span> : Item
+{
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> FirstName { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> LastName { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+}
+</code></pre></div></li>
+<li>
+<p>Ask for an instance of <code>IRepository&lt;TItem></code>, in this case the <code>TItem</code> is <code>Person</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Consumer</span>
+{
+    <span style=color:#66d9ef>readonly</span> IRepository&lt;Person&gt; <span style=color:#ae81ff>_</span>repository;
+
+    <span style=color:#66d9ef>public</span> Consumer(IRepository&lt;Person&gt; repository) =&gt;
+        <span style=color:#ae81ff>_</span>repository = repository;
+
+    <span style=color:#75715e>// Use the repo...
+</span><span style=color:#75715e></span>}
+</code></pre></div></li>
+<li>
+<p>Perform any of the operations on the <code>_repository</code> instance, create <code>Person</code> records, update them, read them, or delete.</p>
+</li>
+<li>
+<p>Enjoy!</p>
+</li>
+</ol>
+<h2 id=configuration>Configuration</h2>
+<p>When <code>OptimizeBandwidth</code> is <code>true</code> (its default value), the repository SDK reduces networking and
+CPU load by not sending the resource back over the network and serializing it to the client. This is specific to writes,
+such as create, update, and delete. For more information, see <a href=https://devblogs.microsoft.com/cosmosdb/enable-content-response-on-write>Optimizing bandwidth in the Azure Cosmos DB .NET SDK</a>.</p>
+<p>There is much debate with how to structure your database and corresponding containers. Many developers with relational
+database design experience might prefer to have a single container per item type, while others understand that Azure Cosmos DB
+will handle things correctly regardless. By default, the <code>ContainerPerItemType</code> option is <code>false</code> and
+all items are persisted into the same container. However, when it is <code>true</code>, each distinct subclass of
+<code>Item</code> gets its own container named by the class itself.</p>
+<h3 id=well-known-keys>Well-known keys</h3>
+<p>Depending on the <a href="https://docs.microsoft.com/dotnet/core/extensions/configuration-providers?WC.m_id=dapine">.NET configuration provider</a> your app is using, there are several well-known keys that map to the repository options that configure your usage of the repository SDK. When using environment variables, such as those in Azure App Service configuration or Azure Key Vault secrets, the following keys map to the <code>RepositoryOptions</code> instance:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Data type</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RepositoryOptions__CosmosConnectionString</td>
+<td>string</td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions__AccountEndpoint</td>
+<td>string</td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions__DatabaseId</td>
+<td>string</td>
+<td><code>"database"</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions__ContainerId</td>
+<td>string</td>
+<td><code>"container"</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions__OptimizeBandwidth</td>
+<td>boolean</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions__ContainerPerItemType</td>
+<td>boolean</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions__AllowBulkExecution</td>
+<td>boolean</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions<strong>SerializationOptions</strong>IgnoreNullValues</td>
+<td>boolean</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions<strong>SerializationOptions</strong>Indented</td>
+<td>boolean</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>RepositoryOptions<strong>SerializationOptions</strong>PropertyNamingPolicy</td>
+<td>CosmosPropertyNamingPolicy</td>
+<td><code>CosmosPropertyNamingPolicy.CamelCase</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id=example-appsettingsjson>Example <code>appsettings.json</code></h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+  <span style=color:#f92672>&#34;Logging&#34;</span>: {
+    <span style=color:#f92672>&#34;LogLevel&#34;</span>: {
+      <span style=color:#f92672>&#34;Default&#34;</span>: <span style=color:#e6db74>&#34;Information&#34;</span>,
+      <span style=color:#f92672>&#34;Microsoft&#34;</span>: <span style=color:#e6db74>&#34;Warning&#34;</span>,
+      <span style=color:#f92672>&#34;Microsoft.Hosting.Lifetime&#34;</span>: <span style=color:#e6db74>&#34;Information&#34;</span>
+    }
+  },
+  <span style=color:#f92672>&#34;AllowedHosts&#34;</span>: <span style=color:#e6db74>&#34;*&#34;</span>,
+  <span style=color:#f92672>&#34;RepositoryOptions&#34;</span>: {
+    <span style=color:#f92672>&#34;CosmosConnectionString&#34;</span>: <span style=color:#e6db74>&#34;&lt;Your-CosmosDB-ConnectionString&gt;&#34;</span>,
+    <span style=color:#f92672>&#34;AccountEndpoint&#34;</span>: <span style=color:#e6db74>&#34;&lt;Your-CosmosDB-URI&gt;&#34;</span>
+    <span style=color:#e6db74>&#34;DatabaseId&#34;</span>: <span style=color:#e6db74>&#34;&lt;Your-CosmosDB-DatabaseName&gt;&#34;</span>,
+    <span style=color:#f92672>&#34;ContainerId&#34;</span>: <span style=color:#e6db74>&#34;&lt;Your-CosmosDB-ContainerName&gt;&#34;</span>,
+    <span style=color:#f92672>&#34;OptimizeBandwidth&#34;</span>: <span style=color:#66d9ef>true</span>,
+    <span style=color:#f92672>&#34;ContainerPerItemType&#34;</span>: <span style=color:#66d9ef>true</span>,
+    <span style=color:#f92672>&#34;AllowBulkExecution&#34;</span>: <span style=color:#66d9ef>true</span>,
+    <span style=color:#f92672>&#34;SerializationOptions&#34;</span>: {
+      <span style=color:#f92672>&#34;IgnoreNullValues&#34;</span>: <span style=color:#66d9ef>true</span>,
+     <span style=color:#f92672>&#34;PropertyNamingPolicy&#34;</span>: <span style=color:#e6db74>&#34;CamelCase&#34;</span>
+    }
+  }
+}
+</code></pre></div><p>For more information, see <a href="https://docs.microsoft.com/dotnet/core/extensions/configuration-providers?WC.m_id=dapine#json-configuration-provider">JSON configuration provider</a>.</p>
+<h3 id=example-appsettingsjson-with-azure-functions>Example <code>appsettings.json</code> with Azure Functions</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+  <span style=color:#f92672>&#34;Logging&#34;</span>: {
+    <span style=color:#f92672>&#34;LogLevel&#34;</span>: {
+      <span style=color:#f92672>&#34;Default&#34;</span>: <span style=color:#e6db74>&#34;Information&#34;</span>,
+      <span style=color:#f92672>&#34;Microsoft&#34;</span>: <span style=color:#e6db74>&#34;Warning&#34;</span>,
+      <span style=color:#f92672>&#34;Microsoft.Hosting.Lifetime&#34;</span>: <span style=color:#e6db74>&#34;Information&#34;</span>
+    }
+  },
+  <span style=color:#f92672>&#34;AllowedHosts&#34;</span>: <span style=color:#e6db74>&#34;*&#34;</span>,
+  <span style=color:#f92672>&#34;Values&#34;</span>: {
+    <span style=color:#f92672>&#34;RepositoryOptions:CosmosConnectionString&#34;</span>: <span style=color:#e6db74>&#34;&lt;Your-CosmosDB-ConnectionString&gt;&#34;</span>,
+    <span style=color:#f92672>&#34;RepositoryOptions:AccountEndpoint&#34;</span>: <span style=color:#e6db74>&#34;&lt;Your-CosmosDB-URI&gt;&#34;</span>,
+    <span style=color:#f92672>&#34;RepositoryOptions:DatabaseId&#34;</span>: <span style=color:#e6db74>&#34;&lt;Your-CosmosDB-DatabaseName&gt;&#34;</span>,
+    <span style=color:#f92672>&#34;RepositoryOptions:ContainerId&#34;</span>: <span style=color:#e6db74>&#34;&lt;Your-CosmosDB-ContainerName&gt;&#34;</span>,
+    <span style=color:#f92672>&#34;RepositoryOptions:OptimizeBandwidth&#34;</span>: <span style=color:#66d9ef>true</span>,
+    <span style=color:#f92672>&#34;RepositoryOptions:ContainerPerItemType&#34;</span>: <span style=color:#66d9ef>true</span>,
+    <span style=color:#f92672>&#34;RepositoryOptions:AllowBulkExecution&#34;</span>: <span style=color:#66d9ef>true</span>,
+    <span style=color:#f92672>&#34;RepositoryOptions:SerializationOptions:IgnoreNullValues&#34;</span>: <span style=color:#66d9ef>true</span>,
+    <span style=color:#f92672>&#34;RepositoryOptions:SerializationOptions:PropertyNamingPolicy&#34;</span>: <span style=color:#e6db74>&#34;CamelCase&#34;</span>
+  }
+}
+</code></pre></div>
+<footer class=footline>
+</footer>
+</div>
+</div>
+</div>
+<div id=navigation>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/ title> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/logging/ title=Logging style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+</div>
+</section>
+<div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
+<div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
+</div>
+<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1642798160></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/learn.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/mermaid/mermaid.js?1642798160></script>
+<script>mermaid.initialize({startOnLoad:!0})</script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!doctype html><html lang=en class="js csstransforms3d">
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=description content="Azure Cosmos DB Repository-Pattern .NET SDK">
+<meta name=author content="David Pine">
+<link rel="shortcut icon" href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
+<link rel=icon href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
+<title> :: Azure Cosmos DB Repository-Pattern .NET SDK</title>
+<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1642798160 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1642798160 rel=stylesheet>
+<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1642798160></script>
+<style>:root #header+#content>#left>#rlblock_left{display:none!important}</style>
+</head>
+<body data-url=/azure-cosmos-dotnet-repository/>
+<nav id=sidebar class=showVisitedLinks>
+<div id=header-wrapper>
+<div id=header>
+<a href=/>
+<img src=/images/logo.png style=max-height:90%;max-width:90% alt=Logo>
+</a>
+<h4 style=margin-top:0>
+<a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository target=_blank id=my-site><i class="fas fa-code"></i>&nbsp;Cosmos DB</a>
+</h3>
+</div>
+<div class=searchbox>
+<label for=search-by><i class="fas fa-search"></i></label>
+<input data-search-input id=search-by type=search placeholder=Search...>
+<span data-search-clear><i class="fas fa-times"></i></span>
+</div>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1642798160></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1642798160></script>
+<script type=text/javascript>var baseurl="https://ievangelist.github.io/azure-cosmos-dotnet-repository/"</script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1642798160></script>
+</div>
+<div class=highlightable>
+<ul class=topics>
+<li data-nav-id title="Getting Started" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/>
+<b>1. </b>Getting Started
+<i class="fas fa-check read-icon"></i>
+</a>
+<ul>
+<li data-nav-id title=Logging class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/logging/>
+Logging
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title=Partitioning class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/partioning/>
+Partitioning
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title="Unique Keys" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/unique-keys/>
+Unique Keys
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+</ul>
+</li>
+</ul>
+<section id=shortcuts>
+<h3>More</h3>
+<ul>
+<li>
+<a class=padding href=https://ievangelist.github.io/azure-cosmos-dotnet-repository/><i class="fab fa-github"></i> Github Repository</a>
+</li>
+<li>
+<a class=padding href=https://ievangelist.github.io/azure-cosmos-dotnet-repository/><i class="fab fa-twitter"></i> Follow @davidpine7</a>
+</li>
+</ul>
+</section>
+<section id=prefooter>
+<hr>
+<ul>
+<li><a class=padding href=# data-clear-history-toggle><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+</ul>
+</section>
+<section id=footer>
+<p>Built with <a href=https://github.com/matcornic/hugo-theme-learn><i class="fas fa-heart"></i></a> from <a href=https://getgrav.org>Grav</a> and <a href=https://gohugo.io/>Hugo</a></p>
+</section>
+</div>
+</nav>
+<section id=body>
+<div id=overlay></div>
+<div class="padding highlightable">
+<div id=head-tags>
+</div>
+<div id=body-inner>
+<span id=sidebar-toggle-span>
+<a href=# id=sidebar-toggle data-sidebar-toggle><i class="fas fa-bars"></i> navigation</a>
+</span>
+<h1 id=azure-cosmos-db-repository-net-sdk>Azure Cosmos DB Repository .NET SDK</h1>
+<p>This package wraps the <a href=https://www.nuget.org/packages/Microsoft.Azure.Cosmos>NuGet: Microsoft.Azure.Cosmos package</a>,
+exposing a simple dependency-injection enabled <code>IRepository&lt;T></code> interface.</p>
+<p><img src=https://raw.githubusercontent.com/IEvangelist/azure-cosmos-dotnet-repository/main/CosmosRepository.png alt="Cosmos Repository"></p>
+<h2 id=overview>Overview</h2>
+<p>The repository is responsible for all of the create, read, update, and delete (CRUD) operations on objects <code>where T : Item</code>. The <code>Item</code> type adds
+several properties, one which is a globally unique identifier defined as:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#a6e22e>[JsonProperty(&#34;id&#34;)]</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> Id { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; } = Guid.NewGuid().ToString();
+</code></pre></div><p>Additionally, a type property exists which indicates the subclass name (this is used for filtering implicitly on your behalf):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#a6e22e>[JsonProperty(&#34;type&#34;)]</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> Type { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+</code></pre></div><p>Finally, a partition key property is used internally to manage partitioning on your behalf. This can optionally be overridden on an item per item basis.</p>
+<p>📣 <a href=https://devblogs.microsoft.com/cosmosdb/azure-cosmos-db-repository-net-sdk-v-1-0-4>Azure Cosmos DB - Official Blog</a></p>
+<p>For more information, see <a href="https://docs.microsoft.com/azure/azure-functions/functions-dotnet-dependency-injection?WC.m_id=dapine#customizing-configuration-sources">Customizing configuration sources</a>.</p>
+<h4 id=authenticating-using-an-identity>Authenticating using an identity</h4>
+<p>The Azure Cosmos DB .NET SDK also supports authentication using identities, which are considered superior from an audit and granularity of permissions perspective. Authenticating using a connection string essentially provides full access to perform operations within the <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/role-based-access-control>data plane</a>
+of your Cosmos DB Account. More information on the Azure control plane and data plane is available <a href=https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane>here</a>.</p>
+<p>This libary also supports authentication using an identity. To authenticate using an identity (User, Group, Application Registration, or Managed Identity) you will need to set the <code>AccountEndpoint</code> and <code>TokenCredential</code> options that are available on the <code>RepositoryOptions</code> class.</p>
+<p>In a basic scenario, there are three steps that need to be completed:</p>
+<ol>
+<li>
+<p>If the identity that you would like to use, does not exist in Azure Active Directory, create it now.</p>
+</li>
+<li>
+<p>Use the Azure CLI to <a href="https://docs.microsoft.com/en-us/cli/azure/cosmosdb/sql/role/assignment?view=azure-cli-latest#az_cosmosdb_sql_role_assignment_create">assign</a> the appropriate role to your identity at the desired scope. - In most cases, using the <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac#built-in-role-definitions>built-in roles</a> will be sufficient. However, there is support for creating custom role definitions using the Azure CLI, you can read more on this <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac#role-definitions>here</a>.</p>
+</li>
+<li>
+<p>Configure your application using the <code>AddCosmosRepository</code> method in your <code>Startup.cs</code> file:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Azure.Identity;
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> ConfigureServices(IServiceCollection services)
+{
+    DefaultAzureCredential credential = <span style=color:#66d9ef>new</span>();
+
+    services.AddCosmosRepository(
+        options =&gt;
+        {
+            options.TokenCredential = credential;
+            options.AccountEndpoint = <span style=color:#e6db74>&#34;&lt; account endpoint URI &gt;&#34;</span>;
+            options.ContainerId = <span style=color:#e6db74>&#34;data-store&#34;</span>;
+            options.DatabaseId = <span style=color:#e6db74>&#34;samples&#34;</span>;
+        });
+}
+</code></pre></div></li>
+</ol>
+<p>The example above is using the <code>DefaultAzureCredential</code> object provided by the <a href=https://www.nuget.org/packages/Azure.Identity>Azure Identity</a> NuGet package, which provides seamless integration with Azure Active Directory. More information on this package is available <a href=https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme>here</a>.</p>
+<h2 id=advanced-partitioning-strategy>Advanced partitioning strategy</h2>
+<p>As a consumer of Azure Cosmos DB, you can choose how to partition your data. By default, this repository SDK will partition items using their <code>Item.Id</code> value as the <code>/id</code> partition in the storage container. However, you can override this default behavior by:</p>
+<ol>
+<li>Declaratively specifying the partition key path with <code>PartitionKeyPathAttribute</code></li>
+<li>Override the <code>Item.GetPartitionKeyValue()</code> method</li>
+<li>Ensure the the property value of the composite or synthetic key is serialized to match the partition key path</li>
+<li>Set <code>RepositoryOptions__ContainerPerItemType</code> to <code>true</code>, to ensure that your item with explicit partitioning is correctly maintained</li>
+</ol>
+<p>As an example, considering the following:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+<span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository.Attributes;
+<span style=color:#66d9ef>using</span> Newtonsoft.Json;
+<span style=color:#66d9ef>using</span> System;
+
+<span style=color:#66d9ef>namespace</span> Example
+{
+<span style=color:#a6e22e>    [PartitionKeyPath(&#34;/synthetic&#34;)]</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span> : Item
+    {
+        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> FirstName { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; } = <span style=color:#66d9ef>null</span>!;
+        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string?</span> MiddleName { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> LastName { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; } = <span style=color:#66d9ef>null</span>!;
+<span style=color:#a6e22e>
+</span><span style=color:#a6e22e>        [JsonProperty(&#34;synthetic&#34;)]</span>
+        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> SyntheticPartitionKey =&gt;
+            <span style=color:#e6db74>$&#34;{FirstName}-{LastName}&#34;</span>; <span style=color:#75715e>// Also known as a &#34;composite key&#34;.
+</span><span style=color:#75715e></span>
+        <span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>string</span> GetPartitionKeyValue() =&gt; SyntheticPartitionKey;
+    }
+}
+</code></pre></div>
+<h2 id=in-memory-repository>In-memory Repository</h2>
+<p>This library also includes an in-memory version of <code>IRepository&lt;T></code>. To use it swap out the normal
+<code>services.AddCosmosRepository()</code> for
+<code>services.AddInMemoryCosmosRepository()</code> and have all of your items stored in memory. This is a great tool for running integration tests using a package such as <code>Microsoft.AspNetCore.Mvc.Testing</code>, and not having to incur the cost of data stored in an Azure Cosmos DB resource.</p>
+<h2 id=optimistic-concurrency-control-with-etags>Optimistic Concurrency Control with Etags</h2>
+<p>The default repository now supports etags and will pass them when <code>IItemWithEtag</code> is implemented correctly or the base classes <code>EtagItem</code> or <code>FullItem</code> are used. The etag check is enforced on all updates when <code>TItem</code> is of the correct type. It can however be bypassed by setting the <code>ignoreEtag</code> optional parameter in the relevant async methods. The InMemory repository also supports OCC with Etags. The <a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/OptimisticConcurrencyControl>OptimisticCurrencyControl sample</a> shows these features.</p>
+<h3 id=getting-the-new-etag>Getting the new etag</h3>
+<p>When creating a new object, if storing in memory, it is important to store the result from the create call to ensure you have the correct etag for future updated.</p>
+<p>For example your code should look something like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>TItem currentItem = <span style=color:#66d9ef>new</span> TItem(...);
+currentItem = <span style=color:#ae81ff>_</span>repository.CreateAsync(currentItem);
+</code></pre></div><h3 id=sequential-updates>Sequential updates</h3>
+<p>When doing sequential updates to the same item it is important to use the result from the update method (when OptimizeBandwith is false) or refetch the updated data each time (when OptimizeBandwith is true) otherwise the etag value will not be updated. The following code shows what to do in each case:</p>
+<h4 id=optimize-bandwith-off>Optimize Bandwith Off</h4>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>TItem currentItem = <span style=color:#ae81ff>_</span>repository.CreateAsync(itemConfig);
+currentItem = <span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+currentItem = <span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+</code></pre></div><h4 id=optimize-bandwith-on>Optimize Bandwith On</h4>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>TItem currentItem = <span style=color:#ae81ff>_</span>repository.CreateAsync(itemConfig);
+<span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+currentItem = <span style=color:#ae81ff>_</span>repository.GetAsync(currentItem.Id);
+<span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+currentItem = <span style=color:#ae81ff>_</span>repository.GetAsync(currentItem);
+currentItem = <span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+</code></pre></div><h3 id=catching-mismatched-etag-errors>Catching mismatched etag errors</h3>
+<p>The following code shows how to catch the error when the etags do not match.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>  <span style=color:#66d9ef>try</span>
+  {
+      currentBankAccount = <span style=color:#66d9ef>await</span> repository.UpdateAsync(currentBankAccount);
+      Console.WriteLine(<span style=color:#e6db74>$&#34;Updated bank account: {currentBankAccount}.&#34;</span>);
+  }
+  <span style=color:#66d9ef>catch</span> (CosmosException exception) when (exception.StatusCode == HttpStatusCode.PreconditionFailed)
+  {
+      Console.WriteLine(<span style=color:#e6db74>&#34;Failed to update balance as the etags did not match.&#34;</span>);
+  }
+</code></pre></div><h3 id=ignoring-the-etag>Ignoring the etag</h3>
+<p>The following code shows how to ignore the etag when doing an update.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>await</span> repository.UpdateAsync(currentBankAccount, ignoreEtag: <span style=color:#66d9ef>true</span>);
+</code></pre></div><h3 id=passing-the-etag-to-a-patch-update>Passing the etag to a patch update</h3>
+<p>The following code shows how to pass the etag when doing a update to specific properties.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>await</span> repository.UpdateAsync(currentBankAccount.Id,
+  builder =&gt; builder.Replace(account =&gt; account.Balance, currentBankAccount.Balance - <span style=color:#ae81ff>250</span>), etag: currentBankAccount.Etag);
+</code></pre></div><h2 id=time-to-live>Time To Live</h2>
+<p>The time to live property can be set at both an item and container level. At a container level this can be done through the container options builder:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>options.ContainerBuilder.Configure&lt;BankAccount&gt;(
+  x =&gt; x.WithContainerDefaultTimeToLive(TimeSpan.FromHours(<span style=color:#ae81ff>2</span>)));
+</code></pre></div><p>In the above example the container would have a default item lifespan of 2 hours. This can be overriden at the item level by using the <code>TimeToLive</code> property when correctly implemented. This is available through the <code>FullItem</code> and <code>TimeToLiveItem</code> base classes. The example below shows this been overriden so the item has a lifespan of 4 hours rather than the default of 2:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>BankAccount currentBankAccount = <span style=color:#66d9ef>await</span> repository.CreateAsync(
+  <span style=color:#66d9ef>new</span> BankAccount()
+    {
+        Name = <span style=color:#e6db74>&#34;Current Account&#34;</span>,
+        Balance = <span style=color:#ae81ff>500.0</span>,
+        TimeToLive = TimeSpan.FromHours(<span style=color:#ae81ff>4</span>)
+    });
+</code></pre></div><p>If you didn&rsquo;t want that specific item to ever expire the following code can be used:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>BankAccount currentBankAccount = <span style=color:#66d9ef>await</span> repository.CreateAsync(
+  <span style=color:#66d9ef>new</span> BankAccount()
+    {
+        Name = <span style=color:#e6db74>&#34;Current Account&#34;</span>,
+        Balance = <span style=color:#ae81ff>500.0</span>,
+        TimeToLive = TimeSpan.FromSeconds(-<span style=color:#ae81ff>1</span>)
+    });
+</code></pre></div><p>The demo <code>BankAccount</code> class can be found in the <a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/OptimisticConcurrencyControl>OptimisticCurrencyControl sample</a> and its implementation looks like the following:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+<span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository.Attributes;
+
+<span style=color:#66d9ef>namespace</span> OptimisticConcurrencyControl;
+<span style=color:#a6e22e>
+</span><span style=color:#a6e22e>[Container(&#34;accounts&#34;)]</span>
+<span style=color:#a6e22e>[PartitionKeyPath(&#34;/id&#34;)]</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BankAccount</span> : FullItem
+{
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> Name { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; } = <span style=color:#66d9ef>string</span>.Empty;
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>double</span> Balance { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> Withdraw(<span style=color:#66d9ef>double</span> amount)
+    {
+        <span style=color:#66d9ef>if</span> (Balance - amount &lt; <span style=color:#ae81ff>0.0</span>) <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> InvalidOperationException(<span style=color:#e6db74>&#34;Cannot go overdrawn&#34;</span>);
+
+        Balance -= amount;
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> Deposit(<span style=color:#66d9ef>double</span> amount)
+    {
+        Balance += amount;
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>string</span> ToString() =&gt;
+        <span style=color:#e6db74>$&#34;Account (Name = {Name}, Balance = {Balance}, Etag = {Etag})&#34;</span>;
+}
+</code></pre></div><p>This <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/sql/time-to-live>page</a> goes into more detail about the various combinations.</p>
+<h2 id=created-and-last-updated>Created and Last Updated</h2>
+<p>The last updated value is retrieved from the _ts property that Cosmos DB sets; as documented <a href="https://docs.microsoft.com/en-us/rest/api/cosmos-db/documents#:~:text=the%20document%20resource.-,_ts,updated%20timestamp%20of%20the%20resource.%20The%20value%20is%20a%20timestamp.,-_self">here</a>. This property is deserialised and is available in the raw seconds (<code>LastUpdatedTimeRaw</code>) since epoch and a human readable format (<code>LastUpdatedTimeUtc</code>). Both the base classes <code>FullItem</code> and <code>TimeStampedItem</code> contain these properties.</p>
+<p>The <code>CreatedTimeUtc</code> time property available in both the base classes <code>FullItem</code> and <code>TimeStampedItem</code> is set when <code>CreateAsync</code> is called on the repository. However, this property can be set prior to calling <code>CreateAsync</code> in which case it wont be overwritten; allowing you to set your own <code>CreatedTimeUtc</code> value. This does mean that when using existing date the <code>CreatedTimeUtc</code> property will be null.</p>
+<h2 id=samples>Samples</h2>
+<p>Visit the <code>Microsoft.Azure.CosmosRepository.Samples</code> <a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples>directory</a> for samples on how to use the library with:</p>
+<ul>
+<li><a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/AzureFunctionTier>Azure Functions</a></li>
+<li><a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/ServiceTier>Services</a></li>
+<li><a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/WebTier>Controllers (web apps)</a></li>
+<li><a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/Paging>Paging</a></li>
+</ul>
+<h2 id=deep-dive-video>Deep-dive video</h2>
+<p><a href="https://www.youtube.com/watch?v=izdnmBrTweA"><img src=https://raw.githubusercontent.com/IEvangelist/azure-cosmos-dotnet-repository/main/images/deep-dive-talk.png alt="A deep dive into the Azure Cosmos DB repository pattern NET SDK"></a></p>
+<h2 id=discord>Discord</h2>
+<p>Get extra support on our dedicated Discord channel.</p>
+<p><a href=https://discord.com/invite/qMXrX4shAv><img src=https://img.shields.io/discord/868239483529723914.svg alt="alt Join the conversation" title=Discord></a></p>
+</div>
+</div>
+<div id=navigation>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+</div>
+</section>
+<div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
+<div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
+</div>
+<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1642798160></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/learn.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1642798160></script>
+<script src=/azure-cosmos-dotnet-repository/mermaid/mermaid.js?1642798160></script>
+<script>mermaid.initialize({startOnLoad:!0})</script>
+</body>
+</html>
