@@ -7,19 +7,19 @@
 <meta name=author content="David Pine">
 <link rel="shortcut icon" href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
 <link rel=icon href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
-<title>Partitioning :: Azure Cosmos DB Repository-Pattern .NET SDK</title>
-<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/theme.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1642798535 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1642798535 rel=stylesheet>
-<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1642798535></script>
+<title>Azure Cosmos DB Repository-Pattern .NET SDK</title>
+<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1642805996 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1642805996 rel=stylesheet>
+<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1642805996></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}</style>
 </head>
 <body data-url=/azure-cosmos-dotnet-repository/1-getting-started/partioning/>
@@ -38,10 +38,10 @@
 <input data-search-input id=search-by type=search placeholder=Search...>
 <span data-search-clear><i class="fas fa-times"></i></span>
 </div>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1642798535></script>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1642798535></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1642805996></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1642805996></script>
 <script type=text/javascript>var baseurl="https://ievangelist.github.io/azure-cosmos-dotnet-repository/"</script>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1642798535></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1642805996></script>
 </div>
 <div class=highlightable>
 <ul class=topics>
@@ -52,12 +52,6 @@ parent">
 <i class="fas fa-check read-icon"></i>
 </a>
 <ul>
-<li data-nav-id title=Logging class=dd-item>
-<a href=/azure-cosmos-dotnet-repository/1-getting-started/logging/>
-Logging
-<i class="fas fa-check read-icon"></i>
-</a>
-</li>
 <li data-nav-id title=Partitioning class="dd-item
 parent
 active">
@@ -66,9 +60,41 @@ Partitioning
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id title="Unique Keys" class=dd-item>
-<a href=/azure-cosmos-dotnet-repository/1-getting-started/unique-keys/>
-Unique Keys
+</ul>
+</li>
+<li data-nav-id title="Container Configuration" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/2-container-config/>
+<b>2. </b>Container Configuration
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title=Query class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/3-queries/>
+<b>3. </b>Query
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title="Change Feeds" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/4-change-feed/>
+<b>4. </b>Change Feeds
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title=Miscellaneous class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/5-miscellaneous/>
+<b>5. </b>Miscellaneous
+<i class="fas fa-check read-icon"></i>
+</a>
+<ul>
+<li data-nav-id title=Logging class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/>
+Logging
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id title="Unique Keys Policies" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/5-miscellaneous/unique-keys/>
+Unique Keys Policies
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
@@ -142,7 +168,6 @@ Unique Keys
 <h1>
 Partitioning
 </h1>
-<h1 id=partitioning>Partitioning</h1>
 <p>Partitioning is a huge part of Cosmos DB. There are many different strategies you may want to take. Such as, splitting different types of item&rsquo;s across containers, sharing some <code>IItem</code>&rsquo;s in one container and not others and finally, in some cases, even putting all <code>IItem</code> types in a single container.</p>
 <h2 id=default-strategy>Default Strategy</h2>
 <p>Adding the Azure Cosmos Repository with no real configuration, like below. Will result in a simple strategy being assumed on your behalf. This will leave the option&rsquo;s configured in there default state. This means a property called <code>ContainerPerItemType</code> is set to false. This means that the Azure Cosmos Repository will store <em>all</em> <code>IItem</code>&rsquo;s in the same container, setting all the <code>IItem</code>&rsquo;s within to use the partition key <code>/id</code>.</p>
@@ -263,24 +288,24 @@ app.Run();
 </div>
 </div>
 <div id=navigation>
-<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/1-getting-started/logging/ title=Logging> <i class="fa fa-chevron-left"></i></a>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/unique-keys/ title="Unique Keys" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started"> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/2-container-config/ title="Container Configuration" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
 <div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
 </div>
-<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1642798535></script>
-<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1642798535></script>
-<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1642798535></script>
-<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1642798535></script>
-<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1642798535></script>
-<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1642798535></script>
+<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1642805996></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1642805996></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1642805996></script>
+<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1642805996></script>
+<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1642805996></script>
+<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1642805996></script>
 <script>hljs.initHighlightingOnLoad()</script>
-<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1642798535></script>
-<script src=/azure-cosmos-dotnet-repository/js/learn.js?1642798535></script>
-<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1642798535></script>
-<script src=/azure-cosmos-dotnet-repository/mermaid/mermaid.js?1642798535></script>
+<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1642805996></script>
+<script src=/azure-cosmos-dotnet-repository/js/learn.js?1642805996></script>
+<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1642805996></script>
+<script src=/azure-cosmos-dotnet-repository/mermaid/mermaid.js?1642805996></script>
 <script>mermaid.initialize({startOnLoad:!0})</script>
 </body>
 </html>
