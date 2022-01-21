@@ -78,7 +78,7 @@ namespace Microsoft.Azure.CosmosRepository
             _logger.LogPointReadExecuted<TItem>(response.RequestCharge);
             _logger.LogItemRead(item);
 
-            return item is {Type: {Length: 0}} || item.Type == typeof(TItem).Name ? item : default;
+            return _repositoryExpressionProvider.CheckItem(item);
         }
 
         /// <inheritdoc/>

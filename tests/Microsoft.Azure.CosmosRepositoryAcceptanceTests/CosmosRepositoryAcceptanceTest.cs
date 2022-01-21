@@ -8,6 +8,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,15 +18,18 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Collection("CosmosTest")]
 public abstract class CosmosRepositoryAcceptanceTest
 {
     protected const string ProductsInfoContainer = "products-info";
+    protected const string ProductsDatabase = "inventory";
     protected const string DefaultPartitionKey = "/partitionKey";
     protected const string TechnologyCategoryId = "Techonology";
 
     protected readonly ServiceProvider _provider;
     protected readonly IRepository<Product> _productsRepository;
     protected readonly IRepository<Rating> _ratingsRepository;
+    protected readonly ILogger<CosmosRepositoryAcceptanceTest> _logger;
 
     protected EquivalencyAssertionOptions<Product> DefaultProductEquivalencyOptions(
         EquivalencyAssertionOptions<Product> options)
@@ -50,10 +54,7 @@ public abstract class CosmosRepositoryAcceptanceTest
         ServiceCollection services = new();
         services.AddSingleton(builtConfig);
 
-        if (builderOptions is not null)
-        {
-            services.AddCosmosRepository(builderOptions);
-        }
+        services.AddCosmosRepository(builderOptions);
 
         services.AddCosmosRepositoryItemChangeFeedProcessors(typeof(CosmosRepositoryAcceptanceTest).Assembly);
 
@@ -73,6 +74,7 @@ public abstract class CosmosRepositoryAcceptanceTest
 
         _productsRepository = _provider.GetRequiredService<IRepository<Product>>();
         _ratingsRepository = _provider.GetRequiredService<IRepository<Rating>>();
+        _logger = _provider.GetRequiredService<ILogger<CosmosRepositoryAcceptanceTest>>();
     }
 
     protected static async Task WaitFor(int seconds)
@@ -86,13 +88,8 @@ public abstract class CosmosRepositoryAcceptanceTest
         }
     }
 
-    protected static string BuildDatabaseName(string prefix)
-    {
-        string os = Environment.GetEnvironmentVariable("OperatingSystemKey") ??
-                    Environment.OSVersion.Platform.ToString().ToLower();
-
-        return $"{prefix}-{os}";
-    }
+    internal ICosmosClientProvider GetClient() =>
+        _provider.GetRequiredService<ICosmosClientProvider>();
 
     protected static string GetCosmosConnectionString() =>
         Environment.GetEnvironmentVariable("CosmosConnectionString")!;
@@ -101,7 +98,7 @@ public abstract class CosmosRepositoryAcceptanceTest
     {
         options.CosmosConnectionString = GetCosmosConnectionString();
         options.ContainerPerItemType = true;
-        options.DatabaseId = BuildDatabaseName("cosmos-repository-acceptance-tests");
+        options.DatabaseId = ProductsDatabase;
 
         ConfigureProducts(options);
         ConfigureRatings(options);
@@ -139,18 +136,17 @@ public abstract class CosmosRepositoryAcceptanceTest
     };
 
 
-    protected static async Task<ContainerProperties?> DeleteDatabaseIfExists(string dbName, CosmosClient client)
+    protected async Task<ContainerProperties?> PruneDatabases(CosmosClient client)
     {
-        FeedIterator<DatabaseProperties> containerQueryIterator = client.GetDatabaseQueryIterator<DatabaseProperties>("SELECT * FROM c");
+        FeedIterator<DatabaseProperties> containerQueryIterator =
+            client.GetDatabaseQueryIterator<DatabaseProperties>("SELECT * FROM c");
 
         while (containerQueryIterator.HasMoreResults)
         {
             foreach (DatabaseProperties database in await containerQueryIterator.ReadNextAsync())
             {
-                if (database.Id == dbName)
-                {
-                    await client.GetDatabase(dbName).DeleteAsync();
-                }
+                _logger.LogInformation("Deleting database {DatabaseName}", database.Id);
+                await client.GetDatabase(database.Id).DeleteAsync();
             }
         }
 

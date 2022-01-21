@@ -18,6 +18,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         readonly Mock<ICosmosContainerDefaultTimeToLiveProvider> _defaultTimeToLiveProvider = new();
         readonly Mock<ICosmosContainerSyncContainerPropertiesProvider> _syncContainerPropertiesProvider = new();
         readonly Mock<ICosmosThroughputProvider> _throughputProvider = new();
+        readonly Mock<ICosmosStrictTypeCheckingProvider> _strictTypeCheckingProvider = new();
 
         [Fact]
         public void GetOptionsAlwaysGetOptionsForItem()
@@ -28,7 +29,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
                 _uniqueKeyPolicyProvider.Object,
                 _defaultTimeToLiveProvider.Object,
                 _syncContainerPropertiesProvider.Object,
-                _throughputProvider.Object);
+                _throughputProvider.Object,
+                _strictTypeCheckingProvider.Object);
 
             UniqueKeyPolicy uniqueKeyPolicy = new();
             ThroughputProperties throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(400);
@@ -40,14 +42,14 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             _syncContainerPropertiesProvider.Setup(o => o.GetWhetherToSyncContainerProperties(typeof(Item1))).Returns(true);
             _throughputProvider.Setup(o => o.GetThroughputProperties(typeof(Item1))).Returns(throughputProperties);
 
-            ItemOptions options = provider.GetOptions<Item1>();
+            ItemConfiguration configuration = provider.GetItemConfiguration<Item1>();
 
-            Assert.Equal("a", options.ContainerName);
-            Assert.Equal("/id", options.PartitionKeyPath);
-            Assert.Equal(uniqueKeyPolicy, options.UniqueKeyPolicy);
-            Assert.Equal(10, options.DefaultTimeToLive);
-            Assert.True(options.SyncContainerProperties);
-            Assert.Equal(throughputProperties, options.ThroughputProperties);
+            Assert.Equal("a", configuration.ContainerName);
+            Assert.Equal("/id", configuration.PartitionKeyPath);
+            Assert.Equal(uniqueKeyPolicy, configuration.UniqueKeyPolicy);
+            Assert.Equal(10, configuration.DefaultTimeToLive);
+            Assert.True(configuration.SyncContainerProperties);
+            Assert.Equal(throughputProperties, configuration.ThroughputProperties);
         }
 
         class Item1 : Item

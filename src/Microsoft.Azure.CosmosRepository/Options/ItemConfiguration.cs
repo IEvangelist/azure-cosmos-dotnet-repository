@@ -7,7 +7,7 @@ using Microsoft.Azure.CosmosRepository.ChangeFeed;
 
 namespace Microsoft.Azure.CosmosRepository.Options
 {
-    internal class ItemOptions
+    internal class ItemConfiguration
     {
         public Type Type { get; }
 
@@ -25,15 +25,25 @@ namespace Microsoft.Azure.CosmosRepository.Options
 
         public ChangeFeedOptions ChangeFeedOptions { get; } = null;
 
-        public ItemOptions(Type type, string containerName, string partitionKeyPath, UniqueKeyPolicy uniqueKeyPolicy,
-            ThroughputProperties throughputProperties, int defaultTimeToLive = -1, bool syncContainerProperties = false,
-            ChangeFeedOptions changeFeedOptions = null)
+        public bool UseStrictTypeChecking { get; }
+
+        public ItemConfiguration(
+            Type type,
+            string containerName,
+            string partitionKeyPath,
+            UniqueKeyPolicy uniqueKeyPolicy,
+            ThroughputProperties throughputProperties,
+            int defaultTimeToLive = -1,
+            bool syncContainerProperties = false,
+            ChangeFeedOptions changeFeedOptions = null,
+            bool useStrictTypeChecking = true)
         {
             Type = type;
             ContainerName = containerName;
             PartitionKeyPath = partitionKeyPath;
             UniqueKeyPolicy = uniqueKeyPolicy;
             ThroughputProperties = throughputProperties;
+            UseStrictTypeChecking = useStrictTypeChecking;
             DefaultTimeToLive = defaultTimeToLive;
             SyncContainerProperties = syncContainerProperties;
             ChangeFeedOptions = changeFeedOptions;
