@@ -17,7 +17,7 @@ jobs:
       id: regex-match
       with:
         text: ${{ github.ref }}
-        regex: '[0-9.]+'
+        regex: '([pre0-9.-]+)$'
        
     - name: Print Version Number
       run: echo '${{ steps.regex-match.outputs.match }}'
