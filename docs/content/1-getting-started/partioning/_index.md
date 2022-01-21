@@ -1,9 +1,7 @@
 ---
 title: "Partitioning"
-weight: 2
+weight: 1
 ---
-
-# Partitioning
 
 Partitioning is a huge part of Cosmos DB. There are many different strategies you may want to take. Such as, splitting different types of item's across containers, sharing some `IItem`'s in one container and not others and finally, in some cases, even putting all `IItem` types in a single container.
 

@@ -5,8 +5,6 @@ chapter: true
 pre: "<b>1. </b>"
 ---
 
-# Getting Started
-
 1. Create an Azure Cosmos DB SQL resource.
 1. Obtain the resource connection string from the **Keys** blade, be sure to get a connection string and not the key - these are different. The connection string is a compound key and endpoint URL.
 1. Call `AddCosmosRepository`:
