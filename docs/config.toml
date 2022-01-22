@@ -30,3 +30,9 @@ name = "<i class='fab fa-twitter'></i> Follow @davidpine7"
 identifier = "twitter"
 url = "https://twitter.com/davidpine7"
 weight = 2
+
+[[menu.shortcuts]]
+name = "<i class='fas fa-bullhorn'></i> Collaborators"
+identifier = "collaborators"
+url = "https://github.com/IEvangelist/azure-cosmos-dotnet-repository#contributors-"
+weight = 3
