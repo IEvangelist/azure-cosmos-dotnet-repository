@@ -15,6 +15,9 @@ defaultContentLanguageInSubdir= true
   disableNextPrev = false
   disableAssetsBusting = false
   themeVariant = "custom"
+  disableInlineCopyToClipBoard = true
+  disableMermaid = true
+  disableLandingPage = false
 
 [outputs]
 home = [ "HTML", "RSS", "JSON"]
