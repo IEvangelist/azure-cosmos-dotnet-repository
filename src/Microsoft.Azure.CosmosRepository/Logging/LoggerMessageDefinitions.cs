@@ -10,7 +10,7 @@ namespace Microsoft.Azure.CosmosRepository.Logging
     {
         //Debug Definitions
         internal static readonly Action<ILogger, string, Exception> ItemRead = LoggerMessage.Define<string>(
-            LogLevel.Information,
+            LogLevel.Debug,
             EventIds.CosmosItemRead,
             "Cosmos item read {CosmosItemJson}"
         );
