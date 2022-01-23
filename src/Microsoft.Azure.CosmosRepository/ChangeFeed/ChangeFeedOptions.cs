@@ -27,8 +27,14 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         /// </summary>
         public TimeSpan? PollInterval { get; set; }
 
+        /// <summary>
+        /// The processor name provided to the change feed processor library.
+        /// </summary>
+        public string ProcessorName { get; set; } = "cosmos-repository-pattern-processor";
+
         internal bool IsTheSameAs(ChangeFeedOptions options) =>
             options.InstanceName == InstanceName &&
-            options.PollInterval == PollInterval;
+            options.PollInterval == PollInterval &&
+            options.ProcessorName == ProcessorName;
     }
 }
