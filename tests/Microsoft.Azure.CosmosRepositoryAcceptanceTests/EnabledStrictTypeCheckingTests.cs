@@ -31,13 +31,13 @@ public class EnabledOffer : Offer
 [Trait("Type", "Container")]
 public class EnabledStrictTypeCheckingTests : CosmosRepositoryAcceptanceTest
 {
-    private const string OffersDatabaseName = "offers-db";
+    private const string OffersDatabaseName = "offers";
     private const string OffersContainerName = "offers";
     private const string OffersPartitionKeyPath = "/partitionKey";
 
     private static readonly Action<RepositoryOptions> EnabledStrictTypeCheckingOptions = options =>
     {
-        options.DatabaseId = OffersDatabaseName;
+        options.DatabaseId = BuildDatabaseName(OffersDatabaseName);
         options.CosmosConnectionString = GetCosmosConnectionString();
         options.ContainerPerItemType = true;
 

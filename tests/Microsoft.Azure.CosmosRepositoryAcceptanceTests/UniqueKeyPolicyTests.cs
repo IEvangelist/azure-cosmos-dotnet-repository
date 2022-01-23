@@ -28,7 +28,7 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
     private static void UniqueKeyOptionsBuilder(RepositoryOptions options)
     {
         options.CosmosConnectionString = GetCosmosConnectionString();
-        options.DatabaseId = UniquePolicyDb;
+        options.DatabaseId = BuildDatabaseName(UniquePolicyDb);
         options.ContainerPerItemType = true;
         options.ContainerBuilder.Configure<UniqueKeyPolicyItem>(builder =>
         {

@@ -35,7 +35,7 @@ public class DisabledStrictTypeCheckingTests : CosmosRepositoryAcceptanceTest
 
     private static readonly Action<RepositoryOptions> DisabledStrictTypeCheckingOptions = options =>
     {
-        options.DatabaseId = OffersDatabaseName;
+        options.DatabaseId = BuildDatabaseName(OffersDatabaseName);
         options.CosmosConnectionString = GetCosmosConnectionString();
         options.ContainerPerItemType = true;
 

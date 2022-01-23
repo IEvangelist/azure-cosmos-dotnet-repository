@@ -25,6 +25,7 @@ public abstract class CosmosRepositoryAcceptanceTest
     protected const string ProductsDatabase = "inventory";
     protected const string DefaultPartitionKey = "/partitionKey";
     protected const string TechnologyCategoryId = "Techonology";
+    protected const string AcceptanceTestsDatabaseSuffix = "cosmos-repo-acceptance-tests-db";
 
     protected readonly ServiceProvider _provider;
     protected readonly IRepository<Product> _productsRepository;
@@ -98,7 +99,7 @@ public abstract class CosmosRepositoryAcceptanceTest
     {
         options.CosmosConnectionString = GetCosmosConnectionString();
         options.ContainerPerItemType = true;
-        options.DatabaseId = ProductsDatabase;
+        options.DatabaseId = BuildDatabaseName("products");
 
         ConfigureProducts(options);
         ConfigureRatings(options);
@@ -110,7 +111,7 @@ public abstract class CosmosRepositoryAcceptanceTest
     {
         options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
         options.ContainerPerItemType = true;
-        options.DatabaseId = "cosmos-repository-acceptance-tests";
+        options.DatabaseId = BuildDatabaseName("products");
 
         ConfigureProducts(options);
     };
@@ -145,8 +146,11 @@ public abstract class CosmosRepositoryAcceptanceTest
         {
             foreach (DatabaseProperties database in await containerQueryIterator.ReadNextAsync())
             {
-                _logger.LogInformation("Deleting database {DatabaseName}", database.Id);
-                await client.GetDatabase(database.Id).DeleteAsync();
+                if (database.Id.EndsWith(AcceptanceTestsDatabaseSuffix))
+                {
+                    _logger.LogInformation("Deleting database {DatabaseName}", database.Id);
+                    await client.GetDatabase(database.Id).DeleteAsync();
+                }
             }
         }
 
@@ -171,4 +175,7 @@ public abstract class CosmosRepositoryAcceptanceTest
 
         return null;
     }
+
+    protected static string BuildDatabaseName(string prefix) =>
+        $"{prefix}-{AcceptanceTestsDatabaseSuffix}";
 }
