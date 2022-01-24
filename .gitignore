@@ -9,6 +9,9 @@
 *.userosscache
 *.sln.docstates
 
+# Hugo
+.hugo_build.lock
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
