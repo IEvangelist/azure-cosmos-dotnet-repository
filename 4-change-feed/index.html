@@ -8,18 +8,18 @@
 <link rel="shortcut icon" href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
 <link rel=icon href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
 <title>Azure Cosmos DB Repository-Pattern .NET SDK</title>
-<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/theme.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1642879839 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1642879839 rel=stylesheet>
-<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1642879839></script>
+<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1643055937 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1643055937 rel=stylesheet>
+<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1643055937></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
 <body data-url=/azure-cosmos-dotnet-repository/4-change-feed/>
@@ -38,10 +38,10 @@
 <input data-search-input id=search-by type=search placeholder=Search...>
 <span data-search-clear><i class="fas fa-times"></i></span>
 </div>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1642879839></script>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1642879839></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1643055937></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1643055937></script>
 <script type=text/javascript>var baseurl="https://ievangelist.github.io/azure-cosmos-dotnet-repository/"</script>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1642879839></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1643055937></script>
 </div>
 <div class=highlightable>
 <ul class=topics>
@@ -71,11 +71,11 @@ Partitioning
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/4-change-feed/ title="Change Feeds" class="dd-item
+<li data-nav-id=/azure-cosmos-dotnet-repository/4-change-feed/ title="Change Feed" class="dd-item
 parent
 active">
 <a href=/azure-cosmos-dotnet-repository/4-change-feed/>
-<b>4. </b>Change Feeds
+<b>4. </b>Change Feed
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
@@ -143,7 +143,7 @@ Unique Keys Policies
 </a>
 </span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Change Feeds
+<a href=/azure-cosmos-dotnet-repository/></a> > Change Feed
 </span>
 </div>
 </div>
@@ -152,8 +152,65 @@ Unique Keys Policies
 </div>
 <div id=chapter>
 <div id=body-inner>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#75715e>// TODO: Add content here
-</span></code></pre></div>
+<h1 id=change-feed-processing>Change Feed Processing</h1>
+<h2 id=overview>Overview</h2>
+<p>Cosmos DB provides a mechanism for listening to changes in a container. This includes when an item is created or updated. This can be used for many scenarios such as:</p>
+<ol>
+<li>Creating events when items update.</li>
+<li>Replicating data into another Cosmos DB container. Perhaps with a different partitioning strategy.</li>
+<li>Replicating data into another storage medium, possibly SQL server.</li>
+</ol>
+<div class="notices info"><p>The change feed does not currently support tracking the deletion of items. However, there are way you can do this with a soft delete. A soft delete can be done by setting a short TTL on the item.</p>
+</div>
+<h2 id=listening-to-changes-for-an-iitem>Listening to changes for an <code>IItem</code></h2>
+<p>It is possible to listen for changes on any <code>IItem</code> you have a container configured for in this library.</p>
+<h4 id=configuring>Configuring</h4>
+<p>To start off you need to instruct the library that you would like to changes in a container for a given <code>IItem</code>. This is done via the <code>IItemContainerBuilder</code> which you can gain access to adding the repository into the IoC container. An example of this is shown below.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository(options =&gt;
+{
+    options.DatabaseId = <span style=color:#e6db74>&#34;change-feed-demo&#34;</span>;
+    options.ContainerPerItemType = <span style=color:#66d9ef>true</span>;
+
+    options.ContainerBuilder.Configure&lt;Book&gt;(containerOptions =&gt;
+    {
+        containerOptions.WithContainer(BookDemoConstants.Container);
+        containerOptions.WithPartitionKey(BookDemoConstants.PartitionKey);
+
+        <span style=color:#75715e>//Listen to to the change feed
+</span><span style=color:#75715e></span>        containerOptions.WithChangeFeedMonitoring();
+    });
+}
+</code></pre></div><h4 id=change-feed-processors>Change Feed Processors</h4>
+<p>In order to process changes you need define a class that will process changes for a given <code>IItem</code>. This class is known as a processor and it <em>must</em> implement the <code>IItemChangeFeedProcessor&lt;TItem></code> interface. An example of a class implementing this interface is shown below.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BookChangeFeedProcessor</span> : IItemChangeFeedProcessor&lt;Book&gt;
+{
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>readonly</span> ILogger&lt;BookChangeFeedProcessor&gt; <span style=color:#ae81ff>_l</span>ogger;
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>readonly</span> IRepository&lt;BookByIdReference&gt; <span style=color:#ae81ff>_</span>bookByIdReferenceRepository;
+
+    <span style=color:#66d9ef>public</span> BookChangeFeedProcessor(ILogger&lt;BookChangeFeedProcessor&gt; logger,
+        IRepository&lt;BookByIdReference&gt; bookByIdReferenceRepository)
+    {
+        <span style=color:#ae81ff>_l</span>ogger = logger;
+        <span style=color:#ae81ff>_</span>bookByIdReferenceRepository = bookByIdReferenceRepository;
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>async</span> ValueTask HandleAsync(Book rating, CancellationToken cancellationToken)
+    {
+        <span style=color:#ae81ff>_l</span>ogger.LogInformation(<span style=color:#e6db74>&#34;Change detected for book with ID: {BookId}&#34;</span>, rating.Id);
+
+        <span style=color:#66d9ef>if</span> (!rating.HasBeenUpdated)
+        {
+            <span style=color:#66d9ef>await</span> <span style=color:#ae81ff>_</span>bookByIdReferenceRepository
+                .CreateAsync(<span style=color:#66d9ef>new</span> BookByIdReference(rating.Id, rating.Category),
+                cancellationToken);
+        }
+
+        <span style=color:#ae81ff>_l</span>ogger.LogInformation(<span style=color:#e6db74>&#34;Processed change for book with ID: {BookId}&#34;</span>, rating.Id);
+    }
+}
+</code></pre></div>
 <footer class=footline>
 </footer>
 </div>
@@ -167,15 +224,15 @@ Unique Keys Policies
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
 <div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
 </div>
-<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1642879839></script>
-<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1642879839></script>
-<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1642879839></script>
-<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1642879839></script>
-<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1642879839></script>
-<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1642879839></script>
+<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1643055937></script>
 <script>hljs.initHighlightingOnLoad()</script>
-<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1642879839></script>
-<script src=/azure-cosmos-dotnet-repository/js/learn.js?1642879839></script>
-<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1642879839></script>
+<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/learn.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1643055937></script>
 </body>
 </html>
