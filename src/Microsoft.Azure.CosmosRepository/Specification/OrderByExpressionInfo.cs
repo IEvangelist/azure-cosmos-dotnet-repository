@@ -45,7 +45,6 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Compiled <see cref="KeySelector" />.
         /// </summary>
-        public Func<T, object> KeySelectorFunc => keySelectorFunc.Value;
-
+        public Func<T, object> KeySelectorFunc => _keySelectorFunc.Value;
     }
 }
