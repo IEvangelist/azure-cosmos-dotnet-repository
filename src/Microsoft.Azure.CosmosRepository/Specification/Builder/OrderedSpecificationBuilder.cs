@@ -19,10 +19,9 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// 
         /// </summary>
         /// <param name="specification"></param>
-        public OrderedSpecificationBuilder(BaseSpecification<T, TResult> specification)
-        {
+        public OrderedSpecificationBuilder(BaseSpecification<T, TResult> specification) => 
             Specification = specification;
-        }
+        
     }
     /// <summary>
     /// 

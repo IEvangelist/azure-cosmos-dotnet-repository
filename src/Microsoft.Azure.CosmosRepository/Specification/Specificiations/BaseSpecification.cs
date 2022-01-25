@@ -21,7 +21,8 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// </summary>
         public BaseSpecification()
         {
-            Query = new SpecificationBuilder<T, TResult>(this);
+public BaseSpecification() =>
+             Query = new SpecificationBuilder<T, TResult>(this);
 
         }
         /// <summary>
