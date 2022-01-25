@@ -19,12 +19,6 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
             where T : IItem
             where TResult : IQueryResult<T>
         {
-            if (specification.ContinutationToken is { Length: > 0 })
-            {
-                //Ordering is handled with the token
-                return query;
-            }
-
             if (specification.OrderExpressions != null)
             {
                 if (specification.OrderExpressions.Count(x => x.OrderType == OrderTypeEnum.OrderBy

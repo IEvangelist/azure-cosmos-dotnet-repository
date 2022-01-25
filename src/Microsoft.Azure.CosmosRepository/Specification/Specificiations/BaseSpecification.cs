@@ -19,12 +19,9 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Initialize specificaiton and add filters later
         /// </summary>
-        public BaseSpecification()
-        {
 public BaseSpecification() =>
              Query = new SpecificationBuilder<T, TResult>(this);
 
-        }
         /// <summary>
         /// Initialize specificaiton with a list of filter criteria
         /// </summary>
