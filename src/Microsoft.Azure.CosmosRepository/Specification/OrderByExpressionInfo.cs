@@ -14,7 +14,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
     /// <typeparam name="T"></typeparam>
     public class OrderExpressionInfo<T>
     {
-        private readonly Lazy<Func<T, object>> keySelectorFunc;
+        private readonly Lazy<Func<T, object>> _keySelectorFunc;
 
         /// <summary>
         /// Creates instance of <see cref="OrderExpressionInfo{T}" />.
