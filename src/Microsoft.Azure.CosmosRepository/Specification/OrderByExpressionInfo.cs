@@ -29,7 +29,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             KeySelector = keySelector;
             OrderType = orderType;
 
-            keySelectorFunc = new Lazy<Func<T, object>>(KeySelector.Compile);
+            _keySelectorFunc = new Lazy<Func<T, object>>(KeySelector.Compile);
         }
 
         /// <summary>
