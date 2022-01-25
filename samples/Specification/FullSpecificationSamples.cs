@@ -51,7 +51,7 @@ public class FullSpecificationSamples
         UsersOrderByAgeOffsetSpecification specification = new(age);
         IPageQueryResult<Person> page = await _repository.GetAsync(specification);
         int totalItems = 0;
-        while (totalItems < page.Total)
+        while (page.HasNextPage)
         {
             foreach (Person person in page.Items)
             {
@@ -73,6 +73,7 @@ public class FullSpecificationSamples
         public UsersOrderByAgeSpecification(int age)
         {
             Query.Where(p => p.Age > age)
+                .OrderByDescending(p => p.Age)
                 .PageSize(10);
         }
     }
@@ -83,7 +84,7 @@ public class FullSpecificationSamples
             Query.Where(p => p.Age > age)
                 .OrderByDescending(p => p.Age)
                 .PageSize(10)
-                .PageNumber(0);
+                .PageNumber(3);
         }
 
     }

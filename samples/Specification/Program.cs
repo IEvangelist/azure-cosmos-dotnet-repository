@@ -37,6 +37,7 @@ SpecificationOrderSamples orderSamples = new(repository);
 Console.WriteLine("Simple ordering");
 await orderSamples.BasicOrderAsync();
 Console.WriteLine("Multiple fields ordering");
+//This requires a composite index with name desc then age to work
 await orderSamples.MultipleOrderByAsync();
 
 SpecificationFilterSamples filterSamples = new(repository);
