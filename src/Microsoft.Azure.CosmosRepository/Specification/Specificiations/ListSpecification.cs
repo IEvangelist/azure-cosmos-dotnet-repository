@@ -13,7 +13,6 @@ namespace Microsoft.Azure.CosmosRepository.Specification
     /// <typeparam name="T"></typeparam>
     public class ListSpecification<T> : BaseSpecification<T, IQueryResult<T>>
         where T : IItem
-
     {
         /// <summary>
         /// 
