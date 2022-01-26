@@ -32,6 +32,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
             foreach (ContainerOptionsBuilder option in _options.Value.GetContainerSharedContainerOptions(itemType))
             {
+                if (option is { ThroughputProperties: null })
+                {
+                    return null;
+                }
+
                 if (currentItemsOptions.ThroughputProperties.Throughput != null &&
                     option.ThroughputProperties.Throughput != currentItemsOptions.ThroughputProperties.Throughput)
                 {

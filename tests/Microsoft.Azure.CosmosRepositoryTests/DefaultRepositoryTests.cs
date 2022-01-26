@@ -78,7 +78,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                 .Returns(queryable);
 
             _queryableProcessor.Setup(o => o.IterateAsync(queryable, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(items);
+                .ReturnsAsync((items, 0));
 
             //Act
             IEnumerable<TestItemWithEtag> result = await RepositoryForItemWithETag.GetAsync(predicate);
@@ -484,5 +484,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests
     {
         public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate) where TItem : IItem
             => predicate.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso);
+
+        public TItem CheckItem<TItem>(TItem item) where TItem : IItem
+        {
+            throw new NotImplementedException();
+        }
     }
 }

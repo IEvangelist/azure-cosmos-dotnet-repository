@@ -6,12 +6,19 @@ on:
     paths:
     - '**.cs'
     - '**.csproj'
+    - "**.yml"
+    - '!docs/**'
   workflow_dispatch:
     inputs:
       reason:
         description: 'The reason for running the workflow'
         required: true
         default: 'Manual run'
+       
+# Only one instance of this build at a time. 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -38,7 +45,51 @@ jobs:
         dotnet build --configuration Release --no-restore
 
     - name: Test
-      env:
-        CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
       run: |
-        dotnet test --no-restore --verbosity normal
+        dotnet test --no-restore --verbosity normal --filter "Category!=Acceptance"
+
+  acceptance-tests:
+      needs: build
+      runs-on: ubuntu-latest
+      
+      steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: | 
+            3.1.402
+            6.0.x
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: |
+          dotnet build --configuration Release --no-restore
+
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
+
+      - name: Test Functions
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: |
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type!=Container"
+          
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
+
+      - name: Test Container Creation
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: |
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=Container"
+        
+  

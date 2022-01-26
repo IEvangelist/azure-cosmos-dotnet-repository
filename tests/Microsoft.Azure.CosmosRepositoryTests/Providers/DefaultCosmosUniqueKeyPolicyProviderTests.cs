@@ -38,8 +38,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
 
             UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass3>();
-            UniqueKey key1 = policy.UniqueKeys.Single((key) => key.Paths.Count == 2);
-            UniqueKey key2 = policy.UniqueKeys.Single((key) => key.Paths.Count == 1);
+            UniqueKey key1 = policy.UniqueKeys.Single(key => key.Paths.Count == 2);
+            UniqueKey key2 = policy.UniqueKeys.Single(key => key.Paths.Count == 1);
 
             Assert.Contains("/Street", key1.Paths);
             Assert.Contains("/HouseNumber", key1.Paths);
@@ -56,6 +56,15 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass4>();
 
             Assert.Null(policy);
+        }
+
+        [Fact]
+        public void CosmosUniqueKeyPolicyProviderCorrectlyGetsOneUniqueKeyAndPropertyPath()
+        {
+            ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
+
+            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass5>();
+            Assert.Equal("/name", policy.UniqueKeys.Single().Paths.Single());
         }
     }
 
@@ -97,6 +106,16 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 
         public string HouseNumber { get; set; } = "1";
 
+        public string Name { get; set; } = "John";
+    }
+
+    public class SomeInterestingClass5 : Item
+    {
+        public string Street { get; set; } = "Street1";
+
+        public string HouseNumber { get; set; } = "1";
+
+        [UniqueKey(propertyPath: "/name")]
         public string Name { get; set; } = "John";
     }
 }

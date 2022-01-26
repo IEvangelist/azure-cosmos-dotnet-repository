@@ -11,8 +11,8 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     /// </summary>
     interface ICosmosItemConfigurationProvider
     {
-        ItemOptions GetOptions<TItem>() where TItem : IItem;
+        ItemConfiguration GetItemConfiguration<TItem>() where TItem : IItem;
 
-        ItemOptions GetOptions(Type itemType);
+        ItemConfiguration GetItemConfiguration(Type itemType);
     }
 }

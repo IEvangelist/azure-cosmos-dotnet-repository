@@ -22,7 +22,7 @@ public class TestItem2 : Item
 
 public class Processor1 : IItemChangeFeedProcessor<TestItem1>
 {
-    public ValueTask HandleAsync(TestItem1 changedItem, CancellationToken cancellationToken)
+    public ValueTask HandleAsync(TestItem1 rating, CancellationToken cancellationToken)
     {
         throw new System.NotImplementedException();
     }
@@ -30,7 +30,7 @@ public class Processor1 : IItemChangeFeedProcessor<TestItem1>
 
 public class Processor2 : IItemChangeFeedProcessor<TestItem2>
 {
-    public ValueTask HandleAsync(TestItem2 changedItem, CancellationToken cancellationToken)
+    public ValueTask HandleAsync(TestItem2 rating, CancellationToken cancellationToken)
     {
         throw new System.NotImplementedException();
     }

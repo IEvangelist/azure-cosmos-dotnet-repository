@@ -8,31 +8,34 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 
 public class Rating : FullItem
 {
-    public string ProductId { get; set; }
+    public string ProductId { get; }
 
-    public string PartitionKey { get; set; }
+    public string PartitionKey { get; }
 
-    public int Stars { get; set; }
+    public int Stars { get; }
 
-    public string Text { get; set; }
+    public string Text { get; }
+    public string CategoryId { get; }
 
     protected override string GetPartitionKeyValue() =>
         PartitionKey;
 
-    public Rating(string productId, int stars, string text)
+    public Rating(string productId, int stars, string text, string categoryId)
     {
         ProductId = productId;
-        PartitionKey = ProductId;
+        PartitionKey = productId;
         Stars = stars;
         Text = text;
+        CategoryId = categoryId;
     }
 
     [JsonConstructor]
-    private Rating(string productId, string partitionKey, int stars, string text)
+    protected Rating(string productId, string partitionKey, int stars, string text, string categoryId)
     {
         ProductId = productId;
         PartitionKey = partitionKey;
         Stars = stars;
         Text = text;
+        CategoryId = categoryId;
     }
 }

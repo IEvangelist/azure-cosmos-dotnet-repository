@@ -42,7 +42,7 @@ namespace Microsoft.Azure.CosmosRepository.Services
         {
             try
             {
-                ItemOptions itemOptions = _cosmosItemConfigurationProvider.GetOptions(itemType);
+                ItemConfiguration itemConfiguration = _cosmosItemConfigurationProvider.GetItemConfiguration(itemType);
 
                 Database database =
                     await _cosmosClientProvider.UseClientAsync(
@@ -51,26 +51,26 @@ namespace Microsoft.Azure.CosmosRepository.Services
                 ContainerProperties containerProperties = new()
                 {
                     Id = _options.ContainerPerItemType
-                        ? itemOptions.ContainerName
+                        ? itemConfiguration.ContainerName
                         : _options.ContainerId,
-                    PartitionKeyPath = itemOptions.PartitionKeyPath,
-                    UniqueKeyPolicy = itemOptions.UniqueKeyPolicy ?? new(),
-                    DefaultTimeToLive = itemOptions.DefaultTimeToLive
+                    PartitionKeyPath = itemConfiguration.PartitionKeyPath,
+                    UniqueKeyPolicy = itemConfiguration.UniqueKeyPolicy ?? new(),
+                    DefaultTimeToLive = itemConfiguration.DefaultTimeToLive
                 };
 
                 Container container =
                     await database.CreateContainerIfNotExistsAsync(
-                        containerProperties, itemOptions.ThroughputProperties).ConfigureAwait(false);
+                        containerProperties, itemConfiguration.ThroughputProperties).ConfigureAwait(false);
 
-                if ((itemOptions.SyncContainerProperties is false || _containerSyncLog.ContainsKey(container.Id)) && forceContainerSync is false)
+                if ((itemConfiguration.SyncContainerProperties is false || _containerSyncLog.ContainsKey(container.Id)) && forceContainerSync is false)
                 {
                     return container;
                 }
 
-                await container.ReplaceThroughputAsync(itemOptions.ThroughputProperties);
+                await container.ReplaceThroughputAsync(itemConfiguration.ThroughputProperties);
                 await container.ReplaceContainerAsync(containerProperties);
 
-                if (itemOptions.SyncContainerProperties)
+                if (itemConfiguration.SyncContainerProperties)
                 {
                     _containerSyncLog.Add(container.Id, DateTime.UtcNow);
                 }
@@ -91,9 +91,9 @@ namespace Microsoft.Azure.CosmosRepository.Services
                 throw new InvalidOperationException("You must provided at least one item type to get a container for");
             }
 
-            string containerName = _cosmosItemConfigurationProvider.GetOptions(itemTypes.First()).ContainerName;
+            string containerName = _cosmosItemConfigurationProvider.GetItemConfiguration(itemTypes.First()).ContainerName;
 
-            if(itemTypes.Select(x => _cosmosItemConfigurationProvider.GetOptions(x)).All(x => x.ContainerName == containerName))
+            if(itemTypes.Select(x => _cosmosItemConfigurationProvider.GetItemConfiguration(x)).All(x => x.ContainerName == containerName))
             {
                 return GetContainerAsync(itemTypes.First());
             }

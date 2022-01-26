@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Builders;
+using Microsoft.Azure.CosmosRepository.Logging;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -45,11 +46,9 @@ namespace Microsoft.Azure.CosmosRepository
             ILogger<DefaultRepository<TItem>> logger,
             ICosmosQueryableProcessor cosmosQueryableProcessor,
             IRepositoryExpressionProvider repositoryExpressionProvider,
-            ISpecificationEvaluator specificationEvaluator)
-        {
-            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider, _specificationEvaluator)  =
-                (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider, specificationEvaluator);
-        }
+            ISpecificationEvaluator specificationEvaluator) =>
+            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider, _specificationEvaluator) =
+            (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider, specificationEvaluator);
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
@@ -72,16 +71,18 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
+            _logger.LogPointReadStarted<TItem>(id, partitionKey.ToString());
+
             ItemResponse<TItem> response =
                 await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
 
             TItem item = response.Resource;
 
-            TryLogDebugDetails(_logger, () => $"Read: {JsonConvert.SerializeObject(item)}");
+            _logger.LogPointReadExecuted<TItem>(response.RequestCharge);
+            _logger.LogItemRead(item);
 
-            return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name ? item : default;
-
+            return _repositoryExpressionProvider.CheckItem(item);
         }
 
         /// <inheritdoc/>
@@ -96,9 +97,14 @@ namespace Microsoft.Azure.CosmosRepository
                 container.GetItemLinqQueryable<TItem>()
                     .Where(_repositoryExpressionProvider.Build(predicate));
 
-            TryLogDebugDetails(_logger, () => $"Read: {query}");
+            _logger.LogQueryConstructed(query);
 
-            return await _cosmosQueryableProcessor.IterateAsync(query, cancellationToken);
+            (IEnumerable<TItem> items, double charge) =
+                await _cosmosQueryableProcessor.IterateAsync(query, cancellationToken);
+
+            _logger.LogQueryExecuted(query, charge);
+
+            return items;
         }
 
         /// <inheritdoc/>
@@ -136,7 +142,7 @@ namespace Microsoft.Azure.CosmosRepository
             Container container =
                 await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-            if (value is IItemWithTimeStamps { CreatedTimeUtc: null } valueWithTimestamps)
+            if (value is IItemWithTimeStamps {CreatedTimeUtc: null} valueWithTimestamps)
             {
                 valueWithTimestamps.CreatedTimeUtc = DateTime.UtcNow;
             }
@@ -281,7 +287,7 @@ namespace Microsoft.Azure.CosmosRepository
             try
             {
                 _ = await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
-                                   .ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
 
@@ -373,9 +379,14 @@ namespace Microsoft.Azure.CosmosRepository
                 .GetItemLinqQueryable<TItem>(requestOptions: options, continuationToken: continuationToken)
                 .Where(_repositoryExpressionProvider.Build(predicate));
 
+            _logger.LogQueryConstructed(query);
+
             Response<int> countResponse = await query.CountAsync(cancellationToken);
+
             (List<TItem> Items, double Charge, string ContinuationToken) result =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
+
+            _logger.LogQueryExecuted(query, result.Charge);
 
             return new Page<TItem>(
                 countResponse.Resource,
@@ -394,16 +405,22 @@ namespace Microsoft.Azure.CosmosRepository
         {
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>()
-                                               .Where(_repositoryExpressionProvider.Build(predicate));
+            IQueryable<TItem> query = container
+                .GetItemLinqQueryable<TItem>()
+                .Where(_repositoryExpressionProvider.Build(predicate));
 
             Response<int> countResponse =
                 await query.CountAsync(cancellationToken).ConfigureAwait(false);
+
             query = query.Skip(pageSize * (pageNumber - 1))
-                         .Take(pageSize);
+                .Take(pageSize);
+
+            _logger.LogQueryConstructed(query);
 
             (List<TItem> Items, double Charge, string ContinuationToken) result =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
+
+            _logger.LogQueryExecuted(query, result.Charge);
 
             return new PageQueryResult<TItem>(
                 countResponse.Resource,
@@ -474,6 +491,7 @@ namespace Microsoft.Azure.CosmosRepository
                 charge += next.RequestCharge;
                 continuationToken = next.ContinuationToken;
             }
+
             return (results, charge, continuationToken);
         }
 

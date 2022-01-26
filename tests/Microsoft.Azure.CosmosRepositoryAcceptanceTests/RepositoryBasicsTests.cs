@@ -8,45 +8,57 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Trait("Category", "Acceptance")]
+[Trait("Type", "Functional")]
 public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
 {
-    public RepositoryBasicsTests() : base(DefaultTestRepositoryOptions)
+    public RepositoryBasicsTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, DefaultTestRepositoryOptions)
     {
     }
 
     [Fact]
     public async Task ProductRepository_BasicCRUDOperations_WorksCorrectly()
     {
-        StockInformation stockInformation = new(5, DateTime.UtcNow);
+        try
+        {
+            await GetClient().UseClientAsync(PruneDatabases);
 
-        Product product = new(
-            "Samsung TV",
-            TechnologyCategoryId,
-            500,
-            stockInformation);
+            StockInformation stockInformation = new(5, DateTime.UtcNow);
 
-        await _productsRepository.CreateAsync(product);
+            Product product = new(
+                "Samsung TV",
+                TechnologyCategoryId,
+                500,
+                stockInformation);
 
-        IEnumerable<Product> products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
+            await _productsRepository.CreateAsync(product);
 
-        List<Product> productsList = products.ToList();
-        productsList.Count.Should().Be(1);
+            IEnumerable<Product> products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
 
-        Product tvFromList = productsList.First();
-        tvFromList.Should().BeEquivalentTo(product, DefaultProductEquivalencyOptions);
+            List<Product> productsList = products.ToList();
+            productsList.Count.Should().Be(1);
 
-        tvFromList.ApplySaleDiscount(0.10);
-        await _productsRepository.UpdateAsync(tvFromList);
+            Product tvFromList = productsList.First();
+            tvFromList.Should().BeEquivalentTo(product, DefaultProductEquivalencyOptions);
 
-        Product discountedTv = await _productsRepository.GetAsync(product.Id, product.CategoryId);
-        discountedTv.Price.Should().Be(450);
+            tvFromList.ApplySaleDiscount(0.10);
+            await _productsRepository.UpdateAsync(tvFromList);
 
-        await _productsRepository.DeleteAsync(discountedTv);
+            Product discountedTv = await _productsRepository.GetAsync(product.Id, product.CategoryId);
+            discountedTv.Price.Should().Be(450);
 
-        products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
-        products.Count().Should().Be(0);
+            await _productsRepository.DeleteAsync(discountedTv);
+
+            products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
+            products.Count().Should().Be(0);
+        }
+        finally
+        {
+            await GetClient().UseClientAsync(PruneDatabases);
+        }
     }
 }
