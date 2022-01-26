@@ -8,36 +8,36 @@ using System.Linq.Expressions;
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
     /// <inheritdoc cref="ISpecification{T,TResult}"/>
-    public abstract class BaseSpecification<T,TResult> : ISpecification<T, TResult>
-        where T : IItem
-        where TResult : IQueryResult<T>
+    public abstract class BaseSpecification<TItem, TResult> : ISpecification<TItem, TResult>
+        where TItem : IItem
+        where TResult : IQueryResult<TItem>
     {
         /// <summary>
-        /// 
+        /// The specification query builder. Always use this object when interacting with the specifications. All other properties are readonly or internal set;
         /// </summary>
-        protected virtual ISpecificationBuilder<T, TResult> Query { get; }
+        protected virtual ISpecificationBuilder<TItem, TResult> Query { get; }
         /// <summary>
         /// Initialize specificaiton and add filters later
         /// </summary>
-public BaseSpecification() =>
-             Query = new SpecificationBuilder<T, TResult>(this);
+        public BaseSpecification() =>
+             Query = new SpecificationBuilder<TItem, TResult>(this);
 
         /// <summary>
         /// Initialize specificaiton with a list of filter criteria
         /// </summary>
         /// <param name="filters"></param>
-        public BaseSpecification(Expression<Func<T, bool>>[] filters)
+        public BaseSpecification(Expression<Func<TItem, bool>>[] filters)
         {
-            Query = new SpecificationBuilder<T, TResult>(this);
-            foreach(Expression<Func<T, bool>> filter in filters)
+            Query = new SpecificationBuilder<TItem, TResult>(this);
+            foreach(Expression<Func<TItem, bool>> filter in filters)
             {
                 Query.Where(filter);
             }
         }
         /// <inheritdoc/>
-        public IReadOnlyList<WhereExpressionInfo<T>> WhereExpressions { get; } = new List<WhereExpressionInfo<T>>();
+        public IReadOnlyList<WhereExpressionInfo<TItem>> WhereExpressions { get; } = new List<WhereExpressionInfo<TItem>>();
         /// <inheritdoc/>
-        public IReadOnlyList<OrderExpressionInfo<T>> OrderExpressions { get; } = new List<OrderExpressionInfo<T>>();
+        public IReadOnlyList<OrderExpressionInfo<TItem>> OrderExpressions { get; } = new List<OrderExpressionInfo<TItem>>();
         /// <inheritdoc/>
         public string ContinutationToken { get; internal set; } = null;
         /// <inheritdoc/>
@@ -48,7 +48,7 @@ public BaseSpecification() =>
         public bool UseContinutationToken { get; internal set; } = false;
 
         /// <inheritdoc/>
-        public abstract TResult PostProcessingAction(IReadOnlyList<T> queryResult, int totalCount, double charge, string continuationToken);
+        public abstract TResult PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge, string continuationToken);
 
     }
 }

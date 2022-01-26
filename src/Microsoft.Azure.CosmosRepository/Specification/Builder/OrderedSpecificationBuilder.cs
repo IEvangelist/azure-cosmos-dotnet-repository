@@ -8,18 +8,18 @@ using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
-    /// <inheritdoc cref="IOrderedSpecificationBuilder{T, TResult}"/>
-    public class OrderedSpecificationBuilder<T, TResult> : IOrderedSpecificationBuilder<T, TResult>
-        where T : IItem
-        where TResult : IQueryResult<T>
+    /// <inheritdoc cref="IOrderedSpecificationBuilder{TItem, TResult}"/>
+    public class OrderedSpecificationBuilder<TItem, TResult> : IOrderedSpecificationBuilder<TItem, TResult>
+        where TItem : IItem
+        where TResult : IQueryResult<TItem>
     {
         /// <inheritdoc/>
-        public BaseSpecification<T,TResult> Specification { get; }
+        public BaseSpecification<TItem, TResult> Specification { get; }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="specification"></param>
-        public OrderedSpecificationBuilder(BaseSpecification<T, TResult> specification) => 
+        public OrderedSpecificationBuilder(BaseSpecification<TItem, TResult> specification) => 
             Specification = specification;
         
     }
@@ -33,38 +33,38 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// Adds a ThenBy expression to the existing order expression
         /// All ThenBy expressions requires a composite index that matched the ordering clause
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="orderBuilder"></param>
         /// <param name="orderExpression"></param>
         /// <returns></returns>
-        public static IOrderedSpecificationBuilder<T, TResult> ThenBy<T, TResult>(
-            this IOrderedSpecificationBuilder<T, TResult> orderBuilder,
-            Expression<Func<T, object>> orderExpression)
-            where T: IItem
-            where TResult: IQueryResult<T>
+        public static IOrderedSpecificationBuilder<TItem, TResult> ThenBy<TItem, TResult>(
+            this IOrderedSpecificationBuilder<TItem, TResult> orderBuilder,
+            Expression<Func<TItem, object>> orderExpression)
+            where TItem : IItem
+            where TResult: IQueryResult<TItem>
         {
-            ((List<OrderExpressionInfo<T>>)orderBuilder.Specification.OrderExpressions)
-                .Add(new OrderExpressionInfo<T>(orderExpression, OrderTypeEnum.ThenBy));
+            ((List<OrderExpressionInfo<TItem>>)orderBuilder.Specification.OrderExpressions)
+                .Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.ThenBy));
             return orderBuilder;
         }
         /// <summary>
         /// Adds a ThenByDescending expression to the existing order expression
         /// All ThenByDescending expressions requires a composite index that matched the ordering clause
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="orderBuilder"></param>
         /// <param name="orderExpression"></param>
         /// <returns></returns>
-        public static IOrderedSpecificationBuilder<T, TResult> ThenByDescending<T, TResult>(
-            this IOrderedSpecificationBuilder<T, TResult> orderBuilder,
-            Expression<Func<T, object>> orderExpression)
-            where T : IItem
-            where TResult : IQueryResult<T>
+        public static IOrderedSpecificationBuilder<TItem, TResult> ThenByDescending<TItem, TResult>(
+            this IOrderedSpecificationBuilder<TItem, TResult> orderBuilder,
+            Expression<Func<TItem, object>> orderExpression)
+            where TItem : IItem
+            where TResult : IQueryResult<TItem>
         {
-            ((List<OrderExpressionInfo<T>>)orderBuilder.Specification.OrderExpressions)
-                .Add(new OrderExpressionInfo<T>(orderExpression, OrderTypeEnum.ThenByDescending));
+            ((List<OrderExpressionInfo<TItem>>)orderBuilder.Specification.OrderExpressions)
+                .Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.ThenByDescending));
             return orderBuilder;
         }
     }

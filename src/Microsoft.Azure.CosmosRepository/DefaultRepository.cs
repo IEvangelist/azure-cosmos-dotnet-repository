@@ -47,7 +47,7 @@ namespace Microsoft.Azure.CosmosRepository
             IRepositoryExpressionProvider repositoryExpressionProvider,
             ISpecificationEvaluator specificationEvaluator)
         {
-            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider, _specificationEvaluator) =
+            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider, _specificationEvaluator)  =
                 (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider, specificationEvaluator);
         }
 
@@ -413,6 +413,7 @@ namespace Microsoft.Azure.CosmosRepository
                 result.Charge + countResponse.RequestCharge);
         }
 
+        /// <inheritdoc/>
         public async ValueTask<TResult> GetAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
             where TResult : IQueryResult<TItem>
         {

@@ -8,23 +8,16 @@ using System.Text;
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
     /// <summary>
-    /// 
+    /// A specification used for getting all results in a <see cref="QueryResult{T}"/>
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ListSpecification<T> : BaseSpecification<T, IQueryResult<T>>
-        where T : IItem
+    /// <typeparam name="TItem"></typeparam>
+    public class ListSpecification<TItem> : BaseSpecification<TItem, IQueryResult<TItem>>
+        where TItem : IItem
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="queryResult"></param>
-        /// <param name="totalCount"></param>
-        /// <param name="charge"></param>
-        /// <param name="continuationToken"></param>
-        /// <returns></returns>
-        public override IQueryResult<T> PostProcessingAction(IReadOnlyList<T> queryResult, int totalCount, double charge, string continuationToken)
+        /// <inheritdoc/>
+        public override IQueryResult<TItem> PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge, string continuationToken)
         {
-            return new QueryResult<T>(queryResult, charge);
+            return new QueryResult<TItem>(queryResult, charge);
         }
     }
 }

@@ -9,13 +9,13 @@ using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
-    class SpecificationBuilder<T,TResult> : ISpecificationBuilder<T,TResult>
-        where T : IItem
-        where TResult : IQueryResult<T>
+    class SpecificationBuilder<TItem,TResult> : ISpecificationBuilder<TItem,TResult>
+        where TItem : IItem
+        where TResult : IQueryResult<TItem>
 
     {
-        public BaseSpecification<T,TResult> Specification { get; }
-        public SpecificationBuilder(BaseSpecification<T, TResult> specification)
+        public BaseSpecification<TItem,TResult> Specification { get; }
+        public SpecificationBuilder(BaseSpecification<TItem, TResult> specification)
         {
             Specification = specification;
         }
@@ -28,18 +28,18 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Add a search filter added to the query. Multiple filters will be evaluated togheter
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="specificationBuilder"></param>
         /// <param name="criteria"></param>
-        public static ISpecificationBuilder<T, TResult> Where<T, TResult>(
-            this ISpecificationBuilder<T, TResult> specificationBuilder,
-            Expression<Func<T, bool>> criteria)
-            where T : IItem
-            where TResult : IQueryResult<T>
+        public static ISpecificationBuilder<TItem, TResult> Where<TItem, TResult>(
+            this ISpecificationBuilder<TItem, TResult> specificationBuilder,
+            Expression<Func<TItem, bool>> criteria)
+            where TItem : IItem
+            where TResult : IQueryResult<TItem>
 
         {     
-            ((List<WhereExpressionInfo<T>>)specificationBuilder.Specification.WhereExpressions).Add(new WhereExpressionInfo<T>(criteria));
+            ((List<WhereExpressionInfo<TItem>>)specificationBuilder.Specification.WhereExpressions).Add(new WhereExpressionInfo<TItem>(criteria));
 
             return specificationBuilder;
         }
@@ -47,19 +47,19 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Specify the query result will be ordered by <paramref name="orderExpression"/> in an ascending order
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="specificationBuilder"></param>
         /// <param name="orderExpression"></param>
-        public static IOrderedSpecificationBuilder<T, TResult> OrderBy<T, TResult>(
-            this ISpecificationBuilder<T, TResult> specificationBuilder,
-            Expression<Func<T, object>> orderExpression)
-            where T : IItem
-            where TResult : IQueryResult<T>
+        public static IOrderedSpecificationBuilder<TItem, TResult> OrderBy<TItem, TResult>(
+            this ISpecificationBuilder<TItem, TResult> specificationBuilder,
+            Expression<Func<TItem, object>> orderExpression)
+            where TItem : IItem
+            where TResult : IQueryResult<TItem>
         {
-            ((List<OrderExpressionInfo<T>>)specificationBuilder.Specification.OrderExpressions).Add(new OrderExpressionInfo<T>(orderExpression, OrderTypeEnum.OrderBy));
+            ((List<OrderExpressionInfo<TItem>>)specificationBuilder.Specification.OrderExpressions).Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.OrderBy));
 
-            OrderedSpecificationBuilder<T, TResult> orderedSpecificationBuilder = new(specificationBuilder.Specification);
+            OrderedSpecificationBuilder<TItem, TResult> orderedSpecificationBuilder = new(specificationBuilder.Specification);
 
             return orderedSpecificationBuilder;
         }
@@ -67,19 +67,19 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Specify the query result will be ordered by <paramref name="orderExpression"/> in a descending order
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="specificationBuilder"></param>
         /// <param name="orderExpression"></param>
-        public static IOrderedSpecificationBuilder<T, TResult> OrderByDescending<T, TResult>(
-            this ISpecificationBuilder<T, TResult> specificationBuilder,
-            Expression<Func<T, object>> orderExpression)
-            where T : IItem
-            where TResult: IQueryResult<T>
+        public static IOrderedSpecificationBuilder<TItem, TResult> OrderByDescending<TItem, TResult>(
+            this ISpecificationBuilder<TItem, TResult> specificationBuilder,
+            Expression<Func<TItem, object>> orderExpression)
+            where TItem : IItem
+            where TResult: IQueryResult<TItem>
         {
-            ((List<OrderExpressionInfo<T>>)specificationBuilder.Specification.OrderExpressions).Add(new OrderExpressionInfo<T>(orderExpression, OrderTypeEnum.OrderByDescending));
+            ((List<OrderExpressionInfo<TItem>>)specificationBuilder.Specification.OrderExpressions).Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.OrderByDescending));
 
-            IOrderedSpecificationBuilder<T,TResult> orderedSpecificationBuilder = new OrderedSpecificationBuilder<T, TResult>(specificationBuilder.Specification);
+            IOrderedSpecificationBuilder<TItem,TResult> orderedSpecificationBuilder = new OrderedSpecificationBuilder<TItem, TResult>(specificationBuilder.Specification);
 
             return orderedSpecificationBuilder;
         }
@@ -87,11 +87,11 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Specify the number of elements to return.
         /// </summary>
-        public static ISpecificationBuilder<T, TResult> PageSize<T, TResult>(
-            this ISpecificationBuilder<T, TResult> specificationBuilder,
+        public static ISpecificationBuilder<TItem, TResult> PageSize<TItem, TResult>(
+            this ISpecificationBuilder<TItem, TResult> specificationBuilder,
             int pageSize)
-            where T : IItem
-            where TResult : IPage<T>
+            where TItem : IItem
+            where TResult : IPage<TItem>
         {
             specificationBuilder.Specification.PageSize = pageSize;
             return specificationBuilder;
@@ -100,15 +100,15 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Specify which page of elements to take
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="specificationBuilder"></param>
         /// <param name="skip">number of elements to skip</param>
-        public static ISpecificationBuilder<T,TResult> PageNumber<T, TResult>(
-            this ISpecificationBuilder<T, TResult> specificationBuilder,
+        public static ISpecificationBuilder<TItem,TResult> PageNumber<TItem, TResult>(
+            this ISpecificationBuilder<TItem, TResult> specificationBuilder,
             int skip)
-            where T : IItem
-            where TResult: IPageQueryResult<T>
+            where TItem : IItem
+            where TResult: IPageQueryResult<TItem>
         {
             specificationBuilder.Specification.PageNumber = skip;
             return specificationBuilder;
@@ -117,11 +117,11 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Specificy a continuation token to use
         /// </summary>
-        public static ISpecificationBuilder<T, TResult> ContinutationToken<T,TResult>(
-            this ISpecificationBuilder<T, TResult> specificationBuilder,
+        public static ISpecificationBuilder<TItem, TResult> ContinutationToken<TItem,TResult>(
+            this ISpecificationBuilder<TItem, TResult> specificationBuilder,
             string continutationToken)
-            where T : IItem
-            where TResult : IPage<T>
+            where TItem : IItem
+            where TResult : IPage<TItem>
         {
             if(specificationBuilder.Specification.UseContinutationToken == false)
             {

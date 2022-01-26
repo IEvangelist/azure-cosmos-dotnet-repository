@@ -12,10 +12,7 @@ using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
-    /// <summary>
-    /// A specification implementation used for paging with continuation token
-    /// </summary>
-    /// <typeparam name="TItem"></typeparam>
+    /// <inheritdoc/>
     public class ContinuationTokenSpecification<TItem> : BaseSpecification<TItem, IPage<TItem>>
         where TItem : IItem
     {
@@ -46,14 +43,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             Query.ContinutationToken(continuationToken);
         }
 
-        /// <summary>
-        /// Return 
-        /// </summary>
-        /// <param name="queryResult"></param>
-        /// <param name="totalCount"></param>
-        /// <param name="charge"></param>
-        /// <param name="continuationToken"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public override IPage<TItem> PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge, string continuationToken)
         {
             return new Page<TItem>(totalCount, PageSize, queryResult, charge, continuationToken);

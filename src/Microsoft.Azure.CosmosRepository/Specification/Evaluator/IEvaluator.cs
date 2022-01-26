@@ -9,7 +9,8 @@ using System.Text;
 namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
 {
     /// <summary>
-    /// 
+    /// Evaluates specific parts on a specification
+    /// All evaluators should have a single purpose
     /// </summary>
     public interface IEvaluator
     {
@@ -20,14 +21,14 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
         /// <summary>
         /// Evaluates something in the specification and then adds it to an <see cref="IQueryable"/> and returns the updated <see cref="IQueryable"/>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="query"></param>
         /// <param name="specification"></param>
         /// <returns></returns>
-        IQueryable<T> GetQuery<T, TResult>(IQueryable<T> query, ISpecification<T, TResult> specification)
-            where T : IItem
-            where TResult : IQueryResult<T>;
+        IQueryable<TItem> GetQuery<TItem, TResult>(IQueryable<TItem> query, ISpecification<TItem, TResult> specification)
+            where TItem : IItem
+            where TResult : IQueryResult<TItem>;
 
     }
 }

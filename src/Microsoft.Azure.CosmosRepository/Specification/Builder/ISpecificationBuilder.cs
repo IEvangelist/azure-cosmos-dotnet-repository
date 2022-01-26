@@ -10,15 +10,15 @@ namespace Microsoft.Azure.CosmosRepository.Specification
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TItem"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public interface ISpecificationBuilder<T, TResult>
-        where T : IItem
-        where TResult : IQueryResult<T>
+    public interface ISpecificationBuilder<TItem, TResult>
+        where TItem : IItem
+        where TResult : IQueryResult<TItem>
     {
         /// <summary>
         /// 
         /// </summary>
-        BaseSpecification<T, TResult> Specification { get; }
+        BaseSpecification<TItem, TResult> Specification { get; }
     }
 }

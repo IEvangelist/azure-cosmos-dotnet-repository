@@ -29,8 +29,18 @@ namespace Microsoft.Azure.CosmosRepository
     {
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
-
+        internal ISpecificationEvaluator _specificationEvaluator { get; set; }
         internal Action<ChangeFeedItemArgs<TItem>> Changes { get; set; }
+
+        public InMemoryRepository()
+        {
+            _specificationEvaluator = new SpecificationEvaluator();
+        }
+
+        public InMemoryRepository(ISpecificationEvaluator specificationEvaluator)
+        {
+            _specificationEvaluator = specificationEvaluator;
+        }
 
         internal string SerializeItem(TItem item, string etag = null, long? ts = null)
         {
@@ -354,15 +364,19 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
 
+            if (specification.UseContinutationToken)
+            {
+                throw new NotImplementedException();
+            }
+
             IQueryable<TItem> query = Items.Values.Select(DeserializeItem).AsQueryable()
                 .Where(item => item.Type == typeof(TItem).Name);
 
             int pageSize = specification.PageSize;
-            ISpecificationEvaluator specificationEvaluator = new SpecificationEvaluator();
-            query = specificationEvaluator.GetQuery(query, specification);
+            query = _specificationEvaluator.GetQuery(query, specification);
 
             int countResponse =query.Count();
-            return specificationEvaluator.GetResult(query.ToList().AsReadOnly(), specification, countResponse, 0, "");
+            return _specificationEvaluator.GetResult(query.ToList().AsReadOnly(), specification, countResponse, 0, "");
         }
 
 

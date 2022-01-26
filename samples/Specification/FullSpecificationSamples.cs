@@ -25,16 +25,18 @@ public class FullSpecificationSamples
     {
         UsersOrderByAgeSpecification specification = new(age);
         double totalCharge = 0;
-        string? continuationToken = null;
+        string continuationToken = null;
         do
         {
             specification.UpdateContinutationToken(continuationToken);
 
-          IPage<Person> page = await _repository.GetAsync(specification);
+            IPage<Person> page = await _repository.GetAsync(specification);
+
             foreach (Person person in page.Items)
             {
                 Console.WriteLine(person);
             }
+
             totalCharge += page.Charge;
             continuationToken = page.Continuation;
             Console.WriteLine($"Result cost {page.Charge}");

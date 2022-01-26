@@ -8,10 +8,13 @@ using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
 {
-    class SpecificationEvaluator : ISpecificationEvaluator
+    /// <inheritdoc/>
+    public class SpecificationEvaluator : ISpecificationEvaluator
     {
         IEnumerable<IEvaluator> evaluators;
-
+        /// <summary>
+        /// default ctor
+        /// </summary>
         public SpecificationEvaluator()
         {
             evaluators = new IEvaluator[]
@@ -21,10 +24,10 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
                 PagingEvaluator.Instance
             };
         }
-
-        public IQueryable<T> GetQuery<T, TResult>(IQueryable<T> query, ISpecification<T, TResult> specification, bool evaluateCriteriaOnly = false)
-            where T : IItem
-            where TResult : IQueryResult<T>
+        /// <inheritdoc/>
+        public IQueryable<TItem> GetQuery<TItem, TResult>(IQueryable<TItem> query, ISpecification<TItem, TResult> specification, bool evaluateCriteriaOnly = false)
+            where TItem : IItem
+            where TResult : IQueryResult<TItem>
         {
             IEnumerable<IEvaluator> evaluators = evaluateCriteriaOnly ? this.evaluators.Where(e => e.IsFilterEvaluator).ToList() : this.evaluators;
 
@@ -36,10 +39,10 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
             return query;
            
         }
-
-        public TResult GetResult<T, TResult>(IReadOnlyList<T> res, ISpecification<T, TResult> specification, int totalCount, double charge, string continuationToken)
-            where T : IItem
-            where TResult : IQueryResult<T>
+        /// <inheritdoc/>
+        public TResult GetResult<TItem, TResult>(IReadOnlyList<TItem> res, ISpecification<TItem, TResult> specification, int totalCount, double charge, string continuationToken)
+            where TItem : IItem
+            where TResult : IQueryResult<TItem>
         {
             return specification.PostProcessingAction(res, totalCount, charge, continuationToken);
         }

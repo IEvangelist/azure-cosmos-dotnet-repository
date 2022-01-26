@@ -13,18 +13,19 @@ using Microsoft.Azure.CosmosRepository.Specification;
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
     /// <summary>
-    /// 
+    /// A specification used for the Offset and Limit pattern
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class OffsetByPageNumberSpecification<T> : BaseSpecification<T, IPageQueryResult<T>>
-        where T : IItem
+    /// <typeparam name="TItem"></typeparam>
+    public class OffsetByPageNumberSpecification<TItem> : BaseSpecification<TItem, IPageQueryResult<TItem>>
+        where TItem : IItem
     {
         /// <summary>
-        /// 
+        /// Default ctor
         /// </summary>
         public OffsetByPageNumberSpecification() { }
+
         /// <summary>
-        /// 
+        /// Helper ctor to set pagenumber and pagesize
         /// </summary>
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
@@ -33,24 +34,27 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             Query.PageSize(pageSize);
             Query.PageNumber(pageNumber);
         }
+
         /// <summary>
-        /// 
+        /// Update the specification to get the next page of the result
         /// </summary>
         public void NextPage()
         {
             Query.PageNumber(PageNumber.Value + 1);
         }
+
         /// <summary>
-        /// 
+        /// Update the specification to get the previous page of the result
         /// </summary>
-        /// <param name="queryResult"></param>
-        /// <param name="totalCount"></param>
-        /// <param name="charge"></param>
-        /// <param name="continuationToken"></param>
-        /// <returns></returns>
-        public override IPageQueryResult<T> PostProcessingAction(IReadOnlyList<T> queryResult, int totalCount, double charge, string continuationToken)
+        public void PreviousPage()
         {
-            return new PageQueryResult<T>(
+            Query.PageNumber(PageNumber.Value - 1);
+        }
+
+        /// <inheritdoc/>
+        public override IPageQueryResult<TItem> PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge, string continuationToken)
+        {
+            return new PageQueryResult<TItem>(
                 totalCount,
                 PageNumber,
                 PageSize,

@@ -9,23 +9,23 @@ using System.Text;
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
     /// <summary>
-    /// 
+    /// Container class for a where predicate
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class WhereExpressionInfo<T>
+    /// <typeparam name="TItem"></typeparam>
+    public class WhereExpressionInfo<TItem>
     {
         /// <summary>
-        /// 
+        /// Constructor for creating a where expression
         /// </summary>
         /// <param name="filter"></param>
-        public WhereExpressionInfo(Expression<Func<T, bool>> filter)
+        public WhereExpressionInfo(Expression<Func<TItem, bool>> filter)
         {
             Filter = filter;
         }
         /// <summary>
-        /// 
+        /// A predicate that is used for filtering. Given an item of <typeparamref name="TItem"/> a function evalut
         /// </summary>
-        public Expression<Func<T, bool>> Filter { get; }
+        public Expression<Func<TItem, bool>> Filter { get; }
 
     }
 }

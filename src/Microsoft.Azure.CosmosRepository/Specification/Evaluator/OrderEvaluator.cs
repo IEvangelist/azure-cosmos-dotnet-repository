@@ -15,9 +15,9 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
 
         public bool IsFilterEvaluator { get; } = false;
 
-        public IQueryable<T> GetQuery<T, TResult>(IQueryable<T> query, ISpecification<T, TResult> specification)
-            where T : IItem
-            where TResult : IQueryResult<T>
+        public IQueryable<TItem> GetQuery<TItem, TResult>(IQueryable<TItem> query, ISpecification<TItem, TResult> specification)
+            where TItem : IItem
+            where TResult : IQueryResult<TItem>
         {
             if (specification.OrderExpressions != null)
             {
@@ -27,8 +27,8 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
                     throw new ArgumentException("Multiple OrderBy expressions found only use one and then chain with ThenBy and TheByDescending");
                 }
 
-                IOrderedQueryable<T> orderedQuery = null;
-                foreach (OrderExpressionInfo<T> orderExpression in specification.OrderExpressions)
+                IOrderedQueryable<TItem> orderedQuery = null;
+                foreach (OrderExpressionInfo<TItem> orderExpression in specification.OrderExpressions)
                 {
                     orderedQuery = orderExpression.OrderType switch
                     {

@@ -12,22 +12,22 @@ namespace Microsoft.Azure.CosmosRepository.Specification
     /// <summary>
     /// Interface used for defining specification
     /// </summary>
-    public interface ISpecification<T, out TResult>
-        where T : IItem
-        where TResult : IQueryResult<T>
+    public interface ISpecification<TItem, out TResult>
+        where TItem : IItem
+        where TResult : IQueryResult<TItem>
     {
         /// <summary>
         /// The collection of filter expressions used for filtering queries.
         /// </summary>
-        IReadOnlyList<WhereExpressionInfo<T>> WhereExpressions { get; }
+        IReadOnlyList<WhereExpressionInfo<TItem>> WhereExpressions { get; }
         /// <summary>
         /// A collection of expressions used for sorting.
         /// </summary>
-        IReadOnlyList<OrderExpressionInfo<T>> OrderExpressions { get; }
+        IReadOnlyList<OrderExpressionInfo<TItem>> OrderExpressions { get; }
         /// <summary>
         /// Processing for updating the query result before returning it from the repository. Given the methods input it should generate the specified TResult />
         /// </summary>
-        TResult PostProcessingAction(IReadOnlyList<T> queryResult, int totalCount, double charge, string continuationToken);
+        TResult PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge, string continuationToken);
 
         /// <summary>
         /// Continutation token used for paging in cosmos. Must set <see cref="UseContinutationToken"/> for continuation token to be applicable
@@ -46,7 +46,5 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// Use contiutation token instead of pagenumber
         /// </summary>
         bool UseContinutationToken { get; }
-
-
     }
 }

@@ -25,14 +25,14 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="query"></param>
         /// <param name="specification"></param>
         /// <returns></returns>
-        public IQueryable<T> GetQuery<T, TResult>(IQueryable<T> query, ISpecification<T,TResult> specification)
-            where T : IItem
-            where TResult : IQueryResult<T>
+        public IQueryable<TItem> GetQuery<TItem, TResult>(IQueryable<TItem> query, ISpecification<TItem,TResult> specification)
+            where TItem : IItem
+            where TResult : IQueryResult<TItem>
         {
 
             if (specification.UseContinutationToken)
