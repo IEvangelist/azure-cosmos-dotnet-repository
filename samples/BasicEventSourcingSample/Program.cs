@@ -16,8 +16,7 @@ services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
 
 services.AddCosmosEventStreaming();
-PersistedEventConverter.ConvertableTypes.Add(typeof(ShipEvents.TestShipEvent));
-services.AddSingleton<IProjectionBuilder<ShipEvents.TestShipEvent>, TestProjectionBuilder>();
+
 services.AddCosmosRepository(options =>
 {
     options.DatabaseId = "event-sourcing-sample";
@@ -33,7 +32,8 @@ services.AddCosmosRepository(options =>
 
     containerBuilder.ConfigureEventSourcingContainer<SourcedShipEvent>("ship-tracking-events");
 });
-services.AddEventSourcingContainerProcessing<SourcedShipEvent>(options =>
+
+services.AddEventSourcingContainerProcessing<SourcedShipEvent, SourcedShipEventsProjectionBuilder>(options =>
 {
     options.ProcessorName = "shipping-demo";
     options.InstanceName = Environment.MachineName;

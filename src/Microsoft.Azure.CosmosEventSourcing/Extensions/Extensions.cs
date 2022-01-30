@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
+using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
@@ -32,15 +33,17 @@ public static class Extensions
         return services;
     }
 
-    public static IServiceCollection AddEventSourcingContainerProcessing<TSourcedEvent>(
+    public static IServiceCollection AddEventSourcingContainerProcessing<TSourcedEvent, TProjectionBuilder>(
         this IServiceCollection services,
         Action<EventSourcingProcessorOptions<TSourcedEvent>>? optionsAction = null)
         where TSourcedEvent : SourcedEvent
+        where TProjectionBuilder : class, ISourceProjectionBuilder<TSourcedEvent>
     {
         EventSourcingProcessorOptions<TSourcedEvent> options = new();
         optionsAction?.Invoke(options);
 
         services.AddSingleton(options);
+        services.AddSingleton<ISourceProjectionBuilder<TSourcedEvent>, TProjectionBuilder>();
         services.AddSingleton<IContainerChangeFeedProcessor, EventSourcingProcessor<TSourcedEvent>>();
         return services;
     }
