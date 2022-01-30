@@ -6,4 +6,6 @@ namespace Microsoft.Azure.CosmosEventSourcing;
 public interface IPersistedEvent
 {
     string EventName { get; }
+
+    DateTime OccuredUtc { get; }
 }

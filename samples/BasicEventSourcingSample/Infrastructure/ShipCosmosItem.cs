@@ -11,6 +11,8 @@ public class ShipCosmosItem : FullItem
 
     public DateTime Commissioned { get; }
 
+    protected override string GetPartitionKeyValue() => Type;
+
     public ShipCosmosItem(string name, DateTime commissioned)
     {
         Id = name;

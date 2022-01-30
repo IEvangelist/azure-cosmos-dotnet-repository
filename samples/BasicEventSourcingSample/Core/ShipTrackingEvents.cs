@@ -5,10 +5,25 @@ using Microsoft.Azure.CosmosEventSourcing;
 
 namespace BasicEventSourcingSample.Core;
 
-public class ShipEvents
+public static class ShipEvents
 {
-    public record TestShipEvent(string Id) : IPersistedEvent
+    public record DockedInPort(string Name, string Port, DateTime OccuredUtc) : IPersistedEvent
     {
-        public string EventName => nameof(TestShipEvent);
+        public string EventName => nameof(DockedInPort);
+    }
+
+    public record Loading(string Name, string Port, DateTime OccuredUtc) : IPersistedEvent
+    {
+        public string EventName => nameof(Loading);
+    }
+
+    public record Loaded(string Name, string Port, double CargoWeight, DateTime OccuredUtc) : IPersistedEvent
+    {
+        public string EventName => nameof(Loaded);
+    }
+
+    public record Departed(string Name, string Port, DateTime OccuredUtc) : IPersistedEvent
+    {
+        public string EventName => nameof(Departed);
     }
 }

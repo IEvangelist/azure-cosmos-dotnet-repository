@@ -6,4 +6,7 @@ namespace BasicEventSourcingSample.Core;
 public interface IShipRepository
 {
     ValueTask CreateShip(Ship ship);
+    ValueTask<Ship> FindAsync(string shipName);
+    ValueTask SaveAsync(Ship ship);
+    Task<IEnumerable<string>> GetShipNamesAsync();
 }
