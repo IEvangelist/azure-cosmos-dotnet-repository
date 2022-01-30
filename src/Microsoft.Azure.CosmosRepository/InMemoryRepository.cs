@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
-using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Paging;
@@ -29,20 +28,17 @@ namespace Microsoft.Azure.CosmosRepository
     {
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
-        internal ISpecificationEvaluator _specificationEvaluator { get; set; }
+
+        private readonly ISpecificationEvaluator _specificationEvaluator;
         internal Action<ChangeFeedItemArgs<TItem>> Changes { get; set; }
 
-        public InMemoryRepository()
-        {
+        public InMemoryRepository() =>
             _specificationEvaluator = new SpecificationEvaluator();
-        }
 
-        public InMemoryRepository(ISpecificationEvaluator specificationEvaluator)
-        {
+        public InMemoryRepository(ISpecificationEvaluator specificationEvaluator) =>
             _specificationEvaluator = specificationEvaluator;
-        }
 
-        internal string SerializeItem(TItem item, string etag = null, long? ts = null)
+        private string SerializeItem(TItem item, string etag = null, long? ts = null)
         {
             JObject jObject = JObject.FromObject(item);
             if (etag != null)
@@ -168,8 +164,9 @@ namespace Microsoft.Azure.CosmosRepository
             return value;
         }
 
-        private async ValueTask<TItem> UpdateAsync(TItem value, bool raiseChanges,
-            CancellationToken cancellationToken = default,
+        private async ValueTask<TItem> UpdateAsync(
+            TItem value,
+            bool raiseChanges,
             bool ignoreEtag = false)
         {
             await Task.CompletedTask;
@@ -199,7 +196,7 @@ namespace Microsoft.Azure.CosmosRepository
         public ValueTask<TItem> UpdateAsync(TItem value,
             CancellationToken cancellationToken = default,
             bool ignoreEtag = false) =>
-            UpdateAsync(value, true, cancellationToken, ignoreEtag);
+            UpdateAsync(value, true, ignoreEtag);
 
         /// <inheritdoc/>
         public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values,
@@ -212,7 +209,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             foreach (TItem value in enumerable)
             {
-                results.Add(await UpdateAsync(value, false, cancellationToken, ignoreEtag));
+                results.Add(await UpdateAsync(value, false, ignoreEtag));
             }
 
             Changes?.Invoke(new ChangeFeedItemArgs<TItem>(results));
@@ -348,18 +345,27 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
 
-            IEnumerable<TItem> filteredItems = Items.Values.Select(DeserializeItem)
+            IEnumerable<TItem> filteredItems = Items.Values
+                .Select(DeserializeItem)
                 .Where(predicate.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
-            IEnumerable<TItem> items = filteredItems.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+
+            IEnumerable<TItem> enumerable = filteredItems.ToList();
+
+            IEnumerable<TItem> items = enumerable
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize);
+
             return new PageQueryResult<TItem>(
-                filteredItems.Count(),
+                enumerable.Count(),
                 pageNumber,
                 pageSize,
                 items.ToList().AsReadOnly(),
                 0);
         }
 
-        public async ValueTask<TResult> QueryAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
+        public async ValueTask<TResult> QueryAsync<TResult>(
+            ISpecification<TItem, TResult> specification,
+            CancellationToken cancellationToken = default)
             where TResult : IQueryResult<TItem>
         {
             await Task.CompletedTask;
@@ -369,14 +375,20 @@ namespace Microsoft.Azure.CosmosRepository
                 throw new NotImplementedException();
             }
 
-            IQueryable<TItem> query = Items.Values.Select(DeserializeItem).AsQueryable()
+            IQueryable<TItem> query = Items.Values
+                .Select(DeserializeItem).AsQueryable()
                 .Where(item => item.Type == typeof(TItem).Name);
 
-            int pageSize = specification.PageSize;
             query = _specificationEvaluator.GetQuery(query, specification);
 
-            int countResponse =query.Count();
-            return _specificationEvaluator.GetResult(query.ToList().AsReadOnly(), specification, countResponse, 0, "");
+            int countResponse = query.Count();
+
+            return _specificationEvaluator.GetResult(
+                query.ToList().AsReadOnly(),
+                specification,
+                countResponse,
+                0,
+                "");
         }
 
 

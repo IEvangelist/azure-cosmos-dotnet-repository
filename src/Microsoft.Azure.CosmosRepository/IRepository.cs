@@ -270,7 +270,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <summary>
         /// Get items based on a specification.
         /// The specification is used to define which filters are used, the order of the search results and how they are paged.
-        /// Depending on how results are paged dervice specification implementations from different classes:
+        /// Depending on how results are paged derive specification implementations from different classes:
         /// For non paged results derive <see cref="ListSpecification{T}"/>
         /// For continuation token derive <see cref="ContinuationTokenSpecification{T}"/>
         /// For page number results derive <see cref="OffsetByPageNumberSpecification{T}"/>

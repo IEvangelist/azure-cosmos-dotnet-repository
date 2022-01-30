@@ -186,7 +186,7 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             ItemResponse<TItem> response =
-                await container.UpsertItemAsync<TItem>(value, new PartitionKey(value.PartitionKey), options,
+                await container.UpsertItemAsync(value, new PartitionKey(value.PartitionKey), options,
                         cancellationToken)
                     .ConfigureAwait(false);
 
