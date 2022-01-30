@@ -13,7 +13,7 @@ public abstract class Aggregate
 
     public IReadOnlyList<IPersistedEvent> Events =>
         _restoredAt.HasValue
-            ? _events.Where(x => x.OccuredUtc < _restoredAt).ToList()
+            ? _events.Where(x => x.OccuredUtc > _restoredAt).ToList()
             : new List<IPersistedEvent>();
 
     public void ReHydrate(List<IPersistedEvent> persistedEvents)

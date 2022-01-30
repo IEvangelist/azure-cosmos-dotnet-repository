@@ -15,6 +15,8 @@ public class Ship : Aggregate
 
     public string? Port { get; private set; }
 
+    public double? CargoWeight { get; private set; }
+
     public Ship(string name, DateTime commissioned, DateTime? createdAt = null)
     {
         Name = name;
@@ -27,6 +29,12 @@ public class Ship : Aggregate
 
     public void StartLoading(string port, DateTime occuredUtc) =>
         Apply(new ShipEvents.Loading(Name, port, occuredUtc));
+
+    public void FinishLoading(string port, double cargoWeight, DateTime occuredUtc) =>
+        Apply(new ShipEvents.Loaded(Name, port, cargoWeight, occuredUtc));
+
+    public void Depart(string port, DateTime occuredUtc) =>
+        Apply(new ShipEvents.Departed(Name, port, occuredUtc));
 
     private void Apply(ShipEvents.DockedInPort dockedInPort)
     {
@@ -54,27 +62,46 @@ public class Ship : Aggregate
                 $"The ship cannot load at port {loading.Port} as it is docked at port {Port}");
         }
 
+        Status = ShipStatus.Loading;
+
         _events.Add(loading);
     }
 
-    private void Apply(ShipEvents.Loaded dockedInPort)
+    private void Apply(ShipEvents.Loaded loaded)
     {
-        if (Status != ShipStatus.Loading)
+        if (Status is not (ShipStatus.Loading or ShipStatus.UnUsed))
         {
             throw new InvalidOperationException($"A ship cannot have finished loading when at status {Status}");
         }
 
-        _events.Add(dockedInPort);
+        if (Port != loaded.Port)
+        {
+            throw new InvalidOperationException(
+                $"The ship cannot finish loading at port {loaded.Port} as it is docked at port {Port}");
+        }
+
+        CargoWeight = loaded.CargoWeight;
+        Status = ShipStatus.AwaitingDeparture;
+
+        _events.Add(loaded);
     }
 
-    private void Apply(ShipEvents.Departed dockedInPort)
+    private void Apply(ShipEvents.Departed departed)
     {
-        if (Status != ShipStatus.AwaitingDeparture)
+        if (Status is not (ShipStatus.AwaitingDeparture or ShipStatus.UnUsed))
         {
             throw new InvalidOperationException($"A ship cannot depart when at status {Status}");
         }
 
-        _events.Add(dockedInPort);
+        if (Port != departed.Port)
+        {
+            throw new InvalidOperationException(
+                $"The ship cannot depart {departed.Port} as it is awaiting departure at {Port}");
+        }
+
+        Status = ShipStatus.AtSea;
+
+        _events.Add(departed);
     }
 
     protected override void HandleHydratedEvent(IPersistedEvent persistedEvent)
