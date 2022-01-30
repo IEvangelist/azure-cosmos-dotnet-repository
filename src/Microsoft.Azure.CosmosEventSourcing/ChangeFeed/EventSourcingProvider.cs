@@ -8,9 +8,9 @@ namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 
 public class EventSourcingProvider : IChangeFeedContainerProcessorProvider
 {
-    private readonly IEnumerable<IContainerChangeFeedProcessor> _processors;
+    private readonly IEnumerable<IEventSourcingProcessor> _processors;
 
-    public EventSourcingProvider(IEnumerable<IContainerChangeFeedProcessor> processors) =>
+    public EventSourcingProvider(IEnumerable<IEventSourcingProcessor> processors) =>
         _processors = processors;
 
     public IEnumerable<IContainerChangeFeedProcessor> GetProcessors() =>
