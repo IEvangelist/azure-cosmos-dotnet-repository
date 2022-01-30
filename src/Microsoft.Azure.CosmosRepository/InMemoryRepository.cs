@@ -359,7 +359,7 @@ namespace Microsoft.Azure.CosmosRepository
                 0);
         }
 
-        public async ValueTask<TResult> GetAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
+        public async ValueTask<TResult> QueryAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
             where TResult : IQueryResult<TItem>
         {
             await Task.CompletedTask;

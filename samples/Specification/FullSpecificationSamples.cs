@@ -26,7 +26,7 @@ public class FullSpecificationSamples
         {
             specification.UpdateContinuationToken(continuationToken);
 
-            IPage<Person> page = await _repository.GetAsync(specification);
+            IPage<Person> page = await _repository.QueryAsync(specification);
 
             foreach (Person person in page.Items)
             {
@@ -47,7 +47,7 @@ public class FullSpecificationSamples
         double totalCharge = 0;
 
         UsersOrderByAgeOffsetSpecification specification = new(age);
-        IPageQueryResult<Person> page = await _repository.GetAsync(specification);
+        IPageQueryResult<Person> page = await _repository.QueryAsync(specification);
         while (page.HasNextPage)
         {
             foreach (Person person in page.Items)
@@ -58,7 +58,7 @@ public class FullSpecificationSamples
             totalCharge += page.Charge;
             Console.WriteLine($"First 10 results cost {page.Charge}");
             specification.NextPage();
-            page = await _repository.GetAsync(specification);
+            page = await _repository.QueryAsync(specification);
         }
 
         Console.WriteLine($"Last results cost {page.Charge}");

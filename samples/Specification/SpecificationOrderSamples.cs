@@ -24,7 +24,7 @@ public class SpecificationOrderSamples
     public async Task BasicOrderAsync()
     {
         OrderByNameSpecification specification = new();
-        IQueryResult<Person> result = await _repository.GetAsync(specification);
+        IQueryResult<Person> result = await _repository.QueryAsync(specification);
 
         Console.WriteLine($"Simple order first result {result.Items.First().Name}");
         Console.WriteLine($"Total Charge {result.Charge} RU's");
@@ -50,7 +50,7 @@ public class SpecificationOrderSamples
     public async Task MultipleOrderByAsync()
     {
         OrderByMultipleFieldsSpecification specification = new();
-        IQueryResult<Person> result = await _repository.GetAsync(specification);
+        IQueryResult<Person> result = await _repository.QueryAsync(specification);
 
         Console.WriteLine($"Multiple order first result {result.Items.First().Name}");
         Console.WriteLine($"Total Charge {result.Charge} RU's");

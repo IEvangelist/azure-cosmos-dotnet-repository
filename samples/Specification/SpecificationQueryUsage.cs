@@ -24,14 +24,14 @@ public class SpecificationFilterSamples
     public async Task FilterSamples()
     {
         AllPersonsWithNameSpecification nameSpecification = new("Tom");
-        IQueryResult<Person> personsWithNameTom = await _repository.GetAsync(nameSpecification);
+        IQueryResult<Person> personsWithNameTom = await _repository.QueryAsync(nameSpecification);
 
         Console.WriteLine($"Found {personsWithNameTom.Items.Count} with name Tom");
         Console.WriteLine($"Change for query {personsWithNameTom.Charge}");
 
         int age = 25;
         AllPersonsOlderThanSpecifciation ageSpecification = new(age);
-        IQueryResult<Person> peopleOlderThan25 = await _repository.GetAsync(ageSpecification);
+        IQueryResult<Person> peopleOlderThan25 = await _repository.QueryAsync(ageSpecification);
 
         Console.WriteLine($"Found {peopleOlderThan25.Items.Count} people older than {age}");
         Console.WriteLine($"Change for query {peopleOlderThan25.Charge}");

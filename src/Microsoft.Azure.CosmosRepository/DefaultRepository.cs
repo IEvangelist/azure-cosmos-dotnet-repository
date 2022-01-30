@@ -298,8 +298,6 @@ namespace Microsoft.Azure.CosmosRepository
             return true;
         }
 
-
-
         /// <inheritdoc/>
         public async ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate,
             CancellationToken cancellationToken = default)
@@ -431,7 +429,7 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<TResult> GetAsync<TResult>(
+        public async ValueTask<TResult> QueryAsync<TResult>(
             ISpecification<TItem, TResult> specification,
             CancellationToken cancellationToken = default)
             where TResult : IQueryResult<TItem>
