@@ -448,7 +448,11 @@ namespace Microsoft.Azure.CosmosRepository
 
             query = _specificationEvaluator.GetQuery(query, specification);
 
+            _logger.LogQueryConstructed(query);
+
             (List<TItem> items, double charge, string continuationToken) = await GetAllItemsAsync(query, specification.PageSize, cancellationToken).ConfigureAwait(false);
+
+            _logger.LogQueryExecuted(query, charge);
 
             Response<int> count = await CountAsync(specification, cancellationToken).ConfigureAwait(false);
 
