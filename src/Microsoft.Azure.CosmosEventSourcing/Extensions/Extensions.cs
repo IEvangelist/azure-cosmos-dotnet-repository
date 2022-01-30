@@ -32,6 +32,16 @@ public static class Extensions
         return services;
     }
 
-    public static IServiceCollection AddEventSourcingContainerProcessing<TSourcedEvent>(this IServiceCollection services) where TSourcedEvent : SourcedEvent =>
+    public static IServiceCollection AddEventSourcingContainerProcessing<TSourcedEvent>(
+        this IServiceCollection services,
+        Action<EventSourcingProcessorOptions<TSourcedEvent>>? optionsAction = null)
+        where TSourcedEvent : SourcedEvent
+    {
+        EventSourcingProcessorOptions<TSourcedEvent> options = new();
+        optionsAction?.Invoke(options);
+
+        services.AddSingleton(options);
         services.AddSingleton<IContainerChangeFeedProcessor, EventSourcingProcessor<TSourcedEvent>>();
+        return services;
+    }
 }

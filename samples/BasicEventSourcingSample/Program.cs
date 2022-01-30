@@ -33,7 +33,11 @@ services.AddCosmosRepository(options =>
 
     containerBuilder.ConfigureEventSourcingContainer<SourcedShipEvent>("ship-tracking-events");
 });
-services.AddEventSourcingContainerProcessing<SourcedShipEvent>();
+services.AddEventSourcingContainerProcessing<SourcedShipEvent>(options =>
+{
+    options.ProcessorName = "shipping-demo";
+    options.InstanceName = Environment.MachineName;
+});
 services.AddCosmosRepositoryChangeFeedHostedService();
 
 services.AddSingleton<IShipRepository, ShipRepository>();

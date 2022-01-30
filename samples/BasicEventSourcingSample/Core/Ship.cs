@@ -1,6 +1,8 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosEventSourcing;
+
 namespace BasicEventSourcingSample.Core;
 
 public class Ship
@@ -15,5 +17,13 @@ public class Ship
         Name = name;
         Commissioned = commissioned;
         CreatedAt = createdAt ?? DateTime.UtcNow;
+    }
+
+    void Restore(IEnumerable<IPersistedEvent> persistedEvents)
+    {
+        foreach (IPersistedEvent persistedEvent in persistedEvents)
+        {
+
+        }
     }
 }

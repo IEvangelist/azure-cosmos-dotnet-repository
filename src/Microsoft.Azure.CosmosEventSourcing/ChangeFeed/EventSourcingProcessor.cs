@@ -16,6 +16,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 public class EventSourcingProcessor<TSourcedEvent> : IContainerChangeFeedProcessor
     where TSourcedEvent : SourcedEvent
 {
+    private readonly EventSourcingProcessorOptions<TSourcedEvent> _options;
     private readonly ICosmosContainerService _containerService;
         private readonly ILeaseContainerProvider _leaseContainerProvider;
         private readonly ILogger<EventSourcingProcessor<TSourcedEvent>> _logger;
@@ -24,11 +25,13 @@ public class EventSourcingProcessor<TSourcedEvent> : IContainerChangeFeedProcess
         private static readonly ConcurrentDictionary<Type, Type> Handlers = new();
 
         public EventSourcingProcessor(
+            EventSourcingProcessorOptions<TSourcedEvent> options,
             ICosmosContainerService containerService,
             ILeaseContainerProvider leaseContainerProvider,
             ILogger<EventSourcingProcessor<TSourcedEvent>> logger,
             IServiceProvider serviceProvider)
         {
+            _options = options;
             _containerService = containerService;
             _leaseContainerProvider = leaseContainerProvider;
             _logger = logger;
@@ -41,11 +44,16 @@ public class EventSourcingProcessor<TSourcedEvent> : IContainerChangeFeedProcess
             Container leaseContainer = await _leaseContainerProvider.GetLeaseContainerAsync();
 
             ChangeFeedProcessorBuilder builder = itemContainer
-                .GetChangeFeedProcessorBuilder<TSourcedEvent>("a",
+                .GetChangeFeedProcessorBuilder<TSourcedEvent>(_options.ProcessorName,
                     (changes, token) => OnChangesAsync(changes, token, itemContainer.Id))
                 .WithLeaseContainer(leaseContainer)
-                .WithInstanceName("b")
+                .WithInstanceName(_options.InstanceName)
                 .WithErrorNotification((token, exception) => OnErrorAsync(exception, itemContainer.Id));
+
+            if (_options.PollInterval.HasValue)
+            {
+                builder.WithPollInterval(_options.PollInterval.Value);
+            }
 
             _processor = builder.Build();
 
