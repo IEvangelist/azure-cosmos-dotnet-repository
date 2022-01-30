@@ -12,10 +12,10 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 {
     class DefaultChangeFeedService : IChangeFeedService
     {
-        private readonly IChangeFeedContainerProcessorProvider _changeFeedContainerProcessorProvider;
+        private readonly IEnumerable<IChangeFeedContainerProcessorProvider> _changeFeedContainerProcessorProvider;
         private IEnumerable<IContainerChangeFeedProcessor> _processors;
 
-        public DefaultChangeFeedService(IChangeFeedContainerProcessorProvider changeFeedContainerProcessorProvider)
+        public DefaultChangeFeedService(IEnumerable<IChangeFeedContainerProcessorProvider> changeFeedContainerProcessorProvider)
         {
             _processors = new List<IContainerChangeFeedProcessor>();
             _changeFeedContainerProcessorProvider = changeFeedContainerProcessorProvider;
@@ -23,7 +23,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _processors = _changeFeedContainerProcessorProvider.GetProcessors();
+            _processors = _changeFeedContainerProcessorProvider.SelectMany(x => x.GetProcessors());
 
             cancellationToken.Register(() => StopAsync().Wait(TimeSpan.FromSeconds(5)));
 
