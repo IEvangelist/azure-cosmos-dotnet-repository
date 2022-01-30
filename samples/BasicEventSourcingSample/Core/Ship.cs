@@ -10,11 +10,8 @@ public class Ship : Aggregate
     public string Name { get; }
     public DateTime Commissioned { get; }
     public DateTime CreatedAt { get; }
-
     public ShipStatus Status { get; private set; }
-
     public string? Port { get; private set; }
-
     public double? CargoWeight { get; private set; }
 
     public Ship(string name, DateTime commissioned, DateTime? createdAt = null)
