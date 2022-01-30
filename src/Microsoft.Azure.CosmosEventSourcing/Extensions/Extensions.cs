@@ -1,7 +1,9 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Reflection;
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
+using Microsoft.Azure.CosmosEventSourcing.Converters;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
@@ -30,6 +32,7 @@ public static class Extensions
     {
         services.AddSingleton(typeof(IEventSourcingRepository<>), typeof(EventSourcingRepository<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, EventSourcingProvider>();
+        services.AddAllPersistedEvents();
         return services;
     }
 
@@ -45,6 +48,24 @@ public static class Extensions
         services.AddSingleton(options);
         services.AddSingleton<ISourceProjectionBuilder<TSourcedEvent>, TProjectionBuilder>();
         services.AddSingleton<IContainerChangeFeedProcessor, EventSourcingProcessor<TSourcedEvent>>();
+        return services;
+    }
+
+    private static IServiceCollection AddAllPersistedEvents(this IServiceCollection services,
+        params Assembly[] assemblies)
+    {
+        if (!assemblies.Any())
+        {
+            assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        }
+
+        List<Type> types = assemblies
+            .SelectMany(x => x.GetTypes()
+                .Where(type => type.IsAssignableTo(typeof(IPersistedEvent))))
+            .ToList();
+
+        types.ForEach(x => PersistedEventConverter.ConvertableTypes.Add(x));
+
         return services;
     }
 }

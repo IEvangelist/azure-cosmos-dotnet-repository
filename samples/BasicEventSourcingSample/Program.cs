@@ -2,9 +2,7 @@ using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections;
 using Microsoft.Azure.CosmosEventSourcing;
-using Microsoft.Azure.CosmosEventSourcing.Converters;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
-using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Builders;
 
@@ -14,9 +12,6 @@ IServiceCollection services = builder.Services;
 
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
-
-services.AddCosmosEventStreaming();
-
 services.AddCosmosRepository(options =>
 {
     options.DatabaseId = "event-sourcing-sample";
@@ -33,6 +28,7 @@ services.AddCosmosRepository(options =>
     containerBuilder.ConfigureEventSourcingContainer<SourcedShipEvent>("ship-tracking-events");
 });
 
+services.AddCosmosEventStreaming();
 services.AddEventSourcingContainerProcessing<SourcedShipEvent, SourcedShipEventsProjectionBuilder>(options =>
 {
     options.ProcessorName = "shipping-demo";
@@ -57,10 +53,12 @@ app.MapPost("/api/ship", async (CreateShip createShip, IShipRepository shipRepos
     await shipRepository.CreateShip(ship);
 });
 
-app.MapPost("/api/ship/test", async (IEventSourcingRepository<SourcedShipEvent> repository) =>
-{
-    await repository.PersistAsync(new SourcedShipEvent(new ShipEvents.TestShipEvent(Guid.NewGuid().ToString()), "A"));
-});
+app.MapPost("/api/ship/test",
+    async (IEventSourcingRepository<SourcedShipEvent> repository) =>
+    {
+        await repository.PersistAsync(
+            new SourcedShipEvent(new ShipEvents.TestShipEvent(Guid.NewGuid().ToString()), "A"));
+    });
 
 app.Run();
 
