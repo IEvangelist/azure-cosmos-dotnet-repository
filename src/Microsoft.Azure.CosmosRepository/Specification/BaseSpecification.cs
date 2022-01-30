@@ -38,12 +38,12 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<WhereExpressionInfo<TItem>> WhereExpressions { get; } =
-            new List<WhereExpressionInfo<TItem>>();
+        public List<WhereExpressionInfo<TItem>> WhereExpressions { get; } =
+            new();
 
         /// <inheritdoc/>
-        public IReadOnlyList<OrderExpressionInfo<TItem>> OrderExpressions { get; } =
-            new List<OrderExpressionInfo<TItem>>();
+        public List<OrderExpressionInfo<TItem>> OrderExpressions { get; } =
+            new();
 
         /// <inheritdoc/>
         public string ContinuationToken { get; internal set; }
@@ -58,7 +58,10 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         public bool UseContinuationToken { get; internal set; }
 
         /// <inheritdoc/>
-        public abstract TResult PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge,
+        public abstract TResult PostProcessingAction(
+            IReadOnlyList<TItem> queryResult,
+            int totalCount,
+            double charge,
             string continuationToken);
     }
 }

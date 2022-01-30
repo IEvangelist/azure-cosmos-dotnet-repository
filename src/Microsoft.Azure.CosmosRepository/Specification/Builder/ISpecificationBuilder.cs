@@ -13,7 +13,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Builder
         where TResult : IQueryResult<TItem>
     {
         /// <summary>
-        ///
+        /// The specification for the <see cref="IItem"/>
         /// </summary>
         BaseSpecification<TItem, TResult> Specification { get; }
     }
