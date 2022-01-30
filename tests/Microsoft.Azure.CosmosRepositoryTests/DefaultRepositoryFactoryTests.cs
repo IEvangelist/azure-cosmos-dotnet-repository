@@ -31,7 +31,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             services.AddSingleton<IConfiguration>(configuration);
 
             services.AddCosmosRepository();
-
+            
             IServiceProvider provider = services.BuildServiceProvider();
             IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();
 

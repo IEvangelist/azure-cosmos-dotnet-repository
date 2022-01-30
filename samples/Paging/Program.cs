@@ -22,8 +22,12 @@ ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =
 IRepository<Person> repository = provider.GetRequiredService<IRepository<Person>>();
 
 await SeedAsync();
-await BasicScrollingAsync();
+
+Console.WriteLine("Basic paging");
 await BasicPageAsync();
+Console.WriteLine("Basic continuation token");
+await BasicScrollingAsync();
+
 
 async Task BasicPageAsync()
 {
@@ -36,6 +40,7 @@ async Task BasicPageAsync()
             Console.WriteLine(person);
         }
         totalCharge += page.Charge;
+        page = await repository.PageAsync(pageNumber: page.PageNumber.Value + 1, pageSize: 25);
         Console.WriteLine($"Get page {page.PageNumber} 25 results cost {page.Charge}");
     }
     Console.WriteLine($"Total Charge {totalCharge} RU's");
@@ -45,7 +50,7 @@ async Task BasicScrollingAsync()
 {
     double totalCharge = 0;
 
-    IPage<Person> page = await repository.PageAsync(pageSize: 25, continuationToken: string.Empty);
+    IPage<Person> page = await repository.PageAsync(pageSize: 25, continuationToken: null);
 
     foreach (Person person in page.Items)
     {

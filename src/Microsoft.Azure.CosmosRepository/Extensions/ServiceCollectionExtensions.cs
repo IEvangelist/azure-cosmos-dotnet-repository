@@ -19,6 +19,7 @@ using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Services;
 using Microsoft.Azure.CosmosRepository.Validators;
+using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -66,6 +67,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<ICosmosQueryableProcessor, DefaultCosmosQueryableProcessor>()
                 .AddSingleton<IRepositoryExpressionProvider, DefaultRepositoryExpressionProvider>()
                 .AddSingleton<IRepositoryOptionsValidator, DefaultRepositoryOptionsValidator>()
+                .AddSingleton<ISpecificationEvaluator, SpecificationEvaluator>()
                 .AddSingleton<ICosmosContainerDefaultTimeToLiveProvider,
                     DefaultCosmosContainerDefaultTimeToLiveProvider>()
                 .AddSingleton<ICosmosContainerSyncContainerPropertiesProvider,

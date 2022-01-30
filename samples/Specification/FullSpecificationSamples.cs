@@ -1,0 +1,94 @@
+﻿// Copyright (c) IEvangelist. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Paging;
+using Microsoft.Azure.CosmosRepository.Specification;
+
+namespace Specification;
+
+public class FullSpecificationSamples
+{
+    private readonly IRepository<Person> _repository;
+
+    public FullSpecificationSamples(IRepository<Person> repository)
+    {
+        _repository = repository;
+    }
+
+    public async Task FullContinuationTokenSpecificationAsync(int age)
+    {
+        UsersOrderByAgeSpecification specification = new(age);
+        double totalCharge = 0;
+        string continuationToken = null;
+        do
+        {
+            specification.UpdateContinutationToken(continuationToken);
+
+            IPage<Person> page = await _repository.GetAsync(specification);
+
+            foreach (Person person in page.Items)
+            {
+                Console.WriteLine(person);
+            }
+
+            totalCharge += page.Charge;
+            continuationToken = page.Continuation;
+            Console.WriteLine($"Result cost {page.Charge}");
+
+        } while (continuationToken != null);
+
+        Console.WriteLine($"Total Charge {totalCharge} RU's");
+    }
+
+    public async Task FullPageNumberSpecificationAsync(int age)
+    {
+        double totalCharge = 0;
+
+        UsersOrderByAgeOffsetSpecification specification = new(age);
+        IPageQueryResult<Person> page = await _repository.GetAsync(specification);
+        int totalItems = 0;
+        while (page.HasNextPage)
+        {
+            foreach (Person person in page.Items)
+            {
+                Console.WriteLine(person);
+            }
+            totalItems += page.Items.Count;
+            totalCharge += page.Charge;
+            Console.WriteLine($"First 10 results cost {page.Charge}");
+            specification.NextPage();
+            page = await _repository.GetAsync(specification);
+        }
+
+        Console.WriteLine($"Last results cost {page.Charge}");
+        Console.WriteLine($"Total Charge {totalCharge} RU's");
+    }
+
+    private class UsersOrderByAgeSpecification: ContinuationTokenSpecification<Person>
+    {
+        public UsersOrderByAgeSpecification(int age)
+        {
+            Query.Where(p => p.Age > age)
+                .OrderByDescending(p => p.Age)
+                .PageSize(10);
+        }
+    }
+    private class UsersOrderByAgeOffsetSpecification : OffsetByPageNumberSpecification<Person>
+    {
+        public UsersOrderByAgeOffsetSpecification(int age)
+        {
+            Query.Where(p => p.Age > age)
+                .OrderByDescending(p => p.Age)
+                .PageSize(10)
+                .PageNumber(3);
+        }
+
+    }
+}
+

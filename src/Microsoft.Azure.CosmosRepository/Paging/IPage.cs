@@ -10,7 +10,8 @@ namespace Microsoft.Azure.CosmosRepository.Paging
     /// Represents a page of data from a cosmos query
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IPage<out T> where T : IItem
+    public interface IPage<out T>: IQueryResult<T>
+        where T : IItem
     {
         /// <summary>
         /// The total amount items that matched the query.
@@ -22,15 +23,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// </summary>
         int Size { get; }
 
-        /// <summary>
-        /// The items that are in the current page.
-        /// </summary>
-        IReadOnlyList<T> Items { get; }
-
-        /// <summary>
-        /// The amount of RU's the given query cost.
-        /// </summary>
-        double Charge { get; }
+    
 
         /// <summary>
         /// The continuation token used to load results from a stateless marker.
@@ -38,4 +31,5 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <remarks>This is provided by cosmos DB.</remarks>
         string? Continuation { get; }
     }
+
 }

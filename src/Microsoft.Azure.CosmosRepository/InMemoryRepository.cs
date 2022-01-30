@@ -17,6 +17,8 @@ using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Paging;
+using Microsoft.Azure.CosmosRepository.Specification;
+using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -27,8 +29,18 @@ namespace Microsoft.Azure.CosmosRepository
     {
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
-
+        internal ISpecificationEvaluator _specificationEvaluator { get; set; }
         internal Action<ChangeFeedItemArgs<TItem>> Changes { get; set; }
+
+        public InMemoryRepository()
+        {
+            _specificationEvaluator = new SpecificationEvaluator();
+        }
+
+        public InMemoryRepository(ISpecificationEvaluator specificationEvaluator)
+        {
+            _specificationEvaluator = specificationEvaluator;
+        }
 
         internal string SerializeItem(TItem item, string etag = null, long? ts = null)
         {
@@ -335,6 +347,7 @@ namespace Microsoft.Azure.CosmosRepository
             int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
+
             IEnumerable<TItem> filteredItems = Items.Values.Select(DeserializeItem)
                 .Where(predicate.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
             IEnumerable<TItem> items = filteredItems.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
@@ -345,6 +358,27 @@ namespace Microsoft.Azure.CosmosRepository
                 items.ToList().AsReadOnly(),
                 0);
         }
+
+        public async ValueTask<TResult> GetAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
+            where TResult : IQueryResult<TItem>
+        {
+            await Task.CompletedTask;
+
+            if (specification.UseContinutationToken)
+            {
+                throw new NotImplementedException();
+            }
+
+            IQueryable<TItem> query = Items.Values.Select(DeserializeItem).AsQueryable()
+                .Where(item => item.Type == typeof(TItem).Name);
+
+            int pageSize = specification.PageSize;
+            query = _specificationEvaluator.GetQuery(query, specification);
+
+            int countResponse =query.Count();
+            return _specificationEvaluator.GetResult(query.ToList().AsReadOnly(), specification, countResponse, 0, "");
+        }
+
 
         private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
         private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Paging;
+using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -265,6 +266,24 @@ namespace Microsoft.Azure.CosmosRepository
             int pageSize = 25,
             string continuationToken = null,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Get items based on a specification.
+        /// The specification is used to define which filters are used, the order of the search results and how they are paged.
+        /// Depending on how results are paged dervice specification implementations from different classes:
+        /// For nonpaged results derivce <see cref="ListSpecification{T}"/>
+        /// For continuation token derive <see cref="ContinuationTokenSpecification{T}"/>
+        /// For pagenumber results derive <see cref="OffsetByPageNumberSpecification{T}"/>
+        /// </summary>
+        /// <typeparam name="TResult">Decides which paging information is retrieved. Use <see cref="ContinuationTokenSpecification{T}"/></typeparam>
+        /// <param name="specification">A specification used to filtering, ordering and paging. A <see cref="ISpecification{T, TResult}"/></param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns> The selected TResult implementation that implements <see cref="IQueryResult{T}"/> of <see cref="IItem"/></returns>
+        /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
+        ValueTask<TResult> GetAsync<TResult>(
+            ISpecification<TItem, TResult> specification,
+            CancellationToken cancellationToken = default)
+            where TResult : IQueryResult<TItem>;
 
         /// <summary>
         /// Offers a load more paging implementation for infinite scroll scenarios.
