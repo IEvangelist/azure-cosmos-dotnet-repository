@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
-namespace Microsoft.Azure.CosmosRepository.Specification
+namespace Microsoft.Azure.CosmosRepository.Specification.Builder
 {
     /// <inheritdoc cref="IOrderedSpecificationBuilder{TItem, TResult}"/>
     public class OrderedSpecificationBuilder<TItem, TResult> : IOrderedSpecificationBuilder<TItem, TResult>
@@ -15,20 +15,20 @@ namespace Microsoft.Azure.CosmosRepository.Specification
     {
         /// <inheritdoc/>
         public BaseSpecification<TItem, TResult> Specification { get; }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="specification"></param>
-        public OrderedSpecificationBuilder(BaseSpecification<TItem, TResult> specification) => 
+        public OrderedSpecificationBuilder(BaseSpecification<TItem, TResult> specification) =>
             Specification = specification;
-        
     }
+
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class OrderedBuilderExtensions
     {
-
         /// <summary>
         /// Adds a ThenBy expression to the existing order expression
         /// All ThenBy expressions requires a composite index that matched the ordering clause
@@ -42,12 +42,13 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             this IOrderedSpecificationBuilder<TItem, TResult> orderBuilder,
             Expression<Func<TItem, object>> orderExpression)
             where TItem : IItem
-            where TResult: IQueryResult<TItem>
+            where TResult : IQueryResult<TItem>
         {
-            ((List<OrderExpressionInfo<TItem>>)orderBuilder.Specification.OrderExpressions)
+            ((List<OrderExpressionInfo<TItem>>) orderBuilder.Specification.OrderExpressions)
                 .Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.ThenBy));
             return orderBuilder;
         }
+
         /// <summary>
         /// Adds a ThenByDescending expression to the existing order expression
         /// All ThenByDescending expressions requires a composite index that matched the ordering clause
@@ -63,7 +64,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             where TItem : IItem
             where TResult : IQueryResult<TItem>
         {
-            ((List<OrderExpressionInfo<TItem>>)orderBuilder.Specification.OrderExpressions)
+            orderBuilder.Specification.OrderExpressions.ToList()
                 .Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.ThenByDescending));
             return orderBuilder;
         }

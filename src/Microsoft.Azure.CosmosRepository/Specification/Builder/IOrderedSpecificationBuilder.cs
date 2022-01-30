@@ -1,11 +1,7 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.Azure.CosmosRepository.Specification
+namespace Microsoft.Azure.CosmosRepository.Specification.Builder
 {
     /// <inheritdoc cref="ISpecificationBuilder{T, TResult}"/>
     public interface IOrderedSpecificationBuilder<TItem, TResult> : ISpecificationBuilder<TItem, TResult>

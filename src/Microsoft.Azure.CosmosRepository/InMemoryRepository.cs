@@ -364,7 +364,7 @@ namespace Microsoft.Azure.CosmosRepository
         {
             await Task.CompletedTask;
 
-            if (specification.UseContinutationToken)
+            if (specification.UseContinuationToken)
             {
                 throw new NotImplementedException();
             }

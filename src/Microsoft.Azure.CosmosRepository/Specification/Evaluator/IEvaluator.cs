@@ -1,10 +1,7 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
 {
@@ -29,6 +26,5 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
         IQueryable<TItem> GetQuery<TItem, TResult>(IQueryable<TItem> query, ISpecification<TItem, TResult> specification)
             where TItem : IItem
             where TResult : IQueryResult<TItem>;
-
     }
 }

@@ -1,9 +1,7 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
@@ -15,9 +13,11 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         where TItem : IItem
     {
         /// <inheritdoc/>
-        public override IQueryResult<TItem> PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge, string continuationToken)
-        {
-            return new QueryResult<TItem>(queryResult, charge);
-        }
+        public override IQueryResult<TItem> PostProcessingAction(
+            IReadOnlyList<TItem> queryResult,
+            int totalCount,
+            double charge,
+            string continuationToken) =>
+            new QueryResult<TItem>(queryResult, charge);
     }
 }

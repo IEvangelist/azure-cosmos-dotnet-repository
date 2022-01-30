@@ -46,7 +46,7 @@ public class SpecificationPagingSamples
 
         ContinuationTokenSpecification<Person> specification = new(null, pageSize: 25);
         IPage<Person> page = await _repository.GetAsync(specification);
-        specification.UpdateContinutationToken(page.Continuation);
+        specification.UpdateContinuationToken(page.Continuation);
         int totalItems = 0;
         while (totalItems < page.Total)
         {
@@ -57,7 +57,7 @@ public class SpecificationPagingSamples
             totalItems += page.Items.Count;
             totalCharge += page.Charge;
             Console.WriteLine($"First 25 results cost {page.Charge}");
-            specification.UpdateContinutationToken(page.Continuation);
+            specification.UpdateContinuationToken(page.Continuation);
             page = await _repository.GetAsync(specification);
         }
 

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Paging;
-using Microsoft.Azure.CosmosRepository.Specification;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Specification;
@@ -13,11 +7,11 @@ using Specification;
 ConfigurationBuilder configuration = new();
 
 ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =>
-{
-    options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
-    options.DatabaseId = "paging-db";
-    options.ContainerPerItemType = true;
-})
+    {
+        options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
+        options.DatabaseId = "paging-db";
+        options.ContainerPerItemType = true;
+    })
     .AddSingleton<IConfiguration>(configuration.Build())
     .BuildServiceProvider();
 

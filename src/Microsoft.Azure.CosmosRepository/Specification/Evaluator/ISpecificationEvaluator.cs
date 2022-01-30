@@ -1,10 +1,8 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
 {
@@ -12,10 +10,10 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
     /// The aggregator of <see cref="IEvaluator"/>
     /// Uses multiple evaluators to evaluate specifications
     /// </summary>
-    public  interface ISpecificationEvaluator 
+    public  interface ISpecificationEvaluator
     {
         /// <summary>
-        /// Returns an IQueryable thats matching all paramaters that are setup in the specification 
+        /// Returns an IQueryable that matching all parameters that are setup in the specification
         /// </summary>
         /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
@@ -28,7 +26,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
             where TResult : IQueryResult<TItem>;
 
         /// <summary>
-        /// Converts an incoming cosmos query result to the specified  <typeparamref name="TResult"/> 
+        /// Converts an incoming cosmos query result to the specified  <typeparamref name="TResult"/>
         /// </summary>
         /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>

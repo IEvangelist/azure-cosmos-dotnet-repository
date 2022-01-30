@@ -4,10 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 using Microsoft.Azure.CosmosRepository.Paging;
 
-namespace Microsoft.Azure.CosmosRepository.Specification
+namespace Microsoft.Azure.CosmosRepository.Specification.Builder
 {
     class SpecificationBuilder<TItem,TResult> : ISpecificationBuilder<TItem,TResult>
         where TItem : IItem
@@ -21,12 +20,12 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         }
     }
     /// <summary>
-    /// 
+    /// A set of extension methods that can be used with a given <see cref="ISpecificationBuilder{TItem,TResult}"/>
     /// </summary>
     public static class SpecificationBuilderExtensions
     {
         /// <summary>
-        /// Add a search filter added to the query. Multiple filters will be evaluated togheter
+        /// Add a search filter added to the query. Multiple filters will be evaluated together
         /// </summary>
         /// <typeparam name="TItem"></typeparam>
         /// <typeparam name="TResult"></typeparam>
@@ -38,7 +37,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             where TItem : IItem
             where TResult : IQueryResult<TItem>
 
-        {     
+        {
             ((List<WhereExpressionInfo<TItem>>)specificationBuilder.Specification.WhereExpressions).Add(new WhereExpressionInfo<TItem>(criteria));
 
             return specificationBuilder;
@@ -115,19 +114,19 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         }
 
         /// <summary>
-        /// Specificy a continuation token to use
+        /// Specify a continuation token to use
         /// </summary>
-        public static ISpecificationBuilder<TItem, TResult> ContinutationToken<TItem,TResult>(
+        public static ISpecificationBuilder<TItem, TResult> ContinuationToken<TItem,TResult>(
             this ISpecificationBuilder<TItem, TResult> specificationBuilder,
-            string continutationToken)
+            string continuationToken)
             where TItem : IItem
             where TResult : IPage<TItem>
         {
-            if(specificationBuilder.Specification.UseContinutationToken == false)
+            if(specificationBuilder.Specification.UseContinuationToken == false)
             {
-                throw new ArgumentException("Cannot add continuationtoken to a non continutation token specification", "continutationToken");
+                throw new ArgumentException("Cannot add continuation token to a non continuation token specification", nameof(continuationToken));
             }
-            specificationBuilder.Specification.ContinutationToken = continutationToken;
+            specificationBuilder.Specification.ContinuationToken = continuationToken;
             return specificationBuilder;
         }
     }

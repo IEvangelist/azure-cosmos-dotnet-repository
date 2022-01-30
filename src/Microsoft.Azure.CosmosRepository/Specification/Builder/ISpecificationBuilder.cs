@@ -1,14 +1,10 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.Azure.CosmosRepository.Specification
+namespace Microsoft.Azure.CosmosRepository.Specification.Builder
 {
     /// <summary>
-    /// 
+    /// Defines a builder that can build a specification
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -17,7 +13,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         where TResult : IQueryResult<TItem>
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         BaseSpecification<TItem, TResult> Specification { get; }
     }
