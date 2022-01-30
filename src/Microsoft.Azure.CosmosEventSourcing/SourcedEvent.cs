@@ -10,7 +10,7 @@ namespace Microsoft.Azure.CosmosEventSourcing;
 public abstract class SourcedEvent : FullItem
 {
     [JsonConverter(typeof(PersistedEventConverter))]
-    public IPersistedEvent Event { get; set; } = null!;
+    public IPersistedEvent EventPayload { get; set; } = null!;
 
     public string PartitionKey { get; set; } = null!;
 
@@ -19,15 +19,15 @@ public abstract class SourcedEvent : FullItem
 
     public string EventName { get; set; } = null!;
 
-    protected SourcedEvent(IPersistedEvent @event, string partitionKey)
+    protected SourcedEvent(IPersistedEvent eventPayload, string partitionKey)
     {
         if (string.IsNullOrWhiteSpace(partitionKey))
         {
             throw new ArgumentNullException(nameof(partitionKey), "The partition key must be provided");
         }
 
-        Event = @event;
-        EventName = @event.EventName;
+        EventPayload = eventPayload;
+        EventName = eventPayload.EventName;
         PartitionKey = partitionKey;
     }
 

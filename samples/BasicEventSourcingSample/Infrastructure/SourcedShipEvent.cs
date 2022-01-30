@@ -8,8 +8,8 @@ namespace BasicEventSourcingSample.Infrastructure;
 
 public class SourcedShipEvent : SourcedEvent
 {
-    public SourcedShipEvent(IPersistedEvent @event, string shipName)
-        : base(@event, shipName)
+    public SourcedShipEvent(IPersistedEvent eventPayload, string shipName)
+        : base(eventPayload, shipName)
     {
     }
 
