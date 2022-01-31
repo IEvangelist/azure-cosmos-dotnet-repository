@@ -18,7 +18,6 @@ public class EventSourcingProcessor<TSourcedEvent> : IEventSourcingProcessor
     private readonly ILeaseContainerProvider _leaseContainerProvider;
     private readonly ILogger<EventSourcingProcessor<TSourcedEvent>> _logger;
     private readonly ISourceProjectionBuilder<TSourcedEvent> _projectionBuilder;
-    private readonly IServiceProvider _serviceProvider;
     private ChangeFeedProcessor? _processor;
 
     public EventSourcingProcessor(
@@ -26,15 +25,13 @@ public class EventSourcingProcessor<TSourcedEvent> : IEventSourcingProcessor
         ICosmosContainerService containerService,
         ILeaseContainerProvider leaseContainerProvider,
         ILogger<EventSourcingProcessor<TSourcedEvent>> logger,
-        ISourceProjectionBuilder<TSourcedEvent> projectionBuilder,
-        IServiceProvider serviceProvider)
+        ISourceProjectionBuilder<TSourcedEvent> projectionBuilder)
     {
         _options = options;
         _containerService = containerService;
         _leaseContainerProvider = leaseContainerProvider;
         _logger = logger;
         _projectionBuilder = projectionBuilder;
-        _serviceProvider = serviceProvider;
     }
 
     public async Task StartAsync()
