@@ -68,7 +68,7 @@ jobs:
 
     deploy:
       needs:
-        - ac_tests
+        - acceptance_tests
         - unit_tests
       if: github.event.base_ref == 'refs/heads/main'
       runs-on: ubuntu-latest
