@@ -10,14 +10,14 @@ namespace BasicEventSourcingSample.Infrastructure;
 public class ShipRepository : IShipRepository
 {
     private readonly IRepository<ShipCosmosItem> _cosmosRepository;
-    private readonly IEventSourcingRepository<ShipEventSource> _sourcingRepository;
+    private readonly IEventSourceRepository<ShipEventSource> _sourceRepository;
 
     public ShipRepository(
         IRepository<ShipCosmosItem> cosmosRepository,
-        IEventSourcingRepository<ShipEventSource> sourcingRepository)
+        IEventSourceRepository<ShipEventSource> sourceRepository)
     {
         _cosmosRepository = cosmosRepository;
-        _sourcingRepository = sourcingRepository;
+        _sourceRepository = sourceRepository;
     }
 
     public async ValueTask CreateShip(Ship ship) =>
@@ -28,7 +28,7 @@ public class ShipRepository : IShipRepository
         ShipCosmosItem shipItem = await _cosmosRepository.GetAsync(shipName, nameof(ShipCosmosItem));
         Ship shipAggregate = shipItem.ToAggregate();
 
-        IEnumerable<ShipEventSource> sourcedEvents = await _sourcingRepository.ReadAsync(shipAggregate.Name);
+        IEnumerable<ShipEventSource> sourcedEvents = await _sourceRepository.ReadAsync(shipAggregate.Name);
         shipAggregate.ReHydrate(sourcedEvents.Select(x => x.EventPayload).ToList());
 
         return shipAggregate;
@@ -37,7 +37,7 @@ public class ShipRepository : IShipRepository
     public ValueTask SaveAsync(Ship ship)
     {
         IEnumerable<ShipEventSource> sourced = ship.Events.Select(x => new ShipEventSource(x, ship.Name));
-        return _sourcingRepository.PersistAsync(sourced);
+        return _sourceRepository.PersistAsync(sourced);
     }
 
     public async Task<IEnumerable<string>> GetShipNamesAsync()

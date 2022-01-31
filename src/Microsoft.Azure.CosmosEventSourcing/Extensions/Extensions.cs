@@ -30,7 +30,7 @@ public static class Extensions
 
     public static IServiceCollection AddCosmosEventSourcing(this IServiceCollection services)
     {
-        services.AddSingleton(typeof(IEventSourcingRepository<>), typeof(EventSourcingRepository<>));
+        services.AddSingleton(typeof(IEventSourceRepository<>), typeof(EventSourceRepository<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, EventSourcingProvider>();
         services.AddAllPersistedEvents();
         return services;
