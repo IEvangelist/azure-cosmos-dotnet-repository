@@ -3,7 +3,6 @@
 
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
-using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Azure.CosmosRepository.Services;
 using Microsoft.Extensions.Logging;
@@ -40,8 +39,8 @@ public class EventSourcingProcessor<TSourcedEvent> : IEventSourcingProcessor
         Container leaseContainer = await _leaseContainerProvider.GetLeaseContainerAsync();
 
         ChangeFeedProcessorBuilder builder = itemContainer
-            .GetChangeFeedProcessorBuilder<TSourcedEvent>(_options.ProcessorName,
-                (changes, token) => OnChangesAsync(changes, token, itemContainer.Id))
+            .GetChangeFeedProcessorBuilder<TSourcedEvent>(_options.ProcessorName, (changes, token) =>
+                OnChangesAsync(changes, token, itemContainer.Id))
             .WithLeaseContainer(leaseContainer)
             .WithInstanceName(_options.InstanceName)
             .WithErrorNotification((token, exception) => OnErrorAsync(exception, itemContainer.Id));
