@@ -12,7 +12,8 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
     {
         public bool IsFilterEvaluator => false;
 
-        public IQueryable<TItem> GetQuery<TItem, TResult>(IQueryable<TItem> query,
+        public IQueryable<TItem> GetQuery<TItem, TResult>(
+            IQueryable<TItem> query,
             ISpecification<TItem, TResult> specification)
             where TItem : IItem
             where TResult : IQueryResult<TItem>
