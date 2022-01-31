@@ -3,7 +3,7 @@
 
 namespace Microsoft.Azure.CosmosEventSourcing;
 
-public interface IEventSourcingRepository<TEventStream> where TEventStream : SourcedEvent
+public interface IEventSourcingRepository<TEventStream> where TEventStream : EventSource
 {
     ValueTask PersistAsync(TEventStream record);
 

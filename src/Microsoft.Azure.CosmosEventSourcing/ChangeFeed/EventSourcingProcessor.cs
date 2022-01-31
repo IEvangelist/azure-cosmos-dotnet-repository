@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 
 public class EventSourcingProcessor<TSourcedEvent> : IEventSourcingProcessor
-    where TSourcedEvent : SourcedEvent
+    where TSourcedEvent : EventSource
 {
     private readonly EventSourcingProcessorOptions<TSourcedEvent> _options;
     private readonly ICosmosContainerService _containerService;

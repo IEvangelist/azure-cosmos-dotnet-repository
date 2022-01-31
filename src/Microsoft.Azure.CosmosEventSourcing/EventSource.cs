@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosEventSourcing;
 
-public abstract class SourcedEvent : FullItem
+public abstract class EventSource : FullItem
 {
     [JsonConverter(typeof(PersistedEventConverter))]
     public IPersistedEvent EventPayload { get; set; } = null!;
@@ -19,7 +19,7 @@ public abstract class SourcedEvent : FullItem
 
     public string EventName { get; set; } = null!;
 
-    protected SourcedEvent(IPersistedEvent eventPayload, string partitionKey)
+    protected EventSource(IPersistedEvent eventPayload, string partitionKey)
     {
         if (string.IsNullOrWhiteSpace(partitionKey))
         {
@@ -31,7 +31,7 @@ public abstract class SourcedEvent : FullItem
         PartitionKey = partitionKey;
     }
 
-    public SourcedEvent()
+    public EventSource()
     {
 
     }

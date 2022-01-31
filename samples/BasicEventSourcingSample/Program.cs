@@ -23,11 +23,11 @@ services.AddCosmosRepository(options =>
         shipContainerOptions.WithPartitionKey("/type");
     });
 
-    containerBuilder.ConfigureEventSourcingContainer<SourcedShipEvent>("ship-tracking-events");
+    containerBuilder.ConfigureEventSourceStore<ShipEventSource>("ship-tracking-events");
 });
 
-services.AddCosmosEventStreaming();
-services.AddEventSourcingContainerProcessing<SourcedShipEvent, SourcedShipEventsProjectionBuilder>(options =>
+services.AddCosmosEventSourcing();
+services.AddEventSourceProcessing<ShipEventSource, SourcedShipEventsProjectionBuilder>(options =>
 {
     options.ProcessorName = "shipping-demo";
     options.InstanceName = Environment.MachineName;

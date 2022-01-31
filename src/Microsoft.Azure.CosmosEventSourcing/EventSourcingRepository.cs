@@ -5,7 +5,7 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace Microsoft.Azure.CosmosEventSourcing;
 
-internal class EventSourcingRepository<TEventStream> : IEventSourcingRepository<TEventStream> where TEventStream : SourcedEvent
+internal class EventSourcingRepository<TEventStream> : IEventSourcingRepository<TEventStream> where TEventStream : EventSource
 {
     private readonly IRepository<TEventStream> _repository;
 

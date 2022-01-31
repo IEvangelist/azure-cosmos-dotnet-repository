@@ -14,10 +14,10 @@ namespace Microsoft.Azure.CosmosEventSourcing.Extensions;
 
 public static class Extensions
 {
-    public static IItemContainerBuilder ConfigureEventSourcingContainer<TSourcedEvent>(
+    public static IItemContainerBuilder ConfigureEventSourceStore<TSourcedEvent>(
         this IItemContainerBuilder containerBuilder,
         string containerName)
-        where TSourcedEvent : SourcedEvent
+        where TSourcedEvent : EventSource
     {
         containerBuilder.Configure<TSourcedEvent>(options =>
         {
@@ -28,7 +28,7 @@ public static class Extensions
         return containerBuilder;
     }
 
-    public static IServiceCollection AddCosmosEventStreaming(this IServiceCollection services)
+    public static IServiceCollection AddCosmosEventSourcing(this IServiceCollection services)
     {
         services.AddSingleton(typeof(IEventSourcingRepository<>), typeof(EventSourcingRepository<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, EventSourcingProvider>();
@@ -36,18 +36,18 @@ public static class Extensions
         return services;
     }
 
-    public static IServiceCollection AddEventSourcingContainerProcessing<TSourcedEvent, TProjectionBuilder>(
+    public static IServiceCollection AddEventSourceProcessing<TEventSource, TProjectionBuilder>(
         this IServiceCollection services,
-        Action<EventSourcingProcessorOptions<TSourcedEvent>>? optionsAction = null)
-        where TSourcedEvent : SourcedEvent
-        where TProjectionBuilder : class, ISourceProjectionBuilder<TSourcedEvent>
+        Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
+        where TEventSource : EventSource
+        where TProjectionBuilder : class, ISourceProjectionBuilder<TEventSource>
     {
-        EventSourcingProcessorOptions<TSourcedEvent> options = new();
+        EventSourcingProcessorOptions<TEventSource> options = new();
         optionsAction?.Invoke(options);
 
         services.AddSingleton(options);
-        services.AddSingleton<ISourceProjectionBuilder<TSourcedEvent>, TProjectionBuilder>();
-        services.AddSingleton<IContainerChangeFeedProcessor, EventSourcingProcessor<TSourcedEvent>>();
+        services.AddSingleton<ISourceProjectionBuilder<TEventSource>, TProjectionBuilder>();
+        services.AddSingleton<IContainerChangeFeedProcessor, EventSourcingProcessor<TEventSource>>();
         return services;
     }
 

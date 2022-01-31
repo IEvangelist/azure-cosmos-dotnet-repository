@@ -3,7 +3,7 @@
 
 namespace Microsoft.Azure.CosmosEventSourcing;
 
-public class EventSourcingProcessorOptions<TSourceEvent> where TSourceEvent : SourcedEvent
+public class EventSourcingProcessorOptions<TSourceEvent> where TSourceEvent : EventSource
 {
     /// <summary>
     /// The instance name of the processor.

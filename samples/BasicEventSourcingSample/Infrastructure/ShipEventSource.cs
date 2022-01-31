@@ -6,14 +6,14 @@ using Microsoft.Azure.CosmosEventSourcing;
 
 namespace BasicEventSourcingSample.Infrastructure;
 
-public class SourcedShipEvent : SourcedEvent
+public class ShipEventSource : EventSource
 {
-    public SourcedShipEvent(IPersistedEvent eventPayload, string shipName)
+    public ShipEventSource(IPersistedEvent eventPayload, string shipName)
         : base(eventPayload, shipName)
     {
     }
 
-    public SourcedShipEvent()
+    public ShipEventSource()
     {
 
     }

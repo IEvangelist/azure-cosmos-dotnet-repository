@@ -3,7 +3,7 @@
 
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
-public interface ISourceProjectionBuilder<in TSourceEvent> where TSourceEvent : SourcedEvent
+public interface ISourceProjectionBuilder<in TEventSource> where TEventSource : EventSource
 {
-    ValueTask ProjectAsync(TSourceEvent sourcedEvent, CancellationToken cancellationToken = default);
+    ValueTask ProjectAsync(TEventSource sourcedEvent, CancellationToken cancellationToken = default);
 }
