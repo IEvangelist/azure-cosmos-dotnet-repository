@@ -12,13 +12,13 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         where TItem : IItem
     {
         /// <summary>
-        /// Default ctor to set all parameters yourself
+        /// Default constructor to set all parameters yourself
         /// </summary>
-        public ContinuationTokenSpecification() =>
+        protected ContinuationTokenSpecification() =>
             UseContinuationToken = true;
 
         /// <summary>
-        /// Ctor for specifying the token and page size
+        /// Constructor for specifying the token and page size
         /// </summary>
         /// <param name="continuationToken"></param>
         /// <param name="pageSize"></param>

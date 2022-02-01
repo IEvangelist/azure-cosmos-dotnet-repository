@@ -33,13 +33,13 @@ public class SpecificationOrderSamples
     /// <summary>
     /// Required a composite index to be set in the database. Do not know how this is done in the repository pattern
     /// Composite index:
-    /// "compositeIndexes":[  
+    /// "compositeIndexes":[
     /// [
-    ///     {  
+    ///     {
     ///         "path":"/name",
     ///         "order":"ascending"
     ///     },
-    ///     {  
+    ///     {
     ///         "path":"/age",
     ///         "order":"descending"
     ///     }
@@ -56,7 +56,7 @@ public class SpecificationOrderSamples
         Console.WriteLine($"Total Charge {result.Charge} RU's");
     }
 
-    private class OrderByNameSpecification : ListSpecification<Person>
+    private class OrderByNameSpecification : DefaultSpecification<Person>
     {
         public OrderByNameSpecification()
         {
@@ -65,7 +65,7 @@ public class SpecificationOrderSamples
     }
 
 
-    private class OrderByMultipleFieldsSpecification : ListSpecification<Person>
+    private class OrderByMultipleFieldsSpecification : DefaultSpecification<Person>
     {
         public OrderByMultipleFieldsSpecification()
         {

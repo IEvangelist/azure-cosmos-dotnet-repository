@@ -141,19 +141,19 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
         }
     }
 
-    private class ProductsPriceHighestToLowest : ListSpecification<Product>
+    private class ProductsPriceHighestToLowest : DefaultSpecification<Product>
     {
         public ProductsPriceHighestToLowest() =>
             Query.OrderByDescending(x => x.Price);
     }
 
-    private class ProductsPriceLowestToHighest : ListSpecification<Product>
+    private class ProductsPriceLowestToHighest : DefaultSpecification<Product>
     {
         public ProductsPriceLowestToHighest() =>
             Query.OrderBy(x => x.Price);
     }
 
-    private class ProductsPriceLowestToHighestInCategory : ListSpecification<Product>
+    private class ProductsPriceLowestToHighestInCategory : DefaultSpecification<Product>
     {
         public ProductsPriceLowestToHighestInCategory(string categoryId) =>
             Query.Where(x => x.PartitionKey == categoryId)
@@ -166,6 +166,5 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
             Query.Where(x => x.PartitionKey == category)
                 .OrderBy(x => x.Price)
                 .PageSize(pageSize);
-
     }
 }

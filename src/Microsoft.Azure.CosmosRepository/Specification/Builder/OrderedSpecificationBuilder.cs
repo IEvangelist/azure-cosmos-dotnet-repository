@@ -1,21 +1,34 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Linq.Expressions;
+
 namespace Microsoft.Azure.CosmosRepository.Specification.Builder
 {
     /// <inheritdoc cref="IOrderedSpecificationBuilder{TItem, TResult}"/>
-    public class OrderedSpecificationBuilder<TItem, TResult> : IOrderedSpecificationBuilder<TItem, TResult>
+    internal class OrderedSpecificationBuilder<TItem, TResult> : SpecificationBuilder<TItem, TResult>, IOrderedSpecificationBuilder<TItem, TResult>
         where TItem : IItem
         where TResult : IQueryResult<TItem>
     {
-        /// <inheritdoc/>
-        public BaseSpecification<TItem, TResult> Specification { get; }
+        internal OrderedSpecificationBuilder(BaseSpecification<TItem, TResult> specification) : base(specification)
+        {
+        }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="specification"></param>
-        public OrderedSpecificationBuilder(BaseSpecification<TItem, TResult> specification) =>
-            Specification = specification;
+        /// <inheritdoc/>
+        public IOrderedSpecificationBuilder<TItem, TResult> ThenBy(
+            Expression<Func<TItem, object>> orderExpression)
+        {
+            Specification.Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.ThenBy));
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IOrderedSpecificationBuilder<TItem, TResult> ThenByDescending(
+            Expression<Func<TItem, object>> orderExpression)
+        {
+            Specification.Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.ThenByDescending));
+            return this;
+        }
     }
 }

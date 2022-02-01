@@ -37,7 +37,7 @@ public class SpecificationFilterSamples
         Console.WriteLine($"Change for query {peopleOlderThan25.Charge}");
     }
 
-    private class AllPersonsWithNameSpecification : ListSpecification<Person>
+    private class AllPersonsWithNameSpecification : DefaultSpecification<Person>
     {
         public AllPersonsWithNameSpecification(string name)
         {
@@ -45,7 +45,7 @@ public class SpecificationFilterSamples
         }
     }
 
-    private class AllPersonsOlderThanSpecifciation : ListSpecification<Person>
+    private class AllPersonsOlderThanSpecifciation : DefaultSpecification<Person>
     {
         public AllPersonsOlderThanSpecifciation(int age)
         {
