@@ -141,6 +141,48 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
         }
     }
 
+    [Fact]
+    public async Task Query_SpecificationSkipTakePaging_PagesCorrectly()
+    {
+        try
+        {
+            //Arrange
+            await _productsRepository.CreateAsync(_products);
+
+            SimplePagingProductsOrderedByName specification = new();
+
+            //Act
+            IQueryResult<Product> page1 =
+                await _productsRepository.QueryAsync(specification);
+
+            specification.NextPage();
+
+            IQueryResult<Product> page2 =
+                await _productsRepository.QueryAsync(specification);
+
+            specification.PreviousPage();
+
+            IQueryResult<Product> page1Again =
+                await _productsRepository.QueryAsync(specification);
+
+            specification.NextPage();
+            specification.NextPage();
+
+            IQueryResult<Product> page3 =
+                await _productsRepository.QueryAsync(specification);
+
+            //Assert
+            page1.Items.Count.Should().Be(2);
+            page2.Items.Count.Should().Be(2);
+            page1Again.Items.Count.Should().Be(2);
+            page3.Items.Count.Should().Be(1);
+        }
+        finally
+        {
+            await GetClient().UseClientAsync(PruneDatabases);
+        }
+    }
+
     private class ProductsPriceHighestToLowest : DefaultSpecification<Product>
     {
         public ProductsPriceHighestToLowest() =>
@@ -166,5 +208,13 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
             Query.Where(x => x.PartitionKey == category)
                 .OrderBy(x => x.Price)
                 .PageSize(pageSize);
+    }
+
+    private class SimplePagingProductsOrderedByName : OffsetByPageNumberSpecification<Product>
+    {
+        public SimplePagingProductsOrderedByName() =>
+            Query.OrderBy(x => x.Name)
+                .PageNumber(1)
+                .PageSize(2);
     }
 }
