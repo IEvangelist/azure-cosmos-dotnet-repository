@@ -22,7 +22,7 @@
 <script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1643753434></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/5-miscellaneous/>
+<body data-url=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -65,13 +65,16 @@ Partitioning
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/ title=Querying class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/ title=Querying class="dd-item
+parent">
 <a href=/azure-cosmos-dotnet-repository/3-queries/>
 <b>3. </b>Querying
 <i class="fas fa-check read-icon"></i>
 </a>
 <ul>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/ title="Specification Pattern" class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/ title="Specification Pattern" class="dd-item
+parent
+active">
 <a href=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/>
 Specification Pattern
 <i class="fas fa-check read-icon"></i>
@@ -85,9 +88,7 @@ Specification Pattern
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/ title=Miscellaneous class="dd-item
-parent
-active">
+<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/ title=Miscellaneous class=dd-item>
 <a href=/azure-cosmos-dotnet-repository/5-miscellaneous/>
 <b>5. </b>Miscellaneous
 <i class="fas fa-check read-icon"></i>
@@ -139,7 +140,7 @@ Unique Keys Policies
 <div>
 <div id=top-bar>
 <div id=top-github-link>
-<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository5-miscellaneous/_index.md target=blank>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository3-queries/specification-pattern/_index.md target=blank>
 <i class="fas fa-code-branch"></i>
 <span id=top-github-link-text>Edit this page</span>
 </a>
@@ -150,26 +151,81 @@ Unique Keys Policies
 <i class="fas fa-bars"></i>
 </a>
 </span>
+<span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Miscellaneous
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/3-queries/>Querying</a> > Specification Pattern
 </span>
+</div>
+<div class=progress>
+<div class=wrapper>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#simple-specification>Simple Specification</a></li>
+<li><a href=#specifications---ordered>Specifications - Ordered</a></li>
+</ul>
+</nav>
+</div>
 </div>
 </div>
 </div>
 <div id=head-tags>
 </div>
-<div id=chapter>
 <div id=body-inner>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#75715e>// TODO: Add content here
-</span></code></pre></div>
+<h1>
+Specification Pattern
+</h1>
+<p>The Azure Cosmos Repository also provides a way to query data based on a set of specifications. These are defined as classes. The inspiration for this implementation was taken from <a href=https://github.com/ardalis/Specification><code>ardalis/Specification</code></a> on Github. This provides a similar mechanism for entity framework.</p>
+<h2 id=simple-specification>Simple Specification</h2>
+<p>The specification below queries for all products in a category ordered by there price.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProductSpecificationExamples</span>
+{
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProductsPriceLowestToHighestInCategory</span> : DefaultSpecification&lt;Product&gt;
+    {
+        <span style=color:#66d9ef>public</span> ProductsPriceLowestToHighestInCategory(<span style=color:#66d9ef>string</span> categoryId) =&gt;
+            Query
+                .Where(x =&gt; x.PartitionKey == categoryId)
+                .OrderBy(x =&gt; x.Price);
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>async</span> Task&lt;IQueryResult&lt;Product&gt;&gt; RunDemoAsync(IRepository&lt;Product&gt; repository)
+    {
+        IQueryResult&lt;Product&gt; orderedProducts =
+                <span style=color:#66d9ef>await</span> <span style=color:#ae81ff>_</span>productsRepository.QueryAsync(<span style=color:#66d9ef>new</span> ProductsPriceLowestToHighestInCategory(<span style=color:#e6db74>&#34;Clothing&#34;</span>));
+
+        <span style=color:#66d9ef>return</span> orderedProducts;
+    }
+}
+</code></pre></div><h2 id=specifications---ordered>Specifications - Ordered</h2>
+<p>A specification can also contain more than one ordering clause. You can order by one property then by another.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProductSpecificationAdvancedOrderingExamples</span>
+{
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProductsPriceLowestToHighestThenByName</span> : DefaultSpecification&lt;Product&gt;
+    {
+        <span style=color:#66d9ef>public</span> ProductsPriceLowestToHighestInCategory(<span style=color:#66d9ef>string</span> categoryId) =&gt;
+            Query
+                .OrderBy(x =&gt; x.Price)
+                .ThenByDescending(x =&gt; x.Name);
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>async</span> Task&lt;IQueryResult&lt;Product&gt;&gt; RunDemoAsync(IRepository&lt;Product&gt; repository)
+    {
+        IQueryResult&lt;Product&gt; orderedProducts =
+                <span style=color:#66d9ef>await</span> <span style=color:#ae81ff>_</span>productsRepository.QueryAsync(<span style=color:#66d9ef>new</span> ProductsPriceLowestToHighestThenByName());
+
+        <span style=color:#66d9ef>return</span> orderedProducts;
+    }
+}
+</code></pre></div>
+<div class="notices warning"><p>If you want to use the <code>.ThenBy</code> or <code>.ThenByDescending</code> methods you will need to add composite index to the fields you are querying on. If not you will get an exception.</p>
+</div>
 <footer class=footline>
 </footer>
 </div>
 </div>
-</div>
 <div id=navigation>
-<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/4-change-feed/ title="Change Feed"> <i class="fa fa-chevron-left"></i></a>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/ title=Logging style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/3-queries/ title=Querying> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/4-change-feed/ title="Change Feed" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>

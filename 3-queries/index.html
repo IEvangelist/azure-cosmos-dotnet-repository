@@ -2,24 +2,24 @@
 <head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=generator content="Hugo 0.92.0">
+<meta name=generator content="Hugo 0.92.1">
 <meta name=description content="Azure Cosmos DB Repository-Pattern .NET SDK">
 <meta name=author content="David Pine">
 <link rel="shortcut icon" href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
 <link rel=icon href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
 <title>Azure Cosmos DB Repository-Pattern .NET SDK</title>
-<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/theme.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1643055937 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1643055937 rel=stylesheet>
-<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1643055937></script>
+<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1643753434 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1643753434 rel=stylesheet>
+<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1643753434></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
 <body data-url=/azure-cosmos-dotnet-repository/3-queries/>
@@ -38,10 +38,10 @@
 <input data-search-input id=search-by type=search placeholder=Search...>
 <span data-search-clear><i class="fas fa-times"></i></span>
 </div>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1643055937></script>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1643055937></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1643753434></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1643753434></script>
 <script type=text/javascript>var baseurl="https://ievangelist.github.io/azure-cosmos-dotnet-repository/"</script>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1643055937></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1643753434></script>
 </div>
 <div class=highlightable>
 <ul class=topics>
@@ -65,13 +65,21 @@ Partitioning
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/ title=Query class="dd-item
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/ title=Querying class="dd-item
 parent
 active">
 <a href=/azure-cosmos-dotnet-repository/3-queries/>
-<b>3. </b>Query
+<b>3. </b>Querying
 <i class="fas fa-check read-icon"></i>
 </a>
+<ul>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/ title="Specification Pattern" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/>
+Specification Pattern
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+</ul>
 </li>
 <li data-nav-id=/azure-cosmos-dotnet-repository/4-change-feed/ title="Change Feed" class=dd-item>
 <a href=/azure-cosmos-dotnet-repository/4-change-feed/>
@@ -143,7 +151,7 @@ Unique Keys Policies
 </a>
 </span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Query
+<a href=/azure-cosmos-dotnet-repository/></a> > Querying
 </span>
 </div>
 </div>
@@ -152,8 +160,145 @@ Unique Keys Policies
 </div>
 <div id=chapter>
 <div id=body-inner>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#75715e>// TODO: Add content here
-</span></code></pre></div>
+<h1 id=querying-data-in-the-cosmos-repository>Querying Data in the Cosmos Repository</h1>
+<p>The Cosmos Repository supports a rich set of methods for all sorts of query&rsquo;s that you might need to run. This includes basic filters, paging using skip & take, paging uses Cosmos DB continuation tokens, as well as, a specification pattern implementation pattern to do even more with queries.</p>
+<h2 id=basics-querying>Basics Querying</h2>
+<p>The simplest way to get started with a query is to use the <code>_repository.GetAsync&lt;TITem></code> method this allows you to pass an expression used to filter your query.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PeopleRepositoryExtensions</span>
+{
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>async</span> Task&lt;IEnumerable&lt;Person&gt;&gt; GetPeopleOlderThan(
+        <span style=color:#66d9ef>this</span> IRepository&lt;Person&gt; repository, DateTime date)
+    {
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>await</span> repository.GetAsync(p =&gt; p.BirthDate &gt; date);
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>async</span> Task&lt;IEnumerable&lt;Person&gt;&gt; GetPeopleWithoutMiddleNames(<span style=color:#66d9ef>this</span> IRepository&lt;Person&gt; repository)
+    {
+        IEnumerable&lt;Person&gt; peopleWithoutMiddleNames = 
+            <span style=color:#66d9ef>await</span> repository.GetAsync(p =&gt; p.MiddleName == <span style=color:#66d9ef>null</span>);
+
+        <span style=color:#66d9ef>return</span> peopleWithoutMiddleNames;
+    }
+}
+</code></pre></div>
+<div class="notices info"><p>The above example makes use of extensions methods. This can be a nice way to define queries using this library.</p>
+</div>
+<h2 id=basic-paging>Basic Paging</h2>
+<p>There are 3 ways to page data in the library. Below shows the simplest one. It makes use of skip & take, or limit and offset.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PagingExamples</span>
+{
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>async</span> Task BasicPageAsync(IRepository&lt;Person&gt; repository)
+    {
+        <span style=color:#66d9ef>double</span> totalCharge = <span style=color:#ae81ff>0</span>;
+
+        IPageQueryResult&lt;Person&gt; page = <span style=color:#66d9ef>await</span> repository.PageAsync(pageNumber: <span style=color:#ae81ff>1</span>, pageSize: <span style=color:#ae81ff>25</span>);
+
+        <span style=color:#66d9ef>while</span> (page.HasNextPage)
+        {
+            <span style=color:#66d9ef>foreach</span> (Person person <span style=color:#66d9ef>in</span> page.Items)
+            {
+                Console.WriteLine(person);
+            }
+
+            totalCharge += page.Charge;
+            page = <span style=color:#66d9ef>await</span> repository.PageAsync(pageNumber: page.PageNumber.Value + <span style=color:#ae81ff>1</span>, pageSize: <span style=color:#ae81ff>25</span>);
+
+            Console.WriteLine(<span style=color:#e6db74>$&#34;Get page {page.PageNumber} 25 results cost {page.Charge}&#34;</span>);
+        }
+
+        Console.WriteLine(<span style=color:#e6db74>$&#34;Total Charge {totalCharge} RU&#39;s&#34;</span>);
+    }
+}
+</code></pre></div>
+<div class="notices warning"><p>This method if used on large data sets has an exponential RU charge. The further you read into the pages the more RUs this costs.
+Continuation token paging is preferred.</p>
+</div>
+<h2 id=continuation-token-paging>Continuation Token Paging</h2>
+<p>The second way to page data using the library is making use of Cosmos DBs continuation tokens. This offers a more cost effective way to page data in Cosmos DB. Just provide the continuation token back the <code>.PageAsync</code> method to pick up where you left off.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PagingExamples</span>
+{
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>async</span> Task BasicScrollingAsync(IRepository&lt;Person&gt; repository)
+    {
+        <span style=color:#66d9ef>double</span> totalCharge = <span style=color:#ae81ff>0</span>;
+    
+        IPage&lt;Person&gt; page = <span style=color:#66d9ef>await</span> repository.PageAsync(pageSize: <span style=color:#ae81ff>25</span>, continuationToken: <span style=color:#66d9ef>null</span>);
+    
+        <span style=color:#66d9ef>foreach</span> (Person person <span style=color:#66d9ef>in</span> page.Items)
+        {
+            Console.WriteLine(person);
+        }
+    
+        totalCharge += page.Charge;
+    
+        Console.WriteLine(<span style=color:#e6db74>$&#34;First 25 results cost {page.Charge}&#34;</span>);
+    
+        page = <span style=color:#66d9ef>await</span> repository.PageAsync(pageSize: <span style=color:#ae81ff>25</span>, continuationToken: page.Continuation);
+    
+        <span style=color:#66d9ef>foreach</span> (Person person <span style=color:#66d9ef>in</span> page.Items)
+        {
+            Console.WriteLine(person);
+        }
+    
+        totalCharge += page.Charge;
+        Console.WriteLine(<span style=color:#e6db74>$&#34;Second 25 results cost {page.Charge}&#34;</span>);
+    
+        page = <span style=color:#66d9ef>await</span> repository.PageAsync(pageSize: <span style=color:#ae81ff>50</span>, continuationToken: page.Continuation);
+    
+        <span style=color:#66d9ef>foreach</span> (Person person <span style=color:#66d9ef>in</span> page.Items)
+        {
+            Console.WriteLine(person);
+        }
+    
+        totalCharge += page.Charge;
+    
+        Console.WriteLine(<span style=color:#e6db74>$&#34;Last 50 results cost {page.Charge}&#34;</span>);
+        Console.WriteLine(<span style=color:#e6db74>$&#34;Total Charge {totalCharge} RU&#39;s&#34;</span>);
+    }
+}
+</code></pre></div><h2 id=advanced-continuation-token-paging>Advanced Continuation Token Paging</h2>
+<p>If you want to stream large amounts of data you can make use of the <code>IAsyncEnumerable&lt;T></code> type in C# to stream the pages to a consumer as they arrive.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ParcelRepository</span>
+{    
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>readonly</span> IRepository&lt;Parcel&gt; <span style=color:#ae81ff>_</span>parcelCosmosRepository;    
+
+    <span style=color:#66d9ef>public</span> ParcelRepository(IRepository&lt;Parcel&gt; parcelCosmosRepository) =&gt;
+        <span style=color:#ae81ff>_</span>parcelCosmosRepository = parcelCosmosRepository;        
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>async</span> IAsyncEnumerable&lt;IParcel&gt; StreamParcelsWithDeliveryRegionId(
+        <span style=color:#66d9ef>string</span> deliveryRegionId,
+        <span style=color:#66d9ef>int</span> max,
+        <span style=color:#66d9ef>int</span> chunkSize = <span style=color:#ae81ff>25</span>,
+<span style=color:#a6e22e>        [EnumeratorCancellation]</span> CancellationToken cancellationToken = <span style=color:#66d9ef>default</span>)
+    {
+        <span style=color:#66d9ef>int</span> collected = <span style=color:#ae81ff>0</span>;
+        <span style=color:#66d9ef>bool</span> hasMoreResults = <span style=color:#66d9ef>true</span>;
+        <span style=color:#66d9ef>string?</span> token = <span style=color:#66d9ef>null</span>;
+
+        Expression&lt;Func&lt;Parcel, <span style=color:#66d9ef>bool</span>&gt;&gt; expression = parcel =&gt;
+            parcel.PartitionKey == deliveryRegionId &amp;&amp;
+            parcel.Status == ParcelStatus.Inducted;
+
+        <span style=color:#66d9ef>while</span> (hasMoreResults &amp;&amp; collected &lt; max)
+        {
+            <span style=color:#66d9ef>var</span> page = <span style=color:#66d9ef>await</span> <span style=color:#ae81ff>_</span>parcelCosmosRepository
+                    .PageAsync(expression, chunkSize, token, cancellationToken);
+
+            token = page.Continuation;
+            hasMoreResults = page.Continuation <span style=color:#66d9ef>is</span> not <span style=color:#66d9ef>null</span>;
+
+            <span style=color:#66d9ef>foreach</span> (<span style=color:#66d9ef>var</span> item <span style=color:#66d9ef>in</span> page.Items)
+            {
+                <span style=color:#66d9ef>if</span> (collected &lt; max)
+                {
+                    <span style=color:#66d9ef>yield</span> <span style=color:#66d9ef>return</span> item;   
+                }
+                
+                collected++;
+            }
+        }
+    }
+}
+</code></pre></div>
 <footer class=footline>
 </footer>
 </div>
@@ -161,21 +306,21 @@ Unique Keys Policies
 </div>
 <div id=navigation>
 <a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/2-container-config/ title="Container Configuration"> <i class="fa fa-chevron-left"></i></a>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/4-change-feed/ title="Change Feed" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/ title="Specification Pattern" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
 <div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
 </div>
-<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1643055937></script>
-<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1643055937></script>
-<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1643055937></script>
-<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1643055937></script>
-<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1643055937></script>
-<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1643753434></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1643753434></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1643753434></script>
+<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1643753434></script>
+<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1643753434></script>
+<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1643753434></script>
 <script>hljs.initHighlightingOnLoad()</script>
-<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1643055937></script>
-<script src=/azure-cosmos-dotnet-repository/js/learn.js?1643055937></script>
-<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1643055937></script>
+<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1643753434></script>
+<script src=/azure-cosmos-dotnet-repository/js/learn.js?1643753434></script>
+<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1643753434></script>
 </body>
 </html>
