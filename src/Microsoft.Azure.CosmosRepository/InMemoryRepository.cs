@@ -26,10 +26,9 @@ namespace Microsoft.Azure.CosmosRepository
     /// <inheritdoc/>
     internal class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
+        private readonly ISpecificationEvaluator _specificationEvaluator;
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
-
-        private readonly ISpecificationEvaluator _specificationEvaluator;
         internal Action<ChangeFeedItemArgs<TItem>> Changes { get; set; }
 
         public InMemoryRepository() =>
