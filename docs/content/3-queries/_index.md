@@ -131,7 +131,7 @@ public class ParcelRepository
     public ParcelRepository(IRepository<Parcel> parcelCosmosRepository) =>
         _parcelCosmosRepository = parcelCosmosRepository;        
 
-    public async IAsyncEnumerable<IParcel> GetParcelsWithDeliveryRegionId(
+    public async IAsyncEnumerable<IParcel> StreamParcelsWithDeliveryRegionId(
         string deliveryRegionId,
         int max,
         int chunkSize = 25,
