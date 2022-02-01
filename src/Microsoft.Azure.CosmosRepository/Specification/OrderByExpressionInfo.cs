@@ -2,14 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
     public class OrderExpressionInfo<TItem>

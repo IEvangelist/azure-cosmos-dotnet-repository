@@ -2,9 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
@@ -18,14 +16,12 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// Constructor for creating a where expression
         /// </summary>
         /// <param name="filter"></param>
-        public WhereExpressionInfo(Expression<Func<TItem, bool>> filter)
-        {
+        public WhereExpressionInfo(Expression<Func<TItem, bool>> filter) =>
             Filter = filter;
-        }
+
         /// <summary>
         /// A predicate that is used for filtering. Given an item of <typeparamref name="TItem"/> a function evalut
         /// </summary>
         public Expression<Func<TItem, bool>> Filter { get; }
-
     }
 }

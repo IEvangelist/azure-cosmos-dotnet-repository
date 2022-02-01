@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Specification;
+using Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 namespace Specification;
 
@@ -23,7 +24,7 @@ public class SpecificationOrderSamples
     public async Task BasicOrderAsync()
     {
         OrderByNameSpecification specification = new();
-        IQueryResult<Person> result = await _repository.GetAsync(specification);
+        IQueryResult<Person> result = await _repository.QueryAsync(specification);
 
         Console.WriteLine($"Simple order first result {result.Items.First().Name}");
         Console.WriteLine($"Total Charge {result.Charge} RU's");
@@ -32,13 +33,13 @@ public class SpecificationOrderSamples
     /// <summary>
     /// Required a composite index to be set in the database. Do not know how this is done in the repository pattern
     /// Composite index:
-    /// "compositeIndexes":[  
+    /// "compositeIndexes":[
     /// [
-    ///     {  
+    ///     {
     ///         "path":"/name",
     ///         "order":"ascending"
     ///     },
-    ///     {  
+    ///     {
     ///         "path":"/age",
     ///         "order":"descending"
     ///     }
@@ -49,13 +50,13 @@ public class SpecificationOrderSamples
     public async Task MultipleOrderByAsync()
     {
         OrderByMultipleFieldsSpecification specification = new();
-        IQueryResult<Person> result = await _repository.GetAsync(specification);
+        IQueryResult<Person> result = await _repository.QueryAsync(specification);
 
         Console.WriteLine($"Multiple order first result {result.Items.First().Name}");
         Console.WriteLine($"Total Charge {result.Charge} RU's");
     }
 
-    private class OrderByNameSpecification : ListSpecification<Person>
+    private class OrderByNameSpecification : DefaultSpecification<Person>
     {
         public OrderByNameSpecification()
         {
@@ -64,7 +65,7 @@ public class SpecificationOrderSamples
     }
 
 
-    private class OrderByMultipleFieldsSpecification : ListSpecification<Person>
+    private class OrderByMultipleFieldsSpecification : DefaultSpecification<Person>
     {
         public OrderByMultipleFieldsSpecification()
         {

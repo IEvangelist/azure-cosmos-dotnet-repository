@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Specification;
+using Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 namespace Specification;
 
@@ -23,20 +24,20 @@ public class SpecificationFilterSamples
     public async Task FilterSamples()
     {
         AllPersonsWithNameSpecification nameSpecification = new("Tom");
-        IQueryResult<Person> personsWithNameTom = await _repository.GetAsync(nameSpecification);
+        IQueryResult<Person> personsWithNameTom = await _repository.QueryAsync(nameSpecification);
 
         Console.WriteLine($"Found {personsWithNameTom.Items.Count} with name Tom");
         Console.WriteLine($"Change for query {personsWithNameTom.Charge}");
 
         int age = 25;
         AllPersonsOlderThanSpecifciation ageSpecification = new(age);
-        IQueryResult<Person> peopleOlderThan25 = await _repository.GetAsync(ageSpecification);
+        IQueryResult<Person> peopleOlderThan25 = await _repository.QueryAsync(ageSpecification);
 
         Console.WriteLine($"Found {peopleOlderThan25.Items.Count} people older than {age}");
         Console.WriteLine($"Change for query {peopleOlderThan25.Charge}");
     }
 
-    private class AllPersonsWithNameSpecification : ListSpecification<Person>
+    private class AllPersonsWithNameSpecification : DefaultSpecification<Person>
     {
         public AllPersonsWithNameSpecification(string name)
         {
@@ -44,7 +45,7 @@ public class SpecificationFilterSamples
         }
     }
 
-    private class AllPersonsOlderThanSpecifciation : ListSpecification<Person>
+    private class AllPersonsOlderThanSpecifciation : DefaultSpecification<Person>
     {
         public AllPersonsOlderThanSpecifciation(int age)
         {

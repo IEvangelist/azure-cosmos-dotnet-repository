@@ -1,14 +1,10 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Specification;
+using Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 namespace Specification;
 
@@ -28,9 +24,9 @@ public class FullSpecificationSamples
         string continuationToken = null;
         do
         {
-            specification.UpdateContinutationToken(continuationToken);
+            specification.UpdateContinuationToken(continuationToken);
 
-            IPage<Person> page = await _repository.GetAsync(specification);
+            IPage<Person> page = await _repository.QueryAsync(specification);
 
             foreach (Person person in page.Items)
             {
@@ -51,19 +47,18 @@ public class FullSpecificationSamples
         double totalCharge = 0;
 
         UsersOrderByAgeOffsetSpecification specification = new(age);
-        IPageQueryResult<Person> page = await _repository.GetAsync(specification);
-        int totalItems = 0;
+        IPageQueryResult<Person> page = await _repository.QueryAsync(specification);
         while (page.HasNextPage)
         {
             foreach (Person person in page.Items)
             {
                 Console.WriteLine(person);
             }
-            totalItems += page.Items.Count;
+
             totalCharge += page.Charge;
             Console.WriteLine($"First 10 results cost {page.Charge}");
             specification.NextPage();
-            page = await _repository.GetAsync(specification);
+            page = await _repository.QueryAsync(specification);
         }
 
         Console.WriteLine($"Last results cost {page.Charge}");

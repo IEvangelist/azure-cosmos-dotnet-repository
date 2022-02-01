@@ -15,6 +15,7 @@ using Microsoft.Azure.CosmosRepositoryTests.Extensions;
 using Microsoft.Azure.CosmosRepository.Paging;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Azure.CosmosRepository.Specification;
+using Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 namespace Microsoft.Azure.CosmosRepositoryTests
 {
@@ -1075,7 +1076,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
                                                          .ToList();
 
             //Act
-            IPage<Dog> dogs = await _dogRepository.GetAsync(specification);
+            IPage<Dog> dogs = await _dogRepository.QueryAsync(specification);
 
             //Assert
             List<Dog> enumerable = dogs.Items.ToList();
