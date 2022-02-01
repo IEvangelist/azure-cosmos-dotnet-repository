@@ -26,7 +26,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Builder
             where TResult : IQueryResult<TItem>
 
         {
-            specificationBuilder.Specification.WhereExpressions.Add(new WhereExpressionInfo<TItem>(criteria));
+            specificationBuilder.Specification.Add(new WhereExpressionInfo<TItem>(criteria));
             return specificationBuilder;
         }
 
@@ -44,7 +44,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Builder
             where TResult : IQueryResult<TItem>
         {
             OrderExpressionInfo<TItem> orderExpressionInfo = new(orderExpression, OrderTypeEnum.OrderBy);
-            specificationBuilder.Specification.OrderExpressions.Add(orderExpressionInfo);
+            specificationBuilder.Specification.Add(orderExpressionInfo);
 
             OrderedSpecificationBuilder<TItem, TResult> orderedSpecificationBuilder = new(specificationBuilder.Specification);
 
@@ -64,7 +64,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Builder
             where TItem : IItem
             where TResult: IQueryResult<TItem>
         {
-            specificationBuilder.Specification.OrderExpressions.Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.OrderByDescending));
+            specificationBuilder.Specification.Add(new OrderExpressionInfo<TItem>(orderExpression, OrderTypeEnum.OrderByDescending));
 
             IOrderedSpecificationBuilder<TItem,TResult> orderedSpecificationBuilder = new OrderedSpecificationBuilder<TItem, TResult>(specificationBuilder.Specification);
 

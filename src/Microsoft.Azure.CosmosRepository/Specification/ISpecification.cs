@@ -15,11 +15,11 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// The collection of filter expressions used for filtering queries.
         /// </summary>
-        List<WhereExpressionInfo<TItem>> WhereExpressions { get; }
+        IReadOnlyList<WhereExpressionInfo<TItem>> WhereExpressions { get; }
         /// <summary>
         /// A collection of expressions used for sorting.
         /// </summary>
-        List<OrderExpressionInfo<TItem>> OrderExpressions { get; }
+        IReadOnlyList<OrderExpressionInfo<TItem>> OrderExpressions { get; }
         /// <summary>
         /// Processing for updating the query result before returning it from the repository. Given the methods input it should generate the specified TResult />
         /// </summary>

@@ -1,9 +1,7 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
@@ -13,6 +11,10 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         where TItem : IItem
         where TResult : IQueryResult<TItem>
     {
+        private readonly List<WhereExpressionInfo<TItem>> _whereExpressions = new();
+        private readonly List<OrderExpressionInfo<TItem>> _orderExpressions = new();
+
+
         /// <summary>
         /// The specification query builder. Always use this object when interacting with the specifications. All other properties are readonly or internal set;
         /// </summary>
@@ -24,26 +26,19 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         protected BaseSpecification() =>
             Query = new SpecificationBuilder<TItem, TResult>(this);
 
-        /// <summary>
-        /// Initialize specification with a list of filter criteria
-        /// </summary>
-        /// <param name="filters"></param>
-        protected BaseSpecification(IEnumerable<Expression<Func<TItem, bool>>> filters)
-        {
-            Query = new SpecificationBuilder<TItem, TResult>(this);
-            foreach (Expression<Func<TItem, bool>> filter in filters)
-            {
-                Query.Where(filter);
-            }
-        }
+        internal void Add(WhereExpressionInfo<TItem> expression) =>
+            _whereExpressions.Add(expression);
+
+        internal void Add(OrderExpressionInfo<TItem> expression) =>
+            _orderExpressions.Add(expression);
 
         /// <inheritdoc/>
-        public List<WhereExpressionInfo<TItem>> WhereExpressions { get; } =
-            new();
+        public IReadOnlyList<WhereExpressionInfo<TItem>> WhereExpressions =>
+            _whereExpressions;
 
         /// <inheritdoc/>
-        public List<OrderExpressionInfo<TItem>> OrderExpressions { get; } =
-            new();
+        public IReadOnlyList<OrderExpressionInfo<TItem>> OrderExpressions =>
+            _orderExpressions;
 
         /// <inheritdoc/>
         public string ContinuationToken { get; internal set; }
