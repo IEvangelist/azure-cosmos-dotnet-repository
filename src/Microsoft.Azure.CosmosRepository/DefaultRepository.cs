@@ -53,7 +53,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
             string id,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default) =>
             GetAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate));
+                    .Where(_repositoryExpressionProvider.Build(predicate) ?? throw new NotImplementedException());
 
             _logger.LogQueryConstructed(query);
 
@@ -212,9 +212,9 @@ namespace Microsoft.Azure.CosmosRepository
 
         public async ValueTask UpdateAsync(string id,
             Action<IPatchOperationBuilder<TItem>> builder,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default,
-            string etag = default)
+            string? etag = default)
         {
             IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>();
 
@@ -243,7 +243,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public ValueTask DeleteAsync(
             string id,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default) =>
             DeleteAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
@@ -268,7 +268,9 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null,
+        public ValueTask<bool> ExistsAsync(
+            string id,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default)
             => ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
@@ -307,7 +309,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate));
+                    .Where(_repositoryExpressionProvider.Build(predicate) ?? throw new NotImplementedException());
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 
@@ -352,7 +354,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate));
+                    .Where(_repositoryExpressionProvider.Build(predicate) ?? throw new NotImplementedException());
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 
@@ -361,9 +363,9 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <inheritdoc/>
         public async ValueTask<IPage<TItem>> PageAsync(
-            Expression<Func<TItem, bool>> predicate = null,
+            Expression<Func<TItem, bool>>? predicate = null,
             int pageSize = 25,
-            string continuationToken = null,
+            string? continuationToken = null,
             CancellationToken cancellationToken = default)
         {
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
@@ -375,13 +377,13 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query = container
                 .GetItemLinqQueryable<TItem>(requestOptions: options, continuationToken: continuationToken)
-                .Where(_repositoryExpressionProvider.Build(predicate));
+                .Where(_repositoryExpressionProvider.Build(predicate) ?? throw new NotImplementedException());
 
             _logger.LogQueryConstructed(query);
 
             Response<int> countResponse = await query.CountAsync(cancellationToken);
 
-            (List<TItem> Items, double Charge, string ContinuationToken) result =
+            (List<TItem> Items, double Charge, string? ContinuationToken) result =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
 
             _logger.LogQueryExecuted(query, result.Charge);
@@ -396,7 +398,7 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <inheritdoc/>
         public async ValueTask<IPageQueryResult<TItem>> PageAsync(
-            Expression<Func<TItem, bool>> predicate = null,
+            Expression<Func<TItem, bool>>? predicate = null,
             int pageNumber = 1,
             int pageSize = 25,
             CancellationToken cancellationToken = default)
@@ -405,7 +407,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query = container
                 .GetItemLinqQueryable<TItem>()
-                .Where(_repositoryExpressionProvider.Build(predicate));
+                .Where(_repositoryExpressionProvider.Build(predicate) ?? throw new NotImplementedException());
 
             Response<int> countResponse =
                 await query.CountAsync(cancellationToken).ConfigureAwait(false);
@@ -415,7 +417,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             _logger.LogQueryConstructed(query);
 
-            (List<TItem> Items, double Charge, string ContinuationToken) result =
+            (List<TItem> Items, double Charge, string? ContinuationToken) result =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
 
             _logger.LogQueryExecuted(query, result.Charge);
@@ -444,13 +446,13 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>(requestOptions: options,continuationToken: specification.ContinuationToken)
-                .Where(_repositoryExpressionProvider.Build<TItem>(null));
+                .Where(_repositoryExpressionProvider.Build<TItem>(null) ?? throw new NotImplementedException());
 
             query = _specificationEvaluator.GetQuery(query, specification);
 
             _logger.LogQueryConstructed(query);
 
-            (List<TItem> items, double charge, string continuationToken) = await GetAllItemsAsync(query, specification.PageSize, cancellationToken).ConfigureAwait(false);
+            (List<TItem> items, double charge, string? continuationToken) = await GetAllItemsAsync(query, specification.PageSize, cancellationToken).ConfigureAwait(false);
 
             _logger.LogQueryExecuted(query, charge);
 
@@ -467,12 +469,12 @@ namespace Microsoft.Azure.CosmosRepository
             }
         }
 
-        static async Task<(List<TItem> items, double charge, string continuationToken)> GetAllItemsAsync(
+        static async Task<(List<TItem> items, double charge, string? continuationToken)> GetAllItemsAsync(
             IQueryable<TItem> query,
             int pageSize,
             CancellationToken cancellationToken = default)
         {
-            string continuationToken = null;
+            string? continuationToken = null;
             List<TItem> results = new();
             int readItemsCount = 0;
             double charge = 0;

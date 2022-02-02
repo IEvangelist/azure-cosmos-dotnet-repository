@@ -26,7 +26,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         public int GetDefaultTimeToLive(Type itemType)
         {
-            ContainerOptionsBuilder options = _options.Value.GetContainerOptions(itemType);
+            ContainerOptionsBuilder? options = _options.Value.GetContainerOptions(itemType);
 
             if (options is null)
             {

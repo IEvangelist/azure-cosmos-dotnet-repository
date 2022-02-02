@@ -16,7 +16,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         public DefaultRepositoryExpressionProvider(ICosmosItemConfigurationProvider itemConfigurationProvider) =>
             _itemConfigurationProvider = itemConfigurationProvider;
 
-        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate = null)
+        public Expression<Func<TItem, bool>>? Build<TItem>(Expression<Func<TItem, bool>>? predicate = null)
             where TItem : IItem
         {
             ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
@@ -32,7 +32,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             return predicate;
         }
 
-        public TItem CheckItem<TItem>(TItem item) where TItem : IItem
+        public TItem? CheckItem<TItem>(TItem item) where TItem : IItem
         {
             ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
 

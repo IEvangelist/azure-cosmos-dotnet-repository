@@ -33,7 +33,7 @@ namespace Microsoft.Azure.CosmosRepository.Services
             _cosmosItemConfigurationProvider = cosmosItemConfigurationProvider;
             _cosmosClientProvider = cosmosClientProvider;
             _logger = logger;
-            _options = options?.Value;
+            _options = options.Value;
         }
 
         public Task<Container> GetContainerAsync<TItem>(bool forceContainerSync = false) where TItem : IItem =>

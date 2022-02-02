@@ -14,10 +14,10 @@ namespace Microsoft.Azure.CosmosRepository.Providers
     class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
     {
         /// <inheritdoc />
-        public UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
+        public UniqueKeyPolicy? GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
             GetUniqueKeyPolicy(typeof(TItem));
 
-        public UniqueKeyPolicy GetUniqueKeyPolicy(Type itemType)
+        public UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType)
         {
             Type attributeType = typeof(UniqueKeyAttribute);
 

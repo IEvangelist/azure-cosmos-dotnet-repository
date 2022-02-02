@@ -38,8 +38,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>The same service collection that was provided, with the required cosmos services.</returns>
         public static IServiceCollection AddCosmosRepository(
             this IServiceCollection services,
-            Action<RepositoryOptions> setupAction = default,
-            Action<CosmosClientOptions> additionSetupAction = default)
+            Action<RepositoryOptions>? setupAction = default,
+            Action<CosmosClientOptions>? additionSetupAction = default)
         {
             if (services is null)
             {
@@ -135,7 +135,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddCosmosRepository(
             this IServiceCollection services,
             IConfiguration configuration,
-            Action<RepositoryOptions> setupAction = default) =>
+            Action<RepositoryOptions>? setupAction = default) =>
             services.AddCosmosRepository(setupAction);
     }
 }

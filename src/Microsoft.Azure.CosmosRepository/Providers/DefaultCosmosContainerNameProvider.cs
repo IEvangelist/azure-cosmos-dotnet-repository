@@ -32,11 +32,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             Attribute attribute =
                 Attribute.GetCustomAttribute(itemType, attributeType);
 
-            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions(itemType);
+            ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);
 
             if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.Name) is false)
             {
-                return optionsBuilder.Name;
+                return optionsBuilder.Name!;
             }
 
             return attribute is ContainerAttribute containerAttribute

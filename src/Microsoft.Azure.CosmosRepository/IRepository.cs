@@ -46,7 +46,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> GetAsync(
             string id,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -157,9 +157,9 @@ namespace Microsoft.Azure.CosmosRepository
         ValueTask UpdateAsync(
             string id,
             Action<IPatchOperationBuilder<TItem>> builder,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default,
-            string etag = default);
+            string? etag = default);
 
         /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="value"/>.
@@ -180,7 +180,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
         ValueTask DeleteAsync(
             string id,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
-        ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null,
+        ValueTask<bool> ExistsAsync(string id, string? partitionKeyValue = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -262,9 +262,9 @@ namespace Microsoft.Azure.CosmosRepository
         /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
         /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
         ValueTask<IPage<TItem>> PageAsync(
-            Expression<Func<TItem, bool>> predicate = null,
+            Expression<Func<TItem, bool>>? predicate = null,
             int pageSize = 25,
-            string continuationToken = null,
+            string? continuationToken = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -297,7 +297,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
 
         ValueTask<IPageQueryResult<TItem>> PageAsync(
-            Expression<Func<TItem, bool>> predicate = null,
+            Expression<Func<TItem, bool>>? predicate = null,
             int pageNumber = 1,
             int pageSize = 25,
             CancellationToken cancellationToken = default);

@@ -27,6 +27,6 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// <returns>The same instance of <see cref="IPatchOperationBuilder{TItem}"/></returns>
         /// <remarks>This currently only supports operations on properties on the root level of a JSON document,
         /// replacing properties on a nested object for example are currently not supported.</remarks>
-        IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue value);
+        IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value);
     }
 }

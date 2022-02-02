@@ -9,25 +9,21 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {
-    /// <inheritdoc/>
     class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
     {
         readonly Lazy<CosmosClient> _lazyCosmosClient;
         readonly CosmosClientOptions _cosmosClientOptions;
         readonly RepositoryOptions _options;
 
-        /// <inheritdoc/>
         private DefaultCosmosClientProvider(
-            CosmosClientOptions cosmosClientOptions,
+            CosmosClientOptions? cosmosClientOptions,
             IOptions<RepositoryOptions> options)
         {
             _cosmosClientOptions = cosmosClientOptions
                 ?? throw new ArgumentNullException(
                     nameof(cosmosClientOptions), "Cosmos Client options are required.");
 
-            _options = options?.Value
-                ?? throw new ArgumentNullException(
-                    nameof(options), "Repository options are required.");
+            _options = options.Value;
 
             _lazyCosmosClient = new Lazy<CosmosClient>(GetCosmoClient);
         }
@@ -43,21 +39,21 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         public DefaultCosmosClientProvider(
             ICosmosClientOptionsProvider cosmosClientOptionsProvider,
             IOptions<RepositoryOptions> options) :
-            this(cosmosClientOptionsProvider?.ClientOptions, options) =>
+            this(cosmosClientOptionsProvider.ClientOptions, options) =>
             _ = cosmosClientOptionsProvider
                 ?? throw new ArgumentNullException(
                     nameof(cosmosClientOptionsProvider), "Cosmos Client Options Provider is required.");
 
         /// <inheritdoc/>
         public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) =>
-            consume?.Invoke(_lazyCosmosClient.Value);
+            consume.Invoke(_lazyCosmosClient.Value);
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (_lazyCosmosClient?.IsValueCreated ?? false)
+            if (_lazyCosmosClient.IsValueCreated)
             {
-                _lazyCosmosClient?.Value?.Dispose();
+                _lazyCosmosClient.Value?.Dispose();
             }
         }
     }

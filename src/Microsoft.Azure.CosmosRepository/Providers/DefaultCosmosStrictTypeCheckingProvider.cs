@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         public bool UseStrictTypeChecking(Type itemType)
         {
-            ContainerOptionsBuilder itemOptions = _options.Value.GetContainerOptions(itemType);
+            ContainerOptionsBuilder? itemOptions = _options.Value.GetContainerOptions(itemType);
 
             return itemOptions?.UseStrictTypeChecking ?? true;
         }
