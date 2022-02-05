@@ -1,7 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -68,7 +66,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             Expression<Func<TestItemWithEtag, bool>> predicate = item => item.Id == "a" || item.Id == "ab";
 
-            Expression<Func<TestItemWithEtag, bool>> expectedPredicate = _expressionProvider.Build(predicate);
+            Expression<Func<TestItemWithEtag, bool>> expectedPredicate = _expressionProvider.Build(predicate)!;
 
             IOrderedQueryable<TestItemWithEtag> queryable = items.AsQueryable().Where(expectedPredicate).OrderBy(i => i.Id);
             _containerProviderForTestItemWithETag.Setup(o => o.GetContainerAsync()).ReturnsAsync(_container.Object);
@@ -101,7 +99,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             Expression<Func<TestItemWithEtag, bool>> predicate = item => item.Id == "a" || item.Id == "ab";
 
-            Expression<Func<TestItemWithEtag, bool>> expectedPredicate = _expressionProvider.Build(predicate);
+            Expression<Func<TestItemWithEtag, bool>> expectedPredicate = _expressionProvider.Build(predicate)!;
 
             IOrderedQueryable<TestItemWithEtag> queryable = items.AsQueryable().Where(expectedPredicate).OrderBy(i => i.Id);
             _containerProviderForTestItemWithETag.Setup(o => o.GetContainerAsync()).ReturnsAsync(_container.Object);
@@ -203,7 +201,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             // Arrange
             TestItemWithEtag itemWithEtag = new()
             {
-                Etag = null
+                Etag = null!
             };
 
             _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
@@ -224,7 +222,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             // Arrange
             TestItemWithEtag itemWithEtag = new()
             {
-                Etag = null
+                Etag = null!
             };
 
             _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
@@ -341,7 +339,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             TestItemWithEtag itemWithEtag2 = new()
             {
-                Etag = null
+                Etag = null!
             };
 
             IEnumerable<TestItemWithEtag> testItemWithEtags = new []
@@ -378,7 +376,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
             TestItemWithEtag itemWithEtag2 = new()
             {
-                Etag = null
+                Etag = null!
             };
 
             IEnumerable<TestItemWithEtag> testItemWithEtags = new []
@@ -482,8 +480,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
     class MockExpressionProvider : IRepositoryExpressionProvider
     {
-        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate) where TItem : IItem
-            => predicate.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso);
+        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>>? predicate) where TItem : IItem
+            => predicate!.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso);
 
         public TItem CheckItem<TItem>(TItem item) where TItem : IItem
         {

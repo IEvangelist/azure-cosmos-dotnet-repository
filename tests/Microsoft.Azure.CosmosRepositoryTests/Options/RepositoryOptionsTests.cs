@@ -28,15 +28,15 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Options
 
         [Fact]
         public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenContainerNameIsNull()
-            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithContainer(null)));
+            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithContainer(null!)));
 
         [Fact]
         public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenPartitionKeyIsNull()
-            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithPartitionKey(null)));
+            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(options => options.WithPartitionKey(null!)));
 
         [Fact]
         public void RepositoryOptionsBuilderThrowsArgumentNullExceptionWhenContainerBuilderActionIsNull()
-            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(null));
+            => Assert.Throws<ArgumentNullException>(() => new RepositoryOptions().ContainerBuilder.Configure<Product>(null!));
 
         [Theory]
         [InlineData(300)]

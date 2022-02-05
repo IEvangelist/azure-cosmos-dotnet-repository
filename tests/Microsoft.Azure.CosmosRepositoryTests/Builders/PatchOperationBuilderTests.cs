@@ -14,7 +14,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Builders
     public class Item1 : Item
     {
         [JsonProperty("thisIsTheName")]
-        public string TestProperty { get; set; }
+        public string TestProperty { get; set; } = null!;
 
         public int TestIntProperty { get; set; }
     }
@@ -22,14 +22,14 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Builders
     public class RequiredItem : Item
     {
         [Required]
-        public string TestProperty { get; set; }
+        public string TestProperty { get; set; } = null!;
     }
 
     public class RequiredAndJsonItem : Item
     {
         [Required]
         [JsonProperty("testProperty")]
-        public string TestProperty { get; set; }
+        public string TestProperty { get; set; } = null!;
     }
 
     public class PatchOperationBuilderTests

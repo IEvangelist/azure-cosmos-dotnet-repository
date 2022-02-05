@@ -17,7 +17,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             IReadOnlyList<TItem> queryResult,
             int totalCount,
             double charge,
-            string continuationToken) =>
+            string? continuationToken) =>
             new QueryResult<TItem>(queryResult, charge);
     }
 }

@@ -26,7 +26,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory
                 .BuildServiceProvider();
 
             provider.GetRequiredService<InMemoryChangeFeed<TestItem>>().Setup();
-            _testItemChangeFeedProcessor = provider.GetRequiredService<IItemChangeFeedProcessor<TestItem>>() as TestItemChangeFeedProcessor;
+            _testItemChangeFeedProcessor =
+                (provider.GetRequiredService<IItemChangeFeedProcessor<TestItem>>() as TestItemChangeFeedProcessor)!;
+
             _testItemRepository = provider.GetRequiredService<IRepository<TestItem>>();
         }
 

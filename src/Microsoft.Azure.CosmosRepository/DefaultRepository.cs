@@ -82,7 +82,8 @@ namespace Microsoft.Azure.CosmosRepository
             _logger.LogPointReadExecuted<TItem>(response.RequestCharge);
             _logger.LogItemRead(item);
 
-            return _repositoryExpressionProvider.CheckItem(item);
+            return _repositoryExpressionProvider.CheckItem(item)
+                   ?? throw new Exception("WHAT TO DO HERE?????");
         }
 
         /// <inheritdoc/>

@@ -20,9 +20,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         [Fact]
         public void GetThroughputPropertiesGivenItemWithNoSettingsReturnManualThroughputPropertiesSetTo400RUs()
         {
-            ThroughputProperties throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
+            ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
 
-            Assert.Equal(400, throughputProperties.Throughput);
+            Assert.Equal(400, throughputProperties!.Throughput);
             Assert.Null(throughputProperties.AutoscaleMaxThroughput);
         }
 
@@ -30,9 +30,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         public void GetThroughputPropertiesItemAutoscaleThroughputProperties()
         {
             _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithAutoscaleThroughput());
-            ThroughputProperties throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
+            ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
 
-            Assert.Equal(4000, throughputProperties.AutoscaleMaxThroughput);
+            Assert.Equal(4000, throughputProperties!.AutoscaleMaxThroughput);
             Assert.Null(throughputProperties.Throughput);
         }
 
@@ -40,17 +40,17 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         public void GetThroughputPropertiesItemManualThroughputProperties()
         {
             _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithManualThroughput(500));
-            ThroughputProperties throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
+            ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
 
-            Assert.Equal(500, throughputProperties.Throughput);
+            Assert.Equal(500, throughputProperties!.Throughput);
             Assert.Null(throughputProperties.AutoscaleMaxThroughput);
         }
 
         [Fact]
-        public void GetThroughputPropertiesItemsWithConflictingAutoscaleValues()
+        public void GetThroughputPropertiesItemsWithConflictingAutoScaleValues()
         {
             _repositoryOptions.ContainerBuilder
-                .Configure<TestItemWithEtag>(builder => builder.WithAutoscaleThroughput(4000))
+                .Configure<TestItemWithEtag>(builder => builder.WithAutoscaleThroughput())
                 .Configure<AnotherTestItem>(builder => builder.WithAutoscaleThroughput(5000));
 
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => _provider.GetThroughputProperties<TestItemWithEtag>());
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
             _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(
                 builder => builder.WithServerlessThroughput());
 
-            ThroughputProperties throughputProperties = _provider.GetThroughputProperties<AnotherTestItem>();
+            ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<AnotherTestItem>();
 
             Assert.Null(throughputProperties);
         }

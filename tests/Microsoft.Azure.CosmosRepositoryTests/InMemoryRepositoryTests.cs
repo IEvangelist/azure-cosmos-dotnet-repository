@@ -22,7 +22,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
     class Person : Item, IItemWithEtag
     {
         [JsonProperty("_etag")]
-        public string Etag { get; set; }
+        public string Etag { get; set; } = null!;
 
         public string Name { get; set; }
 
@@ -49,27 +49,27 @@ namespace Microsoft.Azure.CosmosRepositoryTests
 
     class DogComparer : IEqualityComparer<Dog>
     {
-        public bool Equals([AllowNull] Dog x, [AllowNull] Dog y)
+        public bool Equals(Dog? x,  Dog? y)
         {
-            return x.Id == y.Id;
+            return x?.Id == y?.Id;
         }
 
-        public int GetHashCode([DisallowNull] Dog obj)
+        public int GetHashCode(Dog? obj)
         {
-            return obj?.Id.GetHashCode() ?? 0;
+            return obj != null ? obj.Id.GetHashCode() : 0;
         }
     }
 
     class RootObject : Item
     {
-        public string Type1 { get; set; }
+        public string Type1 { get; set; } = null!;
 
-        public NestedObject NestedObject { get; set; }
+        public NestedObject NestedObject { get; set; } = null!;
     }
 
     class NestedObject
     {
-        public string Property1 { get; set; }
+        public string Property1 { get; set; } = null!;
 
         public int Property2 { get; set; }
     }

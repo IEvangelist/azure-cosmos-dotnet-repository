@@ -15,7 +15,8 @@ namespace Microsoft.Azure.CosmosRepository.Validators
 
         public void ValidateForContainerCreation(IOptions<RepositoryOptions> options)
         {
-            RepositoryOptions current = options.Value;
+            RepositoryOptions? current = options.Value;
+
             if (current is null)
             {
                 throw new ArgumentNullException(nameof(options), "Repository option are required");

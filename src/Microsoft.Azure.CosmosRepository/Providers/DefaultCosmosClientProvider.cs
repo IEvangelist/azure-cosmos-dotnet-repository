@@ -16,12 +16,10 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         readonly RepositoryOptions _options;
 
         private DefaultCosmosClientProvider(
-            CosmosClientOptions? cosmosClientOptions,
+            CosmosClientOptions cosmosClientOptions,
             IOptions<RepositoryOptions> options)
         {
-            _cosmosClientOptions = cosmosClientOptions
-                ?? throw new ArgumentNullException(
-                    nameof(cosmosClientOptions), "Cosmos Client options are required.");
+            _cosmosClientOptions = cosmosClientOptions;
 
             _options = options.Value;
 

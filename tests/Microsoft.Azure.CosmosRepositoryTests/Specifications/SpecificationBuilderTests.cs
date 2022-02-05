@@ -18,8 +18,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Specifications
             DefaultSpecification<TestItem> spec = new();
             SpecificationBuilder<TestItem, IQueryResult<TestItem>> builder = new(spec);
 
-            builder.Where(x => x.Id != null);
-            builder.OrderBy(x => x.CreatedTimeUtc);
+            builder.Where(x => x.Id != string.Empty);
+            builder.OrderBy(x => x.CreatedTimeUtc!);
             builder.PageNumber(5);
             builder.PageSize(25);
 
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Specifications
 
             builder
                 .OrderBy(x => x.Id)
-                .ThenBy(x => x.CreatedTimeUtc);
+                .ThenBy(x => x.CreatedTimeUtc!);
 
             Assert.Equal(2, spec.OrderExpressions.Count);
             Assert.NotNull(spec.OrderExpressions.FirstOrDefault(x => x.OrderType is OrderTypeEnum.OrderBy));

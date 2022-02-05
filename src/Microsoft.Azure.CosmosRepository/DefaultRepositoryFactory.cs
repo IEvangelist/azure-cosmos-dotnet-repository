@@ -16,10 +16,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="serviceProvider"></param>
         public DefaultRepositoryFactory(IServiceProvider serviceProvider) =>
-            _serviceProvider = serviceProvider
-                ?? throw new ArgumentNullException(
-                    nameof(serviceProvider),
-                    "A service provider instance is required.");
+            _serviceProvider = serviceProvider;
 
         /// <inheritdoc/>
         public IRepository<TItem> RepositoryOf<TItem>()
