@@ -36,7 +36,9 @@ public class ShipRepository : IShipRepository
 
     public ValueTask SaveAsync(Ship ship)
     {
-        IEnumerable<ShipEventSource> sourced = ship.Events.Select(x => new ShipEventSource(x, ship.Name));
+        IEnumerable<ShipEventSource> sourced =
+            ship.UnSavedEvents.Select(x => new ShipEventSource(x, ship.Name));
+
         return _sourceRepository.PersistAsync(sourced);
     }
 
