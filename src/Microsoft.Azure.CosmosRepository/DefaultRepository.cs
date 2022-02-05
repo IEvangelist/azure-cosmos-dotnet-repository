@@ -83,7 +83,7 @@ namespace Microsoft.Azure.CosmosRepository
             _logger.LogItemRead(item);
 
             return _repositoryExpressionProvider.CheckItem(item)
-                   ?? throw new Exception("WHAT TO DO HERE?????");
+                   ?? throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
@@ -466,6 +466,7 @@ namespace Microsoft.Azure.CosmosRepository
         {
             if (logger?.IsEnabled(LogLevel.Debug) ?? false)
             {
+                // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
                 logger.LogDebug(getMessage());
             }
         }
