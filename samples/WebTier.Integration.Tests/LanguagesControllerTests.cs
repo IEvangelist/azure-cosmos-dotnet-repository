@@ -57,7 +57,7 @@ namespace WebTier.Integration.Tests
             List<LanguageDto> responseLanguages = await response.Content.ReadFromJsonAsync<List<LanguageDto>>(new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
-                Converters = { new JsonStringEnumConverter()}
+                Converters = { new JsonStringEnumConverter() }
             });
             Assert.NotNull(responseLanguages);
             LanguageDto responseLanguage = responseLanguages.First();
