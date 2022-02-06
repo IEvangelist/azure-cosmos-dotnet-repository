@@ -1,6 +1,7 @@
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Builders;
@@ -49,6 +50,24 @@ app.MapGet("/api/ships", async (IShipRepository shipRepository) =>
     return shipNames;
 });
 
+app.MapGet("/api/ships/info/{name}", async (string name, IShipRepository shipRepository) =>
+{
+    ShipInformation? information = await shipRepository.GetInformation(name);
+
+    if (information is null)
+    {
+        return Results.NoContent();
+    }
+
+    ShipInfoDto dto = new(
+        information.Name,
+        information.Commissioned,
+        information.LatestPort,
+        information.LatestCargoWeight);
+
+    return Results.Ok(dto);
+});
+
 app.MapPost("/api/ships", async (CreateShip createShip, IShipRepository shipRepository) =>
 {
     (string name, DateTime dateTime) = createShip;
@@ -87,3 +106,5 @@ app.MapPost("/api/ships/departed", async (ShipEvents.Departed departed, IShipRep
 app.Run();
 
 record CreateShip(string Name, DateTime Commissioned);
+
+record ShipInfoDto(string Name, DateTime Commissioned, string? LatestPort, double? latestCargoWeight);

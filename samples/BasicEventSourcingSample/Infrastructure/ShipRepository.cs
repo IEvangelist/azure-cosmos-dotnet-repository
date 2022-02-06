@@ -1,9 +1,11 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Net;
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Projections;
 using BasicEventSourcingSample.Projections.Models;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosRepository;
 
@@ -43,5 +45,17 @@ public class ShipRepository : IShipRepository
             .GetAsync(x => x.PartitionKey == nameof(ShipInformation));
 
         return all.Select(x => x.Name);
+    }
+
+    public async ValueTask<ShipInformation?> GetInformation(string name)
+    {
+        try
+        {
+            return await _shipInformationRepository.GetAsync(name, nameof(ShipInformation));
+        }
+        catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
+        {
+            return null;
+        }
     }
 }
