@@ -1,7 +1,6 @@
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Builders;
@@ -35,6 +34,7 @@ services.AddEventSourceProjectionBuilder<ShipEventSource>(options =>
 });
 services.AddAllEventProjectionHandlers();
 services.AddCosmosRepositoryChangeFeedHostedService();
+
 services.AddSingleton<IShipRepository, ShipRepository>();
 
 WebApplication app = builder.Build();
