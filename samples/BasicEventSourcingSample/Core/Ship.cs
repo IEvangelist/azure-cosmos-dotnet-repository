@@ -43,7 +43,7 @@ public class Ship : Aggregate
         Port = dockedInPort.Port;
         Status = ShipStatus.Docked;
 
-        _events.Add(dockedInPort);
+        AddEvent(dockedInPort);
     }
 
     private void Apply(ShipEvents.Loading loading)
@@ -61,7 +61,7 @@ public class Ship : Aggregate
 
         Status = ShipStatus.Loading;
 
-        _events.Add(loading);
+        AddEvent(loading);
     }
 
     private void Apply(ShipEvents.Loaded loaded)
@@ -80,7 +80,7 @@ public class Ship : Aggregate
         CargoWeight = loaded.CargoWeight;
         Status = ShipStatus.AwaitingDeparture;
 
-        _events.Add(loaded);
+        AddEvent(loaded);
     }
 
     private void Apply(ShipEvents.Departed departed)
@@ -98,10 +98,10 @@ public class Ship : Aggregate
 
         Status = ShipStatus.AtSea;
 
-        _events.Add(departed);
+        AddEvent(departed);
     }
 
-    protected override void HandleHydratedEvent(IPersistedEvent persistedEvent)
+    protected override void Apply(IPersistedEvent persistedEvent)
     {
         switch (persistedEvent)
         {

@@ -29,7 +29,7 @@ public class ShipRepository : IShipRepository
         Ship shipAggregate = shipItem.ToAggregate();
 
         IEnumerable<ShipEventSource> sourcedEvents = await _sourceRepository.ReadAsync(shipAggregate.Name);
-        shipAggregate.ReHydrate(sourcedEvents.Select(x => x.EventPayload).ToList());
+        shipAggregate.Apply(sourcedEvents.Select(x => x.EventPayload).ToList());
 
         return shipAggregate;
     }

@@ -8,7 +8,7 @@ namespace BasicEventSourcingSample.Core;
 
 public abstract class Aggregate
 {
-    protected List<IPersistedEvent> _events = new();
+    private List<IPersistedEvent> _events = new();
     private readonly List<IPersistedEvent> _unSavedEvents = new();
 
     public IReadOnlyList<IPersistedEvent> UnSavedEvents =>
@@ -17,7 +17,7 @@ public abstract class Aggregate
     protected void AddEvent(IPersistedEvent persistedEvent) =>
         _unSavedEvents.Add(persistedEvent);
 
-    public void ReHydrate(List<IPersistedEvent> persistedEvents)
+    public void Apply(List<IPersistedEvent> persistedEvents)
     {
         if (!persistedEvents.Any())
         {
@@ -26,10 +26,10 @@ public abstract class Aggregate
 
         List<IPersistedEvent> orderedEvents = persistedEvents.OrderBy(x => x.OccuredUtc).ToList();
 
-        orderedEvents.ForEach(HandleHydratedEvent);
+        orderedEvents.ForEach(Apply);
 
         _events = orderedEvents;
     }
 
-    protected abstract void HandleHydratedEvent(IPersistedEvent persistedEvent);
+    protected abstract void Apply(IPersistedEvent persistedEvent);
 }
