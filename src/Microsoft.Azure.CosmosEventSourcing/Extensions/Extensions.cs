@@ -50,7 +50,7 @@ public static class Extensions
 
         services.AddSingleton(options);
         services.AddSingleton<ISourceProjectionBuilder<TEventSource>, TProjectionBuilder>();
-        services.AddSingleton<IContainerChangeFeedProcessor, EventSourcingProcessor<TEventSource>>();
+        services.AddSingleton<IEventSourcingProcessor, EventSourcingProcessor<TEventSource>>();
         return services;
     }
 
@@ -64,7 +64,7 @@ public static class Extensions
 
         services.AddSingleton(options);
         services.AddSingleton<ISourceProjectionBuilder<TEventSource>, EventBasedSourceProjectionBuilder<TEventSource>>();
-        services.AddSingleton<IContainerChangeFeedProcessor, EventSourcingProcessor<TEventSource>>();
+        services.AddSingleton<IEventSourcingProcessor, EventSourcingProcessor<TEventSource>>();
         return services;
     }
 

@@ -25,6 +25,7 @@ public class ShipInformation : FullItem
         DateTime commissioned,
         DateTime createdAt)
     {
+        Id = name;
         Name = name;
         Commissioned = commissioned;
         CreatedAt = createdAt;

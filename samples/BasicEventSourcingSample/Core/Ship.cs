@@ -1,7 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Security.Policy;
 using Microsoft.Azure.CosmosEventSourcing;
 
 namespace BasicEventSourcingSample.Core;
@@ -25,22 +24,27 @@ public class Ship : Aggregate
     }
 
     public Ship(string name, DateTime commissioned, DateTime? createdAt = null) =>
-        Apply(new ShipEvents.ShipCreated(name, commissioned, createdAt ?? DateTime.UtcNow));
+        AddEvent(new ShipEvents.ShipCreated(name, commissioned, createdAt ?? DateTime.UtcNow));
 
     public void Dock(string port, DateTime occuredUtc) =>
-        Apply(new ShipEvents.DockedInPort(Name, port, occuredUtc));
+        AddEvent(new ShipEvents.DockedInPort(Name, port, occuredUtc));
 
     public void StartLoading(string port, DateTime occuredUtc) =>
-        Apply(new ShipEvents.Loading(Name, port, occuredUtc));
+        AddEvent(new ShipEvents.Loading(Name, port, occuredUtc));
 
     public void FinishLoading(string port, double cargoWeight, DateTime occuredUtc) =>
-        Apply(new ShipEvents.Loaded(Name, port, cargoWeight, occuredUtc));
+        AddEvent(new ShipEvents.Loaded(Name, port, cargoWeight, occuredUtc));
 
     public void Depart(string port, DateTime occuredUtc) =>
-        Apply(new ShipEvents.Departed(Name, port, occuredUtc));
+        AddEvent(new ShipEvents.Departed(Name, port, occuredUtc));
 
     private void Apply(ShipEvents.ShipCreated shipCreated)
     {
+        if (string.IsNullOrWhiteSpace(shipCreated.Name))
+        {
+            throw new InvalidOperationException("A ship name must be provided");
+        }
+
         CreatedAt = shipCreated.OccuredUtc;
         Name = shipCreated.Name;
         Commissioned = shipCreated.Commissioned;
@@ -55,8 +59,6 @@ public class Ship : Aggregate
 
         Port = dockedInPort.Port;
         Status = ShipStatus.Docked;
-
-        AddEvent(dockedInPort);
     }
 
     private void Apply(ShipEvents.Loading loading)
@@ -73,8 +75,6 @@ public class Ship : Aggregate
         }
 
         Status = ShipStatus.Loading;
-
-        AddEvent(loading);
     }
 
     private void Apply(ShipEvents.Loaded loaded)
@@ -92,8 +92,6 @@ public class Ship : Aggregate
 
         CargoWeight = loaded.CargoWeight;
         Status = ShipStatus.AwaitingDeparture;
-
-        AddEvent(loaded);
     }
 
     private void Apply(ShipEvents.Departed departed)
@@ -110,14 +108,15 @@ public class Ship : Aggregate
         }
 
         Status = ShipStatus.AtSea;
-
-        AddEvent(departed);
     }
 
     protected override void Apply(IPersistedEvent persistedEvent)
     {
         switch (persistedEvent)
         {
+            case ShipEvents.ShipCreated created:
+                Apply(created);
+                break;
             case ShipEvents.DockedInPort dockedInPort:
                 Apply(dockedInPort);
                 break;
@@ -130,6 +129,10 @@ public class Ship : Aggregate
             case ShipEvents.Departed departed:
                 Apply(departed);
                 break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(persistedEvent),
+                    $"No apply method found for {persistedEvent.GetType().Name}");
         }
     }
 }

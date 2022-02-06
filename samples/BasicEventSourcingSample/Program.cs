@@ -12,7 +12,7 @@ services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
 services.AddCosmosRepository(options =>
 {
-    options.DatabaseId = "event-sourcing-sample";
+    options.DatabaseId = "event-sourcing-shipping-sample";
     options.ContainerPerItemType = true;
 
     IItemContainerBuilder containerBuilder = options.ContainerBuilder;

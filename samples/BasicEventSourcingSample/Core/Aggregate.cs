@@ -14,8 +14,11 @@ public abstract class Aggregate
     public IReadOnlyList<IPersistedEvent> UnSavedEvents =>
         _unSavedEvents;
 
-    protected void AddEvent(IPersistedEvent persistedEvent) =>
+    protected void AddEvent(IPersistedEvent persistedEvent)
+    {
         _unSavedEvents.Add(persistedEvent);
+        Apply(persistedEvent);
+    }
 
     public void Apply(List<IPersistedEvent> persistedEvents)
     {
