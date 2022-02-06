@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Reflection;
+using System.Security.Policy;
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 using Microsoft.Azure.CosmosEventSourcing.Converters;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
@@ -28,15 +29,17 @@ public static class Extensions
         return containerBuilder;
     }
 
-    public static IServiceCollection AddCosmosEventSourcing(this IServiceCollection services)
+    public static IServiceCollection AddCosmosEventSourcing(
+        this IServiceCollection services,
+        params Assembly[] assemblies)
     {
         services.AddSingleton(typeof(IEventSourceRepository<>), typeof(EventSourceRepository<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, EventSourcingProvider>();
-        services.AddAllPersistedEvents();
+        services.AddAllPersistedEventsTypes(assemblies);
         return services;
     }
 
-    public static IServiceCollection AddEventSourceProcessing<TEventSource, TProjectionBuilder>(
+    public static IServiceCollection AddEventSourceProjectionBuilder<TEventSource, TProjectionBuilder>(
         this IServiceCollection services,
         Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
         where TEventSource : EventSource
@@ -51,7 +54,22 @@ public static class Extensions
         return services;
     }
 
-    private static IServiceCollection AddAllPersistedEvents(this IServiceCollection services,
+    public static IServiceCollection AddEventSourceProjectionBuilder<TEventSource>(
+        this IServiceCollection services,
+        Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
+        where TEventSource : EventSource
+    {
+        EventSourcingProcessorOptions<TEventSource> options = new();
+        optionsAction?.Invoke(options);
+
+        services.AddSingleton(options);
+        services.AddSingleton<ISourceProjectionBuilder<TEventSource>, EventBasedSourceProjectionBuilder<TEventSource>>();
+        services.AddSingleton<IContainerChangeFeedProcessor, EventSourcingProcessor<TEventSource>>();
+        return services;
+    }
+
+    public static IServiceCollection AddAllPersistedEventsTypes(
+        this IServiceCollection services,
         params Assembly[] assemblies)
     {
         if (!assemblies.Any())
@@ -65,6 +83,22 @@ public static class Extensions
             .ToList();
 
         types.ForEach(x => PersistedEventConverter.ConvertableTypes.Add(x));
+
+        return services;
+    }
+
+    public static IServiceCollection AddAllEventProjectionHandlers(
+        this IServiceCollection services,
+        params Assembly[] assemblies)
+    {
+        if (!assemblies.Any())
+        {
+            assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        }
+
+        services.Scan(x => x.FromAssemblies(assemblies)
+            .AddClasses(classes => classes.AssignableTo(typeof(IEventProjectionHandler<>)))
+            .AsImplementedInterfaces().WithSingletonLifetime());
 
         return services;
     }

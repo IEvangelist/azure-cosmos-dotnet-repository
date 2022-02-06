@@ -1,11 +1,9 @@
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
-using BasicEventSourcingSample.Projections;
 using BasicEventSourcingSample.Projections.Models;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Builders;
-using ShipStatus = BasicEventSourcingSample.Core.ShipStatus;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
@@ -29,11 +27,12 @@ services.AddCosmosRepository(options =>
 });
 
 services.AddCosmosEventSourcing();
-services.AddEventSourceProcessing<ShipEventSource, SourcedShipEventsProjectionBuilder>(options =>
+services.AddEventSourceProjectionBuilder<ShipEventSource>(options =>
 {
     options.ProcessorName = "shipping-demo";
     options.InstanceName = Environment.MachineName;
 });
+services.AddAllEventProjectionHandlers();
 services.AddCosmosRepositoryChangeFeedHostedService();
 services.AddSingleton<IShipRepository, ShipRepository>();
 

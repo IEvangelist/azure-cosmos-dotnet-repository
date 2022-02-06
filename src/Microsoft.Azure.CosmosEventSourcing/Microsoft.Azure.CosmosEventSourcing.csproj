@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Scrutor" Version="4.0.0" />
+    </ItemGroup>
+
 </Project>

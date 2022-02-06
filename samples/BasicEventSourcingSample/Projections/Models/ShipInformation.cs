@@ -8,24 +8,26 @@ namespace BasicEventSourcingSample.Projections.Models;
 public class ShipInformation : FullItem
 {
     public string Name { get; init; }
+    public DateTime Commissioned { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
-    public ShipInformation Information { get; set; }
+    public string? LatestPort { get; set; }
 
-    public string? CurrentPort { get; set; }
-
-    public double? CurrentCargoWeight { get; set; }
+    public double? LatestCargoWeight { get; set; }
     public string PartitionKey { get; set; }
 
     protected override string GetPartitionKeyValue() =>
         PartitionKey;
 
-    public ShipInformation(string name, DateTime createdAt, ShipInformation information)
+    public ShipInformation(
+        string name,
+        DateTime commissioned,
+        DateTime createdAt)
     {
         Name = name;
+        Commissioned = commissioned;
         CreatedAt = createdAt;
-        Information = information;
         PartitionKey = Type;
     }
 }
