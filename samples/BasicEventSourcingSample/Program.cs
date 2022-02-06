@@ -1,9 +1,11 @@
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections;
+using BasicEventSourcingSample.Projections.Models;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Builders;
+using ShipStatus = BasicEventSourcingSample.Core.ShipStatus;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
@@ -17,10 +19,10 @@ services.AddCosmosRepository(options =>
 
     IItemContainerBuilder containerBuilder = options.ContainerBuilder;
 
-    containerBuilder.Configure<ShipCosmosItem>(shipContainerOptions =>
+    containerBuilder.Configure<ShipInformation>(shipContainerOptions =>
     {
-        shipContainerOptions.WithContainer("ships");
-        shipContainerOptions.WithPartitionKey("/type");
+        shipContainerOptions.WithContainer("ships-projections");
+        shipContainerOptions.WithPartitionKey("/partitionKey");
     });
 
     containerBuilder.ConfigureEventSourceStore<ShipEventSource>("ship-tracking-events");
@@ -52,7 +54,7 @@ app.MapPost("/api/ships", async (CreateShip createShip, IShipRepository shipRepo
 {
     (string name, DateTime dateTime) = createShip;
     Ship ship = new(name, dateTime);
-    await shipRepository.CreateShip(ship);
+    await shipRepository.SaveAsync(ship);
 });
 
 app.MapPost("/api/ships/dock", async (ShipEvents.DockedInPort docked, IShipRepository shipRepository) =>

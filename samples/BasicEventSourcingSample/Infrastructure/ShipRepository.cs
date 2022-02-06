@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 using BasicEventSourcingSample.Core;
+using BasicEventSourcingSample.Projections;
+using BasicEventSourcingSample.Projections.Models;
 using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosRepository;
 
@@ -9,29 +11,22 @@ namespace BasicEventSourcingSample.Infrastructure;
 
 public class ShipRepository : IShipRepository
 {
-    private readonly IRepository<ShipCosmosItem> _cosmosRepository;
     private readonly IEventSourceRepository<ShipEventSource> _sourceRepository;
+    private readonly IRepository<ShipInformation> _shipInformationRepository;
 
     public ShipRepository(
-        IRepository<ShipCosmosItem> cosmosRepository,
-        IEventSourceRepository<ShipEventSource> sourceRepository)
+        IEventSourceRepository<ShipEventSource> sourceRepository,
+        IRepository<ShipInformation> shipInformationRepository)
     {
-        _cosmosRepository = cosmosRepository;
         _sourceRepository = sourceRepository;
+        _shipInformationRepository = shipInformationRepository;
     }
-
-    public async ValueTask CreateShip(Ship ship) =>
-        await _cosmosRepository.CreateAsync(ship.ToCosmosItem());
 
     public async ValueTask<Ship> FindAsync(string shipName)
     {
-        ShipCosmosItem shipItem = await _cosmosRepository.GetAsync(shipName, nameof(ShipCosmosItem));
-        Ship shipAggregate = shipItem.ToAggregate();
-
-        IEnumerable<ShipEventSource> sourcedEvents = await _sourceRepository.ReadAsync(shipAggregate.Name);
-        shipAggregate.Apply(sourcedEvents.Select(x => x.EventPayload).ToList());
-
-        return shipAggregate;
+        IEnumerable<ShipEventSource> sourcedEvents = await _sourceRepository.ReadAsync(shipName);
+        Ship ship = Ship.Build(sourcedEvents.Select(x => x.EventPayload).ToList());
+        return ship;
     }
 
     public ValueTask SaveAsync(Ship ship)
@@ -44,7 +39,9 @@ public class ShipRepository : IShipRepository
 
     public async Task<IEnumerable<string>> GetShipNamesAsync()
     {
-        IEnumerable<ShipCosmosItem> ships = await _cosmosRepository.GetAsync(x => x.Type == nameof(ShipCosmosItem));
-        return ships.Select(x => x.Name);
+        IEnumerable<ShipInformation>? all = await _shipInformationRepository
+            .GetAsync(x => x.PartitionKey == nameof(ShipInformation));
+
+        return all.Select(x => x.Name);
     }
 }

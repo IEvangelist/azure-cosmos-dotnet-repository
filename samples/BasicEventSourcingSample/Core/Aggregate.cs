@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 using System.Reflection.Metadata;
+using System.Security.Policy;
 using Microsoft.Azure.CosmosEventSourcing;
 
 namespace BasicEventSourcingSample.Core;
-
 public abstract class Aggregate
 {
     private List<IPersistedEvent> _events = new();

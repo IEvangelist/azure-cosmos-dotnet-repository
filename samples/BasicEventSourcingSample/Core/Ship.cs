@@ -1,25 +1,31 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Security.Policy;
 using Microsoft.Azure.CosmosEventSourcing;
 
 namespace BasicEventSourcingSample.Core;
 
 public class Ship : Aggregate
 {
-    public string Name { get; }
-    public DateTime Commissioned { get; }
-    public DateTime CreatedAt { get; }
+    public string Name { get; private set; } = null!;
+    public DateTime Commissioned { get; private set; }
+    public DateTime CreatedAt { get; private set; }
     public ShipStatus Status { get; private set; }
     public string? Port { get; private set; }
     public double? CargoWeight { get; private set; }
 
-    public Ship(string name, DateTime commissioned, DateTime? createdAt = null)
+    private Ship() { }
+
+    public static Ship Build(List<IPersistedEvent> persistedEvents)
     {
-        Name = name;
-        Commissioned = commissioned;
-        CreatedAt = createdAt ?? DateTime.UtcNow;
+        Ship ship = new();
+        ship.Apply(persistedEvents);
+        return ship;
     }
+
+    public Ship(string name, DateTime commissioned, DateTime? createdAt = null) =>
+        Apply(new ShipEvents.ShipCreated(name, commissioned, createdAt ?? DateTime.UtcNow));
 
     public void Dock(string port, DateTime occuredUtc) =>
         Apply(new ShipEvents.DockedInPort(Name, port, occuredUtc));
@@ -32,6 +38,13 @@ public class Ship : Aggregate
 
     public void Depart(string port, DateTime occuredUtc) =>
         Apply(new ShipEvents.Departed(Name, port, occuredUtc));
+
+    private void Apply(ShipEvents.ShipCreated shipCreated)
+    {
+        CreatedAt = shipCreated.OccuredUtc;
+        Name = shipCreated.Name;
+        Commissioned = shipCreated.Commissioned;
+    }
 
     private void Apply(ShipEvents.DockedInPort dockedInPort)
     {
