@@ -82,7 +82,7 @@ public static class Extensions
                 .Where(type => type.IsAssignableTo(typeof(IPersistedEvent))))
             .ToList();
 
-        types.ForEach(x => PersistedEventConverter.ConvertableTypes.Add(x));
+        types.ForEach(PersistedEventConverter.ConvertableTypes.Add);
 
         return services;
     }
