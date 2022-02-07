@@ -107,4 +107,4 @@ app.Run();
 
 record CreateShip(string Name, DateTime Commissioned);
 
-record ShipInfoDto(string Name, DateTime Commissioned, string? LatestPort, double? latestCargoWeight);
+record ShipInfoDto(string Name, DateTime Commissioned, string? LatestPort, double? LatestCargoWeight);
