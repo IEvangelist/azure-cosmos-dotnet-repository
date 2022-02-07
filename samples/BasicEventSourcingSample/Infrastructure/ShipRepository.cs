@@ -47,7 +47,7 @@ public class ShipRepository : IShipRepository
         return all.Select(x => x.Name);
     }
 
-    public async ValueTask<ShipInformation?> GetInformation(string name)
+    public async ValueTask<ShipInformation?> GetInformationAsync(string name)
     {
         try
         {
