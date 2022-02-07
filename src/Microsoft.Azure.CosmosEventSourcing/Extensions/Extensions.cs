@@ -98,7 +98,8 @@ public static class Extensions
 
         services.Scan(x => x.FromAssemblies(assemblies)
             .AddClasses(classes => classes.AssignableTo(typeof(IEventProjectionHandler<>)))
-            .AsImplementedInterfaces().WithSingletonLifetime());
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime());
 
         return services;
     }
