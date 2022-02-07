@@ -10,5 +10,5 @@ public interface IShipRepository
     ValueTask<Ship> FindAsync(string shipName);
     ValueTask SaveAsync(Ship ship);
     Task<IEnumerable<string>> GetShipNamesAsync();
-    ValueTask<ShipInformation?> GetInformation(string name);
+    ValueTask<ShipInformation?> GetInformationAsync(string name);
 }
