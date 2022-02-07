@@ -15,6 +15,5 @@ public class ShipEventSource : EventSource
 
     public ShipEventSource()
     {
-
     }
 }
