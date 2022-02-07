@@ -8,7 +8,7 @@ public class EventSourcingProcessorOptions<TSourceEvent> where TSourceEvent : Ev
     /// <summary>
     /// The instance name of the processor.
     /// </summary>
-    public string InstanceName { get; set; } = "default";
+    public string InstanceName { get; set; } = "default-processor-instance-name";
 
     /// <summary>
     /// The poll interval to query the change feed processor
