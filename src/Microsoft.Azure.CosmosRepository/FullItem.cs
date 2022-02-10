@@ -42,7 +42,7 @@ namespace Microsoft.Azure.CosmosRepository
         public TimeSpan? TimeToLive
         {
             get => _timeToLive.HasValue ? TimeSpan.FromSeconds(_timeToLive.Value) : null;
-            set => _timeToLive = (int?) value?.TotalSeconds;
+            set => _timeToLive = value?.TotalSeconds;
         }
 
         [JsonProperty("ttl", NullValueHandling = NullValueHandling.Ignore)]
