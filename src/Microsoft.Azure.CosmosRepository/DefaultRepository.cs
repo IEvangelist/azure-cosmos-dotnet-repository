@@ -96,7 +96,8 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate) ?? throw new NotImplementedException());
+                    .Where(_repositoryExpressionProvider.Build(predicate)
+                    ?? Enumerable.Empty<TItem>().AsQueryable();
 
             _logger.LogQueryConstructed(query);
 
