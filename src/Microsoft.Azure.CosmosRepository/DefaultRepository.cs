@@ -450,7 +450,8 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>(requestOptions: options,continuationToken: specification.ContinuationToken)
-                .Where(_repositoryExpressionProvider.Build<TItem>(null) ?? throw new NotImplementedException());
+                .Where(_repositoryExpressionProvider.Build<TItem>(null)
+                ?? Enumerable.Empty<TItem>().AsQueryable();
 
             query = _specificationEvaluator.GetQuery(query, specification);
 
