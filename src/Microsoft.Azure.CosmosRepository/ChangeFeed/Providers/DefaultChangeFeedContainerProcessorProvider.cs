@@ -47,8 +47,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
                 .Options
                 .Where(x =>
                     x.ChangeFeedOptions != null && x.Name is not null)
-                .GroupBy(x =>
-                    x.Name!);
+                .GroupBy(x => x.Name!);
 
             foreach (IGrouping<string, ContainerOptionsBuilder> container in containers)
             {
