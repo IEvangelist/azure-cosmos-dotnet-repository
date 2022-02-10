@@ -8,7 +8,7 @@ namespace WebTier.Integration.Tests
 {
     public class LanguageDto
     {
-        public string Id { get; set; } = "default";
+        public string Id { get; set; } = null!;
 
         public string Name { get; set; }
 
