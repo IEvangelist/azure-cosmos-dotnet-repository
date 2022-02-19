@@ -47,8 +47,10 @@ namespace Microsoft.Azure.CosmosRepository
             ICosmosQueryableProcessor cosmosQueryableProcessor,
             IRepositoryExpressionProvider repositoryExpressionProvider,
             ISpecificationEvaluator specificationEvaluator) =>
-            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider, _specificationEvaluator) =
-            (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider, specificationEvaluator);
+            (_optionsMonitor, _containerProvider, _logger, _cosmosQueryableProcessor, _repositoryExpressionProvider,
+                _specificationEvaluator) =
+            (optionsMonitor, containerProvider, logger, cosmosQueryableProcessor, repositoryExpressionProvider,
+                specificationEvaluator);
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
@@ -82,8 +84,7 @@ namespace Microsoft.Azure.CosmosRepository
             _logger.LogPointReadExecuted<TItem>(response.RequestCharge);
             _logger.LogItemRead(item);
 
-            return _repositoryExpressionProvider.CheckItem(item)
-                   ?? throw new NotImplementedException();
+            return _repositoryExpressionProvider.CheckItem(item)!;
         }
 
         /// <inheritdoc/>
@@ -96,8 +97,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate)
-                    ?? Enumerable.Empty<TItem>().AsQueryable();
+                    .Where(_repositoryExpressionProvider.Build(predicate));
 
             _logger.LogQueryConstructed(query);
 
@@ -303,7 +303,8 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate,
+        public async ValueTask<bool> ExistsAsync(
+            Expression<Func<TItem, bool>> predicate,
             CancellationToken cancellationToken = default)
         {
             Container container =
@@ -311,8 +312,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate)
-                    ?? Enumerable.Empty<TItem>().AsQueryable();
+                    .Where(_repositoryExpressionProvider.Build(predicate));
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 
@@ -333,7 +333,8 @@ namespace Microsoft.Azure.CosmosRepository
             return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
         }
 
-        private async ValueTask<Response<int>> CountAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
+        private async ValueTask<Response<int>> CountAsync<TResult>(ISpecification<TItem, TResult> specification,
+            CancellationToken cancellationToken = default)
             where TResult : IQueryResult<TItem>
         {
             Container container =
@@ -378,10 +379,11 @@ namespace Microsoft.Azure.CosmosRepository
                 MaxItemCount = pageSize
             };
 
+
             IQueryable<TItem> query = container
                 .GetItemLinqQueryable<TItem>(requestOptions: options, continuationToken: continuationToken)
-                .Where(_repositoryExpressionProvider.Build(predicate)
-                ?? Enumerable.Empty<TItem>().AsQueryable();
+                .Where(_repositoryExpressionProvider.Build(predicate ??
+                                                           _repositoryExpressionProvider.Default<TItem>()));
 
             _logger.LogQueryConstructed(query);
 
@@ -411,7 +413,8 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query = container
                 .GetItemLinqQueryable<TItem>()
-                .Where(_repositoryExpressionProvider.Build(predicate) ?? throw new NotImplementedException());
+                .Where(_repositoryExpressionProvider
+                    .Build(predicate ?? _repositoryExpressionProvider.Default<TItem>()));
 
             Response<int> countResponse =
                 await query.CountAsync(cancellationToken).ConfigureAwait(false);
@@ -449,21 +452,25 @@ namespace Microsoft.Azure.CosmosRepository
                 options.MaxItemCount = specification.PageSize;
             }
 
-            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>(requestOptions: options,continuationToken: specification.ContinuationToken)
-                .Where(_repositoryExpressionProvider.Build<TItem>(null)
-                ?? Enumerable.Empty<TItem>().AsQueryable();
+            IQueryable<TItem> query = container
+                .GetItemLinqQueryable<TItem>(
+                    requestOptions: options,
+                    continuationToken: specification.ContinuationToken)
+                .Where(_repositoryExpressionProvider.Default<TItem>());
 
             query = _specificationEvaluator.GetQuery(query, specification);
 
             _logger.LogQueryConstructed(query);
 
-            (List<TItem> items, double charge, string? continuationToken) = await GetAllItemsAsync(query, specification.PageSize, cancellationToken).ConfigureAwait(false);
+            (List<TItem> items, double charge, string? continuationToken) =
+                await GetAllItemsAsync(query, specification.PageSize, cancellationToken).ConfigureAwait(false);
 
             _logger.LogQueryExecuted(query, charge);
 
             Response<int> count = await CountAsync(specification, cancellationToken).ConfigureAwait(false);
 
-            return specification.PostProcessingAction(items.AsReadOnly(), count.Resource, charge + count.RequestCharge, continuationToken);
+            return specification.PostProcessingAction(items.AsReadOnly(), count.Resource, charge + count.RequestCharge,
+                continuationToken);
         }
 
         static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
@@ -506,6 +513,5 @@ namespace Microsoft.Azure.CosmosRepository
 
             return (results, charge, continuationToken);
         }
-
     }
 }

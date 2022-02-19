@@ -16,21 +16,18 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         public DefaultRepositoryExpressionProvider(ICosmosItemConfigurationProvider itemConfigurationProvider) =>
             _itemConfigurationProvider = itemConfigurationProvider;
 
-        public Expression<Func<TItem, bool>>? Build<TItem>(Expression<Func<TItem, bool>>? predicate = null)
+        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate)
             where TItem : IItem
         {
             ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
 
-            if (options.UseStrictTypeChecking)
-            {
-                return predicate is null
-                    ? item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name
-                    : predicate.Compose(item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name,
-                        Expression.AndAlso);
-            }
-
-            return predicate;
+            return options.UseStrictTypeChecking ?
+                predicate.Compose(Default<TItem>(), Expression.AndAlso) :
+                predicate;
         }
+
+        public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem =>
+            item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name;
 
         public TItem? CheckItem<TItem>(TItem item) where TItem : IItem
         {

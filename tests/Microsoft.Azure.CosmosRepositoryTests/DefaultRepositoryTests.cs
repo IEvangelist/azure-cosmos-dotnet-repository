@@ -481,7 +481,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests
     class MockExpressionProvider : IRepositoryExpressionProvider
     {
         public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>>? predicate) where TItem : IItem
-            => predicate!.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso);
+            => predicate!.Compose(Default<TItem>(), Expression.AndAlso);
+
+        public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem =>
+            item => item.Type == typeof(TItem).Name;
 
         public TItem CheckItem<TItem>(TItem item) where TItem : IItem
         {
