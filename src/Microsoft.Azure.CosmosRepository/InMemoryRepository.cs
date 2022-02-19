@@ -90,7 +90,7 @@ namespace Microsoft.Azure.CosmosRepository
             }
 
             TItem? toReturn = item is {Type: {Length: 0}} || item?.Type == typeof(TItem).Name ? item : default;
-            return toReturn ?? throw new Exception("WHAT TO DO HERE?????");
+            return toReturn!;
         }
 
         /// <inheritdoc/>

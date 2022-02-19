@@ -35,6 +35,7 @@ namespace WebTier.Integration.Tests
             //Arrange
             LanguageDto language = new()
             {
+                Id = string.Empty,
                 Name = "C#",
                 Description = "A language created by Microsoft.",
                 Aliases = new []{"C#", ".NET"},
