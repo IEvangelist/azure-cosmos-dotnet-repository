@@ -103,8 +103,6 @@ public abstract class CosmosRepositoryAcceptanceTest
 
         ConfigureProducts(options);
         ConfigureRatings(options);
-
-        ConfigureProducts(options);
     };
 
     protected static readonly Action<RepositoryOptions> ConfigureDatabaseSettings = options =>
