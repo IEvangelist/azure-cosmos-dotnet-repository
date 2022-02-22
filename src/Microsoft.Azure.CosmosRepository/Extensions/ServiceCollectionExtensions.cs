@@ -101,7 +101,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(
                     nameof(services), "A service collection is required.");
             }
-
             services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
                 .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
                 .AddSingleton(typeof(InMemoryChangeFeed<>));

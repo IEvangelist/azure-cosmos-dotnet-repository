@@ -4,6 +4,7 @@
 using System;
 using System.Linq.Expressions;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 
@@ -21,21 +22,21 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         {
             ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
 
-            return options.UseStrictTypeChecking ?
-                predicate.Compose(Default<TItem>(), Expression.AndAlso) :
-                predicate;
+            return options.UseStrictTypeChecking ? predicate.Compose(Default<TItem>(), Expression.AndAlso) : predicate;
         }
 
         public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem =>
             item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name;
 
-        public TItem? CheckItem<TItem>(TItem item) where TItem : IItem
+        public TItem CheckItem<TItem>(TItem item) where TItem : IItem
         {
             ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
 
             if (options.UseStrictTypeChecking)
             {
-                return item is {Type: {Length: 0}} || item.Type == typeof(TItem).Name ? item : default;
+                return item is {Type: {Length: 0}} || item.Type == typeof(TItem).Name
+                    ? item
+                    : throw new MissMatchedTypeDiscriminatorException(typeof(TItem).Name, item.Type);
             }
 
             return item;

@@ -12,6 +12,6 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
         Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem;
 
-        TItem? CheckItem<TItem>(TItem item) where TItem : IItem;
+        TItem CheckItem<TItem>(TItem item) where TItem : IItem;
     }
 }

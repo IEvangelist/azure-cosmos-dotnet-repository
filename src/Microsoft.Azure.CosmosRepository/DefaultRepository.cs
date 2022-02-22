@@ -84,7 +84,7 @@ namespace Microsoft.Azure.CosmosRepository
             _logger.LogPointReadExecuted<TItem>(response.RequestCharge);
             _logger.LogItemRead(item);
 
-            return _repositoryExpressionProvider.CheckItem(item)!;
+            return _repositoryExpressionProvider.CheckItem(item);
         }
 
         /// <inheritdoc/>
@@ -358,7 +358,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             IQueryable<TItem> query =
                 container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate) ?? throw new NotImplementedException());
+                    .Where(_repositoryExpressionProvider.Build(predicate));
 
             TryLogDebugDetails(_logger, () => $"Read: {query}");
 
@@ -475,6 +475,7 @@ namespace Microsoft.Azure.CosmosRepository
 
         static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
         {
+            // ReSharper disable once ConstantConditionalAccessQualifier
             if (logger?.IsEnabled(LogLevel.Debug) ?? false)
             {
                 // ReSharper disable once TemplateIsNotCompileTimeConstantProblem

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -486,9 +487,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem =>
             item => item.Type == typeof(TItem).Name;
 
-        public TItem CheckItem<TItem>(TItem item) where TItem : IItem
-        {
-            throw new NotImplementedException();
-        }
+        public TItem CheckItem<TItem>(TItem item) where TItem : IItem =>
+            item is {Type: {Length: 0}} || item.Type == typeof(TItem).Name
+                ? item
+                : throw new MissMatchedTypeDiscriminatorException(typeof(TItem).Name, item.Type);
     }
 }
