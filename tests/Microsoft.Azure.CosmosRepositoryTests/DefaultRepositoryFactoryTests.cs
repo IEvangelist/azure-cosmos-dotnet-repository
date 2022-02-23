@@ -13,11 +13,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests
     public class DefaultRepositoryFactoryTests
     {
         [Fact]
-        public void NewRepositoryFactoryThrowsWithNullServiceProvider() =>
-            Assert.Throws<ArgumentNullException>(() =>
-                new DefaultRepositoryFactory(null));
-
-        [Fact]
         public void RepositoryFactoryCorrectlyGetsRepositoryUsingConnectionStringTest()
         {
             IConfigurationRoot configuration =
@@ -31,7 +26,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             services.AddSingleton<IConfiguration>(configuration);
 
             services.AddCosmosRepository();
-            
+
             IServiceProvider provider = services.BuildServiceProvider();
             IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();
 
@@ -83,13 +78,13 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         public string Type { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonProperty("quest")]
-        public string Quest { get; set; }
+        public string Quest { get; set; } = null!;
 
         [JsonProperty("favoritecolor")]
-        public string FavoriteColor { get; set; }
+        public string FavoriteColor { get; set; } = null!;
 
         string IItem.PartitionKey => GetPartitionKeyValue();
 

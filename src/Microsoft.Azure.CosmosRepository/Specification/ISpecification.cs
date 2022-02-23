@@ -28,12 +28,12 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             IReadOnlyList<TItem> queryResult,
             int totalCount,
             double charge,
-            string continuationToken);
+            string? continuationToken);
 
         /// <summary>
         /// Continuation token used for paging in cosmos. Must set <see cref="UseContinuationToken"/> for continuation token to be applicable
         /// </summary>
-        string ContinuationToken { get; }
+        string? ContinuationToken { get; }
 
         /// <summary>
         /// Select which page shoud be selected in the paginated result

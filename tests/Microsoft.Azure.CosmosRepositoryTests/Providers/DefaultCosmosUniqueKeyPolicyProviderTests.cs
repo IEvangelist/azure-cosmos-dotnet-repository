@@ -17,8 +17,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         {
             ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
 
-            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass>();
-            Assert.Equal("/Name", policy.UniqueKeys.Single().Paths.Single());
+            UniqueKeyPolicy? policy = provider.GetUniqueKeyPolicy<SomeInterestingClass>();
+            Assert.Equal("/Name", policy!.UniqueKeys.Single().Paths.Single());
         }
 
         [Fact]
@@ -26,8 +26,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         {
             ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
 
-            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass2>();
-            Assert.Contains("/Street", policy.UniqueKeys.Single().Paths);
+            UniqueKeyPolicy? policy = provider.GetUniqueKeyPolicy<SomeInterestingClass2>();
+            Assert.Contains("/Street", policy!.UniqueKeys.Single().Paths);
             Assert.Contains("/HouseNumber", policy.UniqueKeys.Single().Paths);
             Assert.Equal(2, policy.UniqueKeys.Single().Paths.Count);
         }
@@ -37,8 +37,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         {
             ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
 
-            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass3>();
-            UniqueKey key1 = policy.UniqueKeys.Single(key => key.Paths.Count == 2);
+            UniqueKeyPolicy? policy = provider.GetUniqueKeyPolicy<SomeInterestingClass3>();
+            UniqueKey key1 = policy!.UniqueKeys.Single(key => key.Paths.Count == 2);
             UniqueKey key2 = policy.UniqueKeys.Single(key => key.Paths.Count == 1);
 
             Assert.Contains("/Street", key1.Paths);
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         public void CosmosUniqueKeyPolicyProviderCorrectlyGetsNullWhenNoAttributesAreApplied()
         {
             ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
-            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass4>();
+            UniqueKeyPolicy? policy = provider.GetUniqueKeyPolicy<SomeInterestingClass4>();
 
             Assert.Null(policy);
         }
@@ -63,8 +63,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
         {
             ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
 
-            UniqueKeyPolicy policy = provider.GetUniqueKeyPolicy<SomeInterestingClass5>();
-            Assert.Equal("/name", policy.UniqueKeys.Single().Paths.Single());
+            UniqueKeyPolicy? policy = provider.GetUniqueKeyPolicy<SomeInterestingClass5>();
+            Assert.Equal("/name", policy!.UniqueKeys.Single().Paths.Single());
         }
     }
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,11 +90,11 @@ public class EnabledStrictTypeCheckingTests : CosmosRepositoryAcceptanceTest
                 x.PartitionKey == nameof(DiscountOf20Percent));
 
             //Assert
-            Offer offer1 = await offersRepository.GetAsync(discountOf20Percent.Id, nameof(DiscountOf20Percent));
-            offer1.Should().BeNull();
+            await Assert.ThrowsAsync<MissMatchedTypeDiscriminatorException>(async () =>
+                await offersRepository.GetAsync(discountOf20Percent.Id, nameof(DiscountOf20Percent)));
 
-            Offer offer2 = await offersRepository.GetAsync(buyOneGetOneFreeOffer.Id, nameof(BuyOneGetOneFreeOffer));
-            offer2.Should().BeNull();
+            await Assert.ThrowsAsync<MissMatchedTypeDiscriminatorException>(async () =>
+                await offersRepository.GetAsync(buyOneGetOneFreeOffer.Id, nameof(BuyOneGetOneFreeOffer)));
 
             results.Count().Should().Be(0);
         }

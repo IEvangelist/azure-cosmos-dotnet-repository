@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
             where TItem : IItem
             where TResult : IQueryResult<TItem>
         {
-            if (specification.OrderExpressions == null)
+            if (specification.OrderExpressions.Any() is false)
             {
                 return query;
             }
@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
                     "Multiple OrderBy expressions found only use one and then chain with ThenBy and TheByDescending");
             }
 
-            IOrderedQueryable<TItem> orderedQuery = null;
+            IOrderedQueryable<TItem>? orderedQuery = null;
 
             foreach (OrderExpressionInfo<TItem> orderExpression in specification.OrderExpressions)
             {

@@ -42,10 +42,12 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         {
             RepositoryOptions repositoryOptions = _optionsMonitor.CurrentValue;
 
-            IEnumerable<IGrouping<string, ContainerOptionsBuilder>> containers = repositoryOptions.ContainerBuilder
+            IEnumerable<IGrouping<string, ContainerOptionsBuilder>> containers = repositoryOptions
+                .ContainerBuilder
                 .Options
-                .Where(x => x.ChangeFeedOptions != null)
-                .GroupBy(x => x.Name);
+                .Where(x =>
+                    x.ChangeFeedOptions != null && x.Name is not null)
+                .GroupBy(x => x.Name!);
 
             foreach (IGrouping<string, ContainerOptionsBuilder> container in containers)
             {

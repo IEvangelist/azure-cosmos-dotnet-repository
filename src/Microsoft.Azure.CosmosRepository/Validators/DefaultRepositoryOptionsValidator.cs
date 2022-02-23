@@ -15,7 +15,8 @@ namespace Microsoft.Azure.CosmosRepository.Validators
 
         public void ValidateForContainerCreation(IOptions<RepositoryOptions> options)
         {
-            RepositoryOptions current = options?.Value;
+            RepositoryOptions? current = options.Value;
+
             if (current is null)
             {
                 throw new ArgumentNullException(nameof(options), "Repository option are required");
@@ -27,8 +28,8 @@ namespace Microsoft.Azure.CosmosRepository.Validators
                 current.CosmosConnectionString is null,
                 current.AccountEndpoint is null,
                 current.TokenCredential is null,
-                current.DatabaseId is null,
-                current.ContainerId is null,
+                string.IsNullOrWhiteSpace(current.DatabaseId),
+                string.IsNullOrWhiteSpace(current.ContainerId),
                 current.ContainerPerItemType
             );
 

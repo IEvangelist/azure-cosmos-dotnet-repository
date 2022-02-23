@@ -1,4 +1,4 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -12,11 +12,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Extensions
         [Fact]
         public void AddCosmosRepositoryThrowsWithNullServiceCollection() =>
             Assert.Throws<ArgumentNullException>(
-                () => (null as IServiceCollection).AddCosmosRepository());
+                () => (null as IServiceCollection)!.AddCosmosRepository());
 
         [Fact]
         public void AddInMemoryCosmosRepositoryThrowsWithNullServiceCollection() =>
             Assert.Throws<ArgumentNullException>(
-                () => (null as IServiceCollection).AddInMemoryCosmosRepository());
+                () => (null as IServiceCollection)!.AddInMemoryCosmosRepository());
     }
 }

@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using Microsoft.Azure.CosmosRepository.Paging;
-using Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
@@ -41,7 +40,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             IReadOnlyList<TItem> queryResult,
             int totalCount,
             double charge,
-            string continuationToken) =>
+            string? continuationToken) =>
             new Page<TItem>(totalCount, PageSize, queryResult, charge, continuationToken);
     }
 }

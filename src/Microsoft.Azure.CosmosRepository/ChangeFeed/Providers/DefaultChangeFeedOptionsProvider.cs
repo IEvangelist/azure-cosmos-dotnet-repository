@@ -23,7 +23,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
             List<ChangeFeedOptions> changeFeedOptions = _repositoryOptions.ContainerBuilder
                 .Options
                 .Where(x => items.Contains(x.Type) && x.ChangeFeedOptions is not null)
-                .Select(x => x.ChangeFeedOptions)
+                .Select(x => x.ChangeFeedOptions!)
                 .ToList();
 
             ChangeFeedOptions sample = changeFeedOptions.FirstOrDefault();

@@ -41,7 +41,7 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             _orderExpressions;
 
         /// <inheritdoc/>
-        public string ContinuationToken { get; internal set; }
+        public string? ContinuationToken { get; internal set; }
 
         /// <inheritdoc/>
         public int? PageNumber { get; internal set; }
@@ -57,6 +57,6 @@ namespace Microsoft.Azure.CosmosRepository.Specification
             IReadOnlyList<TItem> queryResult,
             int totalCount,
             double charge,
-            string continuationToken);
+            string? continuationToken);
     }
 }

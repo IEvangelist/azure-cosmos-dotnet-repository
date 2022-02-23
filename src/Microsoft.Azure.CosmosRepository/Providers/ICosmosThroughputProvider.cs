@@ -16,8 +16,8 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         /// </summary>
         /// <typeparam name="TItem">The type of <see cref="IItem"/></typeparam>
         /// <returns><see cref="ThroughputProperties"/> for the <see cref="IItem"/>s container.</returns>
-        ThroughputProperties GetThroughputProperties<TItem>() where TItem : IItem;
+        ThroughputProperties? GetThroughputProperties<TItem>() where TItem : IItem;
 
-        ThroughputProperties GetThroughputProperties(Type itemType);
+        ThroughputProperties? GetThroughputProperties(Type itemType);
     }
 }

@@ -29,11 +29,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         {
             Type attributeType = typeof(PartitionKeyPathAttribute);
 
-            ContainerOptionsBuilder optionsBuilder = _options.Value.GetContainerOptions(itemType);
+            ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);
 
             if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
             {
-                return optionsBuilder.PartitionKey;
+                return optionsBuilder.PartitionKey!;
             }
 
             return Attribute.GetCustomAttribute(

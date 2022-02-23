@@ -19,7 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <summary>
         /// Gets or sets the cosmos connection string. Primary or secondary connection strings are valid.
         /// </summary>
-        public string CosmosConnectionString { get; set; }
+        public string? CosmosConnectionString { get; set; }
 
         /// <summary>
         /// Gets or sets the cosmos account endpoint URI. This can be retrieved from the Overview section of the Azure Portal.
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// In the form of https://{databaseaccount}.documents.azure.com:443/, see: https://docs.microsoft.com/en-us/rest/api/cosmos-db/cosmosdb-resource-uri-syntax-for-rest
         /// </remarks>
         /// </summary>
-        public string AccountEndpoint { get; set; }
+        public string? AccountEndpoint { get; set; }
 
         /// <summary>
         /// Gets or sets the name identifier for the cosmos database.
@@ -89,12 +89,12 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <summary>
         /// Gets or sets the repository serialization options.
         /// </summary>
-        public RepositorySerializationOptions SerializationOptions { get; set; }
+        public RepositorySerializationOptions? SerializationOptions { get; set; }
 
         /// <summary>
         /// The <see cref="TokenCredential"/> which can be used to access azure resources, including Cosmos DB.
         /// </summary>
-        public TokenCredential TokenCredential { get; set; } = null;
+        public TokenCredential? TokenCredential { get; set; } = null;
 
         /// <summary>
         /// A builder to configure containers.
@@ -112,10 +112,10 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// </summary>
         /// <typeparam name="TItem"></typeparam>
         /// <returns>null or <see cref="ContainerOptionsBuilder"/>.</returns>
-        internal ContainerOptionsBuilder GetContainerOptions<TItem>() where TItem : IItem =>
+        internal ContainerOptionsBuilder? GetContainerOptions<TItem>() where TItem : IItem =>
             GetContainerOptions(typeof(TItem));
 
-        internal ContainerOptionsBuilder GetContainerOptions(Type itemType) =>
+        internal ContainerOptionsBuilder? GetContainerOptions(Type itemType) =>
             ContainerOptions.FirstOrDefault(co => co.Type == itemType);
 
         /// <summary>
@@ -125,13 +125,13 @@ namespace Microsoft.Azure.CosmosRepository.Options
         /// <returns>A collection of <see cref="ContainerOptionsBuilder"/>s that share the same container.</returns>
         internal IEnumerable<ContainerOptionsBuilder> GetContainerSharedContainerOptions<TItem>() where TItem : IItem
         {
-            ContainerOptionsBuilder containerOptionsBuilder = GetContainerOptions<TItem>();
+            ContainerOptionsBuilder? containerOptionsBuilder = GetContainerOptions<TItem>();
             return containerOptionsBuilder is not null ? ContainerOptions.Where(co => co.Name == containerOptionsBuilder.Name) : new List<ContainerOptionsBuilder>();
         }
 
         internal IEnumerable<ContainerOptionsBuilder> GetContainerSharedContainerOptions(Type itemType)
         {
-            ContainerOptionsBuilder containerOptionsBuilder = GetContainerOptions(itemType);
+            ContainerOptionsBuilder? containerOptionsBuilder = GetContainerOptions(itemType);
             return containerOptionsBuilder is not null ? ContainerOptions.Where(co => co.Name == containerOptionsBuilder.Name) : new List<ContainerOptionsBuilder>();
         }
     }

@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Specification;
-using Microsoft.Azure.CosmosRepository.Specification.Builder;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Xunit;
 using Xunit.Abstractions;
@@ -117,12 +116,15 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
 
             //Act
             IPage<Product> orderedProductsPage1 =
-                await _productsRepository.QueryAsync<IPage<Product>>(specification);
+                await _productsRepository.QueryAsync(specification);
 
-            specification.UpdateContinuationToken(orderedProductsPage1.Continuation);
+            if (orderedProductsPage1.Continuation is not null)
+            {
+                specification.UpdateContinuationToken(orderedProductsPage1.Continuation);
+            }
 
             IPage<Product> orderedProductsPage2 =
-                await _productsRepository.QueryAsync<IPage<Product>>(specification);
+                await _productsRepository.QueryAsync(specification);
 
             //Assert
             orderedProductsPage1.Items.Count.Should().Be(2);

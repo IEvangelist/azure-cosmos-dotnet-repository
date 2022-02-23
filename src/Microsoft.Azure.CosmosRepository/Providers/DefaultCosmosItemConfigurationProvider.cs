@@ -52,10 +52,10 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
             string containerName = _containerNameProvider.GetContainerName(itemType);
             string partitionKeyPath = _cosmosPartitionKeyPathProvider.GetPartitionKeyPath(itemType);
-            UniqueKeyPolicy uniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy(itemType);
+            UniqueKeyPolicy? uniqueKeyPolicy = _cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy(itemType);
             int timeToLive = _containerDefaultTimeToLiveProvider.GetDefaultTimeToLive(itemType);
             bool sync = _syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties(itemType);
-            ThroughputProperties throughputProperties = _cosmosThroughputProvider.GetThroughputProperties(itemType);
+            ThroughputProperties? throughputProperties = _cosmosThroughputProvider.GetThroughputProperties(itemType);
             bool useStrictTypeChecking = _cosmosStrictTypeCheckingProvider.UseStrictTypeChecking(itemType);
 
             return new(
