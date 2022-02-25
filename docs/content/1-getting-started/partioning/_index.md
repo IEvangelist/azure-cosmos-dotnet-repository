@@ -69,14 +69,14 @@ builder.Services.AddCosmosRepository(options =>
 
     options.ContainerBuilder.Configure<Customer>(userContainerOptions => 
     {    
-        userContainerOptions.WithContainer("customer")
-        userContainerOptions.WithPartitionKey("/emailAddress")
+        userContainerOptions.WithContainer("customer");
+        userContainerOptions.WithPartitionKey("/emailAddress");
     });
 
     options.ContainerBuilder.Configure<Order>(orderContainerOptions => 
     {    
-        orderContainerOptions.WithContainer("orders")
-        orderContainerOptions.WithPartitionKey("/customerId")
+        orderContainerOptions.WithContainer("orders");
+        orderContainerOptions.WithPartitionKey("/customerId");
     });
 });
 
@@ -103,14 +103,14 @@ builder.Services.AddCosmosRepository(options =>
 
     options.ContainerBuilder.Configure<Stock>(userContainerOptions => 
     {    
-        userContainerOptions.WithContainer("stock")
-        userContainerOptions.WithPartitionKey("/stockReferenceNumber")
+        userContainerOptions.WithContainer("stock");
+        userContainerOptions.WithPartitionKey("/stockReferenceNumber");
     });
 
     options.ContainerBuilder.Configure<StockRecord>(orderContainerOptions => 
     {    
-        orderContainerOptions.WithContainer("stock")
-        orderContainerOptions.WithPartitionKey("/stockReferenceNumber")
+        orderContainerOptions.WithContainer("stock");
+        orderContainerOptions.WithPartitionKey("/stockReferenceNumber");
     });
 });
 
