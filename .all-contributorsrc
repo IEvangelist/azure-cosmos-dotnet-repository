@@ -222,6 +222,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "fffffatah",
+      "name": "A.F.M. Noorullah",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43249848?v=4",
+      "profile": "https://www.fffffatah.tech",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
