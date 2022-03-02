@@ -37,7 +37,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         protected EtagItem()
         {
-
         }
 
         /// <summary>

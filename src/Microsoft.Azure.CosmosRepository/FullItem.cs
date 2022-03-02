@@ -40,7 +40,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         protected FullItem()
         {
-
         }
 
         /// <summary>
