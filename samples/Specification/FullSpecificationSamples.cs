@@ -48,7 +48,7 @@ public class FullSpecificationSamples
 
         UsersOrderByAgeOffsetSpecification specification = new(age);
         IPageQueryResult<Person> page = await _repository.QueryAsync(specification);
-        while (page.HasNextPage)
+        while (page.HasNextPage is not null && page.HasNextPage.Value)
         {
             foreach (Person person in page.Items)
             {
