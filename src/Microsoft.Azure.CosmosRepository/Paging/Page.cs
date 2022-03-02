@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <param name="items"></param>
         /// <param name="charge"></param>
         /// <param name="continuation"></param>
-        internal Page(int total, int size, IReadOnlyList<T> items, double charge, string? continuation = null)
+        internal Page(int? total, int size, IReadOnlyList<T> items, double charge, string? continuation = null)
         {
             Total = total;
             Size = size;
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         }
 
         /// <inheritdoc />
-        public int Total { get; }
+        public int? Total { get; }
 
         /// <inheritdoc />
         public int Size { get; }

@@ -16,14 +16,14 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <summary>
         /// The total amount items that matched the query.
         /// </summary>
-        int Total { get; }
+        int? Total { get; }
 
         /// <summary>
         /// The size of the current page.
         /// </summary>
         int Size { get; }
 
-    
+
 
         /// <summary>
         /// The continuation token used to load results from a stateless marker.

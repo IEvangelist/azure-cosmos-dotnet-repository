@@ -19,7 +19,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <param name="charge">The charge.</param>
         /// <param name="continuation">The continuation.</param>
         internal PageQueryResult(
-            int total,
+            int? total,
             int size,
             IReadOnlyList<T> items,
             double charge,
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <param name="charge">The charge.</param>
         /// <param name="continuation">The continuation.</param>
         internal PageQueryResult(
-            int total,
+            int? total,
             int? pageNumber,
             int size,
             IReadOnlyList<T> items,
@@ -49,7 +49,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         }
 
         /// <inheritdoc />
-        public int TotalPages => GetTotalPages();
+        public int? TotalPages => GetTotalPages();
 
         /// <inheritdoc />
         public int? PageNumber { get; }
@@ -58,22 +58,32 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         public bool HasPreviousPage => PageNumber > 1;
 
         /// <inheritdoc />
-        public bool HasNextPage => PageNumber < TotalPages;
+        public bool? HasNextPage => TotalPages is not null ? PageNumber < TotalPages : null;
 
         /// <inheritdoc />
         public int PreviousPageNumber => GetPreviousPageNumber();
 
         /// <inheritdoc />
-        public int NextPageNumber => GetNextPageNumber();
+        public int? NextPageNumber => GetNextPageNumber();
 
-        private int GetNextPageNumber()
+        private int? GetNextPageNumber()
         {
-            return HasNextPage && PageNumber.HasValue ? PageNumber.Value + 1 : TotalPages;
+            if (HasNextPage is not null)
+            {
+                return HasNextPage.HasValue && PageNumber.HasValue ? PageNumber.Value + 1 : TotalPages ?? null;
+            }
+
+            return null;
         }
 
-        private int GetTotalPages()
+        private int? GetTotalPages()
         {
-            return (int)Math.Abs(Math.Ceiling(Total / (double)Size));
+            if (Total is not null)
+            {
+                return (int)Math.Abs(Math.Ceiling(Total.Value / (double)Size));
+            }
+
+            return null;
         }
 
         private int GetPreviousPageNumber()
