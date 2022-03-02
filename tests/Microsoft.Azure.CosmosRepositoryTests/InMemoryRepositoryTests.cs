@@ -562,6 +562,31 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
+        public async Task UpdateAsync_WhereValueEtagIsNull_Updates()
+        {
+            //Arrange
+            string originalEtag = Guid.NewGuid().ToString();
+            Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag };
+            _personRepository.Items.TryAddAsJson(item.Id, item);
+            Person updateItem = new("joe2") { Id = item.Id, Type = nameof(Person), Etag = null! };
+
+            //Act
+            Person person = await _personRepository.UpdateAsync(updateItem, default, false);
+
+            Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
+
+            Assert.Equal(updateItem.Name, person.Name);
+            Assert.Equal(updateItem.Id, person.Id);
+            Assert.Equal(updateItem.Type, person.Type);
+
+            Assert.Equal(updateItem.Name, addedPerson.Name);
+            Assert.Equal(updateItem.Id, addedPerson.Id);
+            Assert.Equal(updateItem.Type, addedPerson.Type);
+
+            Assert.True(!string.IsNullOrWhiteSpace(addedPerson.Etag) && addedPerson.Etag != Guid.Empty.ToString() && addedPerson.Etag != originalEtag);
+        }
+
+        [Fact]
         public async Task UpdateAsync_ManyItems_UpdatesAllItems()
         {
             //Arrange

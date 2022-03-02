@@ -30,8 +30,25 @@ namespace Microsoft.Azure.CosmosRepository
     /// ]]>
     /// </code>
     /// </example>
-    public class EtagItem : Item, IItemWithEtag
+    public abstract class EtagItem : Item, IItemWithEtag
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        protected EtagItem()
+        {
+
+        }
+
+        /// <summary>
+        /// A constructor that allows the etag to be set so that items can be mapped to and from other objects
+        /// </summary>
+        /// <param name="etag"></param>
+        protected EtagItem(string etag)
+        {
+            Etag = etag;
+        }
+
         /// <summary>
         /// Etag for the item which was set by Cosmos the last time the item was updated. This string is used for the relevant operations when specified.
         /// </summary>

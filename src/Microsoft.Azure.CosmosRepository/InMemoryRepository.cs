@@ -179,6 +179,7 @@ namespace Microsoft.Azure.CosmosRepository
             await Task.CompletedTask;
 
             if (value is IItemWithEtag valueWithEtag &&
+                !string.IsNullOrWhiteSpace(valueWithEtag.Etag) &&
                 Items.ContainsKey(value.Id) &&
                 DeserializeItem(Items[value.Id]) is IItemWithEtag existingItemWithEtag &&
                 !ignoreEtag
