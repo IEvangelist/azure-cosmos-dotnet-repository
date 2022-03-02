@@ -61,4 +61,46 @@ public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
             await GetClient().UseClientAsync(PruneDatabases);
         }
     }
+
+    [Fact]
+    public async Task Upsert_WithEtag_WorksCorrectly()
+    {
+        try
+        {
+            await GetClient().UseClientAsync(PruneDatabases);
+
+            StockInformation stockInformation = new(5, DateTime.UtcNow);
+
+            Product product = new(
+                "Samsung TV",
+                TechnologyCategoryId,
+                500,
+                stockInformation);
+
+            product = await _productsRepository.CreateAsync(product);
+
+            string? etagAfterCreation = (await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId)).Single().Etag;
+
+            product.ApplySaleDiscount(0.10);
+
+            Product productToUpsert = new (product.Name, product.CategoryId, product.Price,
+                new StockInformation(product.Stock.Count, product.Stock.LastReplenishedUtc,
+                    product.Stock.DueReplenishmentUtc))
+            {
+                Id = product.Id
+            };
+
+            await _productsRepository.UpdateAsync(productToUpsert);
+
+            Product updatedProduct =
+                (await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId)).Single();
+
+            updatedProduct.Price.Should().Be(product.Price);
+            updatedProduct.Etag.Should().NotBe(etagAfterCreation);
+        }
+        finally
+        {
+            await GetClient().UseClientAsync(PruneDatabases);
+        }
+    }
 }
