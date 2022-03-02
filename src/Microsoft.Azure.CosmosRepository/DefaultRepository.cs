@@ -388,6 +388,7 @@ namespace Microsoft.Azure.CosmosRepository
             _logger.LogQueryConstructed(query);
 
             Response<int>? countResponse = null;
+            
             if (returnTotal)
             {
                 countResponse = await query.CountAsync(cancellationToken);
@@ -422,6 +423,7 @@ namespace Microsoft.Azure.CosmosRepository
                     .Build(predicate ?? _repositoryExpressionProvider.Default<TItem>()));
 
             Response<int>? countResponse = null;
+            
             if (returnTotal)
             {
                 countResponse = await query.CountAsync(cancellationToken);
