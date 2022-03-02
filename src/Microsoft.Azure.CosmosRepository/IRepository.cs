@@ -258,6 +258,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
         /// <param name="pageSize">The size of the page to return from cosmos db.</param>
         /// <param name="continuationToken">The token returned from a previous query, if null starts at the beginning of the data</param>
+        /// <param name="returnTotal">Specifies whether or not to return the total number of items that matched the query. This defaults to false as it can be a very expensive operation.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
         /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
@@ -265,6 +266,7 @@ namespace Microsoft.Azure.CosmosRepository
             Expression<Func<TItem, bool>>? predicate = null,
             int pageSize = 25,
             string? continuationToken = null,
+            bool returnTotal=false,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -292,6 +294,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
         /// <param name="pageNumber">The page number to return from cosmos db.</param>
         /// <param name="pageSize">The size of the page to return from cosmos db.</param>
+        /// <param name="returnTotal">Specifies whether or not to return the total number of items that matched the query. This defaults to false as it can be a very expensive operation.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="IPageQueryResult{T}"/> of <see cref="IItem"/>s</returns>
         /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
@@ -300,6 +303,7 @@ namespace Microsoft.Azure.CosmosRepository
             Expression<Func<TItem, bool>>? predicate = null,
             int pageNumber = 1,
             int pageSize = 25,
+            bool returnTotal=false,
             CancellationToken cancellationToken = default);
     }
 }

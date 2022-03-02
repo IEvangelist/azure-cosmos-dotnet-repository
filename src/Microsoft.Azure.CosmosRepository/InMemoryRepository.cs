@@ -359,6 +359,7 @@ namespace Microsoft.Azure.CosmosRepository
             Expression<Func<TItem, bool>>? predicate = null,
             int pageSize = 25,
             string? continuationToken = null,
+            bool returnTotal = false,
             CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
@@ -369,6 +370,7 @@ namespace Microsoft.Azure.CosmosRepository
             Expression<Func<TItem, bool>>? predicate = null,
             int pageNumber = 1,
             int pageSize = 25,
+            bool returnTotal = false,
             CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
@@ -391,7 +393,7 @@ namespace Microsoft.Azure.CosmosRepository
                 .Take(pageSize);
 
             return new PageQueryResult<TItem>(
-                enumerable.Count(),
+                returnTotal ? enumerable.Count() : null,
                 pageNumber,
                 pageSize,
                 items.ToList().AsReadOnly(),

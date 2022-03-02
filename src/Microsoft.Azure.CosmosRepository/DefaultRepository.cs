@@ -370,6 +370,7 @@ namespace Microsoft.Azure.CosmosRepository
             Expression<Func<TItem, bool>>? predicate = null,
             int pageSize = 25,
             string? continuationToken = null,
+            bool returnTotal = false,
             CancellationToken cancellationToken = default)
         {
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
@@ -379,7 +380,6 @@ namespace Microsoft.Azure.CosmosRepository
                 MaxItemCount = pageSize
             };
 
-
             IQueryable<TItem> query = container
                 .GetItemLinqQueryable<TItem>(requestOptions: options, continuationToken: continuationToken)
                 .Where(_repositoryExpressionProvider.Build(predicate ??
@@ -387,7 +387,12 @@ namespace Microsoft.Azure.CosmosRepository
 
             _logger.LogQueryConstructed(query);
 
-            Response<int> countResponse = await query.CountAsync(cancellationToken);
+            Response<int>? countResponse = null;
+            
+            if (returnTotal)
+            {
+                countResponse = await query.CountAsync(cancellationToken);
+            }
 
             (List<TItem> Items, double Charge, string? ContinuationToken) result =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
@@ -395,10 +400,10 @@ namespace Microsoft.Azure.CosmosRepository
             _logger.LogQueryExecuted(query, result.Charge);
 
             return new Page<TItem>(
-                countResponse.Resource,
+                countResponse?.Resource ?? null,
                 pageSize,
                 result.Items.AsReadOnly(),
-                result.Charge + countResponse.RequestCharge,
+                result.Charge + countResponse?.RequestCharge ?? 0,
                 result.ContinuationToken);
         }
 
@@ -407,6 +412,7 @@ namespace Microsoft.Azure.CosmosRepository
             Expression<Func<TItem, bool>>? predicate = null,
             int pageNumber = 1,
             int pageSize = 25,
+            bool returnTotal = false,
             CancellationToken cancellationToken = default)
         {
             Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
@@ -416,8 +422,12 @@ namespace Microsoft.Azure.CosmosRepository
                 .Where(_repositoryExpressionProvider
                     .Build(predicate ?? _repositoryExpressionProvider.Default<TItem>()));
 
-            Response<int> countResponse =
-                await query.CountAsync(cancellationToken).ConfigureAwait(false);
+            Response<int>? countResponse = null;
+            
+            if (returnTotal)
+            {
+                countResponse = await query.CountAsync(cancellationToken);
+            }
 
             query = query.Skip(pageSize * (pageNumber - 1))
                 .Take(pageSize);
@@ -430,11 +440,11 @@ namespace Microsoft.Azure.CosmosRepository
             _logger.LogQueryExecuted(query, result.Charge);
 
             return new PageQueryResult<TItem>(
-                countResponse.Resource,
+                countResponse?.Resource ?? null,
                 pageNumber,
                 pageSize,
                 result.Items.AsReadOnly(),
-                result.Charge + countResponse.RequestCharge);
+                result.Charge + countResponse?.RequestCharge ?? 0);
         }
 
         /// <inheritdoc/>

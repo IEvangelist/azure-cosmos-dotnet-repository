@@ -1009,7 +1009,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
 
         [Fact]
-        public async Task PageAsync_PredicateThatDoesMatch_ReturnsItemInList()
+        public async Task PageAsync_ReturnTotalIsFalse_ReturnsCorrectItemsAndTotalIsNullAndCountHasNotBeenCalled()
         {
             //Arrange
             Dog dog1 = new("cocker spaniel");
@@ -1030,10 +1030,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             int pageNumber = 2;
 
             List<Dog> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
-                                                         .Where(d => d.Breed == "cocker spaniel")
-                                                         .Skip(pageSize * (pageNumber - 1))
-                                                         .Take(pageSize)
-                                                         .ToList();
+                .Where(d => d.Breed == "cocker spaniel")
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToList();
 
             //Act
             IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
@@ -1042,11 +1042,54 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             List<Dog> enumerable = dogs.Items.ToList();
             Assert.True(enumerable.Any());
             Assert.Equal(expectedList, enumerable, new DogComparer());
+            Assert.Equal(dogs.PageNumber, pageNumber);
             Assert.True(dogs.HasPreviousPage);
             Assert.Equal(1, dogs.PreviousPageNumber);
-            Assert.True(dogs.HasNextPage);
-            Assert.Equal(3, dogs.NextPageNumber);
-            Assert.Equal(3, dogs.TotalPages);
+            Assert.True(dogs.TotalPages is null);
+            Assert.True(dogs.NextPageNumber is null);
+            Assert.True(dogs.HasNextPage is null);
+        }
+
+        [Fact]
+        public async Task PageAsync_ReturnTotalIsTrue_ReturnsCorrectItemsAndTotalIsNotNull()
+        {
+            //Arrange
+            Dog dog1 = new("cocker spaniel");
+            Dog dog2 = new("cocker spaniel");
+            Dog dog3 = new("cocker spaniel");
+            Dog dog4 = new("cocker spaniel");
+            Dog dog5 = new("cocker spaniel");
+            Dog dog6 = new("cocker spaniel");
+            Dog dog7 = new("golden retriever");
+            _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
+            _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
+            _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+            _dogRepository.Items.TryAddAsJson(dog4.Id, dog4);
+            _dogRepository.Items.TryAddAsJson(dog5.Id, dog5);
+            _dogRepository.Items.TryAddAsJson(dog6.Id, dog6);
+            _dogRepository.Items.TryAddAsJson(dog7.Id, dog7);
+            int pageSize = 2;
+            int pageNumber = 2;
+
+            List<Dog> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
+                .Where(d => d.Breed == "cocker spaniel")
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToList();
+
+            //Act
+            IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
+
+            //Assert
+            List<Dog> enumerable = dogs.Items.ToList();
+            Assert.True(enumerable.Any());
+            Assert.Equal(expectedList, enumerable, new DogComparer());
+            Assert.Equal(dogs.PageNumber, pageNumber);
+            Assert.True(dogs.HasPreviousPage);
+            Assert.Equal(1, dogs.PreviousPageNumber);
+            Assert.True(dogs.TotalPages is null);
+            Assert.True(dogs.NextPageNumber is null);
+            Assert.True(dogs.HasNextPage is null);
         }
 
         [Fact]
@@ -1065,7 +1108,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             DogSpecification specification = new("golden retriever", 2, 2);
 
             //Act
-            IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize);
+            IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize, true);
 
             //Assert
             List<Dog> enumerable = dogs.Items.ToList();

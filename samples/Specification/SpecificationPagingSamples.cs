@@ -25,7 +25,7 @@ public class SpecificationPagingSamples
         double totalCharge = 0;
         OffsetByPageNumberSpecification<Person> specification = new(1, 25);
         IPageQueryResult<Person> page = await _repository.QueryAsync(specification);
-        while (page.HasNextPage)
+        while (page.HasNextPage is not null && page.HasNextPage.Value)
         {
             foreach (Person person in page.Items)
             {
