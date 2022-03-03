@@ -37,7 +37,8 @@ public class ShipInformationProjections
         public ShipDockedHandler(IRepository<ShipInformation> repository) =>
             _repository = repository;
 
-        public async ValueTask HandleAsync(ShipEvents.DockedInPort dockedInPort,
+        public async ValueTask HandleAsync(
+            ShipEvents.DockedInPort dockedInPort,
             CancellationToken cancellationToken = default)
         {
             (string name, string port, _) = dockedInPort;

@@ -82,7 +82,7 @@ public static class Extensions
                 .Where(type => type.IsAssignableTo(typeof(IPersistedEvent))))
             .ToList();
 
-        types.ForEach(x => PersistedEventConverter.ConvertableTypes.Add(x));
+        types.ForEach(PersistedEventConverter.ConvertableTypes.Add);
 
         return services;
     }
@@ -98,7 +98,8 @@ public static class Extensions
 
         services.Scan(x => x.FromAssemblies(assemblies)
             .AddClasses(classes => classes.AssignableTo(typeof(IEventProjectionHandler<>)))
-            .AsImplementedInterfaces().WithSingletonLifetime());
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime());
 
         return services;
     }
