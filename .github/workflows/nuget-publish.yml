@@ -110,6 +110,10 @@ jobs:
         run: |
           dotnet pack ./src/Microsoft.Azure.CosmosRepository.AspNetCore/Microsoft.Azure.CosmosRepository.AspNetCore.csproj --output packages
 
+      - name: Pack Microsoft.Azure.CosmosEventSourcing
+        run: |
+          dotnet pack ./src/Microsoft.Azure.CosmosEventSourcing/Microsoft.Azure.CosmosEventSourcing.csproj -p:PackageVersion='${{ steps.regex-match.outputs.match }}-pre1' --output packages
+      
       - name: Publish Package
         run: |
           nuget push **\*.nupkg -NoSymbols -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
