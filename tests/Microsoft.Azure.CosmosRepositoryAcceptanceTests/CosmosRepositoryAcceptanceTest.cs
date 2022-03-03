@@ -22,7 +22,6 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 public abstract class CosmosRepositoryAcceptanceTest
 {
     protected const string ProductsInfoContainer = "products-info";
-    protected const string ProductsDatabase = "inventory";
     protected const string DefaultPartitionKey = "/partitionKey";
     protected const string TechnologyCategoryId = "Techonology";
     protected const string AcceptanceTestsDatabaseSuffix = "cosmos-repo-acceptance-tests-db";
@@ -101,10 +100,10 @@ public abstract class CosmosRepositoryAcceptanceTest
         options.ContainerPerItemType = true;
         options.DatabaseId = BuildDatabaseName("products");
 
-        ConfigureProducts(options);
-        ConfigureRatings(options);
-
-        ConfigureProducts(options);
+        // ReSharper disable once ConstantConditionalAccessQualifier
+        ConfigureProducts?.Invoke(options);
+        // ReSharper disable once ConstantConditionalAccessQualifier
+        ConfigureRatings?.Invoke(options);
     };
 
     protected static readonly Action<RepositoryOptions> ConfigureDatabaseSettings = options =>
@@ -113,7 +112,8 @@ public abstract class CosmosRepositoryAcceptanceTest
         options.ContainerPerItemType = true;
         options.DatabaseId = BuildDatabaseName("products");
 
-        ConfigureProducts(options);
+        // ReSharper disable once ConstantConditionalAccessQualifier
+        ConfigureProducts?.Invoke(options);
     };
 
     protected static readonly Action<RepositoryOptions> ConfigureProducts = options =>

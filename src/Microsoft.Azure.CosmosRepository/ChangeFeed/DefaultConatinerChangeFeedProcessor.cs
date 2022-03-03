@@ -24,7 +24,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         private readonly ChangeFeedOptions _changeFeedOptions;
         private readonly ILogger<DefaultContainerChangeFeedProcessor> _logger;
         private readonly IServiceProvider _serviceProvider;
-        private ChangeFeedProcessor _processor;
+        private ChangeFeedProcessor? _processor;
         private static readonly ConcurrentDictionary<Type, Type> Handlers = new();
 
         public DefaultContainerChangeFeedProcessor(
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                     (changes, token) => OnChangesAsync(changes, token, itemContainer.Id))
                 .WithLeaseContainer(leaseContainer)
                 .WithInstanceName(_changeFeedOptions.InstanceName)
-                .WithErrorNotification((token, exception) => OnErrorAsync(exception, itemContainer.Id));
+                .WithErrorNotification((_, exception) => OnErrorAsync(exception, itemContainer.Id));
 
             if (_changeFeedOptions.PollInterval != null)
             {
@@ -89,7 +89,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                     continue;
                 }
 
-                Type itemType = ItemTypes.FirstOrDefault(x => x.Name == type.Value<string>());
+                Type? itemType = ItemTypes.FirstOrDefault(x => x.Name == type.Value<string>());
 
                 if (itemType is null)
                 {
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         {
             object item = instance.ToObject(itemType);
 
-            Type handlerType = null;
+            Type? handlerType = null;
 
             if (Handlers.ContainsKey(itemType) is false)
             {
@@ -130,7 +130,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
             {
                 try
                 {
-                    object response = handlerType.GetMethod("HandleAsync")?
+                    object? response = handlerType.GetMethod("HandleAsync")?
                         .Invoke(handler, new[] {item, cancellationToken});
 
                     if (response is ValueTask valueTask)

@@ -53,7 +53,7 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
             IRepository<UniqueKeyPolicyItem> uniqueKeyItemRepository = _provider.GetRequiredService<IRepository<UniqueKeyPolicyItem>>();
 
             //Act
-            Database database = await clientProvider.UseClientAsync(x => x.CreateDatabaseIfNotExistsAsync(UniquePolicyDb));
+            Database database = await clientProvider.UseClientAsync(x => x.CreateDatabaseIfNotExistsAsync(BuildDatabaseName(UniquePolicyDb)));
 
             UniqueKeyPolicyItem bobInYorkshire = new("bob", 22, "Yorkshire", "Red");
             UniqueKeyPolicyItem bobInDerbyshire = new("bob", 22, "Derbyshire", "Yellow");

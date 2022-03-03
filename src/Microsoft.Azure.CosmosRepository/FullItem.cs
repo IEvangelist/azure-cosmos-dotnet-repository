@@ -34,18 +34,32 @@ namespace Microsoft.Azure.CosmosRepository
     /// </example>
     public abstract class FullItem : Item, IItemWithEtag, IItemWithTimeToLive, IItemWithTimeStamps
     {
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        protected FullItem()
+        {
+        }
+
+        /// <summary>
+        /// A constructor that allows the etag to be set so that items can be mapped to and from other objects
+        /// </summary>
+        /// <param name="etag"></param>
+        protected FullItem(string etag)
+        {
+            Etag = etag;
+        }
+
         /// <inheritdoc />
         [JsonProperty("_etag")]
-        public string Etag { get; private set; }
+        public string? Etag { get; private set; }
 
         /// <inheritdoc />
         public TimeSpan? TimeToLive
         {
             get => _timeToLive.HasValue ? TimeSpan.FromSeconds(_timeToLive.Value) : null;
-            set
-            {
-                if (value?.TotalSeconds != null) _timeToLive = (int)value?.TotalSeconds;
-            }
+            set => _timeToLive = (int?) value?.TotalSeconds;
         }
 
         [JsonProperty("ttl", NullValueHandling = NullValueHandling.Ignore)]

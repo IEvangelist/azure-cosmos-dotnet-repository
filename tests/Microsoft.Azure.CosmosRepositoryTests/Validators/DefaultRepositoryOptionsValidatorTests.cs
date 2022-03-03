@@ -23,10 +23,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
         private readonly DefaultRepositoryOptionsValidator _validator = new();
 
         [Fact]
-        public void NullIOptionsThrowsArgumentNullException() =>
-            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(null));
-
-        [Fact]
         public void NullCosmosConnectionStringThrowsAggregateException()
         {
             //Arrange
@@ -157,72 +153,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Validators
             //Act
             //Assert
             Assert.Throws<AggregateException>(() => _validator.ValidateForContainerCreation(_options.Object));
-        }
-
-        [Fact]
-        public void NullDatabaseIdWhenUsingConnectionStringAuthenticationAndItemPerContainerTypeThrowsArgumentNullException()
-        {
-            //Arrange
-            _repositoryOptions.CosmosConnectionString = "Some Connection String";
-            _repositoryOptions.AccountEndpoint = null;
-            _repositoryOptions.TokenCredential = null;
-            _repositoryOptions.DatabaseId = null;
-            _repositoryOptions.ContainerPerItemType = false;
-            _options.Setup(o => o.Value).Returns(_repositoryOptions);
-
-            //Act
-            //Assert
-            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(_options.Object));
-        }
-
-        [Fact]
-        public void NullContainerIdWhenUsingConnectionStringAuthenticationAndItemPerContainerTypeThrowsArgumentNullException()
-        {
-            //Arrange
-            _repositoryOptions.CosmosConnectionString = "Some Connection String";
-            _repositoryOptions.AccountEndpoint = null;
-            _repositoryOptions.TokenCredential = null;
-            _repositoryOptions.DatabaseId = "Database 1";
-            _repositoryOptions.ContainerId = null;
-            _repositoryOptions.ContainerPerItemType = false;
-            _options.Setup(o => o.Value).Returns(_repositoryOptions);
-
-            //Act
-            //Assert
-            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(_options.Object));
-        }
-
-        [Fact]
-        public void NullDatabaseIdWhenUsingTokenCredentialAuthenticationAndItemPerContainerTypeThrowsArgumentNullException()
-        {
-            //Arrange
-            _repositoryOptions.CosmosConnectionString = null;
-            _repositoryOptions.TokenCredential = new TestTokenCredential();
-            _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
-            _repositoryOptions.DatabaseId = null;
-            _repositoryOptions.ContainerPerItemType = false;
-            _options.Setup(o => o.Value).Returns(_repositoryOptions);
-
-            //Act
-            //Assert
-            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(_options.Object));
-        }
-
-        [Fact]
-        public void NullContainerIdWhenUsingTokenCredentialAuthenticationAndItemPerContainerTypeThrowsArgumentNullException()
-        {
-            //Arrange
-            _repositoryOptions.CosmosConnectionString = null;
-            _repositoryOptions.TokenCredential = new TestTokenCredential();
-            _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
-            _repositoryOptions.DatabaseId = "Database 1";
-            _repositoryOptions.ContainerId = null;
-            _repositoryOptions.ContainerPerItemType = false;
-            _options.Setup(o => o.Value).Returns(_repositoryOptions);
-
-            //Act
-            //Assert
-            Assert.Throws<ArgumentNullException>(() => _validator.ValidateForContainerCreation(_options.Object));
         }
 
         [Fact]

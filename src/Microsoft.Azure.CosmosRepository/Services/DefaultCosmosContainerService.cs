@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepository.Validators;
@@ -32,7 +33,7 @@ namespace Microsoft.Azure.CosmosRepository.Services
             _cosmosItemConfigurationProvider = cosmosItemConfigurationProvider;
             _cosmosClientProvider = cosmosClientProvider;
             _logger = logger;
-            _options = options?.Value;
+            _options = options.Value;
         }
 
         public Task<Container> GetContainerAsync<TItem>(bool forceContainerSync = false) where TItem : IItem =>
@@ -86,6 +87,8 @@ namespace Microsoft.Azure.CosmosRepository.Services
 
         public Task<Container> GetContainerAsync(IReadOnlyList<Type> itemTypes)
         {
+            itemTypes.AreAllItems();
+
             if (itemTypes.Any() is false)
             {
                 throw new InvalidOperationException("You must provided at least one item type to get a container for");

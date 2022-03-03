@@ -21,17 +21,18 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// Creates an instance of <see cref="ContainerOptionsBuilder"/>.
         /// </summary>
         /// <param name="type">The type of <see cref="IItem"/> the options are for.</param>
-        public ContainerOptionsBuilder(Type type) => Type = type;
+        public ContainerOptionsBuilder(Type type) =>
+            Type = type;
 
         /// <summary>
         /// Name of the container.
         /// </summary>
-        internal string Name { get; private set; }
+        internal string? Name { get; private set; }
 
         /// <summary>
         /// The partition key for the container.
         /// </summary>
-        internal string PartitionKey { get; private set; }
+        internal string? PartitionKey { get; private set; }
 
         /// <summary>
         /// The default time to live for a container.
@@ -49,9 +50,9 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// The <see cref="ThroughputProperties"/> for the given container.
         /// </summary>
         /// <remarks>By default this uses a manual throughput reserved at 400 RU/s in line with the Cosmos SDK.</remarks>
-        internal ThroughputProperties ThroughputProperties { get; private set; } = ThroughputProperties.CreateManualThroughput(400);
+        internal ThroughputProperties? ThroughputProperties { get; private set; } = ThroughputProperties.CreateManualThroughput(400);
 
-        internal ChangeFeedOptions ChangeFeedOptions { get; private set; } = null;
+        internal ChangeFeedOptions? ChangeFeedOptions { get; private set; } = null;
 
         internal bool UseStrictTypeChecking { get; set;  } = true;
 
@@ -161,7 +162,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// <param name="optionsActions">An action to configure the change feed for the given container.</param>
         /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
         /// <remarks>The options configured here are for the container, not just the <see cref="IItem"/> be aware if item's share a container they will share the same change feed options.</remarks>
-        public ContainerOptionsBuilder WithChangeFeedMonitoring(Action<ChangeFeedOptions> optionsActions = null)
+        public ContainerOptionsBuilder WithChangeFeedMonitoring(Action<ChangeFeedOptions>? optionsActions = null)
         {
             ChangeFeedOptions options = new(Type);
 

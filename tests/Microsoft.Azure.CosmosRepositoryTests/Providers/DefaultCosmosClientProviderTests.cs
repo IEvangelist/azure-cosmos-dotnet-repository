@@ -15,38 +15,6 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers
     public class DefaultCosmosClientProviderTests
     {
         [Fact]
-        public void NewDefaultCosmosClientProviderThrowsWithNullCosmosClientOptionsProviderAndValidConnectionStringOptions() =>
-           Assert.Throws<ArgumentNullException>(
-               () => new DefaultCosmosClientProvider(
-                   cosmosClientOptionsProvider: null,
-                   Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
-                   {
-                       CosmosConnectionString = "pickles",
-                       DatabaseId = "data",
-                       ContainerId = "container"
-                   })));
-
-        [Fact]
-        public void NewDefaultCosmosClientProviderThrowsWithNullCosmosClientOptionsProviderAndValidTokenCredentialOptions() =>
-           Assert.Throws<ArgumentNullException>(
-               () => new DefaultCosmosClientProvider(
-                   cosmosClientOptionsProvider: null,
-                   Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
-                   {
-                       TokenCredential = new TestTokenCredential(),
-                       AccountEndpoint = "pickles endpoint",
-                       DatabaseId = "data",
-                       ContainerId = "container"
-                   })));
-
-        [Fact]
-        public void NewDefaultCosmosClientProviderThrowsWithNullRepositoryOptionsOverload() =>
-           Assert.Throws<ArgumentNullException>(
-               () => new DefaultCosmosClientProvider(
-                   new Mock<ICosmosClientOptionsProvider>().Object,
-                   null));
-
-        [Fact]
         public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithConnectionString()
         {
             Mock<ICosmosClientOptionsProvider> mock = new Mock<ICosmosClientOptionsProvider>();

@@ -17,8 +17,8 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         /// </summary>
         /// <typeparam name="TItem">The item for which the unique key policy corresponds.</typeparam>
         /// <returns>A <see cref="UniqueKeyPolicy"/> for the corresponding to the given <typeparamref name="TItem"/>.</returns>
-        UniqueKeyPolicy GetUniqueKeyPolicy<TItem>() where TItem : IItem;
+        UniqueKeyPolicy? GetUniqueKeyPolicy<TItem>() where TItem : IItem;
 
-        UniqueKeyPolicy GetUniqueKeyPolicy(Type itemType);
+        UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType);
     }
 }

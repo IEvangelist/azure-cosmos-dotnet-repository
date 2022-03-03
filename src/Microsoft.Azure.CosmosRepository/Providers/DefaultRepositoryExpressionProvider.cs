@@ -4,6 +4,7 @@
 using System;
 using System.Linq.Expressions;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 
@@ -16,21 +17,16 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         public DefaultRepositoryExpressionProvider(ICosmosItemConfigurationProvider itemConfigurationProvider) =>
             _itemConfigurationProvider = itemConfigurationProvider;
 
-        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate = null)
+        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate)
             where TItem : IItem
         {
             ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
 
-            if (options.UseStrictTypeChecking)
-            {
-                return predicate is null
-                    ? item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name
-                    : predicate.Compose(item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name,
-                        Expression.AndAlso);
-            }
-
-            return predicate;
+            return options.UseStrictTypeChecking ? predicate.Compose(Default<TItem>(), Expression.AndAlso) : predicate;
         }
+
+        public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem =>
+            item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name;
 
         public TItem CheckItem<TItem>(TItem item) where TItem : IItem
         {
@@ -38,7 +34,9 @@ namespace Microsoft.Azure.CosmosRepository.Providers
 
             if (options.UseStrictTypeChecking)
             {
-                return item is {Type: {Length: 0}} || item.Type == typeof(TItem).Name ? item : default;
+                return item is {Type: {Length: 0}} || item.Type == typeof(TItem).Name
+                    ? item
+                    : throw new MissMatchedTypeDiscriminatorException(typeof(TItem).Name, item.Type);
             }
 
             return item;

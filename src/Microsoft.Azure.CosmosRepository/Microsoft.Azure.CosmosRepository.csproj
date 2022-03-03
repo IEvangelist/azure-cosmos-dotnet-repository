@@ -22,7 +22,6 @@
         <Title>IEvangelist Azure Cosmos DB Repository Client library</Title>
         <PackageId>IEvangelist.Azure.CosmosRepository</PackageId>
         <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureofficial;dotnetcore;netcore;netstandard</PackageTags>
-        <PackageReleaseNotes></PackageReleaseNotes>
         <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
         <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -40,6 +39,7 @@
         <RepositoryUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</RepositoryUrl>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <RepositoryType>git</RepositoryType>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>

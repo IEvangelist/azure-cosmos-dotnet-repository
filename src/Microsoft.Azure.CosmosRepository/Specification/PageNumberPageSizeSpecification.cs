@@ -1,14 +1,8 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
-using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Microsoft.Azure.CosmosRepository.Specification
 {
@@ -20,16 +14,11 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         where TItem : IItem
     {
         /// <summary>
-        /// Default ctor
-        /// </summary>
-        public OffsetByPageNumberSpecification() { }
-
-        /// <summary>
-        /// Helper ctor to set pagenumber and pagesize
+        /// Helper ctor to set page number and page size
         /// </summary>
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
-        public OffsetByPageNumberSpecification(int pageNumber, int pageSize)
+        public OffsetByPageNumberSpecification(int pageNumber = 1, int pageSize = 25)
         {
             Query.PageSize(pageSize);
             Query.PageNumber(pageNumber);
@@ -38,21 +27,21 @@ namespace Microsoft.Azure.CosmosRepository.Specification
         /// <summary>
         /// Update the specification to get the next page of the result
         /// </summary>
-        public void NextPage()
-        {
-            Query.PageNumber(PageNumber.Value + 1);
-        }
+        public void NextPage() =>
+            Query.PageNumber(PageNumber + 1 ?? 1);
 
         /// <summary>
         /// Update the specification to get the previous page of the result
         /// </summary>
-        public void PreviousPage()
-        {
-            Query.PageNumber(PageNumber.Value - 1);
-        }
+        public void PreviousPage() =>
+            Query.PageNumber(PageNumber - 1 ?? 1);
 
         /// <inheritdoc/>
-        public override IPageQueryResult<TItem> PostProcessingAction(IReadOnlyList<TItem> queryResult, int totalCount, double charge, string continuationToken)
+        public override IPageQueryResult<TItem> PostProcessingAction(
+            IReadOnlyList<TItem> queryResult,
+            int totalCount,
+            double charge,
+            string? continuationToken)
         {
             return new PageQueryResult<TItem>(
                 totalCount,

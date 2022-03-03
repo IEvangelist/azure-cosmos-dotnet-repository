@@ -35,6 +35,7 @@ namespace WebTier.Integration.Tests
             //Arrange
             LanguageDto language = new()
             {
+                Id = string.Empty,
                 Name = "C#",
                 Description = "A language created by Microsoft.",
                 Aliases = new []{"C#", ".NET"},
@@ -57,7 +58,7 @@ namespace WebTier.Integration.Tests
             List<LanguageDto> responseLanguages = await response.Content.ReadFromJsonAsync<List<LanguageDto>>(new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
-                Converters = { new JsonStringEnumConverter()}
+                Converters = { new JsonStringEnumConverter() }
             });
             Assert.NotNull(responseLanguages);
             LanguageDto responseLanguage = responseLanguages.First();

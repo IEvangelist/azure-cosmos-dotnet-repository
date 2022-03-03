@@ -18,12 +18,12 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             _options = options;
 
         /// <inheritdoc/>
-        public ThroughputProperties GetThroughputProperties<TItem>() where TItem : IItem =>
+        public ThroughputProperties? GetThroughputProperties<TItem>() where TItem : IItem =>
             GetThroughputProperties(typeof(TItem));
 
-        public ThroughputProperties GetThroughputProperties(Type itemType)
+        public ThroughputProperties? GetThroughputProperties(Type itemType)
         {
-            ContainerOptionsBuilder currentItemsOptions = _options.Value.GetContainerOptions(itemType);
+            ContainerOptionsBuilder? currentItemsOptions = _options.Value.GetContainerOptions(itemType);
 
             if (currentItemsOptions is null)
             {
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                     return null;
                 }
 
-                if (currentItemsOptions.ThroughputProperties.Throughput != null &&
+                if (currentItemsOptions.ThroughputProperties?.Throughput != null &&
                     option.ThroughputProperties.Throughput != currentItemsOptions.ThroughputProperties.Throughput)
                 {
                     throw new InvalidOperationException($"The container {option.Name} has conflicting manual throughput properties. " +
@@ -46,11 +46,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers
                 }
 
                 if (option.ThroughputProperties.AutoscaleMaxThroughput != null &&
-                    option.ThroughputProperties.AutoscaleMaxThroughput != currentItemsOptions.ThroughputProperties.AutoscaleMaxThroughput)
+                    option.ThroughputProperties.AutoscaleMaxThroughput != currentItemsOptions.ThroughputProperties?.AutoscaleMaxThroughput)
                 {
                     throw new InvalidOperationException($"The container {option.Name} has conflicting autoscale throughput properties. " +
                                                         $"({option.Type.Name}->{option.ThroughputProperties.AutoscaleMaxThroughput} vs " +
-                                                        $"{currentItemsOptions.Type.Name}->{currentItemsOptions.ThroughputProperties.AutoscaleMaxThroughput}).");
+                                                        $"{currentItemsOptions.Type.Name}->{currentItemsOptions.ThroughputProperties?.AutoscaleMaxThroughput}).");
                 }
             }
 

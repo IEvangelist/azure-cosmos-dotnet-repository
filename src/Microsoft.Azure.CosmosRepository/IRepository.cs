@@ -46,7 +46,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <returns>A <see cref="ValueTask{TItem}"/> representing the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/>.</returns>
         ValueTask<TItem> GetAsync(
             string id,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -157,9 +157,9 @@ namespace Microsoft.Azure.CosmosRepository
         ValueTask UpdateAsync(
             string id,
             Action<IPatchOperationBuilder<TItem>> builder,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default,
-            string etag = default);
+            string? etag = default);
 
         /// <summary>
         /// Deletes the cosmos object that corresponds to the given <paramref name="value"/>.
@@ -180,7 +180,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous delete operation.</returns>
         ValueTask DeleteAsync(
             string id,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous exists operation.</returns>
-        ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null,
+        ValueTask<bool> ExistsAsync(string id, string? partitionKeyValue = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -258,29 +258,31 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
         /// <param name="pageSize">The size of the page to return from cosmos db.</param>
         /// <param name="continuationToken">The token returned from a previous query, if null starts at the beginning of the data</param>
+        /// <param name="returnTotal">Specifies whether or not to return the total number of items that matched the query. This defaults to false as it can be a very expensive operation.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
         /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
         ValueTask<IPage<TItem>> PageAsync(
-            Expression<Func<TItem, bool>> predicate = null,
+            Expression<Func<TItem, bool>>? predicate = null,
             int pageSize = 25,
-            string continuationToken = null,
+            string? continuationToken = null,
+            bool returnTotal=false,
             CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get items based on a specification.
         /// The specification is used to define which filters are used, the order of the search results and how they are paged.
-        /// Depending on how results are paged dervice specification implementations from different classes:
-        /// For nonpaged results derivce <see cref="ListSpecification{T}"/>
+        /// Depending on how results are paged derive specification implementations from different classes:
+        /// For non paged results derive <see cref="DefaultSpecification{TItem}"/>
         /// For continuation token derive <see cref="ContinuationTokenSpecification{T}"/>
-        /// For pagenumber results derive <see cref="OffsetByPageNumberSpecification{T}"/>
+        /// For page number results derive <see cref="OffsetByPageNumberSpecification{T}"/>
         /// </summary>
         /// <typeparam name="TResult">Decides which paging information is retrieved. Use <see cref="ContinuationTokenSpecification{T}"/></typeparam>
         /// <param name="specification">A specification used to filtering, ordering and paging. A <see cref="ISpecification{T, TResult}"/></param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns> The selected TResult implementation that implements <see cref="IQueryResult{T}"/> of <see cref="IItem"/></returns>
         /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
-        ValueTask<TResult> GetAsync<TResult>(
+        ValueTask<TResult> QueryAsync<TResult>(
             ISpecification<TItem, TResult> specification,
             CancellationToken cancellationToken = default)
             where TResult : IQueryResult<TItem>;
@@ -292,14 +294,16 @@ namespace Microsoft.Azure.CosmosRepository
         /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
         /// <param name="pageNumber">The page number to return from cosmos db.</param>
         /// <param name="pageSize">The size of the page to return from cosmos db.</param>
+        /// <param name="returnTotal">Specifies whether or not to return the total number of items that matched the query. This defaults to false as it can be a very expensive operation.</param>
         /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
         /// <returns>A <see cref="IPageQueryResult{T}"/> of <see cref="IItem"/>s</returns>
         /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
 
         ValueTask<IPageQueryResult<TItem>> PageAsync(
-            Expression<Func<TItem, bool>> predicate = null,
+            Expression<Func<TItem, bool>>? predicate = null,
             int pageNumber = 1,
             int pageSize = 25,
+            bool returnTotal=false,
             CancellationToken cancellationToken = default);
     }
 }

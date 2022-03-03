@@ -31,7 +31,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
                 .AddSingleton<IItemChangeFeedProcessor<TestItem>, TestItemChangeFeedProcessor>()
                 .BuildServiceProvider();
 
-            _testItemChangeFeedChangeFeedProcessor = _serviceProvider.GetRequiredService<IItemChangeFeedProcessor<TestItem>>() as TestItemChangeFeedProcessor;
+            _testItemChangeFeedChangeFeedProcessor = (_serviceProvider.GetRequiredService<IItemChangeFeedProcessor<TestItem>>() as TestItemChangeFeedProcessor)!;
         }
 
         private DefaultContainerChangeFeedProcessor CreateSut() =>

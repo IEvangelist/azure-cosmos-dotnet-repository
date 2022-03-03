@@ -15,15 +15,15 @@ namespace Microsoft.Azure.CosmosRepository.Options
 
         public string PartitionKeyPath { get; }
 
-        public UniqueKeyPolicy UniqueKeyPolicy { get; }
+        public UniqueKeyPolicy? UniqueKeyPolicy { get; }
 
-        public ThroughputProperties ThroughputProperties { get; }
+        public ThroughputProperties? ThroughputProperties { get; }
 
         public int DefaultTimeToLive { get; }
 
         public bool SyncContainerProperties { get; }
 
-        public ChangeFeedOptions ChangeFeedOptions { get; } = null;
+        public ChangeFeedOptions? ChangeFeedOptions { get; }
 
         public bool UseStrictTypeChecking { get; }
 
@@ -31,11 +31,11 @@ namespace Microsoft.Azure.CosmosRepository.Options
             Type type,
             string containerName,
             string partitionKeyPath,
-            UniqueKeyPolicy uniqueKeyPolicy,
-            ThroughputProperties throughputProperties,
+            UniqueKeyPolicy? uniqueKeyPolicy,
+            ThroughputProperties? throughputProperties,
             int defaultTimeToLive = -1,
             bool syncContainerProperties = false,
-            ChangeFeedOptions changeFeedOptions = null,
+            ChangeFeedOptions? changeFeedOptions = null,
             bool useStrictTypeChecking = true)
         {
             Type = type;

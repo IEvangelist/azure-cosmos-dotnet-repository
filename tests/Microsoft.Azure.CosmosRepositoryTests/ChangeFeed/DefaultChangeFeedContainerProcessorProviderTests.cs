@@ -76,15 +76,15 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed
             //Assert
             Assert.Equal(2, processors.Count());
 
-            IContainerChangeFeedProcessor aChangeFeedProcessor = processors
+            IContainerChangeFeedProcessor? aChangeFeedProcessor = processors
                 .FirstOrDefault(x =>
-                x.ItemTypes.Count == 2 &&
-                x.ItemTypes.Contains(typeof(TestItem)) &&
-                x.ItemTypes.Contains(typeof(AnotherTestItem)));
+                    x.ItemTypes.Count == 2 &&
+                    x.ItemTypes.Contains(typeof(TestItem)) &&
+                    x.ItemTypes.Contains(typeof(AnotherTestItem)));
 
             Assert.NotNull(aChangeFeedProcessor);
 
-            IContainerChangeFeedProcessor bChangeFeedProcessor = processors
+            IContainerChangeFeedProcessor? bChangeFeedProcessor = processors
                 .FirstOrDefault(x =>
                     x.ItemTypes.Count == 1 &&
                     x.ItemTypes.Contains(typeof(AndAnotherItem)));

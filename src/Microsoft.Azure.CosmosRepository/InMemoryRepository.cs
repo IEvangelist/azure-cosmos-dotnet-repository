@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
-using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Paging;
@@ -27,22 +26,21 @@ namespace Microsoft.Azure.CosmosRepository
     /// <inheritdoc/>
     internal class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
     {
+        private readonly ISpecificationEvaluator _specificationEvaluator;
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
-        internal ISpecificationEvaluator _specificationEvaluator { get; set; }
-        internal Action<ChangeFeedItemArgs<TItem>> Changes { get; set; }
+        internal Action<ChangeFeedItemArgs<TItem>>? Changes { get; set; }
 
-        public InMemoryRepository()
-        {
+        public InMemoryRepository() =>
             _specificationEvaluator = new SpecificationEvaluator();
-        }
 
-        public InMemoryRepository(ISpecificationEvaluator specificationEvaluator)
-        {
+        public InMemoryRepository(ISpecificationEvaluator specificationEvaluator) =>
             _specificationEvaluator = specificationEvaluator;
-        }
 
-        internal string SerializeItem(TItem item, string etag = null, long? ts = null)
+        private string SerializeItem(
+            TItem item,
+            string? etag = null,
+            long? ts = null)
         {
             JObject jObject = JObject.FromObject(item);
             if (etag != null)
@@ -64,7 +62,9 @@ namespace Microsoft.Azure.CosmosRepository
             JsonConvert.DeserializeObject<TDeserializeTo>(jsonItem);
 
         /// <inheritdoc/>
-        public ValueTask<TItem> GetAsync(string id, string partitionKeyValue = null,
+        public ValueTask<TItem> GetAsync(
+            string id,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default)
             => GetAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
@@ -79,7 +79,9 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Items.Values.Select(DeserializeItem)
+            TItem? item = Items
+                .Values
+                .Select(DeserializeItem)
                 .FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if (item is null)
@@ -87,7 +89,8 @@ namespace Microsoft.Azure.CosmosRepository
                 NotFound();
             }
 
-            return item is {Type: {Length: 0}} || item?.Type == typeof(TItem).Name ? item : default;
+            TItem? toReturn = item is {Type: {Length: 0}} || item?.Type == typeof(TItem).Name ? item : default;
+            return toReturn!;
         }
 
         /// <inheritdoc/>
@@ -138,11 +141,11 @@ namespace Microsoft.Azure.CosmosRepository
 
         private async ValueTask<TItem> CreateAsync(TItem value, bool raiseChanges = false)
         {
-            value.Id ??= Guid.NewGuid().ToString();
-
             await Task.CompletedTask;
 
-            TItem item = Items.Values.Select(DeserializeItem)
+            TItem? item = Items
+                .Values
+                .Select(DeserializeItem)
                 .FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
 
             if (item is not null)
@@ -168,13 +171,15 @@ namespace Microsoft.Azure.CosmosRepository
             return value;
         }
 
-        private async ValueTask<TItem> UpdateAsync(TItem value, bool raiseChanges,
-            CancellationToken cancellationToken = default,
+        private async ValueTask<TItem> UpdateAsync(
+            TItem value,
+            bool raiseChanges,
             bool ignoreEtag = false)
         {
             await Task.CompletedTask;
 
             if (value is IItemWithEtag valueWithEtag &&
+                !string.IsNullOrWhiteSpace(valueWithEtag.Etag) &&
                 Items.ContainsKey(value.Id) &&
                 DeserializeItem(Items[value.Id]) is IItemWithEtag existingItemWithEtag &&
                 !ignoreEtag
@@ -199,7 +204,7 @@ namespace Microsoft.Azure.CosmosRepository
         public ValueTask<TItem> UpdateAsync(TItem value,
             CancellationToken cancellationToken = default,
             bool ignoreEtag = false) =>
-            UpdateAsync(value, true, cancellationToken, ignoreEtag);
+            UpdateAsync(value, true, ignoreEtag);
 
         /// <inheritdoc/>
         public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values,
@@ -212,7 +217,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             foreach (TItem value in enumerable)
             {
-                results.Add(await UpdateAsync(value, false, cancellationToken, ignoreEtag));
+                results.Add(await UpdateAsync(value, false, ignoreEtag));
             }
 
             Changes?.Invoke(new ChangeFeedItemArgs<TItem>(results));
@@ -223,27 +228,30 @@ namespace Microsoft.Azure.CosmosRepository
         /// <inheritdoc/>
         public async ValueTask UpdateAsync(string id,
             Action<IPatchOperationBuilder<TItem>> builder,
-            string partitionKeyValue = null,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default,
-            string etag = default)
+            string? etag = default)
         {
             await Task.CompletedTask;
 
             partitionKeyValue ??= id;
 
-            TItem item = Items.Values.Select(DeserializeItem)
+            TItem? item = Items
+                .Values
+                .Select(DeserializeItem)
                 .FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
-            if (item is null)
-            {
-                NotFound();
-            }
 
-            if (item is IItemWithEtag itemWithEtag &&
-                etag != default &&
-                !string.IsNullOrWhiteSpace(etag) &&
-                itemWithEtag.Etag != etag)
+            switch (item)
             {
-                MismatchedEtags();
+                case null:
+                    NotFound();
+                    break;
+                case IItemWithEtag itemWithEtag when
+                    etag != default &&
+                    !string.IsNullOrWhiteSpace(etag) &&
+                    itemWithEtag.Etag != etag:
+                    MismatchedEtags();
+                    break;
             }
 
             PatchOperationBuilder<TItem> patchOperationBuilder = new();
@@ -253,11 +261,11 @@ namespace Microsoft.Azure.CosmosRepository
             foreach (InternalPatchOperation internalPatchOperation in
                      patchOperationBuilder._rawPatchOperations.Where(ipo => ipo.Type is PatchOperationType.Replace))
             {
-                PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.PropertyInfo.Name);
-                property?.SetValue(item, internalPatchOperation.NewValue);
+                PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.PropertyInfo.Name)!;
+                property.SetValue(item, internalPatchOperation.NewValue);
             }
 
-            Items[id] = SerializeItem(item, Guid.NewGuid().ToString(), CurrentTs);
+            Items[id] = SerializeItem(item!, Guid.NewGuid().ToString(), CurrentTs);
 
             Changes?.Invoke(new ChangeFeedItemArgs<TItem>(DeserializeItem(Items[id])));
         }
@@ -267,12 +275,16 @@ namespace Microsoft.Azure.CosmosRepository
             DeleteAsync(value.Id, value.PartitionKey, cancellationToken);
 
         /// <inheritdoc/>
-        public ValueTask DeleteAsync(string id, string partitionKeyValue = null,
+        public ValueTask DeleteAsync(
+            string id,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default) =>
             DeleteAsync(id, new PartitionKey(partitionKeyValue), cancellationToken);
 
         /// <inheritdoc/>
-        public async ValueTask DeleteAsync(string id, PartitionKey partitionKey,
+        public async ValueTask DeleteAsync(
+            string id,
+            PartitionKey partitionKey,
             CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
@@ -282,7 +294,9 @@ namespace Microsoft.Azure.CosmosRepository
                 partitionKey = new PartitionKey(id);
             }
 
-            TItem item = Items.Values.Select(DeserializeItem)
+            TItem? item = Items
+                .Values
+                .Select(DeserializeItem)
                 .FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
             if (item is null)
@@ -294,21 +308,29 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
         /// <inheritdoc/>
-        public ValueTask<bool> ExistsAsync(string id, string partitionKeyValue = null,
+        public ValueTask<bool> ExistsAsync(
+            string id,
+            string? partitionKeyValue = null,
             CancellationToken cancellationToken = default)
             => ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
         /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(string id, PartitionKey partitionKey,
+        public async ValueTask<bool> ExistsAsync(
+            string id,
+            PartitionKey partitionKey,
             CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            return Items.Values.Select(DeserializeItem)
+
+            return Items
+                .Values
+                .Select(DeserializeItem)
                 .FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey) is not null;
         }
 
         /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(Expression<Func<TItem, bool>> predicate,
+        public async ValueTask<bool> ExistsAsync(
+            Expression<Func<TItem, bool>> predicate,
             CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
@@ -334,49 +356,76 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <inheritdoc/>
         public ValueTask<IPage<TItem>> PageAsync(
-            Expression<Func<TItem, bool>> predicate = null,
+            Expression<Func<TItem, bool>>? predicate = null,
             int pageSize = 25,
-            string continuationToken = null,
+            string? continuationToken = null,
+            bool returnTotal = false,
             CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public async ValueTask<IPageQueryResult<TItem>> PageAsync(Expression<Func<TItem, bool>> predicate = null,
-            int pageNumber = 1, int pageSize = 25, CancellationToken cancellationToken = default)
+        public async ValueTask<IPageQueryResult<TItem>> PageAsync(
+            Expression<Func<TItem, bool>>? predicate = null,
+            int pageNumber = 1,
+            int pageSize = 25,
+            bool returnTotal = false,
+            CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
 
-            IEnumerable<TItem> filteredItems = Items.Values.Select(DeserializeItem)
-                .Where(predicate.Compose(item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
-            IEnumerable<TItem> items = filteredItems.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+            IEnumerable<TItem> filteredItems = Items.Values
+                .Select(DeserializeItem)
+                .ToList();
+
+            Expression<Func<TItem, bool>> typeCheck = item =>
+                item.Type == typeof(TItem).Name;
+
+            filteredItems = filteredItems.Where(predicate is not null ?
+                predicate.Compose(typeCheck, Expression.AndAlso).Compile() :
+                typeCheck.Compile());
+
+            IEnumerable<TItem> enumerable = filteredItems.ToList();
+
+            IEnumerable<TItem> items = enumerable
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize);
+
             return new PageQueryResult<TItem>(
-                filteredItems.Count(),
+                returnTotal ? enumerable.Count() : null,
                 pageNumber,
                 pageSize,
                 items.ToList().AsReadOnly(),
                 0);
         }
 
-        public async ValueTask<TResult> GetAsync<TResult>(ISpecification<TItem, TResult> specification, CancellationToken cancellationToken = default)
+        public async ValueTask<TResult> QueryAsync<TResult>(
+            ISpecification<TItem, TResult> specification,
+            CancellationToken cancellationToken = default)
             where TResult : IQueryResult<TItem>
         {
             await Task.CompletedTask;
 
-            if (specification.UseContinutationToken)
+            if (specification.UseContinuationToken)
             {
                 throw new NotImplementedException();
             }
 
-            IQueryable<TItem> query = Items.Values.Select(DeserializeItem).AsQueryable()
+            IQueryable<TItem> query = Items.Values
+                .Select(DeserializeItem).AsQueryable()
                 .Where(item => item.Type == typeof(TItem).Name);
 
-            int pageSize = specification.PageSize;
             query = _specificationEvaluator.GetQuery(query, specification);
 
-            int countResponse =query.Count();
-            return _specificationEvaluator.GetResult(query.ToList().AsReadOnly(), specification, countResponse, 0, "");
+            int countResponse = query.Count();
+
+            return _specificationEvaluator.GetResult(
+                query.ToList().AsReadOnly(),
+                specification,
+                countResponse,
+                0,
+                "");
         }
 
 

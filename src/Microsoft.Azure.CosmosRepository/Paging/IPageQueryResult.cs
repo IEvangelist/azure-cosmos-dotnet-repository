@@ -14,7 +14,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <summary>
         /// The total amount pages that matched the query.
         /// </summary>
-        int TotalPages { get; }
+        int? TotalPages { get; }
 
         /// <summary>
         /// The total amount items that matched the query.
@@ -24,7 +24,7 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <summary>
         /// Gets a value indicating whether the are next pages.
         /// </summary>
-        bool HasNextPage { get; }
+        bool? HasNextPage { get; }
 
         /// <summary>
         /// Gets a value indicating whether the are previous pages.
@@ -39,6 +39,6 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// <summary>
         /// The next page number.
         /// </summary>
-        int NextPageNumber { get; }
+        int? NextPageNumber { get; }
     }
 }
