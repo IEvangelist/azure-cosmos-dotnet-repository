@@ -23,8 +23,6 @@ namespace Microsoft.Azure.CosmosRepository.Paging
         /// </summary>
         int Size { get; }
 
-
-
         /// <summary>
         /// The continuation token used to load results from a stateless marker.
         /// </summary>

@@ -73,7 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventSourcing", "EventSourc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNetCore", "AspNetCore", "{3D8EDE92-2014-4AD5-8EDD-69A2DEA33928}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AzureCosmosEventSourcingTests", "tests\Microsoft.AzureCosmosEventSourcingTests\Microsoft.AzureCosmosEventSourcingTests.csproj", "{FEB072AC-B573-48BF-948D-B5FFF9102303}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosEventSourcingTests", "tests\Microsoft.Azure.CosmosEventSourcingTests\Microsoft.Azure.CosmosEventSourcingTests.csproj", "{FEB072AC-B573-48BF-948D-B5FFF9102303}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

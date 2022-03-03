@@ -7,21 +7,21 @@ using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Xunit;
 
-namespace Microsoft.AzureCosmosEventSourcingTests;
+namespace Microsoft.Azure.CosmosEventSourcingTests;
 
 public class EventSourceTests
 {
     [Fact]
     public void Ctor_EmptyPartitionKey_ThrowsArgumentNullException()
     {
-        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new SampleEventSource(new SampleEvent(DateTime.UtcNow), string.Empty));
+        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), string.Empty));
         ex.Message.Should().Be("The partition key must be provided (Parameter 'partitionKey')");
     }
 
     [Fact]
     public void Ctor_NullPartitionKey_ThrowsArgumentNullException()
     {
-        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new SampleEventSource(new SampleEvent(DateTime.UtcNow), null!));
+        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), null!));
         ex.Message.Should().Be("The partition key must be provided (Parameter 'partitionKey')");
     }
 
@@ -29,30 +29,15 @@ public class EventSourceTests
     public void Ctor_ValidValues_CreatesSource()
     {
         //Arrange
-        SampleEvent evt = new(DateTime.UtcNow);
+        Testing.SampleEvent evt = new(DateTime.UtcNow);
 
         //Act
-        SampleEventSource source = new(evt, "A");
+        Testing.SampleEventSource source = new(evt, "A");
 
         //Assert
         source.Id.Should().NotBeNull();
         source.PartitionKey.Should().Be("A");
         source.EventPayload.Should().Be(evt);
         source.EventName.Should().Be(evt.EventName);
-    }
-
-    private record SampleEvent(DateTime OccuredUtc) : IPersistedEvent
-    {
-        public string EventName { get; } = nameof(SampleEvent);
-    }
-
-    private class SampleEventSource : EventSource
-    {
-        public SampleEventSource(
-            IPersistedEvent eventPayload,
-            string partitionKey) : base(eventPayload, partitionKey)
-        {
-
-        }
     }
 }

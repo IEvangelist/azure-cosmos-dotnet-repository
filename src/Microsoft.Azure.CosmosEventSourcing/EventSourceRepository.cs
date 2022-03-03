@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 
@@ -14,27 +15,36 @@ internal class EventSourceRepository<TEventSource> : IEventSourceRepository<TEve
     public EventSourceRepository(IRepository<TEventSource> repository) =>
         _repository = repository;
 
-    public async ValueTask PersistAsync(IEnumerable<TEventSource> records) =>
-        await _repository.CreateAsync(records);
+    public async ValueTask PersistAsync(
+        IEnumerable<TEventSource> records,
+        CancellationToken cancellationToken = default) =>
+        await _repository.CreateAsync(
+            records,
+            cancellationToken);
 
-    public ValueTask<IEnumerable<TEventSource>> ReadAsync(string partitionKey) =>
-        _repository.GetAsync(x => x.PartitionKey == partitionKey);
+    public ValueTask<IEnumerable<TEventSource>> ReadAsync(string partitionKey,
+        CancellationToken cancellationToken = default) =>
+        _repository.GetAsync(
+            x => x.PartitionKey == partitionKey,
+            cancellationToken);
 
     public async IAsyncEnumerable<TEventSource> StreamAsync(
         string partitionKey,
-        int chunkSize = 25)
+        int chunkSize = 25,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         string? token = null;
 
         Expression<Func<TEventSource, bool>> expression = eventSource =>
             eventSource.PartitionKey == partitionKey;
 
-        while (token is not null)
+        do
         {
             IPage<TEventSource> page = await _repository.PageAsync(
                 expression,
                 chunkSize,
-                token);
+                token,
+                cancellationToken: cancellationToken);
 
             token = page.Continuation;
 
@@ -42,6 +52,6 @@ internal class EventSourceRepository<TEventSource> : IEventSourceRepository<TEve
             {
                 yield return eventSource;
             }
-        }
+        } while (token is not null);
     }
 }

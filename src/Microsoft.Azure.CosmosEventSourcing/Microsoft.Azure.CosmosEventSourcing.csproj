@@ -44,6 +44,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Microsoft.Azure.CosmosEventSourcingTests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    </ItemGroup>
+
+    <ItemGroup>
       <None Include="..\..\LICENSE">
         <Pack>True</Pack>
         <Link>LICENSE</Link>
