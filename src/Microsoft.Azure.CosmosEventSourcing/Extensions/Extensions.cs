@@ -4,8 +4,10 @@
 using System.Reflection;
 using Microsoft.Azure.CosmosEventSourcing.Builders;
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
+using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
+using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Extensions;
@@ -28,13 +30,34 @@ public static class Extensions
         return containerBuilder;
     }
 
+    public static IItemContainerBuilder ConfigureProjectionStore<TProjection>(
+        this IItemContainerBuilder containerBuilder,
+        string containerName,
+        string partitionKey = "/partitionKey",
+        Action<ContainerOptionsBuilder>? builder = default)
+        where TProjection : IItem
+    {
+        containerBuilder.Configure<TProjection>(options =>
+        {
+            options.WithContainer(containerName);
+            options.WithPartitionKey(partitionKey);
+            builder?.Invoke(options);
+        });
+
+        return containerBuilder;
+    }
+
     public static IServiceCollection AddCosmosEventSourcing(
         this IServiceCollection services,
-        Action<ICosmosEventSourcingBuilder> builder,
+        Action<ICosmosEventSourcingBuilder> eventSourcingBuilder,
         params Assembly[] assemblies)
     {
+        CosmosEventSourcingBuilder builder = new(services);
+        eventSourcingBuilder.Invoke(builder);
         services.AddSingleton(typeof(IEventSourceRepository<>), typeof(EventSourceRepository<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, EventSourcingProvider>();
         return services;
     }
+
+
 }

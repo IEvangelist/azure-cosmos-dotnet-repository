@@ -2,7 +2,9 @@
 // Licensed under the MIT License.
 
 using System.Reflection;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
+using Microsoft.Azure.CosmosRepository.Options;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Builders;
 
@@ -22,4 +24,8 @@ public interface ICosmosEventSourcingBuilder
 
     public ICosmosEventSourcingBuilder AddAllEventProjectionHandlers(
         params Assembly[] assemblies);
+
+    public ICosmosEventSourcingBuilder AddCosmosRepository(
+        Action<RepositoryOptions>? setupAction = default,
+        Action<CosmosClientOptions>? additionSetupAction = default);
 }

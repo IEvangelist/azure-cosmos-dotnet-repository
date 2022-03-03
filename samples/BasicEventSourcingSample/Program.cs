@@ -3,31 +3,24 @@ using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections.Models;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
-using Microsoft.Azure.CosmosRepository.Builders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
 
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
-services.AddCosmosRepository(options =>
-{
-    options.DatabaseId = "event-sourcing-shipping-sample";
-    options.ContainerPerItemType = true;
-
-    IItemContainerBuilder containerBuilder = options.ContainerBuilder;
-
-    containerBuilder.Configure<ShipInformation>(shipContainerOptions =>
-    {
-        shipContainerOptions.WithContainer("ships-projections");
-        shipContainerOptions.WithPartitionKey("/partitionKey");
-    });
-
-    containerBuilder.ConfigureEventSourceStore<ShipEventSource>("ship-tracking-events");
-});
 
 services.AddCosmosEventSourcing(eventSourcingBuilder =>
 {
+    eventSourcingBuilder.AddCosmosRepository(options =>
+    {
+        options.DatabaseId = "event-sourcing-shipping-sample";
+        options.ContainerBuilder
+            .ConfigureProjectionStore<ShipInformation>("ship-projections")
+            .ConfigureEventSourceStore<ShipEventSource>("ship-tracking-events");
+    });
+
+    eventSourcingBuilder.AddAllPersistedEventsTypes();
     eventSourcingBuilder.AddAllEventProjectionHandlers();
     eventSourcingBuilder.AddEventSourceProjectionBuilder<ShipEventSource>(options =>
     {

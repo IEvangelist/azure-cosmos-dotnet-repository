@@ -2,9 +2,11 @@
 // Licensed under the MIT License.
 
 using System.Reflection;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 using Microsoft.Azure.CosmosEventSourcing.Converters;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
+using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Builders;
@@ -38,7 +40,8 @@ internal class CosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         optionsAction?.Invoke(options);
 
         _services.AddSingleton(options);
-        _services.AddSingleton<ISourceProjectionBuilder<TEventSource>, EventBasedSourceProjectionBuilder<TEventSource>>();
+        _services
+            .AddSingleton<ISourceProjectionBuilder<TEventSource>, EventBasedSourceProjectionBuilder<TEventSource>>();
         _services.AddSingleton<IEventSourcingProcessor, EventSourcingProcessor<TEventSource>>();
         return this;
     }
@@ -73,6 +76,19 @@ internal class CosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
             .AddClasses(classes => classes.AssignableTo(typeof(IEventProjectionHandler<>)))
             .AsImplementedInterfaces()
             .WithSingletonLifetime());
+
+        return this;
+    }
+
+    public ICosmosEventSourcingBuilder AddCosmosRepository(
+        Action<RepositoryOptions>? setupAction = default,
+        Action<CosmosClientOptions>? additionSetupAction = default)
+    {
+        _services.AddCosmosRepository(options =>
+        {
+            options.ContainerPerItemType = true;
+            setupAction?.Invoke(options);
+        }, additionSetupAction);
 
         return this;
     }
