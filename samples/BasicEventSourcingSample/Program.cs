@@ -52,7 +52,7 @@ app.MapGet("/api/ships", async (IShipRepository shipRepository) =>
 
 app.MapGet("/api/ships/info/{name}", async (string name, IShipRepository shipRepository) =>
 {
-    ShipInformation? information = await shipRepository.GetInformation(name);
+    ShipInformation? information = await shipRepository.GetInformationAsync(name);
 
     if (information is null)
     {
