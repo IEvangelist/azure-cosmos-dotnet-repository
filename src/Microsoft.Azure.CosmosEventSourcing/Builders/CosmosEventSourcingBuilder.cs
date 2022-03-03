@@ -21,18 +21,18 @@ internal class CosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
     public ICosmosEventSourcingBuilder AddEventSourceProjectionBuilder<TEventSource, TProjectionBuilder>(
         Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
         where TEventSource : EventSource
-        where TProjectionBuilder : class, ISourceProjectionBuilder<TEventSource>
+        where TProjectionBuilder : class, IEventSourceProjectionBuilder<TEventSource>
     {
         EventSourcingProcessorOptions<TEventSource> options = new();
         optionsAction?.Invoke(options);
 
         _services.AddSingleton(options);
-        _services.AddSingleton<ISourceProjectionBuilder<TEventSource>, TProjectionBuilder>();
+        _services.AddSingleton<IEventSourceProjectionBuilder<TEventSource>, TProjectionBuilder>();
         _services.AddSingleton<IEventSourcingProcessor, EventSourcingProcessor<TEventSource>>();
         return this;
     }
 
-    public ICosmosEventSourcingBuilder AddEventSourceProjectionBuilder<TEventSource>(
+    public ICosmosEventSourcingBuilder AddEventBasedEventSourceProjectionBuilder<TEventSource>(
         Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
         where TEventSource : EventSource
     {
@@ -41,7 +41,7 @@ internal class CosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
 
         _services.AddSingleton(options);
         _services
-            .AddSingleton<ISourceProjectionBuilder<TEventSource>, EventBasedSourceProjectionBuilder<TEventSource>>();
+            .AddSingleton<IEventSourceProjectionBuilder<TEventSource>, EventBasedEventSourceProjectionBuilder<TEventSource>>();
         _services.AddSingleton<IEventSourcingProcessor, EventSourcingProcessor<TEventSource>>();
         return this;
     }

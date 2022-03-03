@@ -6,14 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
-public class EventBasedSourceProjectionBuilder<TEventSource> : ISourceProjectionBuilder<TEventSource>
+internal class EventBasedEventSourceProjectionBuilder<TEventSource> : IEventSourceProjectionBuilder<TEventSource>
     where TEventSource : EventSource
 {
-    private readonly ILogger<EventBasedSourceProjectionBuilder<TEventSource>> _logger;
+    private readonly ILogger<EventBasedEventSourceProjectionBuilder<TEventSource>> _logger;
     private readonly IServiceProvider _serviceProvider;
 
-    public EventBasedSourceProjectionBuilder(
-        ILogger<EventBasedSourceProjectionBuilder<TEventSource>> logger,
+    public EventBasedEventSourceProjectionBuilder(
+        ILogger<EventBasedEventSourceProjectionBuilder<TEventSource>> logger,
         IServiceProvider serviceProvider)
     {
         _logger = logger;

@@ -3,7 +3,11 @@
 
 namespace Microsoft.Azure.CosmosEventSourcing;
 
-public class EventSourcingProcessorOptions<TSourceEvent> where TSourceEvent : EventSource
+/// <summary>
+/// The options that can be used to configure the change feed processor consuming new events.
+/// </summary>
+/// <typeparam name="TEventSource">Teh type of <see cref="EventSource"/></typeparam>
+public class EventSourcingProcessorOptions<TEventSource> where TEventSource : EventSource
 {
     /// <summary>
     /// The instance name of the processor.

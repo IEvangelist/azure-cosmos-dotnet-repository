@@ -6,7 +6,7 @@ using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 
 namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 
-public class EventSourcingProvider : IChangeFeedContainerProcessorProvider
+internal class EventSourcingProvider : IChangeFeedContainerProcessorProvider
 {
     private readonly IEnumerable<IEventSourcingProcessor> _processors;
 

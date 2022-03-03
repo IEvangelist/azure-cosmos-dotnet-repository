@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Converters;
 
-public class PersistedEventConverter : JsonConverter
+internal class PersistedEventConverter : JsonConverter
 {
     public static HashSet<Type> ConvertableTypes { get; } = new();
 
