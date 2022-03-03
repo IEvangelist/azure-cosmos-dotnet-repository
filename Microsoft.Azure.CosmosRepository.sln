@@ -73,6 +73,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventSourcing", "EventSourc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNetCore", "AspNetCore", "{3D8EDE92-2014-4AD5-8EDD-69A2DEA33928}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AzureCosmosEventSourcingTests", "tests\Microsoft.AzureCosmosEventSourcingTests\Microsoft.AzureCosmosEventSourcingTests.csproj", "{FEB072AC-B573-48BF-948D-B5FFF9102303}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +157,10 @@ Global
 		{B6F280AC-1895-470D-AADF-A0E43E295AA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6F280AC-1895-470D-AADF-A0E43E295AA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6F280AC-1895-470D-AADF-A0E43E295AA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEB072AC-B573-48BF-948D-B5FFF9102303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEB072AC-B573-48BF-948D-B5FFF9102303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEB072AC-B573-48BF-948D-B5FFF9102303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEB072AC-B573-48BF-948D-B5FFF9102303}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,6 +187,7 @@ Global
 		{BA421538-A1AF-45E7-8028-DBCD4B7E5B99} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
 		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7} = {3D8EDE92-2014-4AD5-8EDD-69A2DEA33928}
 		{CDF603BA-5474-45E9-BBA1-2D33CAD12062} = {3D8EDE92-2014-4AD5-8EDD-69A2DEA33928}
+		{FEB072AC-B573-48BF-948D-B5FFF9102303} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6AAE7641-B62C-48BA-8FE6-0F819E5B45EF}
