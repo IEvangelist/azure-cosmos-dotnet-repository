@@ -31,7 +31,7 @@ public abstract class EventSource : FullItem
         PartitionKey = partitionKey;
     }
 
-    public EventSource()
+    protected EventSource()
     {
 
     }

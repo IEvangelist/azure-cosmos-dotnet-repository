@@ -56,7 +56,7 @@ internal class CosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
 
         List<Type> types = assemblies
             .SelectMany(x => x.GetTypes()
-                .Where(type => type.IsAssignableTo(typeof(IPersistedEvent))))
+                .Where(type => typeof(IPersistedEvent).IsAssignableFrom(type)))
             .ToList();
 
         types.ForEach(t => PersistedEventConverter.ConvertableTypes.Add(t));
