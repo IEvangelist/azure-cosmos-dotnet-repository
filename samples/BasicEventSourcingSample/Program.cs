@@ -1,12 +1,14 @@
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections.Models;
+using CleanArchitecture.Exceptions.AspNetCore;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
 
+services.AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = "EventSourcingShipSample");
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
 
@@ -37,6 +39,7 @@ WebApplication app = builder.Build();
 
 app.Map("/", () => Results.Redirect("/swagger"));
 
+app.UseCleanArchitectureExceptionsHandler();
 app.UseSwagger();
 app.UseSwaggerUI();
 

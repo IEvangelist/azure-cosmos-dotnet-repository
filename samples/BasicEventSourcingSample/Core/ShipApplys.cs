@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using CleanArchitecture.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing;
 
 namespace BasicEventSourcingSample.Core;
@@ -20,7 +21,7 @@ public partial class Ship
     {
         if (string.IsNullOrWhiteSpace(shipCreated.Name))
         {
-            throw new InvalidOperationException("A ship name must be provided");
+            throw new DomainException<Ship>("A ship name must be provided");
         }
 
         CreatedAt = shipCreated.OccuredUtc;
@@ -32,7 +33,7 @@ public partial class Ship
     {
         if (Status is not (ShipStatus.AtSea or ShipStatus.UnUsed))
         {
-            throw new InvalidOperationException($"A ship cannot dock when at status {Status}");
+            throw new DomainException<Ship>($"A ship cannot dock when at status {Status}");
         }
 
         Port = dockedInPort.Port;
@@ -43,12 +44,12 @@ public partial class Ship
     {
         if (Status is not (ShipStatus.Docked or ShipStatus.UnUsed))
         {
-            throw new InvalidOperationException($"A ship cannot start loading when at status {Status}");
+            throw new DomainException<Ship>($"A ship cannot start loading when at status {Status}");
         }
 
         if (Port != loading.Port)
         {
-            throw new InvalidOperationException(
+            throw new DomainException<Ship>(
                 $"The ship cannot load at port {loading.Port} as it is docked at port {Port}");
         }
 
@@ -59,12 +60,12 @@ public partial class Ship
     {
         if (Status is not (ShipStatus.Loading or ShipStatus.UnUsed))
         {
-            throw new InvalidOperationException($"A ship cannot have finished loading when at status {Status}");
+            throw new DomainException<Ship>($"A ship cannot have finished loading when at status {Status}");
         }
 
         if (Port != loaded.Port)
         {
-            throw new InvalidOperationException(
+            throw new DomainException<Ship>(
                 $"The ship cannot finish loading at port {loaded.Port} as it is docked at port {Port}");
         }
 
@@ -76,12 +77,12 @@ public partial class Ship
     {
         if (Status is not (ShipStatus.AwaitingDeparture or ShipStatus.UnUsed))
         {
-            throw new InvalidOperationException($"A ship cannot depart when at status {Status}");
+            throw new DomainException<Ship>($"A ship cannot depart when at status {Status}");
         }
 
         if (Port != departed.Port)
         {
-            throw new InvalidOperationException(
+            throw new DomainException<Ship>(
                 $"The ship cannot depart {departed.Port} as it is awaiting departure at {Port}");
         }
 
