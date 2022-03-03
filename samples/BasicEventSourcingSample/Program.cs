@@ -26,13 +26,16 @@ services.AddCosmosRepository(options =>
     containerBuilder.ConfigureEventSourceStore<ShipEventSource>("ship-tracking-events");
 });
 
-services.AddCosmosEventSourcing();
-services.AddEventSourceProjectionBuilder<ShipEventSource>(options =>
+services.AddCosmosEventSourcing(eventSourcingBuilder =>
 {
-    options.ProcessorName = "shipping-demo";
-    options.InstanceName = Environment.MachineName;
+    eventSourcingBuilder.AddAllEventProjectionHandlers();
+    eventSourcingBuilder.AddEventSourceProjectionBuilder<ShipEventSource>(options =>
+    {
+        options.ProcessorName = "shipping-demo";
+        options.InstanceName = Environment.MachineName;
+    });
 });
-services.AddAllEventProjectionHandlers();
+
 services.AddCosmosRepositoryChangeFeedHostedService();
 
 services.AddSingleton<IShipRepository, ShipRepository>();
