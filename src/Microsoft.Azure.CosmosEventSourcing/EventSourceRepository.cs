@@ -52,6 +52,7 @@ internal class EventSourceRepository<TEventSource> : IEventSourceRepository<TEve
             {
                 yield return eventSource;
             }
+
         } while (token is not null);
     }
 }
