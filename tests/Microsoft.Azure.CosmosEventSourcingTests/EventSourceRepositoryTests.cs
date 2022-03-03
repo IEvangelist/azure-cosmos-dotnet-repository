@@ -105,9 +105,9 @@ public class EventSourceRepositoryTests
             .ReturnsAsync(page2)
             .ReturnsAsync(page3);
 
-        //Act
         List<Testing.SampleEventSource> events = new();
 
+        //Act
         await foreach (Testing.SampleEventSource result in sut.StreamAsync(Pk, 5))
         {
             events.Add(result);
