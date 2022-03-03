@@ -38,7 +38,9 @@ public abstract class EventSource : FullItem
     /// <param name="eventPayload">The payload of the event.</param>
     /// <param name="partitionKey">The value to use as the partition key for the event.</param>
     /// <exception cref="ArgumentNullException">Occurs when the partition key value is a empty string or null.</exception>
-    protected EventSource(IPersistedEvent eventPayload, string partitionKey)
+    protected EventSource(
+        IPersistedEvent eventPayload,
+        string partitionKey)
     {
         if (string.IsNullOrWhiteSpace(partitionKey))
         {
