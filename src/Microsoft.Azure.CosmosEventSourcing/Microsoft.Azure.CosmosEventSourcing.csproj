@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <LangVersion>latest</LangVersion>
+
+        <PackageId>IEvangelist.Azure.CosmosEventSourcing</PackageId>
+        <Company>Microsoft Corporation</Company>
+        <Product>IEvangelist Azure Cosmos Event Sourcing</Product>
+        <Description>This client library enables client applications to connect to Azure Cosmos and use it as an event sourcing store.</Description>
+        <Copyright>Copyright © IEvangelist. All rights reserved. Licensed under the MIT License.</Copyright>
+        <Authors>Mumby0168,IEvangelist</Authors>
+        <AssemblyName>Microsoft.Azure.CosmosEventSourcing</AssemblyName>
+        <Title>IEvangelist Azure Cosmos Event Sourcing</Title>
+        <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureofficial;dotnetcore;netcore;netstandard;event-sourcing;eda;change-feed;projections</PackageTags>
+        <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
+        <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <ShippingScope>External</ShippingScope>
+        <SigningType>Product</SigningType>
+        <DebugType>portable</DebugType>
+        <IncludeSymbols>false</IncludeSymbols>
+        <IncludeSource>false</IncludeSource>
+        <RootNamespace>Microsoft.Azure.CosmosEventSourcing</RootNamespace>
+        <NoWarn>NU5125</NoWarn>
+        <Optimize Condition="'$(Configuration)'=='Release'">true</Optimize>
+        <RepositoryUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</RepositoryUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Scrutor" Version="4.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Microsoft.Azure.CosmosEventSourcingTests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\..\LICENSE">
+        <Pack>True</Pack>
+        <Link>LICENSE</Link>
+      </None>
+    </ItemGroup>
+
+</Project>
