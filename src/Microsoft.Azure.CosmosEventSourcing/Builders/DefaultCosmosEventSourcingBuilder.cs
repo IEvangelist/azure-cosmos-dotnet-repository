@@ -11,11 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Builders;
 
-internal class CosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
+internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
 {
     private readonly IServiceCollection _services;
 
-    public CosmosEventSourcingBuilder(IServiceCollection services) =>
+    public DefaultCosmosEventSourcingBuilder(IServiceCollection services) =>
         _services = services;
 
     public ICosmosEventSourcingBuilder AddEventSourceProjectionBuilder<TEventSource, TProjectionBuilder>(
@@ -28,7 +28,7 @@ internal class CosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
 
         _services.AddSingleton(options);
         _services.AddSingleton<IEventSourceProjectionBuilder<TEventSource>, TProjectionBuilder>();
-        _services.AddSingleton<IEventSourcingProcessor, EventSourcingProcessor<TEventSource>>();
+        _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventSource>>();
         return this;
     }
 
@@ -42,7 +42,7 @@ internal class CosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         _services.AddSingleton(options);
         _services
             .AddSingleton<IEventSourceProjectionBuilder<TEventSource>, EventBasedEventSourceProjectionBuilder<TEventSource>>();
-        _services.AddSingleton<IEventSourcingProcessor, EventSourcingProcessor<TEventSource>>();
+        _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventSource>>();
         return this;
     }
 

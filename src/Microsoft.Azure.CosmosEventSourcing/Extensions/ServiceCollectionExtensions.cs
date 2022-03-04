@@ -23,10 +23,10 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Action<ICosmosEventSourcingBuilder> eventSourcingBuilder)
     {
-        CosmosEventSourcingBuilder builder = new(services);
+        DefaultCosmosEventSourcingBuilder builder = new(services);
         eventSourcingBuilder.Invoke(builder);
-        services.AddSingleton(typeof(IEventSourceRepository<>), typeof(EventSourceRepository<>));
-        services.AddSingleton<IChangeFeedContainerProcessorProvider, EventSourcingProvider>();
+        services.AddSingleton(typeof(IEventSourceRepository<>), typeof(DefaultEventSourceRepository<>));
+        services.AddSingleton<IChangeFeedContainerProcessorProvider, DefaultEventSourcingProvider>();
         return services;
     }
 }

@@ -35,7 +35,7 @@ public class EventSourceRepositoryTests
         _repository = _autoMocker.GetMock<IRepository<Testing.SampleEventSource>>();
 
     private IEventSourceRepository<Testing.SampleEventSource> CreateSut() =>
-        _autoMocker.CreateInstance<EventSourceRepository<Testing.SampleEventSource>>();
+        _autoMocker.CreateInstance<DefaultEventSourceRepository<Testing.SampleEventSource>>();
 
     [Fact]
     public async Task PersistAsync_Events_SavesAllEvents()

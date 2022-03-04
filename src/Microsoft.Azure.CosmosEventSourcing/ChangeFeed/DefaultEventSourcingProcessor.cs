@@ -9,21 +9,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 
-internal class EventSourcingProcessor<TSourcedEvent> : IEventSourcingProcessor
+internal class DefaultEventSourcingProcessor<TSourcedEvent> : IEventSourcingProcessor
     where TSourcedEvent : EventSource
 {
     private readonly EventSourcingProcessorOptions<TSourcedEvent> _options;
     private readonly ICosmosContainerService _containerService;
     private readonly ILeaseContainerProvider _leaseContainerProvider;
-    private readonly ILogger<EventSourcingProcessor<TSourcedEvent>> _logger;
+    private readonly ILogger<DefaultEventSourcingProcessor<TSourcedEvent>> _logger;
     private readonly IEventSourceProjectionBuilder<TSourcedEvent> _projectionBuilder;
     private ChangeFeedProcessor? _processor;
 
-    public EventSourcingProcessor(
+    public DefaultEventSourcingProcessor(
         EventSourcingProcessorOptions<TSourcedEvent> options,
         ICosmosContainerService containerService,
         ILeaseContainerProvider leaseContainerProvider,
-        ILogger<EventSourcingProcessor<TSourcedEvent>> logger,
+        ILogger<DefaultEventSourcingProcessor<TSourcedEvent>> logger,
         IEventSourceProjectionBuilder<TSourcedEvent> projectionBuilder)
     {
         _options = options;

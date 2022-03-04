@@ -8,11 +8,11 @@ using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace Microsoft.Azure.CosmosEventSourcing;
 
-internal class EventSourceRepository<TEventSource> : IEventSourceRepository<TEventSource> where TEventSource : EventSource
+internal class DefaultEventSourceRepository<TEventSource> : IEventSourceRepository<TEventSource> where TEventSource : EventSource
 {
     private readonly IRepository<TEventSource> _repository;
 
-    public EventSourceRepository(IRepository<TEventSource> repository) =>
+    public DefaultEventSourceRepository(IRepository<TEventSource> repository) =>
         _repository = repository;
 
     public async ValueTask PersistAsync(
