@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using BasicEventSourcingSample.Core;
+using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections.Models;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository;
@@ -10,7 +11,7 @@ namespace BasicEventSourcingSample.Projections;
 
 public class ShipInformationProjections
 {
-    public class ShipCreatedHandler : IEventProjectionHandler<ShipEvents.ShipCreated>
+    public class ShipCreatedHandler : IEventProjectionHandler<ShipEvents.ShipCreated, ShipEventSource>
     {
         private readonly IRepository<ShipInformation> _repository;
 
@@ -19,6 +20,7 @@ public class ShipInformationProjections
 
         public async ValueTask HandleAsync(
             ShipEvents.ShipCreated shipCreated,
+            ShipEventSource eventSource,
             CancellationToken cancellationToken = default)
         {
             ShipInformation info = new(
@@ -30,7 +32,7 @@ public class ShipInformationProjections
         }
     }
 
-    public class ShipDockedHandler : IEventProjectionHandler<ShipEvents.DockedInPort>
+    public class ShipDockedHandler : IEventProjectionHandler<ShipEvents.DockedInPort, ShipEventSource>
     {
         private readonly IRepository<ShipInformation> _repository;
 
@@ -39,6 +41,7 @@ public class ShipInformationProjections
 
         public async ValueTask HandleAsync(
             ShipEvents.DockedInPort dockedInPort,
+            ShipEventSource eventSource,
             CancellationToken cancellationToken = default)
         {
             (string name, string port, _) = dockedInPort;
@@ -54,7 +57,7 @@ public class ShipInformationProjections
         }
     }
 
-    public class ShipLoadedHandler : IEventProjectionHandler<ShipEvents.Loaded>
+    public class ShipLoadedHandler : IEventProjectionHandler<ShipEvents.Loaded, ShipEventSource>
     {
         private readonly IRepository<ShipInformation> _repository;
 
@@ -63,6 +66,7 @@ public class ShipInformationProjections
 
         public async ValueTask HandleAsync(
             ShipEvents.Loaded loaded,
+            ShipEventSource eventSource,
             CancellationToken cancellationToken = default)
         {
             (string name, string port, double cargoWeight, _) = loaded;

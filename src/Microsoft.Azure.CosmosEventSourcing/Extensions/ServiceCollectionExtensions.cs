@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
     {
         DefaultCosmosEventSourcingBuilder builder = new(services);
         eventSourcingBuilder.Invoke(builder);
-        services.AddSingleton(typeof(IEventSourceRepository<>), typeof(DefaultEventSourceRepository<>));
+        services.AddSingleton(typeof(IEventStore<>), typeof(DefaultEventStore<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, DefaultEventSourcingProvider>();
         return services;
     }

@@ -27,7 +27,7 @@ public interface ICosmosEventSourcingBuilder
         where TProjectionBuilder : class, IEventSourceProjectionBuilder<TEventSource>;
 
     /// <summary>
-    /// Adds a projection builder that uses <see cref="IEventProjectionHandler{TEvent}"/>'s to project a single type of <see cref="IPersistedEvent"/>
+    /// Adds a projection builder that uses <see cref="IEventProjectionHandler{TEvent, TEventSource}"/>'s to project a single type of <see cref="IPersistedEvent"/>
     /// </summary>
     /// <param name="optionsAction">The <see cref="EventSourcingProcessorOptions{TEventSource}"/> used to configure the processor.</param>
     /// <typeparam name="TEventSource">The <see cref="EventSource"/></typeparam>
@@ -45,9 +45,9 @@ public interface ICosmosEventSourcingBuilder
         params Assembly[] assemblies);
 
     /// <summary>
-    /// Adds all of the <see cref="IEventProjectionHandler{TEvent}"/>'s provided in the given assemblies.
+    /// Adds all of the <see cref="IEventProjectionHandler{TEvent, TEventSource}"/>'s provided in the given assemblies.
     /// </summary>
-    /// <param name="assemblies">The assemblies to scan for <see cref="IEventProjectionHandler{TEvent}"/></param>
+    /// <param name="assemblies">The assemblies to scan for <see cref="IEventProjectionHandler{TEvent, TEventSource}"/></param>
     /// <returns></returns>
     public ICosmosEventSourcingBuilder AddAllEventProjectionHandlers(
         params Assembly[] assemblies);
