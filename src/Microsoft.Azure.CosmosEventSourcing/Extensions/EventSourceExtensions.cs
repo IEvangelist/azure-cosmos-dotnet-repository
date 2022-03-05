@@ -26,8 +26,8 @@ public static class EventSourceExtensions
     /// <returns>The TEvent instance.</returns>
     /// <remarks>If the event payload cannot be converted to the TEvent type null is returned.</remarks>
     public static TEvent? TryGetEventPayload<TEvent>(this EventSource eventSource)
-        where TEvent : class, IPersistedEvent
-        => eventSource.EventPayload switch
+        where TEvent : class, IPersistedEvent =>
+        eventSource.EventPayload switch
         {
             TEvent eventPayload => eventPayload,
             null => null,
