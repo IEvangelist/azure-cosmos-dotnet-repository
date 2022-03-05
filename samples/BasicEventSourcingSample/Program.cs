@@ -2,6 +2,7 @@ using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections.Models;
 using CleanArchitecture.Exceptions.AspNetCore;
+using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 
@@ -102,8 +103,26 @@ app.MapPost("/api/ships/departed", async (ShipEvents.Departed departed, IShipRep
     await shipRepository.SaveAsync(ship);
 });
 
+app.MapGet("/api/ship/{shipName}/departures", async (string shipName, IEventStore<ShipEventSource> store) =>
+{
+    IEnumerable<ShipEventSource> events = await store.ReadAsync(
+        shipName,
+        x => x.EventName == nameof(ShipEvents.Departed));
+
+    List<ShipEvents.Departed> departedEvents = events
+        .Select(x =>
+            x.GetEventPayload<ShipEvents.Departed>())
+        .OrderBy(x => x.OccuredUtc)
+        .ToList();
+
+    return departedEvents.Select(x =>
+        new ShipDepartureDto(x.Name, x.Port, x.OccuredUtc));
+});
+
 app.Run();
 
 record CreateShip(string Name, DateTime Commissioned);
+
+record ShipDepartureDto(string Name, string Port, DateTime OccuredUtc);
 
 record ShipInfoDto(string Name, DateTime Commissioned, string? LatestPort, double? LatestCargoWeight);

@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Microsoft.Azure.CosmosEventSourcingTests;
 
-public class EventSourceRepositoryTests
+public class EventStoreTests
 {
     private readonly AutoMocker _autoMocker = new();
     private readonly Mock<IRepository<Testing.SampleEventSource>> _repository;
@@ -31,17 +31,17 @@ public class EventSourceRepositoryTests
         new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), Pk),
     };
 
-    public EventSourceRepositoryTests() =>
+    public EventStoreTests() =>
         _repository = _autoMocker.GetMock<IRepository<Testing.SampleEventSource>>();
 
-    private IEventSourceRepository<Testing.SampleEventSource> CreateSut() =>
-        _autoMocker.CreateInstance<DefaultEventSourceRepository<Testing.SampleEventSource>>();
+    private IEventStore<Testing.SampleEventSource> CreateSut() =>
+        _autoMocker.CreateInstance<DefaultEventStore<Testing.SampleEventSource>>();
 
     [Fact]
     public async Task PersistAsync_Events_SavesAllEvents()
     {
         //Arrange
-        IEventSourceRepository<Testing.SampleEventSource> sut = CreateSut();
+        IEventStore<Testing.SampleEventSource> sut = CreateSut();
 
         //Act
         await sut.PersistAsync(_events);
@@ -54,7 +54,7 @@ public class EventSourceRepositoryTests
     public async Task GetAsync_EventsInDb_GetsAllEvents()
     {
         //Arrange
-        IEventSourceRepository<Testing.SampleEventSource> sut = CreateSut();
+        IEventStore<Testing.SampleEventSource> sut = CreateSut();
 
         _repository
             .Setup(o =>
@@ -72,7 +72,7 @@ public class EventSourceRepositoryTests
     public async Task StreamAsync_EventsInDb_StreamsAllEvents()
     {
         //Arrange
-        IEventSourceRepository<Testing.SampleEventSource> sut = CreateSut();
+        IEventStore<Testing.SampleEventSource> sut = CreateSut();
 
         Page<Testing.SampleEventSource> page1 = new(
             null,

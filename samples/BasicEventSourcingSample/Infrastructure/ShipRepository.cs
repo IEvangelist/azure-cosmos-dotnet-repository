@@ -13,20 +13,20 @@ namespace BasicEventSourcingSample.Infrastructure;
 
 public class ShipRepository : IShipRepository
 {
-    private readonly IEventSourceRepository<ShipEventSource> _sourceRepository;
+    private readonly IEventStore<ShipEventSource> _store;
     private readonly IRepository<ShipInformation> _shipInformationRepository;
 
     public ShipRepository(
-        IEventSourceRepository<ShipEventSource> sourceRepository,
+        IEventStore<ShipEventSource> store,
         IRepository<ShipInformation> shipInformationRepository)
     {
-        _sourceRepository = sourceRepository;
+        _store = store;
         _shipInformationRepository = shipInformationRepository;
     }
 
     public async ValueTask<Ship> FindAsync(string shipName)
     {
-        IEnumerable<ShipEventSource> sourcedEvents = await _sourceRepository.ReadAsync(shipName);
+        IEnumerable<ShipEventSource> sourcedEvents = await _store.ReadAsync(shipName);
         Ship ship = Ship.Build(sourcedEvents.Select(x => x.EventPayload).ToList());
         return ship;
     }
@@ -36,7 +36,7 @@ public class ShipRepository : IShipRepository
         IEnumerable<ShipEventSource> sourced =
             ship.UnSavedEvents.Select(x => new ShipEventSource(x, ship.Name));
 
-        return _sourceRepository.PersistAsync(sourced);
+        return _store.PersistAsync(sourced);
     }
 
     public async Task<IEnumerable<string>> GetShipNamesAsync()

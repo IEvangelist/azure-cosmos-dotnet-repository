@@ -3,16 +3,18 @@
 
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace Microsoft.Azure.CosmosEventSourcing;
 
-internal class DefaultEventSourceRepository<TEventSource> : IEventSourceRepository<TEventSource> where TEventSource : EventSource
+internal class DefaultEventStore<TEventSource> :
+    IEventStore<TEventSource> where TEventSource : EventSource
 {
     private readonly IRepository<TEventSource> _repository;
 
-    public DefaultEventSourceRepository(IRepository<TEventSource> repository) =>
+    public DefaultEventStore(IRepository<TEventSource> repository) =>
         _repository = repository;
 
     public async ValueTask PersistAsync(
@@ -26,6 +28,16 @@ internal class DefaultEventSourceRepository<TEventSource> : IEventSourceReposito
         CancellationToken cancellationToken = default) =>
         _repository.GetAsync(
             x => x.PartitionKey == partitionKey,
+            cancellationToken);
+
+    public ValueTask<IEnumerable<TEventSource>> ReadAsync(
+        string partitionKey,
+        Expression<Func<TEventSource, bool>> predicate,
+        CancellationToken cancellationToken = default) =>
+        _repository.GetAsync(
+            predicate.Compose(
+                x => x.PartitionKey == partitionKey,
+                Expression.AndAlso),
             cancellationToken);
 
     public async IAsyncEnumerable<TEventSource> StreamAsync(

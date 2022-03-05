@@ -30,6 +30,7 @@ internal class EventBasedEventSourceProjectionBuilder<TEventSource> : IEventSour
         {
             _logger.LogDebug("No IEventProjectionHandler<{EventType}> found",
                 payloadTypeName);
+
             return;
         }
 
@@ -38,7 +39,7 @@ internal class EventBasedEventSourceProjectionBuilder<TEventSource> : IEventSour
             try
             {
                 object? result = handlerType.GetMethod("HandleAsync")?
-                    .Invoke(handler, new object [] {sourcedEvent.EventPayload, cancellationToken});
+                    .Invoke(handler, new object[] {sourcedEvent.EventPayload, sourcedEvent, cancellationToken});
 
                 if (result is ValueTask valueTask)
                 {
@@ -57,5 +58,5 @@ internal class EventBasedEventSourceProjectionBuilder<TEventSource> : IEventSour
     }
 
     private static Type BuildEventProjectionHandlerType(TEventSource eventSource) =>
-        typeof(IEventProjectionHandler<>).MakeGenericType(eventSource.EventPayload.GetType());
+        typeof(IEventProjectionHandler<,>).MakeGenericType(eventSource.EventPayload.GetType(), eventSource.GetType());
 }
