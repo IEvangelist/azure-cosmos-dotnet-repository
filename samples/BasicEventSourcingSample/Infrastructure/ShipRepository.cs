@@ -3,7 +3,6 @@
 
 using System.Net;
 using BasicEventSourcingSample.Core;
-using BasicEventSourcingSample.Projections;
 using BasicEventSourcingSample.Projections.Models;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing;

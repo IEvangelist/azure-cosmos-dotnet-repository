@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.VisualBasic.CompilerServices;
 using Xunit;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Options

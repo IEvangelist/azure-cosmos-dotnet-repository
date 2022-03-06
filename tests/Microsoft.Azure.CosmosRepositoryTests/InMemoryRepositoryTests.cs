@@ -5,17 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Paging;
+using Microsoft.Azure.CosmosRepository.Specification;
+using Microsoft.Azure.CosmosRepositoryTests.Extensions;
 using Newtonsoft.Json;
 using Xunit;
-using Microsoft.Azure.CosmosRepositoryTests.Extensions;
-using Microsoft.Azure.CosmosRepository.Paging;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.Azure.CosmosRepository.Specification;
-using Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 namespace Microsoft.Azure.CosmosRepositoryTests
 {

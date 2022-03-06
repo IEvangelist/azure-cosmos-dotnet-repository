@@ -2,9 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Azure.Core;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Validators;
 using Microsoft.Azure.CosmosRepositoryTests.Stubs;

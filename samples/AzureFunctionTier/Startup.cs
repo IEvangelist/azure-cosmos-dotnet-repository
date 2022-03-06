@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using User = AzureFunctionTier.Model.User;

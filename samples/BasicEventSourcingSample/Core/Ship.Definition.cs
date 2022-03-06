@@ -1,8 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Azure.CosmosEventSourcing;
-
 namespace BasicEventSourcingSample.Core;
 
 public partial class Ship : Aggregate

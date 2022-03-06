@@ -1,8 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.IO;
 using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepository

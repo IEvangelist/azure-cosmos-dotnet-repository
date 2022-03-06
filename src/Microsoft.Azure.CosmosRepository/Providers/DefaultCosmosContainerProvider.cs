@@ -4,12 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Attributes;
-using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Services;
-using Microsoft.Azure.CosmosRepository.Validators;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Providers
 {

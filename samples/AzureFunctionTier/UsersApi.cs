@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using AzureFunctionTier.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System.Threading;
-using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace AzureFunctionTier
 {

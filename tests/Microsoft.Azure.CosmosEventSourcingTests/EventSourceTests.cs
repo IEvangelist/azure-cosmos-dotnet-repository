@@ -3,8 +3,6 @@
 
 using System;
 using FluentAssertions;
-using Microsoft.Azure.CosmosEventSourcing;
-using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Xunit;
 
 namespace Microsoft.Azure.CosmosEventSourcingTests;
