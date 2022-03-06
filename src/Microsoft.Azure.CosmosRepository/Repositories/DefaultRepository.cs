@@ -15,10 +15,12 @@ using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    internal sealed partial class DefaultRepository<TItem> : IRepository<TItem> where TItem : IItem
+    internal sealed partial class DefaultRepository<TItem> : IRepository<TItem>
+        where TItem : class, IItem
     {
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;

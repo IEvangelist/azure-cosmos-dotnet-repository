@@ -34,6 +34,21 @@ namespace Microsoft.Azure.CosmosRepository
     /// </example>
     public interface IReadOnlyRepository<TItem> where TItem : IItem
     {
+
+        /// <summary>
+        /// Attempts to get an <see cref="IItem"/> that corresponds to the given <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The string identifier.</param>
+        /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <remarks>This implementation handles the case in which a <see cref="CosmosException"/> with the status code of 404.
+        /// It will return null when this exception is thrown.</remarks>
+        /// <returns></returns>
+        ValueTask<TItem?> TryGetAsync(
+            string id,
+            string? partitionKeyValue = null,
+            CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Gets the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
         /// </summary>

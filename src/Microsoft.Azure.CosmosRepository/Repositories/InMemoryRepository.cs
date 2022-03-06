@@ -24,7 +24,8 @@ using Newtonsoft.Json.Linq;
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    internal class InMemoryRepository<TItem> : IRepository<TItem> where TItem : class, IItem
+    internal class InMemoryRepository<TItem> : IRepository<TItem>
+        where TItem : class, IItem
     {
         private readonly ISpecificationEvaluator _specificationEvaluator;
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -60,6 +61,18 @@ namespace Microsoft.Azure.CosmosRepository
 
         internal TDeserializeTo DeserializeItem<TDeserializeTo>(string jsonItem) =>
             JsonConvert.DeserializeObject<TDeserializeTo>(jsonItem);
+
+        public async ValueTask<TItem?> TryGetAsync(string id, string? partitionKeyValue = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await GetAsync(id, partitionKeyValue, cancellationToken);
+            }
+            catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+        }
 
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(

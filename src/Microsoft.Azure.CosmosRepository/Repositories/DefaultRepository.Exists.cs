@@ -11,7 +11,7 @@ using Microsoft.Azure.Cosmos;
 
 namespace Microsoft.Azure.CosmosRepository
 {
-    internal sealed partial class DefaultRepository<TItem>
+    internal sealed partial class DefaultRepository<TItem> where TItem : class, IItem
     {
         /// <inheritdoc/>
         public ValueTask<bool> ExistsAsync(

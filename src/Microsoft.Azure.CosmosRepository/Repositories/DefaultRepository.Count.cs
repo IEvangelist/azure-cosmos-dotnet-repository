@@ -12,7 +12,7 @@ using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Microsoft.Azure.CosmosRepository
 {
-    internal sealed partial class DefaultRepository<TItem>
+    internal sealed partial class DefaultRepository<TItem> where TItem : class, IItem
     {
         /// <inheritdoc/>
         public async ValueTask<int> CountAsync(

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Linq;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -38,5 +39,12 @@ namespace Microsoft.Azure.CosmosRepository.Logging
             IQueryable<TItem> queryable,
             double charge) where TItem : IItem =>
             LoggerMessageDefinitions.QueryExecuted(logger, typeof(TItem).Name, charge, queryable.ToString(), null!);
+
+        public static void LogItemNotFoundHandled<TItem>(
+            this ILogger logger,
+            string id,
+            string partitionKey,
+            CosmosException e) where TItem : IItem =>
+            LoggerMessageDefinitions.ItemNotFoundHandled(logger, typeof(TItem).Name, id, partitionKey, e);
     }
 }

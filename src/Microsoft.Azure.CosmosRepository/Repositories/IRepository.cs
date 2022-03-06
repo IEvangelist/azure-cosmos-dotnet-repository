@@ -28,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository
     public interface IRepository<TItem> :
         IReadOnlyRepository<TItem>,
         IWriteOnlyRepository<TItem>
-        where TItem : IItem
+        where TItem : class, IItem
     {
     }
 }

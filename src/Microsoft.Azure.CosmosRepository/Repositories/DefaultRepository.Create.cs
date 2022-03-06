@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepository
 {
-    internal sealed partial class DefaultRepository<TItem>
+    internal sealed partial class DefaultRepository<TItem> where TItem : class, IItem
     {
         /// <inheritdoc/>
         public async ValueTask<TItem> CreateAsync(

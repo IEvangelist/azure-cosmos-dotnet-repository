@@ -51,6 +51,9 @@ public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
             Product discountedTv = await _productsRepository.GetAsync(product.Id, product.CategoryId);
             discountedTv.Price.Should().Be(450);
 
+            Product? notFoundProduct = await _productsRepository.TryGetAsync(Guid.NewGuid().ToString());
+            notFoundProduct.Should().BeNull();
+
             await _productsRepository.DeleteAsync(discountedTv);
 
             products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
