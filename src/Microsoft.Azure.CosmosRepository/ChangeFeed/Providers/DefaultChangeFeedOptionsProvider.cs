@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Options;

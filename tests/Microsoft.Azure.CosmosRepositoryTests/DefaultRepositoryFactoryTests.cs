@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Microsoft.Extensions.Configuration;

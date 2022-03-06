@@ -2,9 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Microsoft.Azure.CosmosRepository.Options;
 
 namespace Microsoft.Azure.CosmosRepository.Builders
 {

@@ -1,10 +1,7 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.CosmosRepository.Services
 {

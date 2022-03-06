@@ -6,7 +6,6 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 

@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Linq;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Options;
 

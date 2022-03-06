@@ -1,0 +1,101 @@
+﻿// Copyright (c) IEvangelist. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosRepository.Logging;
+
+namespace Microsoft.Azure.CosmosRepository
+{
+    internal sealed partial class DefaultRepository<TItem>
+    {
+        /// <inheritdoc/>
+        public ValueTask<TItem> GetAsync(
+            string id,
+            string? partitionKeyValue = null,
+            CancellationToken cancellationToken = default) =>
+            GetAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
+
+        /// <inheritdoc/>
+        public async ValueTask<TItem> GetAsync(
+            string id,
+            PartitionKey partitionKey,
+            CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            if (partitionKey == default)
+            {
+                partitionKey = new PartitionKey(id);
+            }
+
+            _logger.LogPointReadStarted<TItem>(id, partitionKey.ToString());
+
+            ItemResponse<TItem> response =
+                await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
+                    .ConfigureAwait(false);
+
+            TItem item = response.Resource;
+
+            _logger.LogPointReadExecuted<TItem>(response.RequestCharge);
+            _logger.LogItemRead(item);
+
+            return _repositoryExpressionProvider.CheckItem(item);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<IEnumerable<TItem>> GetAsync(
+            Expression<Func<TItem, bool>> predicate,
+            CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            IQueryable<TItem> query =
+                container.GetItemLinqQueryable<TItem>()
+                    .Where(_repositoryExpressionProvider.Build(predicate));
+
+            _logger.LogQueryConstructed(query);
+
+            (IEnumerable<TItem> items, double charge) =
+                await _cosmosQueryableProcessor.IterateAsync(query, cancellationToken);
+
+            _logger.LogQueryExecuted(query, charge);
+
+            return items;
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<IEnumerable<TItem>> GetByQueryAsync(
+            string query,
+            CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            TryLogDebugDetails(_logger, () => $"Read {query}");
+
+            QueryDefinition queryDefinition = new(query);
+            return await _cosmosQueryableProcessor.IterateAsync<TItem>(container, queryDefinition, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<IEnumerable<TItem>> GetByQueryAsync(
+            QueryDefinition queryDefinition,
+            CancellationToken cancellationToken = default)
+        {
+            Container container =
+                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+            TryLogDebugDetails(_logger, () => $"Read {queryDefinition.QueryText}");
+
+            return await _cosmosQueryableProcessor.IterateAsync<TItem>(container, queryDefinition, cancellationToken);
+        }
+    }
+}

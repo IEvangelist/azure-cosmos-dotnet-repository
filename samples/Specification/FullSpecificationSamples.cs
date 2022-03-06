@@ -4,7 +4,6 @@
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Specification;
-using Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 namespace Specification;
 

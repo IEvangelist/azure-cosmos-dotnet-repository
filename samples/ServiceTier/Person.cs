@@ -1,10 +1,10 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Attributes;
 using Newtonsoft.Json;
-using System;
 
 namespace ServiceTier
 {

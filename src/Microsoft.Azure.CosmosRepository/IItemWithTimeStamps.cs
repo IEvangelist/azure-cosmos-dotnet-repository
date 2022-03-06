@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosRepository
 {

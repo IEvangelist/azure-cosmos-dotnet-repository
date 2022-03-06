@@ -1,8 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Reflection.Metadata;
-using System.Security.Policy;
 using Microsoft.Azure.CosmosEventSourcing;
 
 namespace BasicEventSourcingSample.Core;

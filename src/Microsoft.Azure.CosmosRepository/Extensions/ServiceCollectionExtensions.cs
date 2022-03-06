@@ -1,25 +1,22 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Internals;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Linq;
-using Microsoft.Azure.CosmosRepository.Builders;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Collections.Generic;
-using System.Reflection;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
+using Microsoft.Azure.CosmosRepository.Internals;
+using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
+using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Azure.CosmosRepository.Services;
-using Microsoft.Azure.CosmosRepository.Validators;
 using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
+using Microsoft.Azure.CosmosRepository.Validators;
+using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -61,6 +58,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<ICosmosPartitionKeyPathProvider, DefaultCosmosPartitionKeyPathProvider>()
                 .AddSingleton<ICosmosContainerNameProvider, DefaultCosmosContainerNameProvider>()
                 .AddSingleton<ICosmosUniqueKeyPolicyProvider, DefaultCosmosUniqueKeyPolicyProvider>()
+                .AddSingleton(typeof(IReadOnlyRepository<>), typeof(DefaultRepository<>))
+                .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(DefaultRepository<>))
                 .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
                 .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
                 .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>()
@@ -101,7 +100,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(
                     nameof(services), "A service collection is required.");
             }
-            services.AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
+
+            services
+                .AddSingleton(typeof(IReadOnlyRepository<>), typeof(InMemoryRepository<>))
+                .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(InMemoryRepository<>))
+                .AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
                 .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
                 .AddSingleton(typeof(InMemoryChangeFeed<>));
 
@@ -115,26 +118,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection RemoveCosmosRepositories(this IServiceCollection services)
         {
-            List<ServiceDescriptor> repositories = services.Where(i => i.ServiceType == typeof(IRepository<>)).ToList();
+            List<ServiceDescriptor> repositories =
+                services.Where(i => i.ServiceType == typeof(IRepository<>))
+                .ToList();
+
             repositories.ForEach(r => services.Remove(r));
             return services;
         }
-
-        /// <summary>
-        /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/>
-        /// instances to interact with Cosmos DB.
-        /// </summary>
-        /// <param name="services">The service collection to add services to.</param>
-        /// <param name="configuration">The configuration representing the applications settings.</param>
-        /// <param name="setupAction">An action to configure the repository options</param>
-        /// <returns>The same service collection that was provided, with the required cosmos services.</returns>
-        [Obsolete(
-            "Use the AddCosmosRepository overload the doesn't accept an IConfiguration. " +
-            "This is no longer needed, and will be removed in later versions.")]
-        public static IServiceCollection AddCosmosRepository(
-            this IServiceCollection services,
-            IConfiguration configuration,
-            Action<RepositoryOptions>? setupAction = default) =>
-            services.AddCosmosRepository(setupAction);
     }
 }

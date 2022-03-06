@@ -9,7 +9,6 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.DependencyInjection;
 using WebTier.Integration.Tests.Factories;

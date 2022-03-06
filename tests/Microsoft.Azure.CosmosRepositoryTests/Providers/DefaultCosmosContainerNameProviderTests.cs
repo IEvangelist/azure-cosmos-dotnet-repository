@@ -8,7 +8,6 @@ using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers
 {

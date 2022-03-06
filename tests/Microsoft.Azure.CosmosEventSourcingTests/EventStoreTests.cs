@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Schema;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosRepository;

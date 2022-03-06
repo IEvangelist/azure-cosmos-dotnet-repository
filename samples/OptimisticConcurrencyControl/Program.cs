@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Bogus;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Configuration;
