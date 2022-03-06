@@ -69,6 +69,7 @@ namespace Microsoft.Azure.CosmosRepository
             int readItemsCount = 0;
             double charge = 0;
             using FeedIterator<TItem> iterator = query.ToFeedIterator();
+            
             while (readItemsCount < pageSize && iterator.HasMoreResults)
             {
                 FeedResponse<TItem> next =
