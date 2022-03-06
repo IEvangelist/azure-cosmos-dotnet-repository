@@ -47,7 +47,7 @@ namespace Microsoft.Azure.CosmosRepository
                 countResponse = await query.CountAsync(cancellationToken);
             }
 
-            (List<TItem> items, double charge, string? continuationToken) =
+            (List<TItem> items, double charge, string? resultingContinationToken) =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
 
             _logger.LogQueryExecuted(query, charge);
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.CosmosRepository
                 pageSize,
                 items.AsReadOnly(),
                 charge + countResponse?.RequestCharge ?? 0,
-                continuationToken);
+                resultingContinationToken);
         }
 
         /// <inheritdoc/>
@@ -88,7 +88,7 @@ namespace Microsoft.Azure.CosmosRepository
 
             _logger.LogQueryConstructed(query);
 
-            (List<TItem> items, double charge, string? continuationToken) =
+            (List<TItem> items, double charge, string? resultingContinationToken) =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
 
             _logger.LogQueryExecuted(query, charge);
@@ -99,7 +99,7 @@ namespace Microsoft.Azure.CosmosRepository
                 pageSize,
                 items.AsReadOnly(),
                 charge + countResponse?.RequestCharge ?? 0,
-                continuationToken /* This was missing, is this correct? */);
+                resultingContinationToken /* This was missing, is this correct? */);
         }
     }
 }
