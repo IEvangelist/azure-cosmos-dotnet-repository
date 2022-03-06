@@ -21,11 +21,15 @@ namespace Microsoft.Azure.CosmosRepository
             bool ignoreEtag = false)
         {
             (bool optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
-            Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            Container container =
+                await _containerProvider.GetContainerAsync()
+                    .ConfigureAwait(false);
 
             if (value is IItemWithEtag valueWithEtag && !ignoreEtag)
             {
-                options.IfMatchEtag = string.IsNullOrWhiteSpace(valueWithEtag.Etag) ? default : valueWithEtag.Etag;
+                options.IfMatchEtag = string.IsNullOrWhiteSpace(valueWithEtag.Etag)
+                    ? default
+                    : valueWithEtag.Etag;
             }
 
             ItemResponse<TItem> response =

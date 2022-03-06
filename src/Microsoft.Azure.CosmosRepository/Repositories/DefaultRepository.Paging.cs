@@ -47,17 +47,17 @@ namespace Microsoft.Azure.CosmosRepository
                 countResponse = await query.CountAsync(cancellationToken);
             }
 
-            (List<TItem> Items, double Charge, string? ContinuationToken) result =
+            (List<TItem> items, double charge, string? continuationToken) =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
 
-            _logger.LogQueryExecuted(query, result.Charge);
+            _logger.LogQueryExecuted(query, charge);
 
             return new Page<TItem>(
                 countResponse?.Resource ?? null,
                 pageSize,
-                result.Items.AsReadOnly(),
-                result.Charge + countResponse?.RequestCharge ?? 0,
-                result.ContinuationToken);
+                items.AsReadOnly(),
+                charge + countResponse?.RequestCharge ?? 0,
+                continuationToken);
         }
 
         /// <inheritdoc/>
@@ -88,17 +88,18 @@ namespace Microsoft.Azure.CosmosRepository
 
             _logger.LogQueryConstructed(query);
 
-            (List<TItem> Items, double Charge, string? ContinuationToken) result =
+            (List<TItem> items, double charge, string? continuationToken) =
                 await GetAllItemsAsync(query, pageSize, cancellationToken);
 
-            _logger.LogQueryExecuted(query, result.Charge);
+            _logger.LogQueryExecuted(query, charge);
 
             return new PageQueryResult<TItem>(
                 countResponse?.Resource ?? null,
                 pageNumber,
                 pageSize,
-                result.Items.AsReadOnly(),
-                result.Charge + countResponse?.RequestCharge ?? 0);
+                items.AsReadOnly(),
+                charge + countResponse?.RequestCharge ?? 0,
+                continuationToken /* This was missing, is this correct? */);
         }
     }
 }

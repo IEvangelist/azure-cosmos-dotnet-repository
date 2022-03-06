@@ -4,8 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -13,7 +11,6 @@ using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
 using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepository.Specification;
 using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -52,58 +49,6 @@ namespace Microsoft.Azure.CosmosRepository
             _specificationEvaluator = specificationEvaluator;
         }
 
-        /// <inheritdoc/>
-        public ValueTask<bool> ExistsAsync(
-            string id,
-            string? partitionKeyValue = null,
-            CancellationToken cancellationToken = default) =>
-            ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
-
-        /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(
-            string id,
-            PartitionKey partitionKey,
-            CancellationToken cancellationToken = default)
-        {
-            Container container =
-                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
-
-            if (partitionKey == default)
-            {
-                partitionKey = new PartitionKey(id);
-            }
-
-            try
-            {
-                _ = await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
-                    .ConfigureAwait(false);
-            }
-            catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(
-            Expression<Func<TItem, bool>> predicate,
-            CancellationToken cancellationToken = default)
-        {
-            Container container =
-                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
-
-            IQueryable<TItem> query =
-                container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate));
-
-            TryLogDebugDetails(_logger, () => $"Read: {query}");
-
-            int count = await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
-            return count > 0;
-        }
-
         static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
         {
             // ReSharper disable once ConstantConditionalAccessQualifier
@@ -126,7 +71,9 @@ namespace Microsoft.Azure.CosmosRepository
             using FeedIterator<TItem> iterator = query.ToFeedIterator();
             while (readItemsCount < pageSize && iterator.HasMoreResults)
             {
-                FeedResponse<TItem> next = await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+                FeedResponse<TItem> next =
+                    await iterator.ReadNextAsync(cancellationToken)
+                        .ConfigureAwait(false);
 
                 foreach (TItem result in next)
                 {
