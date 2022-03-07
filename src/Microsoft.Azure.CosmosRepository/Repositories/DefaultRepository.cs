@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
     internal sealed partial class DefaultRepository<TItem> : IRepository<TItem>
-        where TItem : class, IItem
+        where TItem : IItem
     {
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;

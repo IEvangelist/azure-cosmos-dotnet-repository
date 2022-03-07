@@ -14,9 +14,12 @@ using Microsoft.Azure.CosmosRepository.Logging;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
-    internal sealed partial class DefaultRepository<TItem> where TItem : class, IItem
+    internal sealed partial class DefaultRepository<TItem>
     {
-        public async ValueTask<TItem?> TryGetAsync(string id, string? partitionKeyValue = null, CancellationToken cancellationToken = default)
+        public async ValueTask<TItem?> TryGetAsync(
+            string id,
+            string? partitionKeyValue = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -25,7 +28,7 @@ namespace Microsoft.Azure.CosmosRepository
             catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
             {
                 _logger.LogItemNotFoundHandled<TItem>(id, partitionKeyValue ?? id, e);
-                return null;
+                return default;
             }
         }
 

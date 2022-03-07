@@ -10,9 +10,10 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Specification;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
-    internal sealed partial class DefaultRepository<TItem> where TItem : class, IItem
+    internal sealed partial class DefaultRepository<TItem>
     {
         /// <inheritdoc/>
         public async ValueTask<int> CountAsync(

@@ -25,7 +25,7 @@ namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
     internal class InMemoryRepository<TItem> : IRepository<TItem>
-        where TItem : class, IItem
+        where TItem : IItem
     {
         private readonly ISpecificationEvaluator _specificationEvaluator;
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.CosmosRepository
             }
             catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
             {
-                return null;
+                return default;
             }
         }
 
