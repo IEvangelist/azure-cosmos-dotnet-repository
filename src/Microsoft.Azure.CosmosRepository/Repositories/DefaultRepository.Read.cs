@@ -5,15 +5,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Logging;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
     internal sealed partial class DefaultRepository<TItem>
     {
+        public async ValueTask<TItem?> TryGetAsync(
+            string id,
+            string? partitionKeyValue = null,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await GetAsync(id, partitionKeyValue, cancellationToken);
+            }
+            catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
+            {
+                _logger.LogItemNotFoundHandled<TItem>(id, partitionKeyValue ?? id, e);
+                return default;
+            }
+        }
+
         /// <inheritdoc/>
         public ValueTask<TItem> GetAsync(
             string id,

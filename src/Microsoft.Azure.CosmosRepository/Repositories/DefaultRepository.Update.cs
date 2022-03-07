@@ -10,6 +10,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Newtonsoft.Json;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
     internal sealed partial class DefaultRepository<TItem>

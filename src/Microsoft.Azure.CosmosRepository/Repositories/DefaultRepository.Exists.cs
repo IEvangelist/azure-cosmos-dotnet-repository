@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
     internal sealed partial class DefaultRepository<TItem>

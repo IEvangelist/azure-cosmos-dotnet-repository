@@ -15,6 +15,6 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <typeparam name="TItem">The item type that corresponds to the respoitory.</typeparam>
         /// <returns>An <see cref="IRepository{TItem}"/> of <typeparamref name="TItem"/>.</returns>
-        IRepository<TItem> RepositoryOf<TItem>() where TItem : IItem;
+        IRepository<TItem> RepositoryOf<TItem>() where TItem : class, IItem;
     }
 }

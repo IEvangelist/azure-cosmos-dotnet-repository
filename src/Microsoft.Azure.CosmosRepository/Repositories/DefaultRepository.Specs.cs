@@ -9,6 +9,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Logging;
 using Microsoft.Azure.CosmosRepository.Specification;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
     internal sealed partial class DefaultRepository<TItem>

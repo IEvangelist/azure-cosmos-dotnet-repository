@@ -28,5 +28,9 @@ namespace Microsoft.Azure.CosmosRepository.Logging
         public static readonly EventId CosmosQueryExecuted = new(
             15_104,
             nameof(CosmosQueryExecuted));
+
+        public static readonly EventId ItemNotFoundHandled = new(
+            15_105,
+            nameof(ItemNotFoundHandled));
     }
 }

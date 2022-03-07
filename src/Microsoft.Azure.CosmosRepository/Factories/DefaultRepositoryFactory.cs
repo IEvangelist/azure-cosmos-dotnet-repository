@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <inheritdoc/>
         public IRepository<TItem> RepositoryOf<TItem>()
-            where TItem : IItem =>
+            where TItem : class, IItem =>
             _serviceProvider.GetRequiredService<IRepository<TItem>>();
     }
 }

@@ -15,10 +15,12 @@ using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
-    internal sealed partial class DefaultRepository<TItem> : IRepository<TItem> where TItem : IItem
+    internal sealed partial class DefaultRepository<TItem> : IRepository<TItem>
+        where TItem : IItem
     {
         readonly ICosmosContainerProvider<TItem> _containerProvider;
         readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
@@ -69,7 +71,6 @@ namespace Microsoft.Azure.CosmosRepository
             int readItemsCount = 0;
             double charge = 0;
             using FeedIterator<TItem> iterator = query.ToFeedIterator();
-            
             while (readItemsCount < pageSize && iterator.HasMoreResults)
             {
                 FeedResponse<TItem> next =

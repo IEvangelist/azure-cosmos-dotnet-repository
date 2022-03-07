@@ -41,7 +41,13 @@ namespace Microsoft.Azure.CosmosRepository.Logging
             LoggerMessage.Define<string, double, string>(
                 LogLevel.Information,
                 EventIds.CosmosQueryExecuted,
-                "Cosmos query executed for item type {CosmosItemType} with a charge of {CosmosOperationRUCharge} RUs Query: {CosmosQuery}"
+                "Cosmos query executed for item type {CosmosItemType} with a charge of {CosmosOperationRUCharge} RUs Query: {CosmosQuery}");
+
+        internal static readonly Action<ILogger, string, string, string, Exception> ItemNotFoundHandled =
+            LoggerMessage.Define<string, string, string>(
+                LogLevel.Information,
+                EventIds.ItemNotFoundHandled,
+                "CosmosException Status Code 404 handled for item of type {CosmosItemType} with {CosmosItemId} and partition key {CosmosItemPartitionKey}"
             );
     }
 }
