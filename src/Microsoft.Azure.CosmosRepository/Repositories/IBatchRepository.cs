@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Azure.CosmosRepository.Exceptions;
 
 namespace Microsoft.Azure.CosmosRepository
 {
@@ -37,7 +38,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="items">The items to update.</param>
         /// <param name="cancellationToken">A token to cancel the async operation.</param>
-        /// <returns></returns>
+        /// <exception cref="BatchOperationException{TItem}">Thrown when the batch operation fails</exception>
+        /// <returns>An <see cref="ValueTask"/> that represents the async batch operation.</returns>
         ValueTask UpdateAsBatchAsync(
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default);
@@ -47,7 +49,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="items">The items to create.</param>
         /// <param name="cancellationToken">A token to cancel the async operation.</param>
-        /// <returns></returns>
+        /// <exception cref="BatchOperationException{TItem}">Thrown when the batch operation fails</exception>
+        /// <returns>An <see cref="ValueTask"/> that represents the async batch operation.</returns>
         ValueTask CreateAsBatchAsync(
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default);
@@ -57,7 +60,8 @@ namespace Microsoft.Azure.CosmosRepository
         /// </summary>
         /// <param name="items">The items to create.</param>
         /// <param name="cancellationToken">A token to cancel the async operation.</param>
-        /// <returns></returns>
+        /// <exception cref="BatchOperationException{TItem}">Thrown when the batch operation fails</exception>
+        /// <returns>An <see cref="ValueTask"/> that represents the async batch operation.</returns>
         ValueTask DeleteAsBatchAsync(
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default);
