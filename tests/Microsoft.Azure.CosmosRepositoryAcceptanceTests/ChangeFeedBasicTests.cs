@@ -76,7 +76,7 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
 
             await _ratingsRepository.CreateAsync(tvRating);
 
-            await WaitFor(1);
+            await WaitFor(3);
 
             IEnumerable<RatingByCategory> results = await _ratingsByCategoryRepository
                 .GetAsync(x => x.PartitionKey == TechnologyCategoryId &&
