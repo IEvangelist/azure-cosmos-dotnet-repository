@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
-using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
+[Trait("Category", "Acceptance")]
+[Trait("Type", "Functional")]
 public class TransactionalBatchTests : CosmosRepositoryAcceptanceTest
 {
     public TransactionalBatchTests(ITestOutputHelper testOutputHelper)
