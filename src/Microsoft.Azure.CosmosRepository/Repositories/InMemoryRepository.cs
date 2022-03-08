@@ -462,5 +462,12 @@ namespace Microsoft.Azure.CosmosRepository
         {
             throw new NotImplementedException();
         }
+
+        public ValueTask DeleteAsBatchAsync(
+            IEnumerable<TItem> items,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

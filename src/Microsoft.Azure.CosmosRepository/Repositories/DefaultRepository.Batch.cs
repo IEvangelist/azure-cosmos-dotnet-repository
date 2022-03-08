@@ -21,14 +21,7 @@ namespace Microsoft.Azure.CosmosRepository
         {
             List<TItem> list = items.ToList();
 
-            if (!list.Any())
-            {
-                throw new ArgumentException(
-                    "Unable to perform batch update with no items",
-                    nameof(items));
-            }
-
-            string partitionKey = list[0].PartitionKey;
+            string partitionKey = GetPartitionKeyValue(list);
 
             Container container = await _containerProvider.GetContainerAsync();
 
@@ -61,14 +54,7 @@ namespace Microsoft.Azure.CosmosRepository
         {
             List<TItem> list = items.ToList();
 
-            if (!list.Any())
-            {
-                throw new ArgumentException(
-                    "Unable to perform batch create operation with no items",
-                    nameof(items));
-            }
-
-            string partitionKey = list[0].PartitionKey;
+            string partitionKey = GetPartitionKeyValue(list);
 
             Container container = await _containerProvider.GetContainerAsync();
 
@@ -76,7 +62,6 @@ namespace Microsoft.Azure.CosmosRepository
 
             foreach (TItem item in list)
             {
-                TransactionalBatchItemRequestOptions options = new();
                 batch.CreateItem(item);
             }
 
@@ -86,6 +71,43 @@ namespace Microsoft.Azure.CosmosRepository
             {
                 throw new BatchOperationException<TItem>(response);
             }
+        }
+
+        public async ValueTask DeleteAsBatchAsync(
+            IEnumerable<TItem> items,
+            CancellationToken cancellationToken = default)
+        {
+            List<TItem> list = items.ToList();
+
+            string partitionKey = GetPartitionKeyValue(list);
+
+            Container container = await _containerProvider.GetContainerAsync();
+
+            TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
+
+            foreach (TItem item in list)
+            {
+                batch.DeleteItem(item.Id);
+            }
+
+            using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new BatchOperationException<TItem>(response);
+            }
+        }
+
+        private static string GetPartitionKeyValue(List<TItem> items)
+        {
+            if (!items.Any())
+            {
+                throw new ArgumentException(
+                    "Unable to perform batch operation with no items",
+                    nameof(items));
+            }
+
+            return items[0].PartitionKey;
         }
     }
 }

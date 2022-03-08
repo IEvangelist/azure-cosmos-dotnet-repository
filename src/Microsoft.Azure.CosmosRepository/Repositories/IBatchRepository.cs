@@ -51,5 +51,15 @@ namespace Microsoft.Azure.CosmosRepository
         ValueTask CreateAsBatchAsync(
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Deletes an <see cref="IEnumerable{TItem}"/> as a batch.
+        /// </summary>
+        /// <param name="items">The items to create.</param>
+        /// <param name="cancellationToken">A token to cancel the async operation.</param>
+        /// <returns></returns>
+        ValueTask DeleteAsBatchAsync(
+            IEnumerable<TItem> items,
+            CancellationToken cancellationToken = default);
     }
 }
