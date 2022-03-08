@@ -13,23 +13,25 @@ public class PersonItem : EtagItem
     public int Age { get; set; }
 
     public override string ToString() =>
-        $"Person Item (Name = {Name}, Age = {Age})";
+        $"Person Item (Name = {Name}, Age = {Age}, Id = {Id})";
 }
 
 public class PersonEntity
 {
-    public PersonEntity(string name, int age)
+    public PersonEntity(string name, int age, string? id = null)
     {
+        Id ??= Guid.NewGuid().ToString();
         Name = name;
         Age = age;
     }
 
+    public string Id { get; private set; }
     public string Name { get; private set; }
 
     public int Age { get; private set; }
 
     public override string ToString() =>
-        $"Person Entity (Name = {Name}, Age = {Age})";
+        $"Person Entity (Name = {Name}, Age = {Age}, Id = {Id})";
 
     public void Birthday()
     {
@@ -40,12 +42,13 @@ public class PersonEntity
 static class PersonExtensions
 {
     public static PersonEntity ToEntity(this PersonItem personItem) =>
-        new (personItem.Name, personItem.Age);
+        new (personItem.Name, personItem.Age, personItem.Id);
 
     public static PersonItem ToItem(this PersonEntity personItem) =>
         new ()
         {
             Name = personItem.Name,
-            Age = personItem.Age
+            Age = personItem.Age,
+            Id = personItem.Id
         };
 }

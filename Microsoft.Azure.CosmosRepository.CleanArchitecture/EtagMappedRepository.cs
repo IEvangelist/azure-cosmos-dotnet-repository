@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Options;
 
@@ -13,12 +14,13 @@ public class EtagMappedRepository<TItem, TMapped>
 {
     private readonly IRepository<TItem> _itemRepository;
     private readonly IItemMapper<TItem, TMapped> _itemMapper;
-    private readonly IOptionsMonitor<RepositoryOptions> _repositoryOptions;
     private readonly IMappedItemMapper<TMapped, TItem> _mappedItemMapper;
     private string? _etag;
-    private IDisposable _optionsMonitor;
+    private IDisposable? _optionsMonitor;
 
     public string? Etag => _etag;
+
+    public void ForceEtag(string etag) => _etag = etag;
 
     public EtagMappedRepository(
         IRepository<TItem> itemRepository,
@@ -29,13 +31,12 @@ public class EtagMappedRepository<TItem, TMapped>
         _itemRepository = itemRepository;
         _itemMapper = itemMapper;
         _mappedItemMapper = mappedItemMapper;
-        _repositoryOptions = repositoryOptions;
 
         _optionsMonitor = repositoryOptions.OnChange(EnsureOptimizeBandwidthIsOff);
-        EnsureOptimizeBandwidthIsOff(repositoryOptions.CurrentValue, string.Empty);
+        EnsureOptimizeBandwidthIsOff(repositoryOptions.CurrentValue);
     }
 
-    private void EnsureOptimizeBandwidthIsOff(RepositoryOptions options, string _)
+    private void EnsureOptimizeBandwidthIsOff(RepositoryOptions options)
     {
         if (options.OptimizeBandwidth)
         {
@@ -64,9 +65,20 @@ public class EtagMappedRepository<TItem, TMapped>
         _etag = updatedItem.Etag;
     }
 
+    public async ValueTask UpdateAsync(string id, Action<IPatchOperationBuilder<TItem>> builder, string? partitionKeyValue = null,
+        CancellationToken cancellationToken = default, string? etag = default)
+    {
+        await _itemRepository.UpdateAsync(id, builder, partitionKeyValue, cancellationToken, _etag);
+
+        TItem updatedItem = await _itemRepository.GetAsync(id, partitionKeyValue, cancellationToken);
+
+        _etag = updatedItem.Etag;
+    }
+
     public void Dispose()
     {
-        _optionsMonitor.Dispose();
+        _optionsMonitor?.Dispose();
+        _optionsMonitor = null;
         _etag = null;
     }
 }
