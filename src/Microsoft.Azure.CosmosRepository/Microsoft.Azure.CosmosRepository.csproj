@@ -57,6 +57,7 @@
         <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryAcceptanceTests" />
         <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepositoryTests" />
         <InternalsVisibleTo Include="Microsoft.Azure.CosmosEventSourcingTests" />
+        <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepository.CleanArchitecture" />
         <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     </ItemGroup>
 

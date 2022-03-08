@@ -53,7 +53,7 @@ namespace Microsoft.Azure.CosmosRepository
 
         /// <inheritdoc />
         [JsonProperty("_etag")]
-        public string? Etag { get; private set; }
+        public string? Etag { get; set; }
 
         /// <inheritdoc />
         public TimeSpan? TimeToLive

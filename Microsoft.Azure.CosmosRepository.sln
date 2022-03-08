@@ -75,6 +75,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNetCore", "AspNetCore", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosEventSourcingTests", "tests\Microsoft.Azure.CosmosEventSourcingTests\Microsoft.Azure.CosmosEventSourcingTests.csproj", "{FEB072AC-B573-48BF-948D-B5FFF9102303}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepository.CleanArchitecture", "Microsoft.Azure.CosmosRepository.CleanArchitecture\Microsoft.Azure.CosmosRepository.CleanArchitecture.csproj", "{6FF5CE41-ED17-4B5C-82FB-9D656EDF47D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosRepository.CleanArchitecture.Tests", "tests\Microsoft.Azure.CosmosRepository.CleanArchitecture.Tests\Microsoft.Azure.CosmosRepository.CleanArchitecture.Tests.csproj", "{EDF090A6-A822-4B72-B8C1-295824B42A16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture", "CleanArchitecture\CleanArchitecture.csproj", "{ADE259C2-E900-4EF0-935C-EE80080BE221}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +167,18 @@ Global
 		{FEB072AC-B573-48BF-948D-B5FFF9102303}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEB072AC-B573-48BF-948D-B5FFF9102303}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEB072AC-B573-48BF-948D-B5FFF9102303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FF5CE41-ED17-4B5C-82FB-9D656EDF47D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FF5CE41-ED17-4B5C-82FB-9D656EDF47D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FF5CE41-ED17-4B5C-82FB-9D656EDF47D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FF5CE41-ED17-4B5C-82FB-9D656EDF47D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDF090A6-A822-4B72-B8C1-295824B42A16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDF090A6-A822-4B72-B8C1-295824B42A16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDF090A6-A822-4B72-B8C1-295824B42A16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDF090A6-A822-4B72-B8C1-295824B42A16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADE259C2-E900-4EF0-935C-EE80080BE221}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADE259C2-E900-4EF0-935C-EE80080BE221}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADE259C2-E900-4EF0-935C-EE80080BE221}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADE259C2-E900-4EF0-935C-EE80080BE221}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
