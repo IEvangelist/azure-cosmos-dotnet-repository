@@ -60,6 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<ICosmosUniqueKeyPolicyProvider, DefaultCosmosUniqueKeyPolicyProvider>()
                 .AddSingleton(typeof(IReadOnlyRepository<>), typeof(DefaultRepository<>))
                 .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(DefaultRepository<>))
+                .AddSingleton(typeof(IBatchRepository<>), typeof(DefaultRepository<>))
                 .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
                 .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
                 .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>()
