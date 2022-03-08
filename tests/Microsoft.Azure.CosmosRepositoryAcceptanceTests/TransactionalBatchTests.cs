@@ -24,7 +24,7 @@ public class TransactionalBatchTests : CosmosRepositoryAcceptanceTest
     }
 
     [Fact]
-    public async Task BatchRepository_Items_BehavesCorreclty()
+    public async Task BatchRepository_Items_BehavesCorrectlty()
     {
         try
         {
