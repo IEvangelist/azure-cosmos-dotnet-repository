@@ -2,10 +2,12 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Converters;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository;
 using Newtonsoft.Json;
 
-namespace Microsoft.Azure.CosmosEventSourcing;
+namespace Microsoft.Azure.CosmosEventSourcing.Items;
 
 /// <summary>
 /// A record the represents an event stored in an <see cref="IEventStore{TEventItem}"/>

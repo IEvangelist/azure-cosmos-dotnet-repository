@@ -4,10 +4,11 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
+using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 
-namespace Microsoft.Azure.CosmosEventSourcing;
+namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 
 internal class DefaultEventStore<TEventItem> :
     IEventStore<TEventItem> where TEventItem : EventItem

@@ -6,6 +6,7 @@ using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Projections.Models;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing;
+using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository;
 
 namespace BasicEventSourcingSample.Infrastructure;

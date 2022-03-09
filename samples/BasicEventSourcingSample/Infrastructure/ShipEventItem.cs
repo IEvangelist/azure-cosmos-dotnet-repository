@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Items;
 
 namespace BasicEventSourcingSample.Infrastructure;
 

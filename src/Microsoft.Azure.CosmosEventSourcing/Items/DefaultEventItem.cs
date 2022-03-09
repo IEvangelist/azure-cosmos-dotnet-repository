@@ -1,10 +1,10 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Azure.CosmosEventSourcing.Converters;
+using Microsoft.Azure.CosmosEventSourcing.Events;
 using Newtonsoft.Json;
 
-namespace Microsoft.Azure.CosmosEventSourcing;
+namespace Microsoft.Azure.CosmosEventSourcing.Items;
 
 /// <summary>
 /// A default event item which stores <see cref="DefaultDomainEventPayload"/>'s

@@ -1,7 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-namespace Microsoft.Azure.CosmosEventSourcing;
+namespace Microsoft.Azure.CosmosEventSourcing.Events;
 
 /// <summary>
 /// An event that occurs inside a domain.

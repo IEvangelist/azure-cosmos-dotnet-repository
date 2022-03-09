@@ -4,6 +4,7 @@ using BasicEventSourcingSample.Projections.Models;
 using CleanArchitecture.Exceptions.AspNetCore;
 using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
+using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

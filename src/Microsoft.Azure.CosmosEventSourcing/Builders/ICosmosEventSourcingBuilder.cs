@@ -3,6 +3,8 @@
 
 using System.Reflection;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;

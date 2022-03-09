@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 using System.Linq.Expressions;
+using Microsoft.Azure.CosmosEventSourcing.Items;
 
-namespace Microsoft.Azure.CosmosEventSourcing;
+namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 
 /// <summary>
 /// The class responsible for managing the persistence of the an <see cref="EventItem"/>

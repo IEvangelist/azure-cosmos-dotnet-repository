@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosEventSourcing.Events;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

@@ -3,6 +3,8 @@
 
 using System;
 using Microsoft.Azure.CosmosEventSourcing;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Items;
 
 namespace Microsoft.Azure.CosmosEventSourcingTests;
 
