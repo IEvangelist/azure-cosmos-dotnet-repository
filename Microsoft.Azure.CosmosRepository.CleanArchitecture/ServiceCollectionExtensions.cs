@@ -9,7 +9,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection WithEtagMappedRepositories(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped(typeof(IEtagMappedRepository<,>), typeof(EtagMappedRepository<,>));
+        serviceCollection.AddTransient(typeof(IEtagMappedRepository<,>), typeof(EtagMappedRepository<,>));
+        serviceCollection.AddTransient<IEtagCache, EtagCache>();
         return serviceCollection;
     }
 }

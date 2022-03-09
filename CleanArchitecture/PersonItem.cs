@@ -20,7 +20,7 @@ public class PersonEntity
 {
     public PersonEntity(string name, int age, string? id = null)
     {
-        Id ??= Guid.NewGuid().ToString();
+        Id = id ?? Guid.NewGuid().ToString();
         Name = name;
         Age = age;
     }

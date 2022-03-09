@@ -3,9 +3,9 @@
 
 namespace Microsoft.Azure.CosmosRepository.CleanArchitecture;
 
-public interface IItemMapper<in TItem, TMapped>
+public interface IMapper<TItem, TMapped>
     where TItem : IItemWithEtag
-    where TMapped : class
 {
     ValueTask<TMapped> MapAsync(TItem item);
+    ValueTask<TItem> MapAsync(TMapped item);
 }
