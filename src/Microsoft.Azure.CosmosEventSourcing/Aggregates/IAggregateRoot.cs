@@ -1,0 +1,23 @@
+// Copyright (c) IEvangelist. All rights reserved.
+// Licensed under the MIT License.
+
+using Microsoft.Azure.CosmosEventSourcing.Events;
+
+namespace Microsoft.Azure.CosmosEventSourcing.Aggregates;
+
+/// <summary>
+/// This defines an interface that represents an aggregate root.
+/// This is responsible for making state changes which in turn add new events.
+/// </summary>
+public interface IAggregateRoot
+{
+    /// <summary>
+    /// New events that have been applied to the <see cref="IAggregateRoot"/>.
+    /// </summary>
+    IReadOnlyList<DomainEvent> NewEvents { get; }
+
+    /// <summary>
+    /// All events that have occured on an <see cref="IAggregateRoot"/>
+    /// </summary>
+    IReadOnlyList<DomainEvent> Events { get; }
+}
