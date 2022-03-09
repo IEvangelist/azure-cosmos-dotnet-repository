@@ -15,7 +15,7 @@ public abstract class EventItem : FullItem
     /// <summary>
     /// The payload of the event to be stored.
     /// </summary>
-    [JsonConverter(typeof(PersistedEventConverter))]
+    [JsonConverter(typeof(DomainEventConverter))]
     public IDomainEvent EventPayload { get; set; } = null!;
 
     /// <summary>
@@ -53,7 +53,7 @@ public abstract class EventItem : FullItem
     }
 
     /// <summary>
-    /// Creates an event source
+    /// Creates an event item.
     /// </summary>
     protected EventItem()
     {

@@ -59,7 +59,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
                 .Where(type => typeof(IDomainEvent).IsAssignableFrom(type)))
             .ToList();
 
-        types.ForEach(t => PersistedEventConverter.ConvertableTypes.Add(t));
+        types.ForEach(t => DomainEventConverter.ConvertableTypes.Add(t));
 
         return this;
     }

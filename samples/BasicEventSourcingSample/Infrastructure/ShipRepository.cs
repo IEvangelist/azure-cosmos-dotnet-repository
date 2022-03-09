@@ -26,7 +26,7 @@ public class ShipRepository : IShipRepository
     public async ValueTask<Ship> FindAsync(string shipName)
     {
         IEnumerable<ShipEventItem> sourcedEvents = await _store.ReadAsync(shipName);
-        Ship ship = Ship.Build(sourcedEvents.Select(x => x.EventPayload).ToList());
+        Ship ship = Ship.Build(sourcedEvents.Select(x => x.DefaultDomainEventPayload).ToList());
         return ship;
     }
 

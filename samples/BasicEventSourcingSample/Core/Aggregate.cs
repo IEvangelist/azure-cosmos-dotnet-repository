@@ -7,26 +7,33 @@ namespace BasicEventSourcingSample.Core;
 
 public abstract class Aggregate
 {
-    private List<IDomainEvent> _events = new();
-    private readonly List<IDomainEvent> _unSavedEvents = new();
+    private List<DefaultDomainEvent> _events = new();
+    private readonly List<DefaultDomainEvent> _unSavedEvents = new();
 
-    public IReadOnlyList<IDomainEvent> UnSavedEvents =>
+    public IReadOnlyList<DefaultDomainEvent> UnSavedEvents =>
         _unSavedEvents;
 
-    protected void AddEvent(IDomainEvent domainEvent)
+    protected void AddEvent(DefaultDomainEvent domainEvent)
     {
-        _unSavedEvents.Add(domainEvent);
-        Apply(domainEvent);
+        DefaultDomainEvent evt = domainEvent with
+        {
+            Sequence = _events.Count + 1,
+            OccuredUtc = DateTime.UtcNow
+        };
+
+        _events.Add(evt);
+        _unSavedEvents.Add(evt);
+        Apply(evt);
     }
 
-    public void Apply(List<IDomainEvent> persistedEvents)
+    protected void Apply(List<DefaultDomainEvent> domainEvents)
     {
-        if (!persistedEvents.Any())
+        if (!domainEvents.Any())
         {
             return;
         }
 
-        List<IDomainEvent> orderedEvents = persistedEvents.OrderBy(x => x.OccuredUtc).ToList();
+        List<DefaultDomainEvent> orderedEvents = domainEvents.OrderBy(x => x.Sequence).ToList();
 
         orderedEvents.ForEach(Apply);
 

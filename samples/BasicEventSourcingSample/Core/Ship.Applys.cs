@@ -10,7 +10,7 @@ public partial class Ship
 {
     private Ship() { }
 
-    public static Ship Build(List<IDomainEvent> persistedEvents)
+    public static Ship Build(List<DefaultDomainEvent> persistedEvents)
     {
         Ship ship = new();
         ship.Apply(persistedEvents);
@@ -19,75 +19,28 @@ public partial class Ship
 
     private void Apply(ShipEvents.ShipCreated shipCreated)
     {
-        if (string.IsNullOrWhiteSpace(shipCreated.Name))
-        {
-            throw new DomainException<Ship>("A ship name must be provided");
-        }
-
-        CreatedAt = shipCreated.OccuredUtc;
-        Name = shipCreated.Name;
-        Commissioned = shipCreated.Commissioned;
+        (string? name, DateTime commissioned) = shipCreated;
+        Name = name;
+        Commissioned = commissioned;
     }
 
     private void Apply(ShipEvents.DockedInPort dockedInPort)
     {
-        if (Status is not (ShipStatus.AtSea or ShipStatus.UnUsed))
-        {
-            throw new DomainException<Ship>($"A ship cannot dock when at status {Status}");
-        }
-
         Port = dockedInPort.Port;
         Status = ShipStatus.Docked;
     }
 
-    private void Apply(ShipEvents.Loading loading)
-    {
-        if (Status is not (ShipStatus.Docked or ShipStatus.UnUsed))
-        {
-            throw new DomainException<Ship>($"A ship cannot start loading when at status {Status}");
-        }
-
-        if (Port != loading.Port)
-        {
-            throw new DomainException<Ship>(
-                $"The ship cannot load at port {loading.Port} as it is docked at port {Port}");
-        }
-
+    private void Apply(ShipEvents.Loading _) =>
         Status = ShipStatus.Loading;
-    }
 
     private void Apply(ShipEvents.Loaded loaded)
     {
-        if (Status is not (ShipStatus.Loading or ShipStatus.UnUsed))
-        {
-            throw new DomainException<Ship>($"A ship cannot have finished loading when at status {Status}");
-        }
-
-        if (Port != loaded.Port)
-        {
-            throw new DomainException<Ship>(
-                $"The ship cannot finish loading at port {loaded.Port} as it is docked at port {Port}");
-        }
-
         CargoWeight = loaded.CargoWeight;
         Status = ShipStatus.AwaitingDeparture;
     }
 
-    private void Apply(ShipEvents.Departed departed)
-    {
-        if (Status is not (ShipStatus.AwaitingDeparture or ShipStatus.UnUsed))
-        {
-            throw new DomainException<Ship>($"A ship cannot depart when at status {Status}");
-        }
-
-        if (Port != departed.Port)
-        {
-            throw new DomainException<Ship>(
-                $"The ship cannot depart {departed.Port} as it is awaiting departure at {Port}");
-        }
-
+    private void Apply(ShipEvents.Departed _) =>
         Status = ShipStatus.AtSea;
-    }
 
     protected override void Apply(IDomainEvent domainEvent)
     {

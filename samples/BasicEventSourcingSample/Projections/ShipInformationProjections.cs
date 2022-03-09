@@ -44,7 +44,7 @@ public class ShipInformationProjections
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
-            (string name, string port, _) = dockedInPort;
+            (string name, string port) = dockedInPort;
 
             ShipInformation shipInfo = await _repository.GetAsync(
                 name,
@@ -69,7 +69,7 @@ public class ShipInformationProjections
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
-            (string name, string port, double cargoWeight, _) = loaded;
+            (string name, string port, double cargoWeight) = loaded;
 
             ShipInformation shipInfo = await _repository.GetAsync(
                 name,

@@ -5,9 +5,9 @@ using Microsoft.Azure.CosmosEventSourcing;
 
 namespace BasicEventSourcingSample.Infrastructure;
 
-public class ShipEventItem : EventItem
+public class ShipEventItem : DefaultEventItem
 {
-    public ShipEventItem(IDomainEvent eventPayload, string shipName)
+    public ShipEventItem(DefaultDomainEvent eventPayload, string shipName)
         : base(eventPayload, shipName)
     {
     }

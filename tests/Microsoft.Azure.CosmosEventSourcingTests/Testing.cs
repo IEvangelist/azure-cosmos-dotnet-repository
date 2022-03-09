@@ -8,10 +8,7 @@ namespace Microsoft.Azure.CosmosEventSourcingTests;
 
 public static class Testing
 {
-    public record SampleEvent(DateTime OccuredUtc) : IDomainEvent
-    {
-        public string EventName { get; } = nameof(SampleEvent);
-    }
+    public record SampleEvent(DateTime OccuredUtc) : DefaultDomainEvent;
 
     public class SampleEventItem : EventItem
     {

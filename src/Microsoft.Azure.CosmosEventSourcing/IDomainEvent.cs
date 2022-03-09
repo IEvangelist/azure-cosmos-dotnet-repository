@@ -14,7 +14,12 @@ public interface IDomainEvent
     string EventName { get; }
 
     /// <summary>
-    /// The <see cref="DateTime"/> the event occured
+    /// The sequence number in which the event occured.
+    /// </summary>
+    int Sequence { get; }
+
+    /// <summary>
+    /// The <see cref="DateTime"/> that this event occured
     /// </summary>
     DateTime OccuredUtc { get; }
 }
