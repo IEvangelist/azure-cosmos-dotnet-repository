@@ -3,6 +3,8 @@
 
 using System.Reflection;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Options;
@@ -15,41 +17,41 @@ namespace Microsoft.Azure.CosmosEventSourcing.Builders;
 public interface ICosmosEventSourcingBuilder
 {
     /// <summary>
-    /// Adds a custom <see cref="IEventSourceProjectionBuilder{TEventSource}"/> to the library.
+    /// Adds a custom <see cref="IEventItemProjectionBuilder{TEventItem}"/> to the library.
     /// </summary>
-    /// <param name="optionsAction">The <see cref="EventSourcingProcessorOptions{TEventSource}"/> used to configure the processor.</param>
-    /// <typeparam name="TEventSource">The <see cref="EventSource"/></typeparam>
-    /// <typeparam name="TProjectionBuilder">The custom type of <see cref="IEventSourceProjectionBuilder{TEventSource}"/></typeparam>
+    /// <param name="optionsAction">The <see cref="EventSourcingProcessorOptions{TEventItem}"/> used to configure the processor.</param>
+    /// <typeparam name="TEventItem">The <see cref="EventItem"/></typeparam>
+    /// <typeparam name="TProjectionBuilder">The custom type of <see cref="IEventItemProjectionBuilder{TEventItem}"/></typeparam>
     /// <returns></returns>
-    public ICosmosEventSourcingBuilder AddEventSourceProjectionBuilder<TEventSource, TProjectionBuilder>(
-        Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
-        where TEventSource : EventSource
-        where TProjectionBuilder : class, IEventSourceProjectionBuilder<TEventSource>;
+    public ICosmosEventSourcingBuilder AddEventItemProjectionBuilder<TEventItem, TProjectionBuilder>(
+        Action<EventSourcingProcessorOptions<TEventItem>>? optionsAction = null)
+        where TEventItem : EventItem
+        where TProjectionBuilder : class, IEventItemProjectionBuilder<TEventItem>;
 
     /// <summary>
-    /// Adds a projection builder that uses <see cref="IEventProjectionHandler{TEvent, TEventSource}"/>'s to project a single type of <see cref="IPersistedEvent"/>
+    /// Adds a projection builder that uses <see cref="IDomainEventProjectionBuilder{TEvent,TEventItem}"/>'s to project a single type of <see cref="IDomainEvent"/>
     /// </summary>
-    /// <param name="optionsAction">The <see cref="EventSourcingProcessorOptions{TEventSource}"/> used to configure the processor.</param>
-    /// <typeparam name="TEventSource">The <see cref="EventSource"/></typeparam>
+    /// <param name="optionsAction">The <see cref="EventSourcingProcessorOptions{TEventItem}"/> used to configure the processor.</param>
+    /// <typeparam name="TEventItem">The <see cref="EventItem"/></typeparam>
     /// <returns></returns>
-    public ICosmosEventSourcingBuilder AddEventBasedEventSourceProjectionBuilder<TEventSource>(
-        Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
-        where TEventSource : EventSource;
+    public ICosmosEventSourcingBuilder AddEventItemProjectionBuilder<TEventItem>(
+        Action<EventSourcingProcessorOptions<TEventItem>>? optionsAction = null)
+        where TEventItem : EventItem;
 
     /// <summary>
-    /// Adds all <see cref="IPersistedEvent"/> to the custom json converter.
+    /// Adds all <see cref="IDomainEvent"/> to the custom json converter.
     /// </summary>
-    /// <param name="assemblies">The assemblies to scan for <see cref="IPersistedEvent"/></param>
+    /// <param name="assemblies">The assemblies to scan for <see cref="IDomainEvent"/></param>
     /// <returns></returns>
-    public ICosmosEventSourcingBuilder AddAllPersistedEventsTypes(
+    public ICosmosEventSourcingBuilder AddDomainEventTypes(
         params Assembly[] assemblies);
 
     /// <summary>
-    /// Adds all of the <see cref="IEventProjectionHandler{TEvent, TEventSource}"/>'s provided in the given assemblies.
+    /// Adds all of the <see cref="IDomainEventProjectionBuilder{TEvent,TEventItem}"/>'s provided in the given assemblies.
     /// </summary>
-    /// <param name="assemblies">The assemblies to scan for <see cref="IEventProjectionHandler{TEvent, TEventSource}"/></param>
+    /// <param name="assemblies">The assemblies to scan for <see cref="IDomainEventProjectionBuilder{TEvent,TEventItem}"/></param>
     /// <returns></returns>
-    public ICosmosEventSourcingBuilder AddAllEventProjectionHandlers(
+    public ICosmosEventSourcingBuilder AddDomainEventProjectionHandlers(
         params Assembly[] assemblies);
 
     /// <summary>

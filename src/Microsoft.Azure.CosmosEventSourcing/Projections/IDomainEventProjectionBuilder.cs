@@ -1,16 +1,19 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Items;
+
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
 /// <summary>
-/// Allows a projection to be built from a specific <see cref="IPersistedEvent"/> defined within an <see cref="EventSource"/>
+/// Allows a projection to be built from a specific <see cref="IDomainEvent"/> defined within an <see cref="EventItem"/>
 /// </summary>
-/// <typeparam name="TEvent">The type of <see cref="IPersistedEvent"/></typeparam>
-/// <typeparam name="TEventSource">The <see cref="EventSource"/>The event was part of</typeparam>
-public interface IEventProjectionHandler<in TEvent, in TEventSource>
-    where TEvent : IPersistedEvent
-    where TEventSource : EventSource
+/// <typeparam name="TEvent">The type of <see cref="IDomainEvent"/></typeparam>
+/// <typeparam name="TEventItem">The <see cref="EventItem"/>The event was part of</typeparam>
+public interface IDomainEventProjectionBuilder<in TEvent, in TEventItem>
+    where TEvent : IDomainEvent
+    where TEventItem : EventItem
 {
     /// <summary>
     /// A method to process a new event after it has been saved into Cosmos.
@@ -22,6 +25,6 @@ public interface IEventProjectionHandler<in TEvent, in TEventSource>
     /// <returns>A <see cref="ValueTask"/> that represents the async operation</returns>
     ValueTask HandleAsync(
         TEvent persistedEvent,
-        TEventSource eventSource,
+        TEventItem eventSource,
         CancellationToken cancellationToken = default);
 }

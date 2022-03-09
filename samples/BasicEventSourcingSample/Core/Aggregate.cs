@@ -2,36 +2,44 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing;
+using Microsoft.Azure.CosmosEventSourcing.Events;
 
 namespace BasicEventSourcingSample.Core;
 
 public abstract class Aggregate
 {
-    private List<IPersistedEvent> _events = new();
-    private readonly List<IPersistedEvent> _unSavedEvents = new();
+    private List<DomainEvent> _events = new();
+    private readonly List<DomainEvent> _unSavedEvents = new();
 
-    public IReadOnlyList<IPersistedEvent> UnSavedEvents =>
+    public IReadOnlyList<DomainEvent> UnSavedEvents =>
         _unSavedEvents;
 
-    protected void AddEvent(IPersistedEvent persistedEvent)
+    protected void AddEvent(DomainEvent domainEvent)
     {
-        _unSavedEvents.Add(persistedEvent);
-        Apply(persistedEvent);
+        DomainEvent evt = domainEvent with
+        {
+            Sequence = _events.Count + 1,
+            OccuredUtc = DateTime.UtcNow
+        };
+
+        _events.Add(evt);
+        _unSavedEvents.Add(evt);
+        Apply(evt);
     }
 
-    public void Apply(List<IPersistedEvent> persistedEvents)
+    protected void Apply(List<DomainEvent> domainEvents)
     {
-        if (!persistedEvents.Any())
+        if (!domainEvents.Any())
         {
             return;
         }
 
-        List<IPersistedEvent> orderedEvents = persistedEvents.OrderBy(x => x.OccuredUtc).ToList();
+        List<DomainEvent> orderedEvents = domainEvents.OrderBy(x => x.Sequence).ToList();
 
         orderedEvents.ForEach(Apply);
 
         _events = orderedEvents;
     }
 
-    protected abstract void Apply(IPersistedEvent persistedEvent);
+    protected abstract void Apply(IDomainEvent domainEvent);
 }

@@ -4,6 +4,7 @@ using BasicEventSourcingSample.Projections.Models;
 using CleanArchitecture.Exceptions.AspNetCore;
 using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
+using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -20,12 +21,12 @@ services.AddCosmosEventSourcing(eventSourcingBuilder =>
         options.DatabaseId = "event-sourcing-shipping-sample";
         options.ContainerBuilder
             .ConfigureProjectionStore<ShipInformation>("ship-projections")
-            .ConfigureEventSourceStore<ShipEventSource>("ship-tracking-events");
+            .ConfigureEventItemStore<ShipEventItem>("ship-tracking-events");
     });
 
-    eventSourcingBuilder.AddAllPersistedEventsTypes();
-    eventSourcingBuilder.AddAllEventProjectionHandlers();
-    eventSourcingBuilder.AddEventBasedEventSourceProjectionBuilder<ShipEventSource>(options =>
+    eventSourcingBuilder.AddDomainEventTypes();
+    eventSourcingBuilder.AddDomainEventProjectionHandlers();
+    eventSourcingBuilder.AddEventItemProjectionBuilder<ShipEventItem>(options =>
     {
         options.ProcessorName = "shipping-demo";
         options.InstanceName = Environment.MachineName;
@@ -78,34 +79,34 @@ app.MapPost("/api/ships", async (CreateShip createShip, IShipRepository shipRepo
 app.MapPost("/api/ships/dock", async (ShipEvents.DockedInPort docked, IShipRepository shipRepository) =>
 {
     Ship ship = await shipRepository.FindAsync(docked.Name);
-    ship.Dock(docked.Port, DateTime.UtcNow);
+    ship.Dock(docked.Port);
     await shipRepository.SaveAsync(ship);
 });
 
 app.MapPost("/api/ships/loading", async (ShipEvents.Loading loading, IShipRepository shipRepository) =>
 {
     Ship ship = await shipRepository.FindAsync(loading.Name);
-    ship.StartLoading(loading.Port, DateTime.UtcNow);
+    ship.StartLoading(loading.Port);
     await shipRepository.SaveAsync(ship);
 });
 
 app.MapPost("/api/ships/loaded", async (ShipEvents.Loaded loaded, IShipRepository shipRepository) =>
 {
     Ship ship = await shipRepository.FindAsync(loaded.Name);
-    ship.FinishLoading(loaded.Port, loaded.CargoWeight, DateTime.UtcNow);
+    ship.FinishLoading(loaded.Port, loaded.CargoWeight);
     await shipRepository.SaveAsync(ship);
 });
 
 app.MapPost("/api/ships/departed", async (ShipEvents.Departed departed, IShipRepository shipRepository) =>
 {
     Ship ship = await shipRepository.FindAsync(departed.Name);
-    ship.Depart(departed.Port, DateTime.UtcNow);
+    ship.Depart(departed.Port);
     await shipRepository.SaveAsync(ship);
 });
 
-app.MapGet("/api/ship/{shipName}/departures", async (string shipName, IEventStore<ShipEventSource> store) =>
+app.MapGet("/api/ship/{shipName}/departures", async (string shipName, IEventStore<ShipEventItem> store) =>
 {
-    IEnumerable<ShipEventSource> events = await store.ReadAsync(
+    IEnumerable<ShipEventItem> events = await store.ReadAsync(
         shipName,
         x => x.EventName == nameof(ShipEvents.Departed));
 
@@ -121,8 +122,8 @@ app.MapGet("/api/ship/{shipName}/departures", async (string shipName, IEventStor
 
 app.Run();
 
-record CreateShip(string Name, DateTime Commissioned);
+internal record CreateShip(string Name, DateTime Commissioned);
 
-record ShipDepartureDto(string Name, string Port, DateTime OccuredUtc);
+internal record ShipDepartureDto(string Name, string Port, DateTime OccuredUtc);
 
-record ShipInfoDto(string Name, DateTime Commissioned, string? LatestPort, double? LatestCargoWeight);
+internal record ShipInfoDto(string Name, DateTime Commissioned, string? LatestPort, double? LatestCargoWeight);

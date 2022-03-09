@@ -12,14 +12,14 @@ public class EventSourceTests
     [Fact]
     public void Ctor_EmptyPartitionKey_ThrowsArgumentNullException()
     {
-        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), string.Empty));
+        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), string.Empty));
         ex.Message.Should().Be("The partition key must be provided (Parameter 'partitionKey')");
     }
 
     [Fact]
     public void Ctor_NullPartitionKey_ThrowsArgumentNullException()
     {
-        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), null!));
+        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), null!));
         ex.Message.Should().Be("The partition key must be provided (Parameter 'partitionKey')");
     }
 
@@ -30,12 +30,12 @@ public class EventSourceTests
         Testing.SampleEvent evt = new(DateTime.UtcNow);
 
         //Act
-        Testing.SampleEventSource source = new(evt, "A");
+        Testing.SampleEventItem item = new(evt, "A");
 
         //Assert
-        source.Id.Should().NotBeNull();
-        source.PartitionKey.Should().Be("A");
-        source.EventPayload.Should().Be(evt);
-        source.EventName.Should().Be(evt.EventName);
+        item.Id.Should().NotBeNull();
+        item.PartitionKey.Should().Be("A");
+        item.EventPayload.Should().Be(evt);
+        item.EventName.Should().Be(evt.EventName);
     }
 }

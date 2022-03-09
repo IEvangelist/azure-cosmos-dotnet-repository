@@ -2,17 +2,19 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Items;
 
 namespace BasicEventSourcingSample.Infrastructure;
 
-public class ShipEventSource : EventSource
+public class ShipEventItem : DefaultEventItem
 {
-    public ShipEventSource(IPersistedEvent eventPayload, string shipName)
+    public ShipEventItem(DomainEvent eventPayload, string shipName)
         : base(eventPayload, shipName)
     {
     }
 
-    public ShipEventSource()
+    public ShipEventItem()
     {
     }
 }

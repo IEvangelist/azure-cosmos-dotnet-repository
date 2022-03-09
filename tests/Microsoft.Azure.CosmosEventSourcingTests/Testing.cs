@@ -3,20 +3,19 @@
 
 using System;
 using Microsoft.Azure.CosmosEventSourcing;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Items;
 
 namespace Microsoft.Azure.CosmosEventSourcingTests;
 
 public static class Testing
 {
-    public record SampleEvent(DateTime OccuredUtc) : IPersistedEvent
-    {
-        public string EventName { get; } = nameof(SampleEvent);
-    }
+    public record SampleEvent(DateTime OccuredUtc) : DomainEvent;
 
-    public class SampleEventSource : EventSource
+    public class SampleEventItem : EventItem
     {
-        public SampleEventSource(
-            IPersistedEvent eventPayload,
+        public SampleEventItem(
+            IDomainEvent eventPayload,
             string partitionKey) : base(eventPayload, partitionKey)
         {
 

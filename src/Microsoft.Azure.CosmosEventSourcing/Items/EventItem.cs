@@ -2,21 +2,23 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Converters;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository;
 using Newtonsoft.Json;
 
-namespace Microsoft.Azure.CosmosEventSourcing;
+namespace Microsoft.Azure.CosmosEventSourcing.Items;
 
 /// <summary>
-/// A record the represents an event
+/// A record the represents an event stored in an <see cref="IEventStore{TEventItem}"/>
 /// </summary>
-public abstract class EventSource : FullItem
+public abstract class EventItem : FullItem
 {
     /// <summary>
     /// The payload of the event to be stored.
     /// </summary>
-    [JsonConverter(typeof(PersistedEventConverter))]
-    public IPersistedEvent EventPayload { get; set; } = null!;
+    [JsonConverter(typeof(DomainEventConverter))]
+    public IDomainEvent EventPayload { get; set; } = null!;
 
     /// <summary>
     /// The value used to partition the event.
@@ -33,13 +35,13 @@ public abstract class EventSource : FullItem
     public string EventName { get; set; } = null!;
 
     /// <summary>
-    /// Creates an event source.
+    /// Creates an event item.
     /// </summary>
     /// <param name="eventPayload">The payload of the event.</param>
     /// <param name="partitionKey">The value to use as the partition key for the event.</param>
     /// <exception cref="ArgumentNullException">Occurs when the partition key value is a empty string or null.</exception>
-    protected EventSource(
-        IPersistedEvent eventPayload,
+    protected EventItem(
+        IDomainEvent eventPayload,
         string partitionKey)
     {
         if (string.IsNullOrWhiteSpace(partitionKey))
@@ -53,9 +55,9 @@ public abstract class EventSource : FullItem
     }
 
     /// <summary>
-    /// Creates an event source
+    /// Creates an event item.
     /// </summary>
-    protected EventSource()
+    protected EventItem()
     {
 
     }

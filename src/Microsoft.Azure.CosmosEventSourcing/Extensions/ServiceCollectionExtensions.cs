@@ -3,6 +3,7 @@
 
 using Microsoft.Azure.CosmosEventSourcing.Builders;
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
+using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Extensions.DependencyInjection;
 

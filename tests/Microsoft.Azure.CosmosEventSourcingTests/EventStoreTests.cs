@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing;
+using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Moq;
@@ -18,29 +19,29 @@ namespace Microsoft.Azure.CosmosEventSourcingTests;
 public class EventStoreTests
 {
     private readonly AutoMocker _autoMocker = new();
-    private readonly Mock<IRepository<Testing.SampleEventSource>> _repository;
+    private readonly Mock<IRepository<Testing.SampleEventItem>> _repository;
     private const string Pk = "pk";
 
-    private readonly List<Testing.SampleEventSource> _events = new()
+    private readonly List<Testing.SampleEventItem> _events = new()
     {
-        new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventSource(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
     };
 
     public EventStoreTests() =>
-        _repository = _autoMocker.GetMock<IRepository<Testing.SampleEventSource>>();
+        _repository = _autoMocker.GetMock<IRepository<Testing.SampleEventItem>>();
 
-    private IEventStore<Testing.SampleEventSource> CreateSut() =>
-        _autoMocker.CreateInstance<DefaultEventStore<Testing.SampleEventSource>>();
+    private IEventStore<Testing.SampleEventItem> CreateSut() =>
+        _autoMocker.CreateInstance<DefaultEventStore<Testing.SampleEventItem>>();
 
     [Fact]
     public async Task PersistAsync_Events_SavesAllEvents()
     {
         //Arrange
-        IEventStore<Testing.SampleEventSource> sut = CreateSut();
+        IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
         //Act
         await sut.PersistAsync(_events);
@@ -53,7 +54,7 @@ public class EventStoreTests
     public async Task GetAsync_EventsInDb_GetsAllEvents()
     {
         //Arrange
-        IEventStore<Testing.SampleEventSource> sut = CreateSut();
+        IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
         _repository
             .Setup(o =>
@@ -61,7 +62,7 @@ public class EventStoreTests
             .ReturnsAsync(_events);
 
         //Act
-        IEnumerable<Testing.SampleEventSource> got = await sut.ReadAsync(Pk);
+        IEnumerable<Testing.SampleEventItem> got = await sut.ReadAsync(Pk);
 
         //Assert
         got.Should().BeEquivalentTo(_events);
@@ -71,23 +72,23 @@ public class EventStoreTests
     public async Task StreamAsync_EventsInDb_StreamsAllEvents()
     {
         //Arrange
-        IEventStore<Testing.SampleEventSource> sut = CreateSut();
+        IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
-        Page<Testing.SampleEventSource> page1 = new(
+        Page<Testing.SampleEventItem> page1 = new(
             null,
             5,
             _events,
             0,
             Guid.NewGuid().ToString());
 
-        Page<Testing.SampleEventSource> page2 = new(
+        Page<Testing.SampleEventItem> page2 = new(
             null,
             5,
             _events,
             0,
             Guid.NewGuid().ToString());
 
-        Page<Testing.SampleEventSource> page3 = new(
+        Page<Testing.SampleEventItem> page3 = new(
             null,
             5,
             _events.Take(2).ToList(),
@@ -104,10 +105,10 @@ public class EventStoreTests
             .ReturnsAsync(page2)
             .ReturnsAsync(page3);
 
-        List<Testing.SampleEventSource> events = new();
+        List<Testing.SampleEventItem> events = new();
 
         //Act
-        await foreach (Testing.SampleEventSource result in sut.StreamAsync(Pk, 5))
+        await foreach (Testing.SampleEventItem result in sut.StreamAsync(Pk, 5))
         {
             events.Add(result);
         }

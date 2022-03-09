@@ -1,12 +1,13 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosEventSourcing.Events;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Converters;
 
-internal class PersistedEventConverter : JsonConverter
+internal class DomainEventConverter : JsonConverter
 {
     public static HashSet<Type> ConvertableTypes { get; } = new();
 
@@ -26,5 +27,5 @@ internal class PersistedEventConverter : JsonConverter
     }
 
     public override bool CanConvert(Type objectType) =>
-        typeof(IPersistedEvent).IsAssignableFrom(objectType);
+        typeof(IDomainEvent).IsAssignableFrom(objectType);
 }
