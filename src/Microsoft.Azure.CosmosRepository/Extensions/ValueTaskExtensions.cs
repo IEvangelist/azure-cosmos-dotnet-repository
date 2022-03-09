@@ -20,8 +20,8 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
         /// <returns></returns>
         public static async ValueTask<List<T>> ToListAsync<T>(this ValueTask<IEnumerable<T>> valueTask)
         {
-            IEnumerable<T> e = await valueTask;
-            return e.ToList();
+            IEnumerable<T> items = await valueTask;
+            return items.ToList();
         }
     }
 }
