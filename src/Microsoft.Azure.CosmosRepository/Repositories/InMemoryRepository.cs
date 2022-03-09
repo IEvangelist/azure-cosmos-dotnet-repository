@@ -449,11 +449,14 @@ namespace Microsoft.Azure.CosmosRepository
         private void MismatchedEtags() =>
             throw new CosmosException(string.Empty, HttpStatusCode.PreconditionFailed, 0, string.Empty, 0);
 
-        public ValueTask UpdateAsBatchAsync(
+        public async ValueTask UpdateAsBatchAsync(
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            foreach (var item in items)
+            {
+                await UpdateAsync(item);
+            }
         }
 
         public async ValueTask CreateAsBatchAsync(
