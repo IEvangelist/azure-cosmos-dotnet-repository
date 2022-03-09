@@ -18,35 +18,35 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
     public DefaultCosmosEventSourcingBuilder(IServiceCollection services) =>
         _services = services;
 
-    public ICosmosEventSourcingBuilder AddEventSourceProjectionBuilder<TEventSource, TProjectionBuilder>(
-        Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
-        where TEventSource : EventSource
-        where TProjectionBuilder : class, IEventSourceProjectionBuilder<TEventSource>
+    public ICosmosEventSourcingBuilder AddEventItemProjectionBuilder<TEventItem, TProjectionBuilder>(
+        Action<EventSourcingProcessorOptions<TEventItem>>? optionsAction = null)
+        where TEventItem : EventItem
+        where TProjectionBuilder : class, IEventItemProjectionBuilder<TEventItem>
     {
-        EventSourcingProcessorOptions<TEventSource> options = new();
+        EventSourcingProcessorOptions<TEventItem> options = new();
         optionsAction?.Invoke(options);
 
         _services.AddSingleton(options);
-        _services.AddSingleton<IEventSourceProjectionBuilder<TEventSource>, TProjectionBuilder>();
-        _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventSource>>();
+        _services.AddSingleton<IEventItemProjectionBuilder<TEventItem>, TProjectionBuilder>();
+        _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventItem>>();
         return this;
     }
 
-    public ICosmosEventSourcingBuilder AddEventBasedEventSourceProjectionBuilder<TEventSource>(
-        Action<EventSourcingProcessorOptions<TEventSource>>? optionsAction = null)
-        where TEventSource : EventSource
+    public ICosmosEventSourcingBuilder AddEventItemProjectionBuilder<TEventItem>(
+        Action<EventSourcingProcessorOptions<TEventItem>>? optionsAction = null)
+        where TEventItem : EventItem
     {
-        EventSourcingProcessorOptions<TEventSource> options = new();
+        EventSourcingProcessorOptions<TEventItem> options = new();
         optionsAction?.Invoke(options);
 
         _services.AddSingleton(options);
         _services
-            .AddSingleton<IEventSourceProjectionBuilder<TEventSource>, EventBasedEventSourceProjectionBuilder<TEventSource>>();
-        _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventSource>>();
+            .AddSingleton<IEventItemProjectionBuilder<TEventItem>, DefaultDomainEventProjectionBuilder<TEventItem>>();
+        _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventItem>>();
         return this;
     }
 
-    public ICosmosEventSourcingBuilder AddAllPersistedEventsTypes(
+    public ICosmosEventSourcingBuilder AddDomainEventTypes(
         params Assembly[] assemblies)
     {
         if (!assemblies.Any())
@@ -56,7 +56,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
 
         List<Type> types = assemblies
             .SelectMany(x => x.GetTypes()
-                .Where(type => typeof(IPersistedEvent).IsAssignableFrom(type)))
+                .Where(type => typeof(IDomainEvent).IsAssignableFrom(type)))
             .ToList();
 
         types.ForEach(t => PersistedEventConverter.ConvertableTypes.Add(t));
@@ -64,7 +64,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         return this;
     }
 
-    public ICosmosEventSourcingBuilder AddAllEventProjectionHandlers(
+    public ICosmosEventSourcingBuilder AddDomainEventProjectionHandlers(
         params Assembly[] assemblies)
     {
         if (!assemblies.Any())
@@ -73,7 +73,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         }
 
         _services.Scan(x => x.FromAssemblies(assemblies)
-            .AddClasses(classes => classes.AssignableTo(typeof(IEventProjectionHandler<,>)))
+            .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventProjectionBuilder<,>)))
             .AsImplementedInterfaces()
             .WithSingletonLifetime());
 

@@ -17,15 +17,15 @@ public static class ItemContainerBuilderExtensions
     /// <param name="containerBuilder">The builder used to customise a containers.</param>
     /// <param name="containerName">The name of the container to store the events.</param>
     /// <param name="containerOptionsBuilder">The options to build the container.</param>
-    /// <typeparam name="TEventSource">The type of <see cref="EventSource"/> to store in this container.</typeparam>
+    /// <typeparam name="TEventItem">The type of <see cref="EventItem"/> to store in this container.</typeparam>
     /// <returns></returns>
-    public static IItemContainerBuilder ConfigureEventSourceStore<TEventSource>(
+    public static IItemContainerBuilder ConfigureEventItemStore<TEventItem>(
         this IItemContainerBuilder containerBuilder,
         string containerName,
         Action<ContainerOptionsBuilder>? containerOptionsBuilder = null)
-        where TEventSource : EventSource
+        where TEventItem : EventItem
     {
-        containerBuilder.Configure<TEventSource>(options =>
+        containerBuilder.Configure<TEventItem>(options =>
         {
             options.WithContainer(containerName);
             options.WithPartitionKey(CosmosEventSourcingPartitionKeys.Default);

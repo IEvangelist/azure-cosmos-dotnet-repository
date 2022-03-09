@@ -4,10 +4,10 @@
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
 /// <summary>
-/// Allows projections to built from an <see cref="EventSource"/>
+/// Allows projections to built from an <see cref="EventItem"/>
 /// </summary>
-/// <typeparam name="TEventSource"></typeparam>
-public interface IEventSourceProjectionBuilder<in TEventSource> where TEventSource : EventSource
+/// <typeparam name="TEventItem"></typeparam>
+public interface IEventItemProjectionBuilder<in TEventItem> where TEventItem : EventItem
 {
     /// <summary>
     /// A method to process a new event after it has been saved into Cosmos.
@@ -17,6 +17,6 @@ public interface IEventSourceProjectionBuilder<in TEventSource> where TEventSour
     /// <param name="cancellationToken">A token used to cancel the async operation.</param>
     /// <returns>A <see cref="ValueTask"/> that represents the async operation</returns>
     ValueTask ProjectAsync(
-        TEventSource sourcedEvent,
+        TEventItem sourcedEvent,
         CancellationToken cancellationToken = default);
 }

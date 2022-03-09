@@ -6,19 +6,19 @@ using System.Linq.Expressions;
 namespace Microsoft.Azure.CosmosEventSourcing;
 
 /// <summary>
-/// The class responsible for managing the persistence of the an <see cref="EventSource"/>
+/// The class responsible for managing the persistence of the an <see cref="EventItem"/>
 /// </summary>
-/// <typeparam name="TEventSource"></typeparam>
-public interface IEventStore<TEventSource> where TEventSource : EventSource
+/// <typeparam name="TEventItem"></typeparam>
+public interface IEventStore<TEventItem> where TEventItem : EventItem
 {
     /// <summary>
-    /// Persists a set of <see cref="EventSource"/> records.
+    /// Persists a set of <see cref="EventItem"/> records.
     /// </summary>
     /// <param name="records">The records to persist.</param>
     /// <param name="cancellationToken">A token that can be used to cancel this async request.</param>
     /// <returns></returns>
     ValueTask PersistAsync(
-        IEnumerable<TEventSource> records,
+        IEnumerable<TEventItem> records,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -27,7 +27,7 @@ public interface IEventStore<TEventSource> where TEventSource : EventSource
     /// <param name="partitionKey">The value to use as the partition key in the query.</param>
     /// <param name="cancellationToken">A token that can be used to cancel this async request.</param>
     /// <returns></returns>
-    ValueTask<IEnumerable<TEventSource>> ReadAsync(
+    ValueTask<IEnumerable<TEventItem>> ReadAsync(
         string partitionKey,
         CancellationToken cancellationToken = default);
 
@@ -38,9 +38,9 @@ public interface IEventStore<TEventSource> where TEventSource : EventSource
     /// <param name="predicate">A filter predicate to filter event on.</param>
     /// <param name="cancellationToken">A token that can be used to cancel this async request.</param>
     /// <returns></returns>
-    ValueTask<IEnumerable<TEventSource>> ReadAsync(
+    ValueTask<IEnumerable<TEventItem>> ReadAsync(
         string partitionKey,
-        Expression<Func<TEventSource, bool>> predicate,
+        Expression<Func<TEventItem, bool>> predicate,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -50,7 +50,7 @@ public interface IEventStore<TEventSource> where TEventSource : EventSource
     /// <param name="chunkSize">The size in which the library will retrieve pages of events.</param>
     /// /// <param name="cancellationToken">A token that can be used to cancel this async request.</param>
     /// <returns></returns>
-    IAsyncEnumerable<TEventSource> StreamAsync(
+    IAsyncEnumerable<TEventItem> StreamAsync(
         string partitionKey,
         int chunkSize = 25,
         CancellationToken cancellationToken = default);

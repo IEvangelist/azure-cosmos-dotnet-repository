@@ -11,16 +11,16 @@ namespace BasicEventSourcingSample.Projections;
 
 public class ShipInformationProjections
 {
-    public class ShipCreatedHandler : IEventProjectionHandler<ShipEvents.ShipCreated, ShipEventSource>
+    public class ShipCreatedBuilder : IDomainEventProjectionBuilder<ShipEvents.ShipCreated, ShipEventItem>
     {
         private readonly IRepository<ShipInformation> _repository;
 
-        public ShipCreatedHandler(IRepository<ShipInformation> repository) =>
+        public ShipCreatedBuilder(IRepository<ShipInformation> repository) =>
             _repository = repository;
 
         public async ValueTask HandleAsync(
             ShipEvents.ShipCreated shipCreated,
-            ShipEventSource eventSource,
+            ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
             ShipInformation info = new(
@@ -32,16 +32,16 @@ public class ShipInformationProjections
         }
     }
 
-    public class ShipDockedHandler : IEventProjectionHandler<ShipEvents.DockedInPort, ShipEventSource>
+    public class ShipDockedBuilder : IDomainEventProjectionBuilder<ShipEvents.DockedInPort, ShipEventItem>
     {
         private readonly IRepository<ShipInformation> _repository;
 
-        public ShipDockedHandler(IRepository<ShipInformation> repository) =>
+        public ShipDockedBuilder(IRepository<ShipInformation> repository) =>
             _repository = repository;
 
         public async ValueTask HandleAsync(
             ShipEvents.DockedInPort dockedInPort,
-            ShipEventSource eventSource,
+            ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
             (string name, string port, _) = dockedInPort;
@@ -57,16 +57,16 @@ public class ShipInformationProjections
         }
     }
 
-    public class ShipLoadedHandler : IEventProjectionHandler<ShipEvents.Loaded, ShipEventSource>
+    public class ShipLoadedBuilder : IDomainEventProjectionBuilder<ShipEvents.Loaded, ShipEventItem>
     {
         private readonly IRepository<ShipInformation> _repository;
 
-        public ShipLoadedHandler(IRepository<ShipInformation> repository) =>
+        public ShipLoadedBuilder(IRepository<ShipInformation> repository) =>
             _repository = repository;
 
         public async ValueTask HandleAsync(
             ShipEvents.Loaded loaded,
-            ShipEventSource eventSource,
+            ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
             (string name, string port, double cargoWeight, _) = loaded;

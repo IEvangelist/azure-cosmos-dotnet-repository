@@ -20,12 +20,12 @@ services.AddCosmosEventSourcing(eventSourcingBuilder =>
         options.DatabaseId = "event-sourcing-shipping-sample";
         options.ContainerBuilder
             .ConfigureProjectionStore<ShipInformation>("ship-projections")
-            .ConfigureEventSourceStore<ShipEventSource>("ship-tracking-events");
+            .ConfigureEventItemStore<ShipEventItem>("ship-tracking-events");
     });
 
-    eventSourcingBuilder.AddAllPersistedEventsTypes();
-    eventSourcingBuilder.AddAllEventProjectionHandlers();
-    eventSourcingBuilder.AddEventBasedEventSourceProjectionBuilder<ShipEventSource>(options =>
+    eventSourcingBuilder.AddDomainEventTypes();
+    eventSourcingBuilder.AddDomainEventProjectionHandlers();
+    eventSourcingBuilder.AddEventItemProjectionBuilder<ShipEventItem>(options =>
     {
         options.ProcessorName = "shipping-demo";
         options.InstanceName = Environment.MachineName;
@@ -103,9 +103,9 @@ app.MapPost("/api/ships/departed", async (ShipEvents.Departed departed, IShipRep
     await shipRepository.SaveAsync(ship);
 });
 
-app.MapGet("/api/ship/{shipName}/departures", async (string shipName, IEventStore<ShipEventSource> store) =>
+app.MapGet("/api/ship/{shipName}/departures", async (string shipName, IEventStore<ShipEventItem> store) =>
 {
-    IEnumerable<ShipEventSource> events = await store.ReadAsync(
+    IEnumerable<ShipEventItem> events = await store.ReadAsync(
         shipName,
         x => x.EventName == nameof(ShipEvents.Departed));
 

@@ -4,9 +4,9 @@
 namespace Microsoft.Azure.CosmosEventSourcing;
 
 /// <summary>
-/// An event that is stored.
+/// An event that occurs inside a domain.
 /// </summary>
-public interface IPersistedEvent
+public interface IDomainEvent
 {
     /// <summary>
     /// The name of the event.

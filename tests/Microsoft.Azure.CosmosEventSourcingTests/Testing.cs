@@ -8,15 +8,15 @@ namespace Microsoft.Azure.CosmosEventSourcingTests;
 
 public static class Testing
 {
-    public record SampleEvent(DateTime OccuredUtc) : IPersistedEvent
+    public record SampleEvent(DateTime OccuredUtc) : IDomainEvent
     {
         public string EventName { get; } = nameof(SampleEvent);
     }
 
-    public class SampleEventSource : EventSource
+    public class SampleEventItem : EventItem
     {
-        public SampleEventSource(
-            IPersistedEvent eventPayload,
+        public SampleEventItem(
+            IDomainEvent eventPayload,
             string partitionKey) : base(eventPayload, partitionKey)
         {
 

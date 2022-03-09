@@ -26,5 +26,5 @@ internal class PersistedEventConverter : JsonConverter
     }
 
     public override bool CanConvert(Type objectType) =>
-        typeof(IPersistedEvent).IsAssignableFrom(objectType);
+        typeof(IDomainEvent).IsAssignableFrom(objectType);
 }

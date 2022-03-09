@@ -7,27 +7,27 @@ namespace BasicEventSourcingSample.Core;
 
 public static class ShipEvents
 {
-    public record ShipCreated(string Name, DateTime Commissioned, DateTime OccuredUtc) : IPersistedEvent
+    public record ShipCreated(string Name, DateTime Commissioned, DateTime OccuredUtc) : IDomainEvent
     {
         public string EventName => nameof(ShipCreated);
     }
 
-    public record DockedInPort(string Name, string Port, DateTime OccuredUtc) : IPersistedEvent
+    public record DockedInPort(string Name, string Port, DateTime OccuredUtc) : IDomainEvent
     {
         public string EventName => nameof(DockedInPort);
     }
 
-    public record Loading(string Name, string Port, DateTime OccuredUtc) : IPersistedEvent
+    public record Loading(string Name, string Port, DateTime OccuredUtc) : IDomainEvent
     {
         public string EventName => nameof(Loading);
     }
 
-    public record Loaded(string Name, string Port, double CargoWeight, DateTime OccuredUtc) : IPersistedEvent
+    public record Loaded(string Name, string Port, double CargoWeight, DateTime OccuredUtc) : IDomainEvent
     {
         public string EventName => nameof(Loaded);
     }
 
-    public record Departed(string Name, string Port, DateTime OccuredUtc) : IPersistedEvent
+    public record Departed(string Name, string Port, DateTime OccuredUtc) : IDomainEvent
     {
         public string EventName => nameof(Departed);
     }

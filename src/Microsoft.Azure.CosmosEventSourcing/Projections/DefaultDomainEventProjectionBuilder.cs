@@ -6,21 +6,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
-internal class EventBasedEventSourceProjectionBuilder<TEventSource> : IEventSourceProjectionBuilder<TEventSource>
-    where TEventSource : EventSource
+internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProjectionBuilder<TEventItem>
+    where TEventItem : EventItem
 {
-    private readonly ILogger<EventBasedEventSourceProjectionBuilder<TEventSource>> _logger;
+    private readonly ILogger<DefaultDomainEventProjectionBuilder<TEventItem>> _logger;
     private readonly IServiceProvider _serviceProvider;
 
-    public EventBasedEventSourceProjectionBuilder(
-        ILogger<EventBasedEventSourceProjectionBuilder<TEventSource>> logger,
+    public DefaultDomainEventProjectionBuilder(
+        ILogger<DefaultDomainEventProjectionBuilder<TEventItem>> logger,
         IServiceProvider serviceProvider)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
     }
 
-    public async ValueTask ProjectAsync(TEventSource sourcedEvent, CancellationToken cancellationToken = default)
+    public async ValueTask ProjectAsync(TEventItem sourcedEvent, CancellationToken cancellationToken = default)
     {
         string payloadTypeName = sourcedEvent.EventPayload.GetType().Name;
         Type handlerType = BuildEventProjectionHandlerType(sourcedEvent);
@@ -28,7 +28,7 @@ internal class EventBasedEventSourceProjectionBuilder<TEventSource> : IEventSour
 
         if (handlers.Any() is false)
         {
-            _logger.LogDebug("No IEventProjectionHandler<{EventType}> found",
+            _logger.LogDebug("No IDomainEventProjectionBuilder<{EventType}> found",
                 payloadTypeName);
 
             return;
@@ -57,6 +57,6 @@ internal class EventBasedEventSourceProjectionBuilder<TEventSource> : IEventSour
         }));
     }
 
-    private static Type BuildEventProjectionHandlerType(TEventSource eventSource) =>
-        typeof(IEventProjectionHandler<,>).MakeGenericType(eventSource.EventPayload.GetType(), eventSource.GetType());
+    private static Type BuildEventProjectionHandlerType(TEventItem eventSource) =>
+        typeof(IDomainEventProjectionBuilder<,>).MakeGenericType(eventSource.EventPayload.GetType(), eventSource.GetType());
 }

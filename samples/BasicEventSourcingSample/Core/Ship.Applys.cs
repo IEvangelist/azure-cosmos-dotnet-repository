@@ -10,7 +10,7 @@ public partial class Ship
 {
     private Ship() { }
 
-    public static Ship Build(List<IPersistedEvent> persistedEvents)
+    public static Ship Build(List<IDomainEvent> persistedEvents)
     {
         Ship ship = new();
         ship.Apply(persistedEvents);
@@ -89,9 +89,9 @@ public partial class Ship
         Status = ShipStatus.AtSea;
     }
 
-    protected override void Apply(IPersistedEvent persistedEvent)
+    protected override void Apply(IDomainEvent domainEvent)
     {
-        switch (persistedEvent)
+        switch (domainEvent)
         {
             case ShipEvents.ShipCreated created:
                 Apply(created);
@@ -110,8 +110,8 @@ public partial class Ship
                 break;
             default:
                 throw new ArgumentOutOfRangeException(
-                    nameof(persistedEvent),
-                    $"No apply method found for {persistedEvent.GetType().Name}");
+                    nameof(domainEvent),
+                    $"No apply method found for {domainEvent.GetType().Name}");
         }
     }
 }
