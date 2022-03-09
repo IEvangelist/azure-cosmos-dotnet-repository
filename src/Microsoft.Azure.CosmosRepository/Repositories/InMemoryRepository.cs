@@ -21,6 +21,7 @@ using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository
 {
     /// <inheritdoc/>
@@ -447,5 +448,35 @@ namespace Microsoft.Azure.CosmosRepository
 
         private void MismatchedEtags() =>
             throw new CosmosException(string.Empty, HttpStatusCode.PreconditionFailed, 0, string.Empty, 0);
+
+        public async ValueTask UpdateAsBatchAsync(
+            IEnumerable<TItem> items,
+            CancellationToken cancellationToken = default)
+        {
+            foreach (TItem? item in items)
+            {
+                await UpdateAsync(item, cancellationToken);
+            }
+        }
+
+        public async ValueTask CreateAsBatchAsync(
+            IEnumerable<TItem> items,
+            CancellationToken cancellationToken = default)
+        {
+            foreach (TItem? item in items)
+            {
+                await CreateAsync(item, cancellationToken);
+            }
+        }
+
+        public async ValueTask DeleteAsBatchAsync(
+            IEnumerable<TItem> items,
+            CancellationToken cancellationToken = default)
+        {
+            foreach (TItem? item in items)
+            {
+                await DeleteAsync(item, cancellationToken);
+            }
+        }
     }
 }
