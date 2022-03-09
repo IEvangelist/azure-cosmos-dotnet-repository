@@ -443,11 +443,29 @@ namespace Microsoft.Azure.CosmosRepository
         }
 
 
-        private void NotFound() => throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
-        private void Conflict() => throw new CosmosException(string.Empty, HttpStatusCode.Conflict, 0, string.Empty, 0);
+        private static void NotFound() =>
+            throw new CosmosException(
+                string.Empty,
+                HttpStatusCode.NotFound,
+                0,
+                string.Empty,
+                0);
 
-        private void MismatchedEtags() =>
-            throw new CosmosException(string.Empty, HttpStatusCode.PreconditionFailed, 0, string.Empty, 0);
+        private static void Conflict() =>
+            throw new CosmosException(
+                string.Empty,
+                HttpStatusCode.Conflict,
+                0,
+                string.Empty,
+                0);
+
+        private static void MismatchedEtags() =>
+            throw new CosmosException(
+                string.Empty,
+                HttpStatusCode.PreconditionFailed,
+                0,
+                string.Empty,
+                0);
 
         public async ValueTask UpdateAsBatchAsync(
             IEnumerable<TItem> items,
