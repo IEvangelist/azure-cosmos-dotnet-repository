@@ -467,7 +467,10 @@ namespace Microsoft.Azure.CosmosRepository
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            foreach (var item in items)
+            {
+                await DeleteAsync(item);
+            }
         }
     }
 }
