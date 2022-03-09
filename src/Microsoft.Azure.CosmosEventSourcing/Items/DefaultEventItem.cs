@@ -35,6 +35,5 @@ public class DefaultEventItem : EventItem
     /// </summary>
     protected DefaultEventItem()
     {
-
     }
 }
