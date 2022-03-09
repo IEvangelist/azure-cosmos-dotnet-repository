@@ -27,35 +27,31 @@ public class ShipRepository : IShipRepository
     public async ValueTask<Ship> FindAsync(string shipName)
     {
         IEnumerable<ShipEventItem> sourcedEvents = await _store.ReadAsync(shipName);
-        Ship ship = Ship.Build(sourcedEvents.Select(x => x.DomainEventPayload).ToList());
+
+        Ship ship = Ship.Build(sourcedEvents.Select(x =>
+            x.DomainEventPayload).ToList());
+
         return ship;
     }
 
     public ValueTask SaveAsync(Ship ship)
     {
-        IEnumerable<ShipEventItem> sourced =
-            ship.UnSavedEvents.Select(x => new ShipEventItem(x, ship.Name));
+        IEnumerable<ShipEventItem> events = ship
+            .NewEvents
+            .Select(x =>
+                new ShipEventItem(x, ship.Name));
 
-        return _store.PersistAsync(sourced);
+        return _store.PersistAsync(events);
     }
 
     public async Task<IEnumerable<string>> GetShipNamesAsync()
     {
-        IEnumerable<ShipInformation>? all = await _shipInformationRepository
+        IEnumerable<ShipInformation> all = await _shipInformationRepository
             .GetAsync(x => x.PartitionKey == nameof(ShipInformation));
 
         return all.Select(x => x.Name);
     }
 
-    public async ValueTask<ShipInformation?> GetInformationAsync(string name)
-    {
-        try
-        {
-            return await _shipInformationRepository.GetAsync(name, nameof(ShipInformation));
-        }
-        catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
-        {
-            return null;
-        }
-    }
+    public async ValueTask<ShipInformation?> GetInformationAsync(string name) =>
+        await _shipInformationRepository.TryGetAsync(name, nameof(ShipInformation));
 }

@@ -43,7 +43,7 @@ public partial class Ship
     private void Apply(ShipEvents.Departed _) =>
         Status = ShipStatus.AtSea;
 
-    protected override void Apply(IDomainEvent domainEvent)
+    protected override void Apply(DomainEvent domainEvent)
     {
         switch (domainEvent)
         {

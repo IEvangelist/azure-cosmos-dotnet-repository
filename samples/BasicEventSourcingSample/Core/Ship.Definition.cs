@@ -2,10 +2,12 @@
 // Licensed under the MIT License.
 
 using CleanArchitecture.Exceptions;
+using Microsoft.Azure.CosmosEventSourcing.Aggregates;
+using Microsoft.Azure.CosmosEventSourcing.Events;
 
 namespace BasicEventSourcingSample.Core;
 
-public partial class Ship : Aggregate
+public partial class Ship : AggregateRoot
 {
     public string Name { get; private set; } = null!;
     public DateTime Commissioned { get; private set; }
