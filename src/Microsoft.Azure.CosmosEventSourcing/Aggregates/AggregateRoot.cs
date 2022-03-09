@@ -67,7 +67,7 @@ public abstract class AggregateRoot : IAggregateRoot
     /// <![CDATA[
     /// public class MyAggregate : AggregateRoot
     /// {
-    ///     protected override void Apply(IDomainEvent domainEvent)
+    ///     protected override void Apply(DomainEvent domainEvent)
     ///     {
     ///         switch (domainEvent)
     ///         {
