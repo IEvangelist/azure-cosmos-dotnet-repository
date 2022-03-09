@@ -11,7 +11,7 @@ public partial class Ship
 {
     private Ship() { }
 
-    public static Ship Build(List<DefaultDomainEvent> persistedEvents)
+    public static Ship Build(List<DomainEvent> persistedEvents)
     {
         Ship ship = new();
         ship.Apply(persistedEvents);

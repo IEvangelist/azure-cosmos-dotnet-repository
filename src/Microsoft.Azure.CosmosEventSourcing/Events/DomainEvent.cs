@@ -6,7 +6,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Events;
 /// <summary>
 /// A default implementation of a <see cref="IDomainEvent"/>
 /// </summary>
-public record DefaultDomainEvent : IDomainEvent
+public record DomainEvent : IDomainEvent
 {
     ///<inheritdoc />
     public string EventName => GetType().Name;

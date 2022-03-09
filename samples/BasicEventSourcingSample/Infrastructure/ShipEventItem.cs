@@ -9,7 +9,7 @@ namespace BasicEventSourcingSample.Infrastructure;
 
 public class ShipEventItem : DefaultEventItem
 {
-    public ShipEventItem(DefaultDomainEvent eventPayload, string shipName)
+    public ShipEventItem(DomainEvent eventPayload, string shipName)
         : base(eventPayload, shipName)
     {
     }

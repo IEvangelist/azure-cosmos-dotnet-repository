@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Microsoft.Azure.CosmosEventSourcing.Items;
 
 /// <summary>
-/// A default event item which stores <see cref="DefaultDomainEventPayload"/>'s
+/// A default event item which stores <see cref="DomainEventPayload"/>'s
 /// </summary>
 public class DefaultEventItem : EventItem
 {
@@ -24,11 +24,11 @@ public class DefaultEventItem : EventItem
     }
 
     /// <summary>
-    /// Converts an <see cref="IDomainEvent"/> to an <see cref="DefaultDomainEvent"/>
+    /// Converts an <see cref="IDomainEvent"/> to an <see cref="DomainEvent"/>
     /// </summary>
     [JsonIgnore]
-    public DefaultDomainEvent DefaultDomainEventPayload =>
-        (DefaultDomainEvent) EventPayload;
+    public DomainEvent DomainEventPayload =>
+        (DomainEvent) EventPayload;
 
     /// <summary>
     /// Creates an <see cref="DefaultEventItem"/>
