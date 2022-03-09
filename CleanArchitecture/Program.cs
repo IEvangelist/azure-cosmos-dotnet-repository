@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Bogus;
 using CleanArchitecture;
+using CleanArchitecture.Domain;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.CleanArchitecture;
@@ -19,6 +20,7 @@ ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =
     .AddSingleton<IConfiguration>(configuration.Build())
     .WithEtagMappedRepositories()
     .AddSingleton<IMapper<PersonItem, PersonEntity>, PersonMapper>()
+    .AddTransient<IPersonRepository, PersonRepository>()
     .BuildServiceProvider();
 
 IRepository<PersonItem> globalRepo = provider.GetRequiredService<IRepository<PersonItem>>();
@@ -28,42 +30,33 @@ await SeedAsync();
 IEnumerable<PersonItem> people = await globalRepo.GetAsync(x => x.Type == nameof(PersonItem));
 string personId = people.First().Id;
 
-using (IEtagMappedRepository<PersonItem, PersonEntity> repository = provider.GetRequiredService<IEtagMappedRepository<PersonItem, PersonEntity>>())
+using (IPersonRepository repository = provider.GetRequiredService<IPersonRepository>())
 {
-    PersonEntity person = await repository.GetAsync(personId);
+    PersonEntity person = await repository.GetPerson(personId);
 
-    Console.WriteLine($"Got {person.Name}: {person} - {repository.GetEtag(personId)}");
+    Console.WriteLine($"Got {person.Name}: {person}");
 
-    Console.WriteLine($"{person.Name} is having a birthday: {person} - {repository.GetEtag(personId)}");
+    Console.WriteLine($"{person.Name} is having a birthday: {person}");
     person.Birthday();
-    await repository.UpdateAsync(person);
-    Console.WriteLine($"{person.Name} had a birthday: {person} - {repository.GetEtag(personId)}");
+    await repository.UpdatePerson(person);
+    Console.WriteLine($"{person.Name} had a birthday: {person}");
 
-    Console.WriteLine($"{person.Name} is having a birthday: {person} - {repository.GetEtag(personId)}");
+    Console.WriteLine($"{person.Name} is having a birthday: {person}");
     person.Birthday();
-    await repository.UpdateAsync(person);
-    string oldEtag = repository.GetEtag(personId) ?? throw new NullReferenceException("Shouldn't be null");
-    Console.WriteLine($"{person.Name} had a birthday: {person} - {repository.GetEtag(personId)}");
+    await repository.UpdatePerson(person);
+    Console.WriteLine($"{person.Name} had a birthday: {person}");
 
-    Console.WriteLine($"{person.Name} is having a birthday: {person} - {repository.GetEtag(personId)}");
+    Console.WriteLine($"{person.Name} is having a birthday: {person}");
     person.Birthday();
-    await repository.UpdateAsync(person);
-    Console.WriteLine($"{person.Name} had a birthday: {person} - {repository.GetEtag(personId)}");
+    await repository.UpdatePerson(person);
+    Console.WriteLine($"{person.Name} had a birthday: {person}");
 
-    try
-    {
-        //TODO: Remove
-        (repository as EtagMappedRepository<PersonItem, PersonEntity>)!.ForceEtag(personId, oldEtag);
-        Console.WriteLine($"{person.Name} is having a birthday: {person} - {repository.GetEtag(person.Id)}");
-        person.Birthday();
-        await repository.UpdateAsync(person);
-        Console.WriteLine($"{person.Name} had a birthday: {person} - {repository.GetEtag(person.Id)}");
-    }
-    catch (CosmosException e) when (e.StatusCode == HttpStatusCode.PreconditionFailed)
-    {
-        Console.WriteLine($"{person.Name} failed to have a birthday as the etag was out of date: {person} - {repository.GetEtag(person.Id)}");
-    }
+    Console.WriteLine($"{person.Name} is having a birthday: {person}");
+    person.Birthday();
+    await repository.UpdatePerson(person);
+    Console.WriteLine($"{person.Name} had a birthday: {person}");
 }
+
 
 async Task SeedAsync()
 {

@@ -3,8 +3,8 @@
 
 namespace Microsoft.Azure.CosmosRepository.CleanArchitecture;
 
-public interface IEtagCache
+internal interface IEtagCache
 {
-    string? GetEtag(string id);
-    void SetEtag(string id, string? etag);
+    string? RetrieveEtag(IItemWithEtag item);
+    void StoreEtag(IItemWithEtag item);
 }

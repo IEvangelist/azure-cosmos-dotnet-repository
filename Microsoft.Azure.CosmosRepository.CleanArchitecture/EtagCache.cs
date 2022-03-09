@@ -1,17 +1,20 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Concurrent;
+
 namespace Microsoft.Azure.CosmosRepository.CleanArchitecture;
 
-public class EtagCache : IEtagCache
+internal sealed class EtagCache : IEtagCache
 {
-    private Dictionary<string, string?> _idToEtagMap = new ();
+    private readonly ConcurrentDictionary<string, string?> _idToEtagMap = new ();
 
-    public string? GetEtag(string id) =>
-        _idToEtagMap.TryGetValue(id, out string? etag) ? etag : null;
+    private string ComputeUid(string id, string partitionKey)
+        => $"{id}#{partitionKey}";
 
-    public void SetEtag(string id, string? etag)
-    {
-        _idToEtagMap[id] = etag;
-    }
+    public string? RetrieveEtag(IItemWithEtag item) =>
+        _idToEtagMap.TryGetValue(ComputeUid(item.Id, item.PartitionKey), out string? etag) ? etag : null;
+
+    public void StoreEtag(IItemWithEtag item) =>
+        _idToEtagMap[ComputeUid(item.Id, item.PartitionKey)] = item.Etag;
 }

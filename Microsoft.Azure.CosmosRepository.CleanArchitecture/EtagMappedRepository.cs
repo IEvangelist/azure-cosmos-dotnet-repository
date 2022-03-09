@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository.CleanArchitecture;
 
-public class EtagMappedRepository<TItem, TMapped>
+internal class EtagMappedRepository<TItem, TMapped>
     : IEtagMappedRepository<TItem, TMapped>
     where TItem : IItemWithEtag
 {
@@ -15,10 +15,6 @@ public class EtagMappedRepository<TItem, TMapped>
     private readonly IMapper<TItem, TMapped> _mapper;
     private readonly IEtagCache _etagCache;
     private IDisposable? _optionsMonitor;
-
-    public string? GetEtag(string id) => _etagCache.GetEtag(id);
-
-    public void ForceEtag(string id, string etag) => _etagCache.SetEtag(id, etag);
 
     public EtagMappedRepository(
         IRepository<TItem> itemRepository,
@@ -43,11 +39,12 @@ public class EtagMappedRepository<TItem, TMapped>
         }
     }
 
-    public async ValueTask<TMapped> GetAsync(string id, string? partitionKeyValue = null, CancellationToken cancellationToken = default)
+    public async ValueTask<TMapped> GetAsync(string id, string? partitionKeyValue = null,
+        CancellationToken cancellationToken = default)
     {
         TItem item = await _itemRepository.GetAsync(id, partitionKeyValue, cancellationToken);
 
-        _etagCache.SetEtag(item.Id, item.Etag);
+        _etagCache.StoreEtag(item);
 
         return await _mapper.MapAsync(item);
     }
@@ -56,38 +53,27 @@ public class EtagMappedRepository<TItem, TMapped>
     {
         TItem item = await _mapper.MapAsync(value);
 
-        item.Etag = _etagCache.GetEtag(item.Id);
+        item.Etag = _etagCache.RetrieveEtag(item);
 
         TItem updatedItem = await _itemRepository.UpdateAsync(item, cancellationToken, false);
 
-        _etagCache.SetEtag(updatedItem.Id, updatedItem.Etag);
+        _etagCache.StoreEtag(updatedItem);
 
         return await _mapper.MapAsync(updatedItem);
     }
 
-    public async ValueTask<IEnumerable<TMapped>> UpdateAsync(IEnumerable<TMapped> values, CancellationToken cancellationToken = default)
+    public async ValueTask<IEnumerable<TMapped>> UpdateAsync(IEnumerable<TMapped> values,
+        CancellationToken cancellationToken = default)
     {
         List<Task<TMapped>> updateTasks =
             values.Select(value =>
-                UpdateAsync(value, cancellationToken)
-                    .AsTask())
-                    .ToList();
+                    UpdateAsync(value, cancellationToken)
+                        .AsTask())
+                .ToList();
 
-            await Task.WhenAll(updateTasks).ConfigureAwait(false);
+        await Task.WhenAll(updateTasks).ConfigureAwait(false);
 
-            return updateTasks.Select(x => x.Result);
-        }
-
-    public async ValueTask<TMapped> UpdateAsync(string id, Action<IPatchOperationBuilder<TItem>> builder, string? partitionKeyValue = null,
-        CancellationToken cancellationToken = default, string? etag = default)
-    {
-        await _itemRepository.UpdateAsync(id, builder, partitionKeyValue, cancellationToken, _etagCache.GetEtag(id));
-
-        TItem updatedItem = await _itemRepository.GetAsync(id, partitionKeyValue, cancellationToken);
-
-        _etagCache.SetEtag(updatedItem.Id, updatedItem.Etag);
-
-        return await _mapper.MapAsync(updatedItem);
+        return updateTasks.Select(x => x.Result);
     }
 
     public void Dispose()
