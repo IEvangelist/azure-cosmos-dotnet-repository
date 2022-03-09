@@ -178,6 +178,9 @@ internal class GetTests : EtagMappedRepositoryTestsBase
                 x.GetAsync(predicate, CancellationToken.None),
             Times.Once);
 
+        PersonMapperMock.Verify(x =>
+                x.MapAsync(It.IsAny<TestTypes.PersonItem>()),
+            Times.Exactly(people.Count));
         foreach ((TestTypes.PersonItem? personItem, TestTypes.PersonEntity? _) in people)
         {
             PersonMapperMock.Verify(x =>
