@@ -19,7 +19,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
     class Person : Item, IItemWithEtag
     {
         [JsonProperty("_etag")]
-        public string Etag { get; set; } = null!;
+        public string? Etag { get; set; } = null!;
 
         public string Name { get; set; }
 
