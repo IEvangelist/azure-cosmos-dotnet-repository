@@ -456,11 +456,14 @@ namespace Microsoft.Azure.CosmosRepository
             throw new NotImplementedException();
         }
 
-        public ValueTask CreateAsBatchAsync(
+        public async ValueTask CreateAsBatchAsync(
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            foreach (var item in items)
+            {
+                await CreateAsync(item);
+            }
         }
 
         public ValueTask DeleteAsBatchAsync(
