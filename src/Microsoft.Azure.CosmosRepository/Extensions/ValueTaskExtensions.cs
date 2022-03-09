@@ -17,7 +17,6 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
         /// </summary>
         /// <param name="valueTask">The value task</param>
         /// <typeparam name="T">The type of <see cref="IEnumerable{T}"/></typeparam>
-        /// <returns></returns>
         public static async ValueTask<List<T>> ToListAsync<T>(this ValueTask<IEnumerable<T>> valueTask)
         {
             IEnumerable<T> items = await valueTask;
