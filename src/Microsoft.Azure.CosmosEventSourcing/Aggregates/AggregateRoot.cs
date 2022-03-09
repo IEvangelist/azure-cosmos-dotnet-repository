@@ -5,9 +5,7 @@ using Microsoft.Azure.CosmosEventSourcing.Events;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Aggregates;
 
-/// <summary>
-///
-/// </summary>
+/// <inheritdoc />
 public abstract class AggregateRoot : IAggregateRoot
 {
     private List<DomainEvent> _events = new();
