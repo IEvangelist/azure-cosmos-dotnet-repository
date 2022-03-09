@@ -453,9 +453,9 @@ namespace Microsoft.Azure.CosmosRepository
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default)
         {
-            foreach (var item in items)
+            foreach (TItem? item in items)
             {
-                await UpdateAsync(item);
+                await UpdateAsync(item, cancellationToken);
             }
         }
 
@@ -463,19 +463,19 @@ namespace Microsoft.Azure.CosmosRepository
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default)
         {
-            foreach (var item in items)
+            foreach (TItem? item in items)
             {
-                await CreateAsync(item);
+                await CreateAsync(item, cancellationToken);
             }
         }
 
-        public ValueTask DeleteAsBatchAsync(
+        public async ValueTask DeleteAsBatchAsync(
             IEnumerable<TItem> items,
             CancellationToken cancellationToken = default)
         {
-            foreach (var item in items)
+            foreach (TItem? item in items)
             {
-                await DeleteAsync(item);
+                await DeleteAsync(item, cancellationToken);
             }
         }
     }
