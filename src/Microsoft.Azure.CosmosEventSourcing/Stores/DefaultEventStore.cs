@@ -3,6 +3,8 @@
 
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Azure.CosmosRepository;
@@ -19,11 +21,25 @@ internal class DefaultEventStore<TEventItem> :
         _repository = repository;
 
     public async ValueTask PersistAsync(
-        IEnumerable<TEventItem> records,
-        CancellationToken cancellationToken = default) =>
-        await _repository.CreateAsync(
-            records,
+        IEnumerable<TEventItem> items,
+        CancellationToken cancellationToken = default)
+    {
+        List<TEventItem> eventItems = items.ToList();
+
+        if (!eventItems.Any())
+        {
+            return;
+        }
+
+        if (eventItems.Count(x => x.EventName is nameof(AtomicEvent)) is not 1)
+        {
+            throw new AtomicEventRequiredException();
+        }
+
+        await _repository.UpdateAsBatchAsync(
+            eventItems,
             cancellationToken);
+    }
 
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
         CancellationToken cancellationToken = default) =>
@@ -65,7 +81,6 @@ internal class DefaultEventStore<TEventItem> :
             {
                 yield return eventSource;
             }
-
         } while (token is not null);
     }
 }

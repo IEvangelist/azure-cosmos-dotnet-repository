@@ -24,11 +24,36 @@ public class DefaultEventItem : EventItem
     }
 
     /// <summary>
+    /// Creates a <see cref="DefaultEventItem"/>.
+    /// </summary>
+    /// <param name="atomicEvent">The <see cref="AtomicEvent"/>.</param>
+    /// <param name="partitionKey">The partition key for the set of events.</param>
+    protected DefaultEventItem(
+        AtomicEvent atomicEvent,
+        string partitionKey) : base(atomicEvent, partitionKey)
+    {
+    }
+
+    /// <summary>
     /// Converts an <see cref="IDomainEvent"/> to an <see cref="DomainEvent"/>
     /// </summary>
     [JsonIgnore]
     public DomainEvent DomainEventPayload =>
-        (DomainEvent) EventPayload;
+        GetEventPayload();
+
+    private DomainEvent GetEventPayload()
+    {
+        if (EventPayload is AtomicEvent atomicEvent)
+        {
+            return atomicEvent with
+            {
+                ETag = Etag ?? throw new NullReferenceException(),
+                Id = Guid.Parse(Id)
+            };
+        }
+
+        return (DomainEvent) EventPayload;
+    }
 
     /// <summary>
     /// Creates an <see cref="DefaultEventItem"/>

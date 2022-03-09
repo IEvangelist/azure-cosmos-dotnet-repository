@@ -3,6 +3,8 @@
 
 using Microsoft.Azure.CosmosEventSourcing.Builders;
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
+using Microsoft.Azure.CosmosEventSourcing.Converters;
+using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,7 @@ public static class ServiceCollectionExtensions
         Action<ICosmosEventSourcingBuilder> eventSourcingBuilder)
     {
         DefaultCosmosEventSourcingBuilder builder = new(services);
+        DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
         eventSourcingBuilder.Invoke(builder);
         services.AddSingleton(typeof(IEventStore<>), typeof(DefaultEventStore<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, DefaultEventSourcingProvider>();

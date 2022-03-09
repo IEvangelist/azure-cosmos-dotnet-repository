@@ -36,10 +36,13 @@ public class ShipRepository : IShipRepository
 
     public ValueTask SaveAsync(Ship ship)
     {
-        IEnumerable<ShipEventItem> events = ship
+        List<ShipEventItem> events = ship
             .NewEvents
             .Select(x =>
-                new ShipEventItem(x, ship.Name));
+                new ShipEventItem(x, ship.Name))
+            .ToList();
+
+        events.Add(new ShipEventItem(ship.AtomicEvent, ship.Name));
 
         return _store.PersistAsync(events);
     }

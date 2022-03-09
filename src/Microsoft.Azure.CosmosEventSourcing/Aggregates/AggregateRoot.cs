@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Aggregates;
 
@@ -10,6 +11,7 @@ public abstract class AggregateRoot : IAggregateRoot
 {
     private List<DomainEvent> _events = new();
     private readonly List<DomainEvent> _newEvents = new();
+    private AtomicEvent? _atomicEvent;
 
     /// <inheritdoc />
     public IReadOnlyList<DomainEvent> NewEvents =>
@@ -19,6 +21,11 @@ public abstract class AggregateRoot : IAggregateRoot
     public IReadOnlyList<DomainEvent> Events =>
         _events;
 
+
+    /// <inheritdoc />
+    public AtomicEvent AtomicEvent =>
+        _atomicEvent ?? throw new AtomicEventRequiredException(GetType());
+
     /// <summary>
     /// Adds a new event to the <see cref="AggregateRoot"/>
     /// </summary>
@@ -26,6 +33,16 @@ public abstract class AggregateRoot : IAggregateRoot
     /// <remarks>This should only be used when adding NEW events.</remarks>
     protected void AddEvent(DomainEvent domainEvent)
     {
+        if (_atomicEvent is null)
+        {
+            CreateAtomicMarkerEvent();
+        }
+
+        if (!_newEvents.Any())
+        {
+            UpdateAtomicMarkerEvent();
+        }
+
         DomainEvent evt = domainEvent with
         {
             Sequence = _events.Count + 1,
@@ -46,8 +63,13 @@ public abstract class AggregateRoot : IAggregateRoot
     {
         if (!domainEvents.Any())
         {
-            return;
+            throw new DomainEventsRequiredException(GetType());
         }
+
+        AtomicEvent? atomicEvent = domainEvents.SingleOrDefault(x => x is AtomicEvent) as AtomicEvent;
+
+        _atomicEvent = atomicEvent ?? throw new AtomicEventRequiredException(GetType());
+        domainEvents.Remove(atomicEvent);
 
         List<DomainEvent> orderedEvents = domainEvents
             .OrderBy(x => x.Sequence)
@@ -97,4 +119,26 @@ public abstract class AggregateRoot : IAggregateRoot
     /// </code>
     /// </example>
     protected abstract void Apply(DomainEvent domainEvent);
+
+    private void CreateAtomicMarkerEvent()
+    {
+        _atomicEvent = new AtomicEvent(Guid.NewGuid(), string.Empty) with
+        {
+            Sequence = -1,
+            OccuredUtc = DateTime.UtcNow
+        };
+    }
+
+    private void UpdateAtomicMarkerEvent()
+    {
+        if (_atomicEvent is null)
+        {
+            throw new AtomicEventRequiredException(GetType());
+        }
+
+        _atomicEvent = _atomicEvent with
+        {
+            OccuredUtc = DateTime.UtcNow
+        };
+    }
 }
