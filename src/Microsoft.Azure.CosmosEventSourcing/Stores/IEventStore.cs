@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Linq.Expressions;
+using Microsoft.Azure.CosmosEventSourcing.Aggregates;
+using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Items;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Stores;
@@ -13,13 +15,12 @@ namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 public interface IEventStore<TEventItem> where TEventItem : EventItem
 {
     /// <summary>
-    /// Persists a set of <see cref="EventItem"/> records.
+    /// Persists a set of <see cref="EventItem"/> items.
     /// </summary>
-    /// <param name="records">The records to persist.</param>
+    /// <param name="items">The items to persist.</param>
     /// <param name="cancellationToken">A token that can be used to cancel this async request.</param>
-    /// <returns></returns>
     ValueTask PersistAsync(
-        IEnumerable<TEventItem> records,
+        IEnumerable<TEventItem> items,
         CancellationToken cancellationToken = default);
 
     /// <summary>

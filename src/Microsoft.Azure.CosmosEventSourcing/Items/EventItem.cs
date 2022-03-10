@@ -12,7 +12,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Items;
 /// <summary>
 /// A record the represents an event stored in an <see cref="IEventStore{TEventItem}"/>
 /// </summary>
-public abstract class EventItem : FullItem
+public class EventItem : FullItem
 {
     /// <summary>
     /// The payload of the event to be stored.
@@ -52,6 +52,26 @@ public abstract class EventItem : FullItem
         EventPayload = eventPayload;
         EventName = eventPayload.EventName;
         PartitionKey = partitionKey;
+    }
+
+    /// <summary>
+    /// Creates an event item.
+    /// </summary>
+    /// <param name="atomicEvent">The <see cref="AtomicEvent"/></param>
+    /// <param name="partitionKey">The partition key for the set of events.</param>
+    protected EventItem(
+        AtomicEvent atomicEvent,
+        string partitionKey) : base(atomicEvent.ETag)
+    {
+        if (string.IsNullOrWhiteSpace(partitionKey))
+        {
+            throw new ArgumentNullException(nameof(partitionKey), "The partition key must be provided");
+        }
+
+        PartitionKey = partitionKey;
+        EventName = atomicEvent.EventName;
+        EventPayload = atomicEvent;
+        Id = atomicEvent.Id.ToString();
     }
 
     /// <summary>

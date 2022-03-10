@@ -20,4 +20,9 @@ public interface IAggregateRoot
     /// All events that have occured on an <see cref="IAggregateRoot"/>
     /// </summary>
     IReadOnlyList<DomainEvent> Events { get; }
+
+    /// <summary>
+    /// An event that is used to provide optimistic concurrency control for the entire <see cref="IAggregateRoot"/>
+    /// </summary>
+    AtomicEvent? AtomicEvent { get; }
 }
