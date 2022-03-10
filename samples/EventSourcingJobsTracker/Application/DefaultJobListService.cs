@@ -36,4 +36,13 @@ public class DefaultJobListService : IJobListService
 
         await _jobListRepository.SaveAsync(jobsList);
     }
+
+    public async ValueTask CompleteJob(Guid jobListId, Guid jobId)
+    {
+        JobsList jobsList = await _jobListRepository.ReadAsync(jobListId);
+
+        jobsList.CompleteJob(jobId);
+
+        await _jobListRepository.SaveAsync(jobsList);
+    }
 }

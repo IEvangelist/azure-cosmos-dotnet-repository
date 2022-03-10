@@ -14,4 +14,8 @@ public interface IJobListService
         Guid jobListId,
         string title,
         DateTime due);
+
+    ValueTask CompleteJob(
+        Guid jobListId,
+        Guid jobId);
 }

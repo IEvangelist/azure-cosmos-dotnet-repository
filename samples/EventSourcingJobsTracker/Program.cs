@@ -85,6 +85,24 @@ app.MapPost(
     .Produces<ErrorResponse>(404)
     .WithTags("Jobs List");
 
+app.MapPut(
+        "/api/jobs-list/jobs/complete",
+        async (
+            CompleteJob request,
+            IJobListService service) =>
+        {
+            (Guid jobListId, Guid jobId) = request;
+
+            await service.CompleteJob(jobListId, jobId);
+
+            return Results.Ok();
+        })
+    .Accepts<CompleteJob>("application/json")
+    .Produces(200)
+    .Produces<ErrorResponse>(400)
+    .Produces<ErrorResponse>(404)
+    .WithTags("Jobs List");
+
 app.MapGet("/api/jobs-list/{id}", (Guid id) => id)
     .Produces(200)
     .Produces(404)
