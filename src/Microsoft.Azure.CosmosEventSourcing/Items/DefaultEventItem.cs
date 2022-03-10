@@ -9,7 +9,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Items;
 /// <summary>
 /// A default event item which stores <see cref="DomainEventPayload"/>'s
 /// </summary>
-public class DefaultEventItem : EventItem
+public abstract class DefaultEventItem : EventItem
 {
     /// <summary>
     /// Creates an <see cref="DefaultEventItem"/>
@@ -20,17 +20,6 @@ public class DefaultEventItem : EventItem
         IDomainEvent eventPayload,
         string partitionKey) :
         base(eventPayload, partitionKey)
-    {
-    }
-
-    /// <summary>
-    /// Creates a <see cref="DefaultEventItem"/>.
-    /// </summary>
-    /// <param name="atomicEvent">The <see cref="AtomicEvent"/>.</param>
-    /// <param name="partitionKey">The partition key for the set of events.</param>
-    protected DefaultEventItem(
-        AtomicEvent atomicEvent,
-        string partitionKey) : base(atomicEvent, partitionKey)
     {
     }
 
@@ -53,12 +42,5 @@ public class DefaultEventItem : EventItem
         }
 
         return (DomainEvent) EventPayload;
-    }
-
-    /// <summary>
-    /// Creates an <see cref="DefaultEventItem"/>
-    /// </summary>
-    protected DefaultEventItem()
-    {
     }
 }
