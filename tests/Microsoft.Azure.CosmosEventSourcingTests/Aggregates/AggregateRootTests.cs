@@ -79,7 +79,7 @@ public class AggregateTests
     }
 
     [Fact]
-    public void Ctor_FirstEvent_SetsAtomicEvent()
+    public void Ctor_FirstEvent_CreatesAtomicEvent()
     {
         //Arrange
         string message = "A";

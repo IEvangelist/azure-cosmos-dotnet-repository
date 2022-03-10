@@ -11,7 +11,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Events;
 /// An event that is used to pass between <see cref="IAggregateRoot"/>'s and the <see cref="IEventStore{TEventItem}"/>
 /// <remarks>This is used to provide optimistic concurrency control for batches of <see cref="DomainEvent"/>'s.</remarks>
 /// </summary>
-public record AtomicEvent : DomainEvent
+public record class AtomicEvent : DomainEvent
 {
     [JsonConstructor]
     internal AtomicEvent(Guid id, string eTag)

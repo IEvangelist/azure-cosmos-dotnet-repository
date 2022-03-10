@@ -25,8 +25,7 @@ internal class DefaultEventStore<TEventItem> :
         CancellationToken cancellationToken = default)
     {
         List<TEventItem> eventItems = items.ToList();
-
-        if (!eventItems.Any())
+        if (eventItems is { Count: 0 })
         {
             return;
         }
