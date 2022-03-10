@@ -106,6 +106,6 @@ app.MapGet("/api/jobs-list/{id}", (Guid id) => id)
     .Produces(200)
     .Produces(404)
     .Produces(404)
-    .WithTags("Jobs List");;
+    .WithTags("Jobs List");
 
 app.Run();
