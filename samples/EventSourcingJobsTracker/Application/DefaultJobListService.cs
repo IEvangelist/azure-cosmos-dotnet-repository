@@ -13,7 +13,10 @@ public class DefaultJobListService : IJobListService
     public DefaultJobListService(IJobListRepository jobListRepository) =>
         _jobListRepository = jobListRepository;
 
-    public async ValueTask<Guid> CreateJobList(string name, string category, string username)
+    public async ValueTask<Guid> CreateJobList(
+        string name,
+        string category,
+        string username)
     {
         JobsList jobList = new(name, category, username);
 
