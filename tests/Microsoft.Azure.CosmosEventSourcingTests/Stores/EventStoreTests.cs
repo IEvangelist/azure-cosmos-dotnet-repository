@@ -25,21 +25,21 @@ public class EventStoreTests
 
     private readonly List<Testing.SampleEventItem> _events = new()
     {
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
     };
 
     private readonly List<Testing.SampleEventItem> _eventsWithAtomicEvents = new()
     {
         new Testing.SampleEventItem(new AtomicEvent(Guid.NewGuid(), string.Empty), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
     };
 
     public EventStoreTests() =>
