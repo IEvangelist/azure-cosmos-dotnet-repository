@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing;
+using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
@@ -31,6 +33,16 @@ public class EventStoreTests
         new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
     };
 
+    private readonly List<Testing.SampleEventItem> _eventsWithAtomicEvents = new()
+    {
+        new Testing.SampleEventItem(new AtomicEvent(Guid.NewGuid(), string.Empty), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(DateTime.UtcNow), Pk),
+    };
+
     public EventStoreTests() =>
         _repository = _autoMocker.GetMock<IRepository<Testing.SampleEventItem>>();
 
@@ -44,10 +56,42 @@ public class EventStoreTests
         IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
         //Act
-        await sut.PersistAsync(_events);
+        await sut.PersistAsync(_eventsWithAtomicEvents);
 
         //Assert
-        _repository.Verify(o => o.CreateAsync(_events, default));
+        _repository.Verify(o =>
+            o.UpdateAsBatchAsync(
+                _eventsWithAtomicEvents,
+                default));
+    }
+
+    [Fact]
+    public async Task PersistAsync_NoEvents_DoesNotSaveBatch()
+    {
+        //Arrange
+        IEventStore<Testing.SampleEventItem> sut = CreateSut();
+
+        //Act
+        await sut.PersistAsync(new List<Testing.SampleEventItem>());
+
+        //Assert
+        _repository.Verify(o =>
+            o.UpdateAsBatchAsync(
+                It.IsAny<List<Testing.SampleEventItem>>(),
+                default),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task PersistAsync_EventsWithAtomicEvent_ThrowAtomicEventRequiredExceptions()
+    {
+        //Arrange
+        IEventStore<Testing.SampleEventItem> sut = CreateSut();
+
+        //Act
+        //Assert
+        await Assert.ThrowsAsync<AtomicEventRequiredException>(() =>
+            sut.PersistAsync(_events).AsTask());
     }
 
     [Fact]
@@ -59,13 +103,13 @@ public class EventStoreTests
         _repository
             .Setup(o =>
                 o.GetAsync(x => x.PartitionKey == Pk, default))
-            .ReturnsAsync(_events);
+            .ReturnsAsync(_eventsWithAtomicEvents);
 
         //Act
         IEnumerable<Testing.SampleEventItem> got = await sut.ReadAsync(Pk);
 
         //Assert
-        got.Should().BeEquivalentTo(_events);
+        got.Should().BeEquivalentTo(_eventsWithAtomicEvents);
     }
 
     [Fact]
@@ -77,7 +121,7 @@ public class EventStoreTests
         Page<Testing.SampleEventItem> page1 = new(
             null,
             5,
-            _events,
+            _eventsWithAtomicEvents,
             0,
             Guid.NewGuid().ToString());
 
@@ -114,6 +158,6 @@ public class EventStoreTests
         }
 
         //Assert
-        events.Count.Should().Be(12);
+        events.Count.Should().Be(13);
     }
 }
