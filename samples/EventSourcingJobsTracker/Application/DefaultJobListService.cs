@@ -21,4 +21,16 @@ public class DefaultJobListService : IJobListService
 
         return jobList.Id;
     }
+
+    public async ValueTask AddJob(
+        Guid jobListId,
+        string title,
+        DateTime due)
+    {
+        JobsList jobsList = await _jobListRepository.ReadAsync(jobListId);
+
+        jobsList.AddJob(title, due);
+
+        await _jobListRepository.SaveAsync(jobsList);
+    }
 }

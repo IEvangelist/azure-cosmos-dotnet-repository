@@ -8,4 +8,6 @@ namespace EventSourcingJobsTracker.Application.Infrastructure;
 public interface IJobListRepository
 {
     ValueTask SaveAsync(JobsList jobList);
+
+    ValueTask<JobsList> ReadAsync(Guid jobListId);
 }

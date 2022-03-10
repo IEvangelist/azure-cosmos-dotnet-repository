@@ -112,4 +112,16 @@ public class JobsList : AggregateRoot
                     $"There is no {nameof(Apply)} method for domain event of type {domainEvent.GetType().Name}");
         }
     }
+
+    public static JobsList Replay(List<DomainEvent> domainEvents)
+    {
+        JobsList jobList = new();
+        jobList.Apply(domainEvents);
+        return jobList;
+    }
+
+    private JobsList()
+    {
+
+    }
 }

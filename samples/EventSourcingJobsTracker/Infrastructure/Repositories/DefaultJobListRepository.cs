@@ -1,10 +1,12 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using CleanArchitecture.Exceptions;
 using EventSourcingJobsTracker.Application.Infrastructure;
 using EventSourcingJobsTracker.Core.Aggregates;
 using EventSourcingJobsTracker.Infrastructure.Items;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
+using Microsoft.Azure.CosmosRepository.Extensions;
 
 namespace EventSourcingJobsTracker.Infrastructure.Repositories;
 
@@ -22,15 +24,28 @@ public class DefaultJobListRepository : IJobListRepository
             .Select(evt =>
                 new JobListEventItem(
                     evt,
-                    jobList.Username,
-                    jobList.Category))
+                    jobList.Id))
             .ToList();
 
         eventItems.Add(new JobListEventItem(
             jobList.AtomicEvent,
-            jobList.Username,
-            jobList.Category));
+            jobList.Id));
 
         await _eventStore.PersistAsync(eventItems);
+    }
+
+    public async ValueTask<JobsList> ReadAsync(Guid jobListId)
+    {
+        List<JobListEventItem> events = await _eventStore
+            .ReadAsync(jobListId.ToString())
+            .ToListAsync();
+
+        if (events is {Count: 0})
+        {
+            throw new ResourceNotFoundException<JobsList>(
+                $"There is no job list with the ID {jobListId}");
+        }
+
+        return JobsList.Replay(events.Select(x => x.DomainEventPayload).ToList());
     }
 }

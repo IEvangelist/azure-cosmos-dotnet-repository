@@ -3,6 +3,7 @@
 
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Items;
+using Newtonsoft.Json;
 
 namespace EventSourcingJobsTracker.Infrastructure.Items;
 
@@ -10,18 +11,16 @@ public class JobListEventItem : DefaultEventItem
 {
     public JobListEventItem(
         IDomainEvent domainEvent,
-        string username,
-        string category) :
-        base(domainEvent, $"{username}#{category}")
+        Guid id) :
+        base(domainEvent, id.ToString())
     {
 
     }
 
-    public JobListEventItem(
-        AtomicEvent domainEvent,
-        string username,
-        string category) :
-        base(domainEvent, $"{username}#{category}")
+    [JsonConstructor]
+    private JobListEventItem(
+        IDomainEvent eventPayload,
+        string partitionKey) : base(eventPayload, partitionKey)
     {
 
     }

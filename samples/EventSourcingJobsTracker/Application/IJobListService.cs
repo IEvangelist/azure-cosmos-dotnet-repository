@@ -9,4 +9,9 @@ public interface IJobListService
         string name,
         string category,
         string username);
+
+    ValueTask AddJob(
+        Guid jobListId,
+        string title,
+        DateTime due);
 }

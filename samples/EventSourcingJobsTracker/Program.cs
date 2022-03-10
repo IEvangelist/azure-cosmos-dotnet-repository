@@ -3,6 +3,7 @@ using CleanArchitecture.Exceptions.AspNetCore;
 using EventSourcingJobsTracker.API.Requests;
 using EventSourcingJobsTracker.Application;
 using EventSourcingJobsTracker.Application.Infrastructure;
+using EventSourcingJobsTracker.Core.Aggregates;
 using EventSourcingJobsTracker.Infrastructure.Items;
 using EventSourcingJobsTracker.Infrastructure.Repositories;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
@@ -24,6 +25,8 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
         IItemContainerBuilder containerBuilder = cosmosOptions.ContainerBuilder;
         containerBuilder.ConfigureEventItemStore<JobListEventItem>("jobs-list-events");
     });
+
+    eventSourcingBuilder.AddDomainEventTypes(typeof(JobsList).Assembly);
 });
 
 builder.Services.AddCosmosRepositoryChangeFeedHostedService();
@@ -61,7 +64,25 @@ app.MapPost(
     })
     .Accepts<CreateJobList>("application/json")
     .Produces(201)
-    .Produces(400)
+    .Produces<ErrorResponse>(400)
+    .WithTags("Jobs List");
+
+app.MapPost(
+        "/api/jobs-list/jobs/",
+        async (
+            CreateJob request,
+            IJobListService service) =>
+        {
+            (Guid jobListId, string? title, DateTime due) = request;
+
+            await service.AddJob(jobListId, title, due);
+
+            return Results.Ok();
+        })
+    .Accepts<CreateJob>("application/json")
+    .Produces(200)
+    .Produces<ErrorResponse>(400)
+    .Produces<ErrorResponse>(404)
     .WithTags("Jobs List");
 
 app.MapGet("/api/jobs-list/{id}", (Guid id) => id)
