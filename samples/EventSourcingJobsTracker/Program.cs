@@ -1,4 +1,3 @@
-using Azure.Core;
 using CleanArchitecture.Exceptions.AspNetCore;
 using EventSourcingJobsTracker.API.Requests;
 using EventSourcingJobsTracker.Application;
