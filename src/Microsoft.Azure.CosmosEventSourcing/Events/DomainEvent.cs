@@ -18,5 +18,5 @@ public record DomainEvent : IDomainEvent
     public int Sequence { get; internal set; }
 
     /// <inheritdoc />
-    public DateTime OccuredUtc { get; set; }
+    public DateTime OccuredUtc { get; init; }
 };

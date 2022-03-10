@@ -20,7 +20,7 @@ public record AtomicEvent : DomainEvent
         ETag = eTag;
     }
 
-    internal Guid Id { get; set; }
+    internal Guid Id { get; init; }
 
-    internal string ETag { get; set; }
+    internal string ETag { get; init; }
 }
