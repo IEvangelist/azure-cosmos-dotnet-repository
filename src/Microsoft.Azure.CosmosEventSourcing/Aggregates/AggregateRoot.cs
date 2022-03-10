@@ -124,7 +124,7 @@ public abstract class AggregateRoot : IAggregateRoot
     {
         _atomicEvent = new AtomicEvent(Guid.NewGuid(), string.Empty) with
         {
-            Sequence = -1,
+            Sequence = int.MaxValue,
             OccuredUtc = DateTime.UtcNow
         };
     }

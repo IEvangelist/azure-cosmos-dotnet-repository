@@ -1,6 +1,8 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Newtonsoft.Json;
+
 namespace Microsoft.Azure.CosmosEventSourcing.Events;
 
 /// <summary>
@@ -12,7 +14,8 @@ public record DomainEvent : IDomainEvent
     public string EventName => GetType().Name;
 
     /// <inheritdoc />
-    public int Sequence { get; set; }
+    [JsonProperty("sequence")]
+    public int Sequence { get; internal set; }
 
     /// <inheritdoc />
     public DateTime OccuredUtc { get; set; }

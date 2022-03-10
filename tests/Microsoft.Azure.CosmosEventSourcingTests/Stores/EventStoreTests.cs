@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
@@ -16,7 +15,7 @@ using Moq;
 using Moq.AutoMock;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosEventSourcingTests;
+namespace Microsoft.Azure.CosmosEventSourcingTests.Stores;
 
 public class EventStoreTests
 {

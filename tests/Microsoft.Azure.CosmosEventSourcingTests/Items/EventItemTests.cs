@@ -5,9 +5,9 @@ using System;
 using FluentAssertions;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosEventSourcingTests;
+namespace Microsoft.Azure.CosmosEventSourcingTests.Items;
 
-public class EventSourceTests
+public class EventItemTests
 {
     [Fact]
     public void Ctor_EmptyPartitionKey_ThrowsArgumentNullException()
