@@ -12,18 +12,18 @@ namespace Microsoft.Azure.CosmosEventSourcing.Items;
 /// <summary>
 /// A record the represents an event stored in an <see cref="IEventStore{TEventItem}"/>
 /// </summary>
-public class EventItem : FullItem
+public abstract class EventItem : FullItem
 {
     /// <summary>
     /// The payload of the event to be stored.
     /// </summary>
     [JsonConverter(typeof(DomainEventConverter))]
-    public IDomainEvent EventPayload { get; set; } = null!;
+    public IDomainEvent EventPayload { get; set; }
 
     /// <summary>
     /// The value used to partition the event.
     /// </summary>
-    public string PartitionKey { get; set; } = null!;
+    public string PartitionKey { get; set; }
 
     /// <inheritdoc />
     protected override string GetPartitionKeyValue() =>
@@ -32,7 +32,7 @@ public class EventItem : FullItem
     /// <summary>
     /// The name of the event stored.
     /// </summary>
-    public string EventName { get; set; } = null!;
+    public string EventName { get; set; }
 
     /// <summary>
     /// Creates an event item.
@@ -49,36 +49,13 @@ public class EventItem : FullItem
             throw new ArgumentNullException(nameof(partitionKey), "The partition key must be provided");
         }
 
+        if (eventPayload is AtomicEvent atomicEvent)
+        {
+            Id = atomicEvent.Id.ToString();
+        }
+
         EventPayload = eventPayload;
         EventName = eventPayload.EventName;
         PartitionKey = partitionKey;
-    }
-
-    /// <summary>
-    /// Creates an event item.
-    /// </summary>
-    /// <param name="atomicEvent">The <see cref="AtomicEvent"/></param>
-    /// <param name="partitionKey">The partition key for the set of events.</param>
-    protected EventItem(
-        AtomicEvent atomicEvent,
-        string partitionKey) : base(atomicEvent.ETag)
-    {
-        if (string.IsNullOrWhiteSpace(partitionKey))
-        {
-            throw new ArgumentNullException(nameof(partitionKey), "The partition key must be provided");
-        }
-
-        PartitionKey = partitionKey;
-        EventName = atomicEvent.EventName;
-        EventPayload = atomicEvent;
-        Id = atomicEvent.Id.ToString();
-    }
-
-    /// <summary>
-    /// Creates an event item.
-    /// </summary>
-    protected EventItem()
-    {
-
     }
 }

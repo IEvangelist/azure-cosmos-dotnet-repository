@@ -10,7 +10,7 @@ namespace Microsoft.Azure.CosmosEventSourcingTests;
 
 public static class Testing
 {
-    public record SampleEvent(DateTime OccuredUtc) : DomainEvent;
+    public record SampleEvent : DomainEvent;
 
     public class SampleEventItem : EventItem
     {
