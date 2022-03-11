@@ -34,7 +34,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         return this;
     }
 
-    public ICosmosEventSourcingBuilder AddEventItemProjectionBuilder<TEventItem>(
+    public ICosmosEventSourcingBuilder AddDefaultDomainEventProjectionBuilder<TEventItem>(
         Action<EventSourcingProcessorOptions<TEventItem>>? optionsAction = null)
         where TEventItem : EventItem
     {

@@ -34,7 +34,7 @@ public interface ICosmosEventSourcingBuilder
     /// <param name="optionsAction">The <see cref="EventSourcingProcessorOptions{TEventItem}"/> used to configure the processor.</param>
     /// <typeparam name="TEventItem">The <see cref="EventItem"/></typeparam>
     /// <returns></returns>
-    public ICosmosEventSourcingBuilder AddEventItemProjectionBuilder<TEventItem>(
+    public ICosmosEventSourcingBuilder AddDefaultDomainEventProjectionBuilder<TEventItem>(
         Action<EventSourcingProcessorOptions<TEventItem>>? optionsAction = null)
         where TEventItem : EventItem;
 

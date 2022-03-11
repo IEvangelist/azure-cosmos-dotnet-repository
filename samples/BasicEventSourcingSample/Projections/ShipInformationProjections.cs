@@ -19,14 +19,14 @@ public class ShipInformationProjections
             _repository = repository;
 
         public async ValueTask HandleAsync(
-            ShipEvents.ShipCreated shipCreated,
+            ShipEvents.ShipCreated domainEvent,
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
             ShipInformation info = new(
-                shipCreated.Name,
-                shipCreated.Commissioned,
-                shipCreated.OccuredUtc);
+                domainEvent.Name,
+                domainEvent.Commissioned,
+                domainEvent.OccuredUtc);
 
             await _repository.UpdateAsync(info, cancellationToken);
         }
@@ -40,11 +40,11 @@ public class ShipInformationProjections
             _repository = repository;
 
         public async ValueTask HandleAsync(
-            ShipEvents.DockedInPort dockedInPort,
+            ShipEvents.DockedInPort domainEvent,
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
-            (string name, string port) = dockedInPort;
+            (string name, string port) = domainEvent;
 
             ShipInformation shipInfo = await _repository.GetAsync(
                 name,
@@ -65,11 +65,11 @@ public class ShipInformationProjections
             _repository = repository;
 
         public async ValueTask HandleAsync(
-            ShipEvents.Loaded loaded,
+            ShipEvents.Loaded domainEvent,
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
-            (string name, string port, double cargoWeight) = loaded;
+            (string name, string port, double cargoWeight) = domainEvent;
 
             ShipInformation shipInfo = await _repository.GetAsync(
                 name,
