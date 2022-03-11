@@ -12,4 +12,5 @@ public interface IJobTrackerReadService
         string username);
 
     ValueTask<IEnumerable<JobDto>> FindJobsForJobsListAsync(Guid jobListId);
+    Task<IEnumerable<JobsListDto>> FindJobsListAsync(string username);
 }

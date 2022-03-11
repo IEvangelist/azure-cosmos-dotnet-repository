@@ -78,7 +78,7 @@ app.MapPost(
     .Accepts<CreateJobList>("application/json")
     .Produces(201)
     .Produces<ErrorResponse>(400)
-    .WithTags("Jobs List");
+    .WithTags("Jobs Lists");
 
 app.MapPost(
         "/api/jobs-list/jobs/",
@@ -96,7 +96,7 @@ app.MapPost(
     .Produces(200)
     .Produces<ErrorResponse>(400)
     .Produces<ErrorResponse>(404)
-    .WithTags("Jobs List");
+    .WithTags("Jobs");
 
 app.MapPut(
         "/api/jobs-list/jobs/complete",
@@ -114,7 +114,7 @@ app.MapPut(
     .Produces(200)
     .Produces<ErrorResponse>(400)
     .Produces<ErrorResponse>(404)
-    .WithTags("Jobs List");
+    .WithTags("Jobs");
 
 app.MapGet(
         "/api/jobs-list/{id}",
@@ -131,7 +131,23 @@ app.MapGet(
         })
     .Produces(200)
     .Produces(204)
-    .WithTags("Jobs List");
+    .WithTags("Jobs Lists");
+
+app.MapGet(
+        "/api/jobs-list/",
+        async (
+            string username,
+            [FromServices] IJobTrackerReadService readService) =>
+        {
+            IEnumerable<JobsListDto> jobLists = await readService.FindJobsListAsync(username);
+
+            return jobLists.Any()
+                ? Results.Ok(jobLists)
+                : Results.NoContent();
+        })
+    .Produces(200)
+    .Produces(204)
+    .WithTags("Jobs Lists");
 
 app.MapGet(
         "/api/jobs-list/jobs/",
@@ -147,6 +163,6 @@ app.MapGet(
         })
     .Produces(200)
     .Produces(204)
-    .WithTags("Jobs List");
+    .WithTags("Jobs");
 
 app.Run();

@@ -48,4 +48,16 @@ public class DefaultJobTrackerReadService : IJobTrackerReadService
             x.Due,
             x.CompletedAt));
     }
+
+    public async Task<IEnumerable<JobsListDto>> FindJobsListAsync(string username)
+    {
+        IEnumerable<JobsListReadItem> jobLists = await _jobsListRepository.GetAsync(x =>
+            x.PartitionKey == username);
+
+        return jobLists.Select(x => new JobsListDto(
+            x.Id,
+            x.Username,
+            x.Category,
+            x.CreatedTimeUtc!.Value));
+    }
 }
