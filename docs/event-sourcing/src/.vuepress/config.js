@@ -1,6 +1,7 @@
 const { description } = require('../../package')
 
 module.exports = {
+  base: '/cosmos-event-sourcing-docs/',
   title: 'Cosmos Event Sourcing',
   description: description,
   head: [
