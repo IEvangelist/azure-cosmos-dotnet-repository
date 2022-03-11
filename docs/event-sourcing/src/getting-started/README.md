@@ -42,7 +42,7 @@ public class CustomerAccount : AggregateRoot
 
     public string Surname { get; private set; } = null!;
 
-    public CustomerAddress Address { get; private set; } = null!;
+    public CustomerAddress? Address { get; private set; }
 
      public CustomerAccount(
         string username,
