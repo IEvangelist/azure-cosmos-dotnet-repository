@@ -22,7 +22,7 @@
 <script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1647023383></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/>
+<body data-url=/azure-cosmos-dotnet-repository/7-event-sourcing/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -85,16 +85,13 @@ Specification Pattern
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/ title=Miscellaneous class="dd-item
-parent">
+<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/ title=Miscellaneous class=dd-item>
 <a href=/azure-cosmos-dotnet-repository/5-miscellaneous/>
 <b>5. </b>Miscellaneous
 <i class="fas fa-check read-icon"></i>
 </a>
 <ul>
-<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/ title=Logging class="dd-item
-parent
-active">
+<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/ title=Logging class=dd-item>
 <a href=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/>
 Logging
 <i class="fas fa-check read-icon"></i>
@@ -114,7 +111,9 @@ Unique Keys Policies
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/7-event-sourcing/ title="Event Sourcing" class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/7-event-sourcing/ title="Event Sourcing" class="dd-item
+parent
+active">
 <a href=/azure-cosmos-dotnet-repository/7-event-sourcing/>
 <b>7. </b>Event Sourcing
 <i class="fas fa-check read-icon"></i>
@@ -152,7 +151,7 @@ Unique Keys Policies
 <div>
 <div id=top-bar>
 <div id=top-github-link>
-<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository5-miscellaneous/logging/_index.md target=blank>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository7-event-sourcing/_index.md target=blank>
 <i class="fas fa-code-branch"></i>
 <span id=top-github-link-text>Edit this page</span>
 </a>
@@ -163,72 +162,60 @@ Unique Keys Policies
 <i class="fas fa-bars"></i>
 </a>
 </span>
-<span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/5-miscellaneous/>Miscellaneous</a> > Logging
+<a href=/azure-cosmos-dotnet-repository/></a> > Event Sourcing
 </span>
-</div>
-<div class=progress>
-<div class=wrapper>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#event-id-ranges>Event ID Ranges</a></li>
-</ul>
-</nav>
-</div>
 </div>
 </div>
 </div>
 <div id=head-tags>
 </div>
+<div id=chapter>
 <div id=body-inner>
-<h1>
-Logging
-</h1>
-<p>The Azure Cosmos Repository follows the <a href="https://docs.microsoft.com/aspnet/core/fundamentals/logging/loggermessage?view=aspnetcore-6.0">high performance logging guidelines</a> making use of <code>LoggerMessage</code> throughout the library.</p>
-<p>This page details what logs we offer and also what <code>EventId</code> ranges we have chosen to use.</p>
-<h2 id=event-id-ranges>Event ID Ranges</h2>
-<p>Since this library is making use of <code>EventId</code>&rsquo;s each message we log falls within a range. We have split this range based on the common logging levels you would be use to seeing in any normal applications using <code>ILogger</code>. See the ranges below.</p>
-<table>
-<thead>
-<tr>
-<th>Log Level</th>
-<th><code>EventId</code> range</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Debug/Verbose</td>
-<td>15000 - 15100</td>
-</tr>
-<tr>
-<td>Information</td>
-<td>15101 - 15200</td>
-</tr>
-<tr>
-<td>Critical</td>
-<td>15401 - 15500</td>
-</tr>
-<tr>
-<td>Warning</td>
-<td>15201 - 15300</td>
-</tr>
-<tr>
-<td>Error</td>
-<td>15301 - 15400</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>You can also consult the code for more information <a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/src/Microsoft.Azure.CosmosRepository/Logging/EventIds.cs><code>EventId</code>s definitions</a></p>
-</blockquote>
+<h1 id=event-sourcing>Event Sourcing</h1>
+<p>Cosmos is a great choice for a data store when implementing event sourcing. The <code>IEvangelist.Azure.CosmosEventSourcing</code> package provides a set of features built on top of <code>IEvangelist.Azure.CosmosRepository</code> that make this experience very enjoyable.</p>
+<div class="notices warning"><p>This package is currently in pre-release. A major release is due soon, this means the API surface may change from now until then.</p>
+</div>
+<h2 id=shipping-sample-app>Shipping Sample App</h2>
+<p>The best place to go to see the library is the sample project. Under the <code>/samples</code> directory you can find the example project. This shows how to setup and use cosmos DB as an event store. See a snippet from this sample below.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+IServiceCollection services = builder.Services;
+
+services.AddSwaggerGen();
+services.AddEndpointsApiExplorer();
+
+services.AddCosmosEventSourcing(eventSourcingBuilder =&gt;
+{
+    eventSourcingBuilder.AddCosmosRepository(options =&gt;
+    {
+        options.DatabaseId = <span style=color:#e6db74>&#34;event-sourcing-shipping-sample&#34;</span>;
+        options.ContainerBuilder
+            .ConfigureProjectionStore&lt;ShipInformation&gt;(<span style=color:#e6db74>&#34;ship-projections&#34;</span>)
+            .ConfigureEventSourceStore&lt;ShipEventSource&gt;(<span style=color:#e6db74>&#34;ship-tracking-events&#34;</span>);
+    });
+
+    eventSourcingBuilder.AddAllPersistedEventsTypes();
+    eventSourcingBuilder.AddAllEventProjectionHandlers();
+    eventSourcingBuilder.AddEventBasedEventSourceProjectionBuilder&lt;ShipEventSource&gt;(options =&gt;
+    {
+        options.ProcessorName = <span style=color:#e6db74>&#34;shipping-demo&#34;</span>;
+        options.InstanceName = Environment.MachineName;
+    });
+});
+
+services.AddCosmosRepositoryChangeFeedHostedService();
+
+<span style=color:#66d9ef>var</span> app = builder.Build();
+app.Run();
+</code></pre></div>
 <footer class=footline>
 </footer>
 </div>
 </div>
+</div>
 <div id=navigation>
-<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/5-miscellaneous/ title=Miscellaneous> <i class="fa fa-chevron-left"></i></a>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/5-miscellaneous/unique-keys/ title="Unique Keys Policies" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/6-major-release-notes/ title="Major Release Notes"> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
