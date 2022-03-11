@@ -6,13 +6,16 @@ using EventSourcingJobsTracker.Core.Aggregates;
 using EventSourcingJobsTracker.Infrastructure.Items;
 using EventSourcingJobsTracker.Infrastructure.Repositories;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
+using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.Builders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+string appName = typeof(Program).Assembly.FullName!;
+
 builder.Services
-    .AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = typeof(Program).Assembly.FullName)
+    .AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = appName)
     .AddEndpointsApiExplorer()
     .AddSwaggerGen();
 
@@ -21,11 +24,21 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
     eventSourcingBuilder.AddCosmosRepository(cosmosOptions =>
     {
         cosmosOptions.DatabaseId = "jobs-list-db";
-        IItemContainerBuilder containerBuilder = cosmosOptions.ContainerBuilder;
-        containerBuilder.ConfigureEventItemStore<JobListEventItem>("jobs-list-events");
+        cosmosOptions.ContainerBuilder
+            .ConfigureEventItemStore<JobsListEventItem>("jobs-list-events")
+            .ConfigureProjectionStore<JobsListReadItem>("projections")
+            .ConfigureProjectionStore<JobItem>("projections");
     });
 
     eventSourcingBuilder.AddDomainEventTypes(typeof(JobsList).Assembly);
+    eventSourcingBuilder.AddDomainEventProjectionHandlers(typeof(JobsList).Assembly);
+
+    eventSourcingBuilder.AddDefaultDomainEventProjectionBuilder<JobsListEventItem>(options =>
+    {
+        options.InstanceName = appName;
+        options.ProcessorName = Environment.MachineName;
+        options.PollInterval = TimeSpan.FromSeconds(1);
+    });
 });
 
 builder.Services.AddCosmosRepositoryChangeFeedHostedService();
@@ -47,20 +60,20 @@ app
     .ExcludeFromDescription();
 
 app.MapPost(
-    "/api/jobs-list/",
-    async (
-        CreateJobList request,
-        IJobListService service) =>
-    {
-        (string name, string category, string username) = request;
+        "/api/jobs-list/",
+        async (
+            CreateJobList request,
+            IJobListService service) =>
+        {
+            (string name, string category, string username) = request;
 
-        Guid id = await service.CreateJobList(
-            name,
-            category,
-            username);
+            Guid id = await service.CreateJobList(
+                name,
+                category,
+                username);
 
-        return Results.Created($"api/jobs-list/{id}", id);
-    })
+            return Results.Created($"api/jobs-list/{id}", id);
+        })
     .Accepts<CreateJobList>("application/json")
     .Produces(201)
     .Produces<ErrorResponse>(400)
@@ -102,10 +115,35 @@ app.MapPut(
     .Produces<ErrorResponse>(404)
     .WithTags("Jobs List");
 
-app.MapGet("/api/jobs-list/{id}", (Guid id) => id)
+app.MapGet(
+        "/api/jobs-list/{id}",
+        async (Guid id, string username, IReadOnlyRepository<JobsListReadItem> repository) =>
+        {
+            JobsListReadItem? jobsList = await repository.TryGetAsync(
+                id.ToString(),
+                username);
+
+            return jobsList is null
+                ? Results.NoContent()
+                : Results.Ok(jobsList);
+        })
     .Produces(200)
-    .Produces(404)
-    .Produces(404)
+    .Produces(204)
+    .WithTags("Jobs List");
+
+app.MapGet(
+        "/api/jobs-list/jobs/",
+        async (Guid jobListId, IReadOnlyRepository<JobItem> repository) =>
+        {
+            IEnumerable<JobItem> jobs = await repository.GetAsync(x =>
+                x.PartitionKey == jobListId.ToString());
+
+            return jobs.Any()
+                ? Results.Ok(jobs)
+                : Results.NoContent();
+        })
+    .Produces(200)
+    .Produces(204)
     .WithTags("Jobs List");
 
 app.Run();

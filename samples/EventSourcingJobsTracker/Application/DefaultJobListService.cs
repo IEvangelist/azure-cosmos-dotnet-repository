@@ -3,6 +3,7 @@
 
 using EventSourcingJobsTracker.Application.Infrastructure;
 using EventSourcingJobsTracker.Core.Aggregates;
+using Microsoft.Azure.CosmosRepository;
 
 namespace EventSourcingJobsTracker.Application;
 

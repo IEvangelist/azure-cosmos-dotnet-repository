@@ -19,12 +19,12 @@ public interface IDomainEventProjectionBuilder<in TEvent, in TEventItem>
     /// A method to process a new event after it has been saved into Cosmos.
     /// </summary>
     /// <remarks>This is invoked off the back fo the change feed processor library.</remarks>
-    /// <param name="persistedEvent">The event that was written.</param>
+    /// <param name="domainEvent">The event that was written.</param>
     /// <param name="eventSource">The event source with all it's properties</param>
     /// <param name="cancellationToken">A token used to cancel the async operation.</param>
     /// <returns>A <see cref="ValueTask"/> that represents the async operation</returns>
     ValueTask HandleAsync(
-        TEvent persistedEvent,
+        TEvent domainEvent,
         TEventItem eventSource,
         CancellationToken cancellationToken = default);
 }

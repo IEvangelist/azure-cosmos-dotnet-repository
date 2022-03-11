@@ -12,22 +12,22 @@ namespace EventSourcingJobsTracker.Infrastructure.Repositories;
 
 public class DefaultJobListRepository : IJobListRepository
 {
-    private readonly IEventStore<JobListEventItem> _eventStore;
+    private readonly IEventStore<JobsListEventItem> _eventStore;
 
-    public DefaultJobListRepository(IEventStore<JobListEventItem> eventStore) =>
+    public DefaultJobListRepository(IEventStore<JobsListEventItem> eventStore) =>
         _eventStore = eventStore;
 
     public async ValueTask SaveAsync(JobsList jobList)
     {
-        List<JobListEventItem> eventItems = jobList
+        List<JobsListEventItem> eventItems = jobList
             .NewEvents
             .Select(evt =>
-                new JobListEventItem(
+                new JobsListEventItem(
                     evt,
                     jobList.Id))
             .ToList();
 
-        eventItems.Add(new JobListEventItem(
+        eventItems.Add(new JobsListEventItem(
             jobList.AtomicEvent,
             jobList.Id));
 
@@ -36,7 +36,7 @@ public class DefaultJobListRepository : IJobListRepository
 
     public async ValueTask<JobsList> ReadAsync(Guid jobListId)
     {
-        List<JobListEventItem> events = await _eventStore
+        List<JobsListEventItem> events = await _eventStore
             .ReadAsync(jobListId.ToString())
             .ToListAsync();
 
