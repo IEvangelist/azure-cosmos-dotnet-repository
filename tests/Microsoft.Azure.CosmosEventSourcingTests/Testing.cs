@@ -62,6 +62,11 @@ public static class Testing
             }
         }
 
+        public new void AddEvent(DomainEvent domainEvent)
+        {
+            base.AddEvent(domainEvent);
+        }
+
         protected override void Apply(DomainEvent domainEvent)
         {
             if (domainEvent is Testing.SampleEvent sampleEvent)

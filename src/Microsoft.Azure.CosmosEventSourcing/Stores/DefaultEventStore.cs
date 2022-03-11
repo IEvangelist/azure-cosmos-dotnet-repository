@@ -142,15 +142,16 @@ internal class DefaultEventStore<TEventItem> :
         switch (partitionKeyProperties.Count)
         {
             case 0:
-                throw new InvalidOperationException(
-                    $"A {nameof(EventItemPartitionKeyAttribute)} must be present on a property in {aggregate.GetType().Name}");
+                throw new EventItemPartitionKeyAttributeRequiredException(aggregate.GetType());
             case > 1:
-                throw new InvalidOperationException(
-                    $"{nameof(EventItemPartitionKeyAttribute)} can not be present on multiple properties in {aggregate.GetType().Name}");
+                throw new InvalidEventItemPartitionKeyAttributeCombinationException(aggregate.GetType());
         }
 
-        Object partitionKey = partitionKeyProperties.Single().GetValue(aggregate) ??
-                              throw new InvalidOperationException();
+        PropertyInfo partitionKeyProperty = partitionKeyProperties.Single();
+        Object partitionKey = partitionKeyProperty.GetValue(aggregate) ??
+                              throw new InvalidPartitionKeyValueException(
+                                  partitionKeyProperty.Name,
+                                  aggregate.GetType());
 
         return partitionKey.ToString();
     }
