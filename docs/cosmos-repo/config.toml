@@ -1,0 +1,41 @@
+baseURL = "https://ievangelist.github.io/azure-cosmos-dotnet-repository/"
+languageCode = "en-US"
+defaultContentLanguage = "en"
+theme = "hugo-theme-learn"
+metaDataFormat = "yaml"
+title = "Azure Cosmos DB Repository-Pattern .NET SDK"
+defaultContentLanguageInSubdir= true
+
+[params]
+  editURL = "https://github.com/IEvangelist/azure-cosmos-dotnet-repository"
+  description = "Azure Cosmos DB Repository-Pattern .NET SDK"
+  author = "David Pine"
+  showVisitedLinks = true
+  disableBreadcrumb = false
+  disableNextPrev = false
+  disableAssetsBusting = false
+  themeVariant = "custom"
+  disableInlineCopyToClipBoard = true
+  disableMermaid = true
+  disableLandingPage = false
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+
+[[menu.shortcuts]]
+name = "<i class='fab fa-github'></i> Github Repository"
+identifier = "repository"
+url = "https://github.com/IEvangelist/azure-cosmos-dotnet-repository"
+weight = 1
+
+[[menu.shortcuts]]
+name = "<i class='fab fa-twitter'></i> Follow @davidpine7"
+identifier = "twitter"
+url = "https://twitter.com/davidpine7"
+weight = 2
+
+[[menu.shortcuts]]
+name = "<i class='fas fa-bullhorn'></i> Collaborators"
+identifier = "collaborators"
+url = "https://github.com/IEvangelist/azure-cosmos-dotnet-repository#contributors-"
+weight = 3
