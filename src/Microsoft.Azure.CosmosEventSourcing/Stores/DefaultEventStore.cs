@@ -45,23 +45,19 @@ internal class DefaultEventStore<TEventItem> :
 
     public async ValueTask PersistAsync(
         IAggregateRoot aggregateRoot,
-        CancellationToken cancellationToken = default)
-    {
-        await PersistAsync(
-            aggregateRoot,
-            GetEventItemPartitionKeyValue(aggregateRoot),
-            cancellationToken);
-    }
+        CancellationToken cancellationToken = default) =>
+            await PersistAsync(
+                aggregateRoot,
+                GetEventItemPartitionKeyValue(aggregateRoot),
+                cancellationToken);
 
     public async ValueTask PersistAsync(
         IAggregateRoot aggregateRoot,
         string partitionKeyValue,
-        CancellationToken cancellationToken = default)
-    {
-        await PersistAsync(
-            BuildEvents(aggregateRoot, partitionKeyValue),
-            cancellationToken);
-    }
+        CancellationToken cancellationToken = default) =>
+            await PersistAsync(
+                BuildEvents(aggregateRoot, partitionKeyValue),
+                cancellationToken);
 
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
         CancellationToken cancellationToken = default) =>
