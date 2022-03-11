@@ -1,14 +1,14 @@
 using CleanArchitecture.Exceptions.AspNetCore;
+using EventSourcingJobsTracker.API.DTOs;
 using EventSourcingJobsTracker.API.Requests;
-using EventSourcingJobsTracker.Application;
 using EventSourcingJobsTracker.Application.Infrastructure;
+using EventSourcingJobsTracker.Application.Services;
 using EventSourcingJobsTracker.Core.Aggregates;
 using EventSourcingJobsTracker.Infrastructure.Items;
 using EventSourcingJobsTracker.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
-using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
-using Microsoft.Azure.CosmosRepository.Builders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +45,8 @@ builder.Services.AddCosmosRepositoryChangeFeedHostedService();
 
 builder.Services
     .AddSingleton<IJobListService, DefaultJobListService>()
-    .AddSingleton<IJobListRepository, DefaultJobListRepository>();
+    .AddSingleton<IJobListRepository, DefaultJobListRepository>()
+    .AddSingleton<IJobTrackerReadService, DefaultJobTrackerReadService>();
 
 
 WebApplication app = builder.Build();
@@ -117,11 +118,12 @@ app.MapPut(
 
 app.MapGet(
         "/api/jobs-list/{id}",
-        async (Guid id, string username, IReadOnlyRepository<JobsListReadItem> repository) =>
+        async (
+            Guid id,
+            string username,
+            [FromServices] IJobTrackerReadService readService) =>
         {
-            JobsListReadItem? jobsList = await repository.TryGetAsync(
-                id.ToString(),
-                username);
+            JobsListDto? jobsList = await readService.FindJobsListAsync(id, username);
 
             return jobsList is null
                 ? Results.NoContent()
@@ -133,10 +135,11 @@ app.MapGet(
 
 app.MapGet(
         "/api/jobs-list/jobs/",
-        async (Guid jobListId, IReadOnlyRepository<JobItem> repository) =>
+        async (
+            Guid jobListId,
+            [FromServices] IJobTrackerReadService readService) =>
         {
-            IEnumerable<JobItem> jobs = await repository.GetAsync(x =>
-                x.PartitionKey == jobListId.ToString());
+            IEnumerable<JobDto> jobs = await readService.FindJobsForJobsListAsync(jobListId);
 
             return jobs.Any()
                 ? Results.Ok(jobs)

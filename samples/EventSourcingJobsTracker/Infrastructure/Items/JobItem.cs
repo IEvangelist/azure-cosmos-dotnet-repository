@@ -7,7 +7,6 @@ namespace EventSourcingJobsTracker.Infrastructure.Items;
 
 public class JobItem : FullItem
 {
-    public string Id { get; }
     public string Title { get; }
     public DateTime Due { get; }
     public DateTime? CompletedAt { get; private set; }

@@ -27,7 +27,7 @@ public class JobsListJobCompletedProjection : IDomainEventProjectionBuilder<JobC
 
         JobItem item = await _repository.GetAsync(
             id.ToString(),
-            jobListInfo.Username,
+            jobListInfo.Id.ToString(),
             cancellationToken);
 
         item.Complete(domainEvent.OccuredUtc);

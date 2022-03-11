@@ -1,7 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-namespace EventSourcingJobsTracker.Application;
+namespace EventSourcingJobsTracker.Application.Services;
 
 public interface IJobListService
 {
