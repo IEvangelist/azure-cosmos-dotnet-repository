@@ -37,7 +37,9 @@ public class DefaultJobsTrackerService : IJobsTrackerService
         await _jobListRepository.SaveAsync(jobsList);
     }
 
-    public async ValueTask CompleteJob(Guid jobListId, Guid jobId)
+    public async ValueTask CompleteJob(
+        Guid jobListId,
+        Guid jobId)
     {
         JobsList jobsList = await _jobListRepository.ReadAsync(jobListId);
 
