@@ -1,0 +1,19 @@
+{
+  "name": "event-sourcing",
+  "version": "0.0.1",
+  "description": "Make use of Cosmos DB as an event store",
+  "main": "index.js",
+  "authors": {
+    "name": "Billy Mumby",
+    "email": "billy.mumby@outlook.com"
+  },
+  "repository": "https://github.com/IEvangelist/azure-cosmos-dotnet-repository/event-sourcing",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  }
+}
