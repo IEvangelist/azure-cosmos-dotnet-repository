@@ -2,7 +2,10 @@
 // Licensed under the MIT License.
 
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.Azure.CosmosEventSourcing.Aggregates;
+using Microsoft.Azure.CosmosEventSourcing.Attributes;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
@@ -39,6 +42,22 @@ internal class DefaultEventStore<TEventItem> :
             eventItems,
             cancellationToken);
     }
+
+    public async ValueTask PersistAsync(
+        IAggregateRoot aggregateRoot,
+        CancellationToken cancellationToken = default) =>
+            await PersistAsync(
+                aggregateRoot,
+                GetEventItemPartitionKeyValue(aggregateRoot),
+                cancellationToken);
+
+    public async ValueTask PersistAsync(
+        IAggregateRoot aggregateRoot,
+        string partitionKeyValue,
+        CancellationToken cancellationToken = default) =>
+            await PersistAsync(
+                BuildEvents(aggregateRoot, partitionKeyValue),
+                cancellationToken);
 
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
         CancellationToken cancellationToken = default) =>
@@ -81,5 +100,58 @@ internal class DefaultEventStore<TEventItem> :
                 yield return eventSource;
             }
         } while (token is not null);
+    }
+
+    private static List<TEventItem> BuildEvents(IAggregateRoot aggregateRoot, string partitionKey)
+    {
+        List<TEventItem?> events = aggregateRoot.NewEvents
+            .Select(x =>
+                Activator.CreateInstance(
+                    typeof(TEventItem),
+                    x,
+                    partitionKey) as TEventItem)
+            .ToList();
+
+        events.Add(Activator.CreateInstance(
+            typeof(TEventItem),
+            aggregateRoot.AtomicEvent,
+            partitionKey) as TEventItem);
+
+        if (events.Any(x => x == null))
+        {
+            throw new InvalidOperationException(
+                $"At least one of the {typeof(TEventItem).Name} could not be constructed");
+        }
+
+        return events!;
+    }
+
+    private static string GetEventItemPartitionKeyValue<TAggregate>(TAggregate aggregate)
+        where TAggregate : IAggregateRoot
+    {
+        List<PropertyInfo> partitionKeyProperties = aggregate
+            .GetType()
+            .GetProperties()
+            .Where(x
+                => x.GetCustomAttributes()
+                    .Any(y =>
+                        y is EventItemPartitionKeyAttribute))
+            .ToList();
+
+        switch (partitionKeyProperties.Count)
+        {
+            case 0:
+                throw new EventItemPartitionKeyAttributeRequiredException(aggregate.GetType());
+            case > 1:
+                throw new InvalidEventItemPartitionKeyAttributeCombinationException(aggregate.GetType());
+        }
+
+        PropertyInfo partitionKeyProperty = partitionKeyProperties.Single();
+        Object partitionKey = partitionKeyProperty.GetValue(aggregate) ??
+                              throw new InvalidPartitionKeyValueException(
+                                  partitionKeyProperty.Name,
+                                  aggregate.GetType());
+
+        return partitionKey.ToString();
     }
 }
