@@ -1,0 +1,17 @@
+name: Build and Deploy
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: vuepress-deploy
+      uses: jenkey2011/vuepress-deploy@master
+      env:
+        ACCESS_TOKEN: ${{ secrets.MUMBY0168_ACCESS_TOKEN }}
+        TARGET_REPO: mumby0168/cosmos-event-sourcing-docs
+        TARGET_BRANCH: main
+        BUILD_SCRIPT: yarn && yarn build
+        BUILD_DIR: docs/event-sourcing/.vuepress/dist/
