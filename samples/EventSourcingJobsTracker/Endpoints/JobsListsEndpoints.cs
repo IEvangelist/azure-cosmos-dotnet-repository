@@ -19,7 +19,7 @@ public static class JobsListsEndpoints
                 "/api/jobs-list/",
                 async (
                     CreateJobList request,
-                    IJobListService service) =>
+                    IJobsTrackerService service) =>
                 {
                     (string name, string category, string username) = request;
 

@@ -3,7 +3,7 @@
 
 namespace EventSourcingJobsTracker.Application.Services;
 
-public interface IJobListService
+public interface IJobsTrackerService
 {
     ValueTask<Guid> CreateJobList(
         string name,

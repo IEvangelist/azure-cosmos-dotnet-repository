@@ -6,11 +6,11 @@ using EventSourcingJobsTracker.Core.Aggregates;
 
 namespace EventSourcingJobsTracker.Application.Services;
 
-public class DefaultJobListService : IJobListService
+public class DefaultJobsTrackerService : IJobsTrackerService
 {
     private readonly IJobListRepository _jobListRepository;
 
-    public DefaultJobListService(IJobListRepository jobListRepository) =>
+    public DefaultJobsTrackerService(IJobListRepository jobListRepository) =>
         _jobListRepository = jobListRepository;
 
     public async ValueTask<Guid> CreateJobList(

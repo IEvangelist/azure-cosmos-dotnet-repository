@@ -18,7 +18,7 @@ public static class JobEndpoints
                 "/api/jobs-list/jobs/",
                 async (
                     CreateJob request,
-                    IJobListService service) =>
+                    IJobsTrackerService service) =>
                 {
                     (Guid jobListId, string? title, DateTime due) = request;
 
@@ -36,7 +36,7 @@ public static class JobEndpoints
                 "/api/jobs-list/jobs/complete",
                 async (
                     CompleteJob request,
-                    IJobListService service) =>
+                    IJobsTrackerService service) =>
                 {
                     (Guid jobListId, Guid jobId) = request;
 
