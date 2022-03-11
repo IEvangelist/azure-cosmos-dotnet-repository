@@ -1,5 +1,19 @@
 name: Build and Deploy
-on: [push]
+on:
+  push:
+    branches:
+      - main
+    paths:
+    - 'docs/**'
+
+  workflow_dispatch:
+      inputs:
+        reason:
+          description: 'The reason for running the workflow'
+          required: true
+          default: 'Manual run'
+          
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
