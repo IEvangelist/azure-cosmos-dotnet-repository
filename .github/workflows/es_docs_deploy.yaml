@@ -38,4 +38,4 @@ jobs:
           git checkout -b main
           git add .
           git commit -am "Deploy Documentation"
-          git push --force --set-upstream https://${{secrets.MUMBY0168_ACCESS_TOKEN}}:x-oauth-basic@github.com/mumby0168/cosmos-event-sourcing-docs.git master
+          git push --force --set-upstream https://${{secrets.MUMBY0168_ACCESS_TOKEN}}:x-oauth-basic@github.com/mumby0168/cosmos-event-sourcing-docs.git main
