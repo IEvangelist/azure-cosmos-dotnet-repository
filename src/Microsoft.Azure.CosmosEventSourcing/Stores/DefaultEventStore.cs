@@ -94,14 +94,6 @@ internal class DefaultEventStore<TEventItem> :
         string partitionKeyValue,
         CancellationToken cancellationToken = default)
     {
-        await PersistAsync<string>(aggregateRoot, partitionKeyValue, cancellationToken);
-    }
-
-    public async ValueTask PersistAsync<TPartitionKey>(
-        IAggregateRoot aggregateRoot,
-        TPartitionKey partitionKeyValue,
-        CancellationToken cancellationToken = default)
-    {
         List<TEventItem?> events = aggregateRoot.NewEvents.Select(x =>
             Activator.CreateInstance(
                 typeof(TEventItem),

@@ -33,7 +33,6 @@ public static class Testing
         }
     }
 
-
     public class TestAggregateWithNoPk : AggregateRoot
     {
         public string FirstProp { get; private set; }
@@ -77,27 +76,6 @@ public static class Testing
             {
                 FirstProp = sampleEvent.FirstProp;
                 SecondProp = sampleEvent.SecondProp;
-            }
-        }
-    }
-
-    public class TestAggregateWithGuidPk : AggregateRoot
-    {
-        public Guid FirstProp { get; private set; }
-
-        public void SetEvents(IReadOnlyList<DomainEvent> domainEvents)
-        {
-            foreach (DomainEvent domainEvent in domainEvents)
-            {
-                AddEvent(domainEvent);
-            }
-        }
-
-        protected override void Apply(DomainEvent domainEvent)
-        {
-            if (domainEvent is Testing.SampleEvent sampleEvent)
-            {
-                FirstProp = Guid.NewGuid();
             }
         }
     }

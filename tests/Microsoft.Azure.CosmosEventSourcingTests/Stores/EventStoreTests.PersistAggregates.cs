@@ -40,41 +40,6 @@ public partial class EventStoreTests
     }
 
     [Fact]
-    public async Task PersistAsync_AggregateWithGuidPk_SavesAllEvents()
-    {
-        //Arrange
-        Guid finalGuid = Guid.NewGuid();
-        List<Testing.GuidEvent> events = new List<Testing.GuidEvent>()
-        {
-            new (Guid.NewGuid()),
-            new (Guid.NewGuid()),
-            new (finalGuid)
-        };
-
-        List<Testing.SampleEventItem> eventItemsWithAtomicEvents = new List<Testing.SampleEventItem>();
-        foreach (Testing.GuidEvent guidEvent in events)
-        {
-            eventItemsWithAtomicEvents.Add(new Testing.SampleEventItem(guidEvent, finalGuid));
-        }
-
-        IEventStore<Testing.SampleEventItem> sut = CreateSut();
-
-        Testing.TestAggregateWithGuidPk aggregate = new();
-        aggregate.SetEvents(events);
-
-        //Act
-        await sut.PersistAsync(aggregate, aggregate.FirstProp);
-
-        //Assert
-        _repository.Verify(o =>
-                o.UpdateAsBatchAsync(
-                    It.Is<IEnumerable<Testing.SampleEventItem>>(x =>
-                        x.All(y => y.PartitionKey == aggregate.FirstProp.ToString())),
-                    default),
-            Times.Once);
-    }
-
-    [Fact]
     public async Task PersistAsync_Aggregate_SavesAllEvents()
     {
         //Arrange
