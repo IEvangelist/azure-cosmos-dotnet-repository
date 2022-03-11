@@ -23,7 +23,7 @@ public static class JobsListsEndpoints
                 {
                     (string name, string category, string username) = request;
 
-                    Guid id = await service.CreateJobList(
+                    Guid id = await service.CreateJobListAsync(
                         name,
                         category,
                         username);

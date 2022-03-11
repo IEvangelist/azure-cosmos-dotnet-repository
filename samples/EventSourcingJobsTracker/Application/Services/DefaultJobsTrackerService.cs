@@ -13,7 +13,7 @@ public class DefaultJobsTrackerService : IJobsTrackerService
     public DefaultJobsTrackerService(IJobListRepository jobListRepository) =>
         _jobListRepository = jobListRepository;
 
-    public async ValueTask<Guid> CreateJobList(
+    public async ValueTask<Guid> CreateJobListAsync(
         string name,
         string category,
         string username)
@@ -25,7 +25,7 @@ public class DefaultJobsTrackerService : IJobsTrackerService
         return jobList.Id;
     }
 
-    public async ValueTask AddJob(
+    public async ValueTask AddJobAsync(
         Guid jobListId,
         string title,
         DateTime due)
@@ -37,7 +37,7 @@ public class DefaultJobsTrackerService : IJobsTrackerService
         await _jobListRepository.SaveAsync(jobsList);
     }
 
-    public async ValueTask CompleteJob(
+    public async ValueTask CompleteJobAsync(
         Guid jobListId,
         Guid jobId)
     {

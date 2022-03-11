@@ -13,8 +13,13 @@ namespace Microsoft.Azure.CosmosEventSourcing.Events;
 /// </summary>
 public record class AtomicEvent : DomainEvent
 {
+    /// <summary>
+    /// Creates an <see cref="AtomicEvent"/>
+    /// </summary>
+    /// <param name="id">The ID of the event</param>
+    /// <param name="eTag">The cosmos ETag</param>
     [JsonConstructor]
-    internal AtomicEvent(Guid id, string eTag)
+    public AtomicEvent(Guid id, string eTag)
     {
         Id = id;
         ETag = eTag;

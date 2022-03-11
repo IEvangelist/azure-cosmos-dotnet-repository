@@ -5,17 +5,17 @@ namespace EventSourcingJobsTracker.Application.Services;
 
 public interface IJobsTrackerService
 {
-    ValueTask<Guid> CreateJobList(
+    ValueTask<Guid> CreateJobListAsync(
         string name,
         string category,
         string username);
 
-    ValueTask AddJob(
+    ValueTask AddJobAsync(
         Guid jobListId,
         string title,
         DateTime due);
 
-    ValueTask CompleteJob(
+    ValueTask CompleteJobAsync(
         Guid jobListId,
         Guid jobId);
 }
