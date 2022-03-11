@@ -1,0 +1,31 @@
+name: ES Docs Build and Deploy
+on:
+  push:
+    branches:
+      - main
+    paths:
+    - 'docs/**'
+
+  workflow_dispatch:
+      inputs:
+        reason:
+          description: 'The reason for running the workflow'
+          required: true
+          default: 'Manual run'
+          
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: vuepress-deploy
+      uses: jenkey2011/vuepress-deploy@master  
+      env:
+        ACCESS_TOKEN: ${{ secrets.MUMBY0168_ACCESS_TOKEN }}
+        TARGET_REPO: mumby0168/cosmos-event-sourcing-docs
+        TARGET_BRANCH: main
+        BUILD_SCRIPT: npm install && npm run build
+        BUILD_DIR: docs/event-sourcing/.vuepress/dist/
