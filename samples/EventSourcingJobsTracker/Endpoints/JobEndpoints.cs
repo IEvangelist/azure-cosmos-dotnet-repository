@@ -22,7 +22,7 @@ public static class JobEndpoints
                 {
                     (Guid jobListId, string? title, DateTime due) = request;
 
-                    await service.AddJob(jobListId, title, due);
+                    await service.AddJobAsync(jobListId, title, due);
 
                     return Results.Ok();
                 })
@@ -40,7 +40,7 @@ public static class JobEndpoints
                 {
                     (Guid jobListId, Guid jobId) = request;
 
-                    await service.CompleteJob(jobListId, jobId);
+                    await service.CompleteJobAsync(jobListId, jobId);
 
                     return Results.Ok();
                 })
