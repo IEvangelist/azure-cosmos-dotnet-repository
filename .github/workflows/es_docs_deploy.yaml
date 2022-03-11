@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-    - 'docs/**'
+    - './docs/event-sourcing/**'
 
   workflow_dispatch:
       inputs:
@@ -17,15 +17,25 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@master
 
-    - name: vuepress-deploy
-      uses: jenkey2011/vuepress-deploy@master  
-      env:
-        ACCESS_TOKEN: ${{ secrets.MUMBY0168_ACCESS_TOKEN }}
-        TARGET_REPO: mumby0168/cosmos-event-sourcing-docs
-        TARGET_BRANCH: main
-        BUILD_SCRIPT: npm install && npm run build
-        BUILD_DIR: docs/event-sourcing/.vuepress/dist/
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build
+        working-directory: ./docs/event-sourcing/.vuepress/dist
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy
+        working-directory: ./docs/event-sourcing/.vuepress/dist
+        run: |
+          git init .
+          git config --global user.name "CosmosEventSourcing"
+          git config --global user.email "billy.mumby@outlook.com"
+          git fetch https://github.com/mumby0168/cosmos-event-sourcing-docs.git
+          git checkout -b main
+          git add .
+          git commit -am "Deploy Documentation"
+          git push --force --set-upstream https://${{secrets.MUMBY0168_ACCESS_TOKEN}}:x-oauth-basic@github.com/mumby0168/cosmos-event-sourcing-docs.git master
