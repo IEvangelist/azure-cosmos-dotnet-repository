@@ -14,20 +14,12 @@ namespace Microsoft.Azure.CosmosEventSourcingTests;
 public static class Testing
 {
     public record SampleEvent(string FirstProp = "A", string SecondProp = "B") : DomainEvent;
-    public record GuidEvent(Guid Id) : DomainEvent;
 
     public class SampleEventItem : EventItem
     {
         public SampleEventItem(
             IDomainEvent eventPayload,
             string partitionKey) : base(eventPayload, partitionKey)
-        {
-
-        }
-
-        public SampleEventItem(
-            IDomainEvent eventPayload,
-            Guid id) : base(eventPayload, id.ToString())
         {
 
         }
