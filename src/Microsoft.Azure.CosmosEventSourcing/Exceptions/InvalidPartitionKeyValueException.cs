@@ -9,7 +9,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Exceptions;
 public class InvalidPartitionKeyValueException : Exception
 {
     /// <summary>
-    /// Constructor
+    /// Ceates a new <see cref="InvalidPartitionKeyValueException" />
     /// </summary>
     /// <param name="propertyName">The name of the property that was null</param>
     /// <param name="aggregateType">Type of the aggregate which had the invalid configuration. Used to build up the message</param>

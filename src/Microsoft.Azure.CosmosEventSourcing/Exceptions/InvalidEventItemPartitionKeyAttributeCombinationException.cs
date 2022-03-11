@@ -11,7 +11,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Exceptions;
 public class InvalidEventItemPartitionKeyAttributeCombinationException : Exception
 {
     /// <summary>
-    /// Constructor
+    /// Ceates a new <see cref="InvalidEventItemPartitionKeyAttributeCombinationException" />
     /// </summary>
     /// <param name="aggregateType">Type of the aggregate which had the invalid configuration. Used to build up the message</param>
     public InvalidEventItemPartitionKeyAttributeCombinationException(Type aggregateType) :

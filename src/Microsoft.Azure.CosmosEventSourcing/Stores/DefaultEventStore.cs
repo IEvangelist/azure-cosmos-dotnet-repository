@@ -47,8 +47,10 @@ internal class DefaultEventStore<TEventItem> :
         IAggregateRoot aggregateRoot,
         CancellationToken cancellationToken = default)
     {
-        string partitionKey = GetEventItemPartitionKeyValue(aggregateRoot);
-        await PersistAsync(aggregateRoot, partitionKey.ToString(), cancellationToken);
+        await PersistAsync(
+            aggregateRoot,
+            GetEventItemPartitionKeyValue(aggregateRoot),
+            cancellationToken);
     }
 
     public async ValueTask PersistAsync(
@@ -56,8 +58,9 @@ internal class DefaultEventStore<TEventItem> :
         string partitionKeyValue,
         CancellationToken cancellationToken = default)
     {
-        List<TEventItem> events = BuildEvents(aggregateRoot, partitionKeyValue);
-        await PersistAsync(events, cancellationToken);
+        await PersistAsync(
+            BuildEvents(aggregateRoot, partitionKeyValue),
+            cancellationToken);
     }
 
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
@@ -103,7 +106,7 @@ internal class DefaultEventStore<TEventItem> :
         } while (token is not null);
     }
 
-    private List<TEventItem> BuildEvents(IAggregateRoot aggregateRoot, string partitionKey)
+    private static List<TEventItem> BuildEvents(IAggregateRoot aggregateRoot, string partitionKey)
     {
         List<TEventItem?> events = aggregateRoot.NewEvents
             .Select(x =>
@@ -127,7 +130,7 @@ internal class DefaultEventStore<TEventItem> :
         return events!;
     }
 
-    private string GetEventItemPartitionKeyValue<TAggregate>(TAggregate aggregate)
+    private static string GetEventItemPartitionKeyValue<TAggregate>(TAggregate aggregate)
         where TAggregate : IAggregateRoot
     {
         List<PropertyInfo> partitionKeyProperties = aggregate

@@ -11,7 +11,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Exceptions;
 public class EventItemPartitionKeyAttributeRequiredException : Exception
 {
     /// <summary>
-    /// Constructor
+    /// Ceates a new <see cref="EventItemPartitionKeyAttributeRequiredException" />
     /// </summary>
     /// <param name="aggregateType">Type of the aggregate which had the invalid configuration. Used to build up the message</param>
     public EventItemPartitionKeyAttributeRequiredException(Type aggregateType) :
