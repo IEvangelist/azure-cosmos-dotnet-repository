@@ -17,29 +17,38 @@ using Xunit;
 
 namespace Microsoft.Azure.CosmosEventSourcingTests.Stores;
 
-public class EventStoreTests
+public partial class EventStoreTests
 {
     private readonly AutoMocker _autoMocker = new();
     private readonly Mock<IRepository<Testing.SampleEventItem>> _repository;
     private const string Pk = "pk";
 
-    private readonly List<Testing.SampleEventItem> _events = new()
+    private readonly List<Testing.SampleEvent> _events = new()
     {
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEvent(Pk, "Second Property"),
+        new Testing.SampleEvent(Pk, "Second Property"),
+        new Testing.SampleEvent(Pk, "Second Property"),
+        new Testing.SampleEvent(Pk, "Second Property"),
+        new Testing.SampleEvent(Pk, "Second Property"),
     };
 
-    private readonly List<Testing.SampleEventItem> _eventsWithAtomicEvents = new()
+    private readonly List<Testing.SampleEventItem> _eventItems = new()
+    {
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+    };
+
+    private readonly List<Testing.SampleEventItem> _eventItemsWithAtomicEvents = new()
     {
         new Testing.SampleEventItem(new AtomicEvent(Guid.NewGuid(), string.Empty), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
-        new Testing.SampleEventItem(new Testing.SampleEvent(), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
+        new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
     };
 
     public EventStoreTests() =>
@@ -55,12 +64,12 @@ public class EventStoreTests
         IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
         //Act
-        await sut.PersistAsync(_eventsWithAtomicEvents);
+        await sut.PersistAsync(_eventItemsWithAtomicEvents);
 
         //Assert
         _repository.Verify(o =>
             o.UpdateAsBatchAsync(
-                _eventsWithAtomicEvents,
+                _eventItemsWithAtomicEvents,
                 default));
     }
 
@@ -90,7 +99,7 @@ public class EventStoreTests
         //Act
         //Assert
         await Assert.ThrowsAsync<AtomicEventRequiredException>(() =>
-            sut.PersistAsync(_events).AsTask());
+            sut.PersistAsync(_eventItems).AsTask());
     }
 
     [Fact]
@@ -102,13 +111,13 @@ public class EventStoreTests
         _repository
             .Setup(o =>
                 o.GetAsync(x => x.PartitionKey == Pk, default))
-            .ReturnsAsync(_eventsWithAtomicEvents);
+            .ReturnsAsync(_eventItemsWithAtomicEvents);
 
         //Act
         IEnumerable<Testing.SampleEventItem> got = await sut.ReadAsync(Pk);
 
         //Assert
-        got.Should().BeEquivalentTo(_eventsWithAtomicEvents);
+        got.Should().BeEquivalentTo(_eventItemsWithAtomicEvents);
     }
 
     [Fact]
@@ -120,21 +129,21 @@ public class EventStoreTests
         Page<Testing.SampleEventItem> page1 = new(
             null,
             5,
-            _eventsWithAtomicEvents,
+            _eventItemsWithAtomicEvents,
             0,
             Guid.NewGuid().ToString());
 
         Page<Testing.SampleEventItem> page2 = new(
             null,
             5,
-            _events,
+            _eventItems,
             0,
             Guid.NewGuid().ToString());
 
         Page<Testing.SampleEventItem> page3 = new(
             null,
             5,
-            _events.Take(2).ToList(),
+            _eventItems.Take(2).ToList(),
             0);
 
         _repository

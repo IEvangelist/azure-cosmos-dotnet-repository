@@ -2,7 +2,10 @@
 // Licensed under the MIT License.
 
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.Azure.CosmosEventSourcing.Aggregates;
+using Microsoft.Azure.CosmosEventSourcing.Attributes;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
@@ -38,6 +41,84 @@ internal class DefaultEventStore<TEventItem> :
         await _repository.UpdateAsBatchAsync(
             eventItems,
             cancellationToken);
+    }
+
+    public async ValueTask PersistAsync(
+        IAggregateRoot aggregateRoot,
+        CancellationToken cancellationToken = default)
+    {
+        List<PropertyInfo> partitionKeyProperties = aggregateRoot
+            .GetType()
+            .GetProperties()
+            .Where(x
+                => x.GetCustomAttributes()
+                    .Any(y =>
+                        y is EventItemPartitionKeyAttribute))
+            .ToList();
+
+        switch (partitionKeyProperties.Count)
+        {
+            case 0:
+                throw new InvalidOperationException(
+                    $"A {nameof(EventItemPartitionKeyAttribute)} must be present on a property in {aggregateRoot.GetType().Name}");
+            case > 1:
+                throw new InvalidOperationException(
+                    $"{nameof(EventItemPartitionKeyAttribute)} can not be present on multiple properties in {aggregateRoot.GetType().Name}");
+        }
+
+        Object partitionKey = partitionKeyProperties.Single().GetValue(aggregateRoot) ??
+                              throw new InvalidOperationException();
+
+        List<TEventItem?> events = aggregateRoot.NewEvents.Select(x =>
+        Activator.CreateInstance(
+            typeof(TEventItem),
+            x,
+            partitionKey) as TEventItem).ToList();
+
+        events.Add(Activator.CreateInstance(
+            typeof(TEventItem),
+            aggregateRoot.AtomicEvent,
+            partitionKey) as TEventItem);
+
+        if (events.Any(x => x == null))
+        {
+            throw new InvalidOperationException(
+                $"At least one of the {typeof(TEventItem).Name} could not be constructed");
+        }
+
+        await PersistAsync(events!, cancellationToken);
+    }
+
+    public async ValueTask PersistAsync(
+        IAggregateRoot aggregateRoot,
+        string partitionKeyValue,
+        CancellationToken cancellationToken = default)
+    {
+        await PersistAsync<string>(aggregateRoot, partitionKeyValue, cancellationToken);
+    }
+
+    public async ValueTask PersistAsync<TPartitionKey>(
+        IAggregateRoot aggregateRoot,
+        TPartitionKey partitionKeyValue,
+        CancellationToken cancellationToken = default)
+    {
+        List<TEventItem?> events = aggregateRoot.NewEvents.Select(x =>
+            Activator.CreateInstance(
+                typeof(TEventItem),
+                x,
+                partitionKeyValue) as TEventItem).ToList();
+
+        events.Add(Activator.CreateInstance(
+            typeof(TEventItem),
+            aggregateRoot.AtomicEvent,
+            partitionKeyValue) as TEventItem);
+
+        if (events.Any(x => x == null))
+        {
+            throw new InvalidOperationException($"At least one of the {typeof(TEventItem).Name} could not be constructed");
+        }
+
+        await PersistAsync(events!, cancellationToken);
     }
 
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
