@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: ES Docs Build and Deploy
 on:
   push:
     branches:
