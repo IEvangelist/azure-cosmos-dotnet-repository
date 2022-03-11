@@ -47,46 +47,8 @@ internal class DefaultEventStore<TEventItem> :
         IAggregateRoot aggregateRoot,
         CancellationToken cancellationToken = default)
     {
-        List<PropertyInfo> partitionKeyProperties = aggregateRoot
-            .GetType()
-            .GetProperties()
-            .Where(x
-                => x.GetCustomAttributes()
-                    .Any(y =>
-                        y is EventItemPartitionKeyAttribute))
-            .ToList();
-
-        switch (partitionKeyProperties.Count)
-        {
-            case 0:
-                throw new InvalidOperationException(
-                    $"A {nameof(EventItemPartitionKeyAttribute)} must be present on a property in {aggregateRoot.GetType().Name}");
-            case > 1:
-                throw new InvalidOperationException(
-                    $"{nameof(EventItemPartitionKeyAttribute)} can not be present on multiple properties in {aggregateRoot.GetType().Name}");
-        }
-
-        Object partitionKey = partitionKeyProperties.Single().GetValue(aggregateRoot) ??
-                              throw new InvalidOperationException();
-
-        List<TEventItem?> events = aggregateRoot.NewEvents.Select(x =>
-        Activator.CreateInstance(
-            typeof(TEventItem),
-            x,
-            partitionKey) as TEventItem).ToList();
-
-        events.Add(Activator.CreateInstance(
-            typeof(TEventItem),
-            aggregateRoot.AtomicEvent,
-            partitionKey) as TEventItem);
-
-        if (events.Any(x => x == null))
-        {
-            throw new InvalidOperationException(
-                $"At least one of the {typeof(TEventItem).Name} could not be constructed");
-        }
-
-        await PersistAsync(events!, cancellationToken);
+        string partitionKey = GetEventItemPartitionKeyValue(aggregateRoot);
+        await PersistAsync(aggregateRoot, partitionKey.ToString(), cancellationToken);
     }
 
     public async ValueTask PersistAsync(
@@ -94,23 +56,8 @@ internal class DefaultEventStore<TEventItem> :
         string partitionKeyValue,
         CancellationToken cancellationToken = default)
     {
-        List<TEventItem?> events = aggregateRoot.NewEvents.Select(x =>
-            Activator.CreateInstance(
-                typeof(TEventItem),
-                x,
-                partitionKeyValue) as TEventItem).ToList();
-
-        events.Add(Activator.CreateInstance(
-            typeof(TEventItem),
-            aggregateRoot.AtomicEvent,
-            partitionKeyValue) as TEventItem);
-
-        if (events.Any(x => x == null))
-        {
-            throw new InvalidOperationException($"At least one of the {typeof(TEventItem).Name} could not be constructed");
-        }
-
-        await PersistAsync(events!, cancellationToken);
+        List<TEventItem> events = BuildEvents(aggregateRoot, partitionKeyValue);
+        await PersistAsync(events, cancellationToken);
     }
 
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
@@ -154,5 +101,57 @@ internal class DefaultEventStore<TEventItem> :
                 yield return eventSource;
             }
         } while (token is not null);
+    }
+
+    private List<TEventItem> BuildEvents(IAggregateRoot aggregateRoot, string partitionKey)
+    {
+        List<TEventItem?> events = aggregateRoot.NewEvents
+            .Select(x =>
+                Activator.CreateInstance(
+                    typeof(TEventItem),
+                    x,
+                    partitionKey) as TEventItem)
+            .ToList();
+
+        events.Add(Activator.CreateInstance(
+            typeof(TEventItem),
+            aggregateRoot.AtomicEvent,
+            partitionKey) as TEventItem);
+
+        if (events.Any(x => x == null))
+        {
+            throw new InvalidOperationException(
+                $"At least one of the {typeof(TEventItem).Name} could not be constructed");
+        }
+
+        return events!;
+    }
+
+    private string GetEventItemPartitionKeyValue<TAggregate>(TAggregate aggregate)
+        where TAggregate : IAggregateRoot
+    {
+        List<PropertyInfo> partitionKeyProperties = aggregate
+            .GetType()
+            .GetProperties()
+            .Where(x
+                => x.GetCustomAttributes()
+                    .Any(y =>
+                        y is EventItemPartitionKeyAttribute))
+            .ToList();
+
+        switch (partitionKeyProperties.Count)
+        {
+            case 0:
+                throw new InvalidOperationException(
+                    $"A {nameof(EventItemPartitionKeyAttribute)} must be present on a property in {aggregate.GetType().Name}");
+            case > 1:
+                throw new InvalidOperationException(
+                    $"{nameof(EventItemPartitionKeyAttribute)} can not be present on multiple properties in {aggregate.GetType().Name}");
+        }
+
+        Object partitionKey = partitionKeyProperties.Single().GetValue(aggregate) ??
+                              throw new InvalidOperationException();
+
+        return partitionKey.ToString();
     }
 }
