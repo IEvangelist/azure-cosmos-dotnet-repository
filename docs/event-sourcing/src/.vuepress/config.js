@@ -9,7 +9,8 @@ module.exports = {
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }]
   ],
   themeConfig: {
-    repo: '',
+    logo: '/small-logo.jpg',
+    repo: 'https://github.com/IEvangelist/azure-cosmos-dotnet-repository',
     editLinks: false,
     docsDir: '',
     editLinkText: '',
@@ -22,10 +23,6 @@ module.exports = {
       {
         text: 'Samples',
         link: '/samples/'
-      },
-      {
-        text: 'GitHub',
-        link: 'https://github.com/IEvangelist/azure-cosmos-dotnet-repository'
       },
       {
         text: 'Discord',

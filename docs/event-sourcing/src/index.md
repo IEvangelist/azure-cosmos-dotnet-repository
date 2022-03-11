@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: https://v1.vuepress.vuejs.org/hero.png
+heroImage: large-logo.jpg
 tagline: Azure Cosmos DB as an event sourcing store
 actionText: Getting Started →
 actionLink: /getting-started/
