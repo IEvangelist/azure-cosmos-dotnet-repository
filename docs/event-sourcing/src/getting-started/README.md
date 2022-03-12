@@ -544,3 +544,8 @@ curl -X 'PUT' \
     }
 ]
 ```
+
+:::tip Tip
+Take your event sourcing implementation further with [Projections](../projections/README.md)
+:::
+

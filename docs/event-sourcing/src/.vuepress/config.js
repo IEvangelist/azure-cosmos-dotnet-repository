@@ -18,7 +18,7 @@ module.exports = {
     lastUpdated: false,
     nav: [
       {
-        text: 'Getting Started',
+        text: 'Docs',
         link: '/getting-started/',
       },
       {
@@ -34,7 +34,12 @@ module.exports = {
       {
         title: 'Getting Started',
         path: '/getting-started/',
-        collapsable: true
+        collapsable: false
+      },
+      {
+        title: 'Projections',
+        path: '/projections/',
+        collapsable: false
       }
     ]
   },
