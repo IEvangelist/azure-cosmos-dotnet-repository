@@ -18,7 +18,7 @@ module.exports = {
     lastUpdated: false,
     nav: [
       {
-        text: 'Getting Started',
+        text: 'Docs',
         link: '/getting-started/',
       },
       {
@@ -34,27 +34,18 @@ module.exports = {
       {
         title: 'Getting Started',
         path: '/getting-started/',
-        collapsable: false,
-        children: [
-          '/getting-started/motivation'
-        ]
+        collapsable: false
       },
       {
-        title: 'Features',
-        path: '/features/',
-        collapsable: false,
-        children: [
-          
-        ]
+        title: 'Event Store',
+        path: '/event-store/',
+        collapsable: false
       },
       {
-        title: 'Tutorial',
-        path: '/tutorial/',
-        collapsable: false,
-        children: [
-          
-        ]
-      },
+        title: 'Projections',
+        path: '/projections/',
+        collapsable: false
+      }
     ]
   },
 

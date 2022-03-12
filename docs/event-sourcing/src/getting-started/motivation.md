@@ -1,3 +1,0 @@
-# Motivation
-
-The motivation is
