@@ -373,6 +373,8 @@ app.MapPut(
     });
 ```
 
+## Adding more Events
+
 Now we have our customer account build back up, we can now apply another event which represents assigning the customers's account. This is added to the `CustomerAggregate` below.
 
 ```csharp
@@ -427,4 +429,36 @@ public class CustomerAccount : AggregateRoot
 
 This follows the same pattern as when we created our `CustomerAccount`. This time we add a new event called `CustomerAccountAddressAssigned`. This has it's own `Apply(...)` method and it has also been added to the `switch` case.
 
-We can now use the `AssignAddress(...)` method then save our aggregate back into the event store.
+We can now use the `AssignAddress(...)` method then save our aggregate back into the event store. See the updated PUT endpoint below.
+
+```csharp
+app.MapPut(
+    "/api/accounts/address",
+    async (AssignCustomersAccountAddressRequest request,
+        IEventStore<CustomerAccountEventItem> eventStore) =>
+    {
+        IEnumerable<CustomerAccountEventItem> eventsItems =
+            await eventStore.ReadAsync(request.Username);
+
+        CustomerAccount account = CustomerAccount.Replay(
+            eventsItems.Select(x =>
+                x.DomainEventPayload).ToList());
+        
+        account.AssignAddress(
+            request.AddressLine1,
+            request.AddressLine2,
+            request.City,
+            request.Country,
+            request.PostCode);
+
+        await eventStore.PersistAsync(
+            account,
+            account.Username);
+    });
+```
+
+If we are to use this endpoint now we can see that we now have 3 events in the database, these are shown below.
+
+```json
+TODO
+```

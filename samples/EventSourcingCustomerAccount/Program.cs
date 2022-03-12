@@ -50,6 +50,17 @@ app.MapPut(
         CustomerAccount account = CustomerAccount.Replay(
             eventsItems.Select(x =>
                 x.DomainEventPayload).ToList());
+
+        account.AssignAddress(
+            request.AddressLine1,
+            request.AddressLine2,
+            request.City,
+            request.Country,
+            request.PostCode);
+
+        await eventStore.PersistAsync(
+            account,
+            account.Username);
     });
 
 app.Run();
