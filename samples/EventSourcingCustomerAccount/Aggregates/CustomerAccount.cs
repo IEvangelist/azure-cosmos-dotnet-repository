@@ -3,6 +3,7 @@
 
 using EventSourcingCustomerAccount.Events;
 using EventSourcingCustomerAccount.Models;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 
@@ -33,6 +34,24 @@ public class CustomerAccount : AggregateRoot
             surname));
     }
 
+    public void AssignAddress(
+        string addressLine1,
+        string addressLine2,
+        string city,
+        string country,
+        string postCode)
+    {
+        // Guards excluded for brevity
+
+        AddEvent(new CustomerAccountAddressAssigned(
+            Username,
+            addressLine1,
+            addressLine2,
+            city,
+            country,
+            postCode));
+    }
+
     protected override void Apply(DomainEvent domainEvent)
     {
         switch (domainEvent)
@@ -40,7 +59,20 @@ public class CustomerAccount : AggregateRoot
             case CustomerAccountCreated created:
                 Apply(created);
                 break;
+            case CustomerAccountAddressAssigned addressAssigned:
+                Apply(addressAssigned);
+                break;
         }
+    }
+
+    private void Apply(CustomerAccountAddressAssigned addressAssigned)
+    {
+        Address = new CustomerAddress(
+            addressAssigned.AddressLine1,
+            addressAssigned.AddressLine2,
+            addressAssigned.City,
+            addressAssigned.Country,
+            addressAssigned.PostCode);
     }
 
     private void Apply(CustomerAccountCreated created)
@@ -49,5 +81,17 @@ public class CustomerAccount : AggregateRoot
         Email = created.Email;
         FirstName = created.FirstName;
         Surname = created.Surname;
+    }
+
+    public static CustomerAccount Replay(List<DomainEvent> events)
+    {
+        CustomerAccount account = new();
+        account.Apply(events);
+        return account;
+    }
+
+    private CustomerAccount()
+    {
+
     }
 }

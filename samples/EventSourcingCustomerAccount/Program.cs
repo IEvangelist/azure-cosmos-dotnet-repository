@@ -39,4 +39,17 @@ app.MapPost(
             partitionKeyValue: account.Username);
     });
 
+app.MapPut(
+    "/api/accounts/address",
+    async (AssignCustomersAccountAddressRequest request,
+        IEventStore<CustomerAccountEventItem> eventStore) =>
+    {
+        IEnumerable<CustomerAccountEventItem> eventsItems =
+            await eventStore.ReadAsync(request.Username);
+
+        CustomerAccount account = CustomerAccount.Replay(
+            eventsItems.Select(x =>
+                x.DomainEventPayload).ToList());
+    });
+
 app.Run();
