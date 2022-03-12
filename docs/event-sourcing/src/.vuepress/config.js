@@ -35,23 +35,7 @@ module.exports = {
         title: 'Getting Started',
         path: '/getting-started/',
         collapsable: true
-      },
-      {
-        title: 'Features',
-        path: '/features/',
-        collapsable: false,
-        children: [
-          
-        ]
-      },
-      {
-        title: 'Tutorial',
-        path: '/tutorial/',
-        collapsable: false,
-        children: [
-          
-        ]
-      },
+      }
     ]
   },
 
