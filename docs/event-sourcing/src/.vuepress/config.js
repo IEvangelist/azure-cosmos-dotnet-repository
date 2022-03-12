@@ -37,6 +37,11 @@ module.exports = {
         collapsable: false
       },
       {
+        title: 'Event Store',
+        path: '/event-store/',
+        collapsable: false
+      },
+      {
         title: 'Projections',
         path: '/projections/',
         collapsable: false
