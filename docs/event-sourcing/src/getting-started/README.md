@@ -459,6 +459,88 @@ app.MapPut(
 
 If we are to use this endpoint now we can see that we now have 3 events in the database, these are shown below.
 
+You can make a curl request as defined below, or include swagger.
+
+```bash
+curl -X 'PUT' \
+  'https://localhost:7273/api/accounts/address' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "username": "user123",
+  "addressLine1": "100",
+  "addressLine2": "Some Street",
+  "city": "London",
+  "country": "UK",
+  "postCode": "LS1 7HG"
+}'
+```
+
 ```json
-TODO
+[
+    {
+        "eventPayload": {
+            "username": "user123",
+            "email": "linuxize@example.com",
+            "firstName": "Joe",
+            "surname": "Bloggs",
+            "eventName": "CustomerAccountCreated",
+            "sequence": 1,
+            "occuredUtc": "2022-03-11T22:47:49.268682Z"
+        },
+        "partitionKey": "user123",
+        "eventName": "CustomerAccountCreated",
+        "_etag": "\"0000220d-0000-0d00-0000-622bd1a20000\"",
+        "timeToLive": null,
+        "createdTimeUtc": null,
+        "id": "556cd0f1-0372-429e-b2d8-f1adfc5cfddd",
+        "type": "CustomerAccountEventItem",
+        "_rid": "Gq1NAIsdmJwBAAAAAAAAAA==",
+        "_self": "dbs/Gq1NAA==/colls/Gq1NAIsdmJw=/docs/Gq1NAIsdmJwBAAAAAAAAAA==/",
+        "_attachments": "attachments/",
+        "_ts": 1647038882
+    },
+    {
+        "eventPayload": {
+            "username": "user123",
+            "addressLine1": "100",
+            "addressLine2": "Some Street",
+            "city": "London",
+            "country": "UK",
+            "postCode": "LS1 7HG",
+            "eventName": "CustomerAccountAddressAssigned",
+            "sequence": 2,
+            "occuredUtc": "2022-03-12T08:44:01.53703Z"
+        },
+        "partitionKey": "user123",
+        "eventName": "CustomerAccountAddressAssigned",
+        "_etag": "\"08002cb7-0000-0d00-0000-622c5d520000\"",
+        "timeToLive": null,
+        "createdTimeUtc": null,
+        "id": "6d2ea1ac-950a-44df-bbcb-e23c9da72bbe",
+        "type": "CustomerAccountEventItem",
+        "_rid": "Gq1NAIsdmJwDAAAAAAAAAA==",
+        "_self": "dbs/Gq1NAA==/colls/Gq1NAIsdmJw=/docs/Gq1NAIsdmJwDAAAAAAAAAA==/",
+        "_attachments": "attachments/",
+        "_ts": 1647074642
+    },
+    {
+        "eventPayload": {
+            "eventName": "AtomicEvent",
+            "sequence": 2147483647,
+            "occuredUtc": "2022-03-12T08:44:01.536736Z"
+        },
+        "partitionKey": "user123",
+        "eventName": "AtomicEvent",
+        "_etag": "\"08002db7-0000-0d00-0000-622c5d520000\"",
+        "timeToLive": null,
+        "createdTimeUtc": null,
+        "id": "cb857440-d468-4887-bfbf-793d7968fc74",
+        "type": "CustomerAccountEventItem",
+        "_rid": "Gq1NAIsdmJwCAAAAAAAAAA==",
+        "_self": "dbs/Gq1NAA==/colls/Gq1NAIsdmJw=/docs/Gq1NAIsdmJwCAAAAAAAAAA==/",
+        "_attachments": "attachments/",
+        "_ts": 1647074642
+    }
+]
 ```

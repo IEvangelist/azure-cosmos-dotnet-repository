@@ -7,6 +7,10 @@ using Microsoft.Azure.CosmosEventSourcing.Stores;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Services
+    .AddSwaggerGen()
+    .AddEndpointsApiExplorer();
+
 builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
 {
     eventSourcingBuilder.AddCosmosRepository(options =>
@@ -23,6 +27,10 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
 WebApplication app = builder.Build();
 
 app.MapGet("/", () => "Event Sourcing - Customer Accounts");
+
+app
+    .UseSwagger()
+    .UseSwaggerUI();
 
 app.MapPost(
     "/api/accounts/", async (CreateCustomerAccountRequest request,

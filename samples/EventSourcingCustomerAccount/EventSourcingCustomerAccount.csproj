@@ -11,4 +11,8 @@
       <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosEventSourcing\Microsoft.Azure.CosmosEventSourcing.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
+    </ItemGroup>
+
 </Project>
