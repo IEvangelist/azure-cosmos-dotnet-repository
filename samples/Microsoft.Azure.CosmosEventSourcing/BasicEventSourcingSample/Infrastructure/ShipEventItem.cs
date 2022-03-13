@@ -3,15 +3,17 @@
 
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Items;
+using Newtonsoft.Json;
 
 namespace BasicEventSourcingSample.Infrastructure;
 
-public class ShipEventItem : DefaultEventItem
+public class ShipEventItem : EventItem
 {
     public ShipEventItem(
-        IDomainEvent eventPayload,
+        DomainEvent domainEvent,
         string partitionKey)
-        : base(eventPayload, partitionKey)
     {
+        DomainEvent = domainEvent;
+        PartitionKey = partitionKey;
     }
 }

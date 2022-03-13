@@ -19,10 +19,10 @@ public class CustomerAccountReadProjectionBuilder :
         _repository = repository;
 
     public async ValueTask ProjectAsync(
-        CustomerAccountEventItem sourcedEvent,
+        CustomerAccountEventItem eventItem,
         CancellationToken cancellationToken = default)
     {
-        switch (sourcedEvent.DomainEventPayload)
+        switch (eventItem.DomainEvent)
         {
             case CustomerAccountCreated created:
                 await CreateProjection(created);

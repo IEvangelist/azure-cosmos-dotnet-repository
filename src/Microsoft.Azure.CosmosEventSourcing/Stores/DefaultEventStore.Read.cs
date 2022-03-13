@@ -16,7 +16,7 @@ internal partial class DefaultEventStore<TEventItem>
 {
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
         CancellationToken cancellationToken = default) =>
-        _repository.GetAsync(
+        _readOnlyRepository.GetAsync(
             x => x.PartitionKey == partitionKey,
             cancellationToken);
 
@@ -25,7 +25,7 @@ internal partial class DefaultEventStore<TEventItem>
         CancellationToken cancellationToken = default)
         where TAggregateRoot : IAggregateRoot
     {
-        IEnumerable<TEventItem> events = await _repository.GetAsync(
+        IEnumerable<TEventItem> events = await _readOnlyRepository.GetAsync(
             x => x.PartitionKey == partitionKey,
             cancellationToken);
 
@@ -49,7 +49,7 @@ internal partial class DefaultEventStore<TEventItem>
         IAggregateRootMapper<TAggregateRoot, TEventItem> rootMapper,
         CancellationToken cancellationToken = default) where TAggregateRoot : IAggregateRoot
     {
-        IEnumerable<TEventItem> events = await _repository.GetAsync(
+        IEnumerable<TEventItem> events = await _readOnlyRepository.GetAsync(
             x => x.PartitionKey == partitionKey,
             cancellationToken);
 
@@ -60,7 +60,7 @@ internal partial class DefaultEventStore<TEventItem>
         string partitionKey,
         Expression<Func<TEventItem, bool>> predicate,
         CancellationToken cancellationToken = default) =>
-        _repository.GetAsync(
+        _readOnlyRepository.GetAsync(
             predicate.Compose(
                 x => x.PartitionKey == partitionKey,
                 Expression.AndAlso),
@@ -78,7 +78,7 @@ internal partial class DefaultEventStore<TEventItem>
 
         do
         {
-            IPage<TEventItem> page = await _repository.PageAsync(
+            IPage<TEventItem> page = await _readOnlyRepository.PageAsync(
                 expression,
                 chunkSize,
                 token,

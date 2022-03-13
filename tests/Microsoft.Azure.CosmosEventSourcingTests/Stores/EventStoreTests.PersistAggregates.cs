@@ -1,14 +1,11 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Attributes;
-using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Moq;
@@ -31,7 +28,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(aggregate);
 
         //Assert
-        _repository.Verify(o =>
+        _batchRepository.Verify(o =>
             o.UpdateAsBatchAsync(
                 It.Is<IEnumerable<Testing.SampleEventItem>>(x =>
 
@@ -73,7 +70,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(aggregate, aggregate.FirstProp);
 
         //Assert
-        _repository.Verify(o =>
+        _batchRepository.Verify(o =>
                 o.UpdateAsBatchAsync(
                     It.Is<IEnumerable<Testing.SampleEventItem>>(x =>
                         x.All(y => y.PartitionKey == aggregate.FirstProp)),
@@ -94,6 +91,7 @@ public partial class EventStoreTests
         InvalidEventItemPartitionKeyAttributeCombinationException exception =
             await Assert.ThrowsAsync<InvalidEventItemPartitionKeyAttributeCombinationException>(async () =>
                 await sut.PersistAsync(aggregate));
+
         exception.Message
             .Should()
             .Be(
@@ -113,6 +111,7 @@ public partial class EventStoreTests
         EventItemPartitionKeyAttributeRequiredException exception =
             await Assert.ThrowsAsync<EventItemPartitionKeyAttributeRequiredException>(async () =>
                 await sut.PersistAsync(aggregate));
+
         exception.Message
             .Should()
             .Be(

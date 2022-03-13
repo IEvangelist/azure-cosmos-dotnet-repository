@@ -6,35 +6,22 @@ Once we have defined an `EventItem` then we can configure the library. This stag
 
 ## Defining an Event Item
 
-In order to define an `EventItem` you need to define a class that implements `EventItem`. The library offers a type that implements this and supports storing `DomainEvent`'s. This class `DefaultEventItem` is used below.
+In order to define an `EventItem` you need to define a class that implements `EventItem`. The library offers a type that implements this and supports storing `DomainEvent`'s. This class `EventItem` is used below.
 
 ```csharp
-public class CustomerAccountEventItem : DefaultEventItem
+public class CustomerAccountEventItem : EventItem
 {
     public CustomerAccountEventItem(
         string username,
-        IDomainEvent domainEvent)
-        : base(
-            eventPayload: domainEvent,
-            partitionKey: username)
+        DomainEvent domainEvent)
     {
-    }
-
-    [JsonConstructor]
-    public CustomerAccountEventItem(
-        IDomainEvent eventPayload,
-        string partitionKey) :
-        base(eventPayload, partitionKey)
-    {
+        DomainEvent = domainEvent;
+        PartitionKey = username;
     }
 }
 ```
 
-This class dictates that when this object is created it must be provided an `IDomainEvent` and a value to use to partition this `EventItem`.
-
-::: warning Notice
-The private constructor defined in the above example is noteworthy. This is required with the `[JsonConstructor]` attribute. The names of the parameters are also _very_ important to ensure de-serialization works correctly.
-:::
+This class dictates that when this object is created it must be provided a `DomainEvent` and a value to use to partition this `EventItem`.
 
 ## Startup Configuration
 

@@ -16,10 +16,4 @@ public class TodoListEventItem : EventItem
         DomainEvent = domainEvent;
         PartitionKey = name;
     }
-
-    [JsonConstructor]
-    private TodoListEventItem()
-    {
-
-    }
 }

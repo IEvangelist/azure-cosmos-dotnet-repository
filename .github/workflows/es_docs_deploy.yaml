@@ -1,10 +1,9 @@
 name: ES Docs Build and Deploy
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
     paths:
-    - './docs/event-sourcing/**'
+      - 'docs/**'
 
   workflow_dispatch:
       inputs:

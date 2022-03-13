@@ -20,7 +20,8 @@ namespace Microsoft.Azure.CosmosEventSourcingTests.Stores;
 public partial class EventStoreTests
 {
     private readonly AutoMocker _autoMocker = new();
-    private readonly Mock<IRepository<Testing.SampleEventItem>> _repository;
+    private readonly Mock<IBatchRepository<Testing.SampleEventItem>> _batchRepository;
+    private readonly Mock<IReadOnlyRepository<Testing.SampleEventItem>> _readonlyRepository;
     private const string Pk = "pk";
 
     private readonly List<Testing.SampleEvent> _events = new()
@@ -51,8 +52,11 @@ public partial class EventStoreTests
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
     };
 
-    public EventStoreTests() =>
-        _repository = _autoMocker.GetMock<IRepository<Testing.SampleEventItem>>();
+    public EventStoreTests()
+    {
+        _batchRepository = _autoMocker.GetMock<IBatchRepository<Testing.SampleEventItem>>();
+        _readonlyRepository = _autoMocker.GetMock<IReadOnlyRepository<Testing.SampleEventItem>>();
+    }
 
     private IEventStore<Testing.SampleEventItem> CreateSut() =>
         _autoMocker.CreateInstance<DefaultEventStore<Testing.SampleEventItem>>();
@@ -67,7 +71,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(_eventItemsWithAtomicEvents);
 
         //Assert
-        _repository.Verify(o =>
+        _batchRepository.Verify(o =>
             o.UpdateAsBatchAsync(
                 _eventItemsWithAtomicEvents,
                 default));
@@ -83,7 +87,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(new List<Testing.SampleEventItem>());
 
         //Assert
-        _repository.Verify(o =>
+        _batchRepository.Verify(o =>
             o.UpdateAsBatchAsync(
                 It.IsAny<List<Testing.SampleEventItem>>(),
                 default),
@@ -108,7 +112,7 @@ public partial class EventStoreTests
         //Arrange
         IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
-        _repository
+        _readonlyRepository
             .Setup(o =>
                 o.GetAsync(x => x.PartitionKey == Pk, default))
             .ReturnsAsync(_eventItemsWithAtomicEvents);
@@ -146,7 +150,7 @@ public partial class EventStoreTests
             _eventItems.Take(2).ToList(),
             0);
 
-        _repository
+        _readonlyRepository
             .SetupSequence(o => o.PageAsync(
                 x => x.PartitionKey == Pk,
                 5,

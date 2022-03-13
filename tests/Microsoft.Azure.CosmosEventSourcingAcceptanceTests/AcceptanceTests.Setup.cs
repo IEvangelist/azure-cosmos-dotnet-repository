@@ -2,12 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
-using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +15,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests;
 
+[Trait("Category", "Acceptance")]
+[Trait("Type", "CosmosEventSourcing")]
 public partial class AcceptanceTests
 {
     private const string DatabaseName = "cosmos-event-sourcing-tests";

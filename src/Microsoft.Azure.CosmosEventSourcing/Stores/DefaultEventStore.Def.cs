@@ -9,8 +9,14 @@ namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 internal partial class DefaultEventStore<TEventItem> :
     IEventStore<TEventItem> where TEventItem : EventItem
 {
-    private readonly IRepository<TEventItem> _repository;
+    private readonly IBatchRepository<TEventItem> _batchRepository;
+    private readonly IReadOnlyRepository<TEventItem> _readOnlyRepository;
 
-    public DefaultEventStore(IRepository<TEventItem> repository) =>
-        _repository = repository;
+    public DefaultEventStore(
+        IBatchRepository<TEventItem> batchRepository,
+        IReadOnlyRepository<TEventItem> readOnlyRepository)
+    {
+        _batchRepository = batchRepository;
+        _readOnlyRepository = readOnlyRepository;
+    }
 }

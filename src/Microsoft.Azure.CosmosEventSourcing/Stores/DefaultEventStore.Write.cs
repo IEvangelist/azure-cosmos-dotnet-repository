@@ -11,7 +11,6 @@ namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 
 internal partial class DefaultEventStore<TEventItem>
 {
-
     public async ValueTask PersistAsync(
         IEnumerable<TEventItem> items,
         CancellationToken cancellationToken = default)
@@ -27,7 +26,7 @@ internal partial class DefaultEventStore<TEventItem>
             throw new AtomicEventRequiredException();
         }
 
-        await _repository.UpdateAsBatchAsync(
+        await _batchRepository.UpdateAsBatchAsync(
             eventItems,
             cancellationToken);
     }
@@ -45,7 +44,7 @@ internal partial class DefaultEventStore<TEventItem>
         IAggregateRootMapper<TAggregateRoot, TEventItem> mapper,
         CancellationToken cancellationToken = default)
         where TAggregateRoot : IAggregateRoot =>
-        _repository.UpdateAsBatchAsync(
+        _batchRepository.UpdateAsBatchAsync(
             mapper.MapFrom(aggregateRoot),
             cancellationToken);
 

@@ -7,22 +7,13 @@ using Newtonsoft.Json;
 
 namespace EventSourcingCustomerAccount.Items;
 
-public class CustomerAccountEventItem : DefaultEventItem
+public class CustomerAccountEventItem : EventItem
 {
     public CustomerAccountEventItem(
         string username,
-        IDomainEvent domainEvent)
-        : base(
-            eventPayload: domainEvent,
-            partitionKey: username)
+        DomainEvent domainEvent)
     {
-    }
-
-    [JsonConstructor]
-    public CustomerAccountEventItem(
-        IDomainEvent eventPayload,
-        string partitionKey) :
-        base(eventPayload, partitionKey)
-    {
+        DomainEvent = domainEvent;
+        PartitionKey = username;
     }
 }

@@ -29,7 +29,7 @@ public class ShipRepository : IShipRepository
         IEnumerable<ShipEventItem> sourcedEvents = await _store.ReadAsync(shipName);
 
         Ship ship = Ship.Build(sourcedEvents.Select(x =>
-            x.DomainEventPayload).ToList());
+            x.DomainEvent).ToList());
 
         return ship;
     }

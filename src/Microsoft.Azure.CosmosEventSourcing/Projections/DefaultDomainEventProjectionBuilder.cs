@@ -21,10 +21,10 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProje
         _serviceProvider = serviceProvider;
     }
 
-    public async ValueTask ProjectAsync(TEventItem sourcedEvent, CancellationToken cancellationToken = default)
+    public async ValueTask ProjectAsync(TEventItem eventItem, CancellationToken cancellationToken = default)
     {
-        string payloadTypeName = sourcedEvent.DomainEvent.GetType().Name;
-        Type handlerType = BuildEventProjectionHandlerType(sourcedEvent);
+        string payloadTypeName = eventItem.DomainEvent.GetType().Name;
+        Type handlerType = BuildEventProjectionHandlerType(eventItem);
         IEnumerable<object?> handlers = _serviceProvider.GetServices(handlerType).ToList();
 
         if (handlers.Any() is false)
@@ -40,7 +40,7 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProje
             try
             {
                 object? result = handlerType.GetMethod("HandleAsync")?
-                    .Invoke(handler, new object[] {sourcedEvent.DomainEvent, sourcedEvent, cancellationToken});
+                    .Invoke(handler, new object[] {eventItem.DomainEvent, eventItem, cancellationToken});
 
                 if (result is ValueTask valueTask)
                 {
