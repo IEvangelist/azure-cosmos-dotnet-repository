@@ -12,10 +12,10 @@ module.exports = {
   themeConfig: {
     logo: '/small-logo.jpg',
     repo: 'https://github.com/IEvangelist/azure-cosmos-dotnet-repository',
-    editLinks: false,
+    editLinks: true,
     docsDir: '',
-    editLinkText: '',
-    lastUpdated: false,
+    editLinkText: 'Contribute to this page',
+    lastUpdated: true,
     nav: [
       {
         text: 'Docs',
@@ -34,12 +34,30 @@ module.exports = {
       {
         title: 'Getting Started',
         path: '/getting-started/',
-        collapsable: false
+        collapsable: false,
+        children: [
+          '/getting-started/',
+          {
+            title: 'Guide',
+            path: '/getting-started/guide/00-overview/',
+            collapsable: true,
+            children: [
+              '/getting-started/guide/01-domain-implementation',
+              '/getting-started/guide/02-store-config',
+              '/getting-started/guide/03-replaying-events',
+              '/getting-started/guide/04-read-projection'
+            ]
+          },
+        ]
       },
       {
         title: 'Event Store',
         path: '/event-store/',
-        collapsable: false
+        collapsable: false,
+        children: [
+          '/event-store/persistence/',
+          '/event-store/reading/',
+        ]
       },
       {
         title: 'Projections',
