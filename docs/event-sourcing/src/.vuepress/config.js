@@ -53,7 +53,11 @@ module.exports = {
       {
         title: 'Event Store',
         path: '/event-store/',
-        collapsable: false
+        collapsable: false,
+        children: [
+          '/event-store/persistence/',
+          '/event-store/reading/',
+        ]
       },
       {
         title: 'Projections',
