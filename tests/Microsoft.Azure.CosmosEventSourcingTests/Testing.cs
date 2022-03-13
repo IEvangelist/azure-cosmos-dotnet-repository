@@ -27,8 +27,8 @@ public static class Testing
 
     public class TestAggregateWithNoPk : AggregateRoot
     {
-        public string FirstProp { get; private set; }
-        public string SecondProp { get; private set; }
+        public string FirstProp { get; private set; } = null!;
+        public string SecondProp { get; private set; } = null!;
 
         public void SetEvents(IReadOnlyList<DomainEvent> domainEvents)
         {
@@ -51,8 +51,9 @@ public static class Testing
     public class TestAggregateWithSinglePk : AggregateRoot
     {
         [EventItemPartitionKey]
-        public string FirstProp { get; private set; }
-        public string SecondProp { get; private set; }
+        public string FirstProp { get; private set; } = null!;
+
+        public string SecondProp { get; private set; } = null!;
 
         public void SetEvents(IReadOnlyList<DomainEvent> domainEvents)
         {
@@ -80,9 +81,10 @@ public static class Testing
     public class TestAggregateWithMultiplePk : AggregateRoot
     {
         [EventItemPartitionKey]
-        public string FirstProp { get; private set; }
+        public string FirstProp { get; private set; } = null!;
+
         [EventItemPartitionKey]
-        public string SecondProp { get; private set; }
+        public string SecondProp { get; private set; } = null!;
 
         public void SetEvents(IReadOnlyList<Testing.SampleEvent> domainEvents)
         {
