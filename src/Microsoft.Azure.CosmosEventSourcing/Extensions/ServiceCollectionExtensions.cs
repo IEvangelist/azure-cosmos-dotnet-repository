@@ -30,6 +30,8 @@ public static class ServiceCollectionExtensions
         DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
         eventSourcingBuilder.Invoke(builder);
         services.AddSingleton(typeof(IEventStore<>), typeof(DefaultEventStore<>));
+        services.AddSingleton(typeof(IWriteOnlyEventStore<>), typeof(DefaultEventStore<>));
+        services.AddSingleton(typeof(IReadOnlyEventStore<>), typeof(DefaultEventStore<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, DefaultEventSourcingProvider>();
         return services;
     }
