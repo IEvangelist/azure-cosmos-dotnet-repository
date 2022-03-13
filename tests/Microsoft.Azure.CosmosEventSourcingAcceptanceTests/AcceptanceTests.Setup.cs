@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
+using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Projections;
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +26,9 @@ public partial class AcceptanceTests
     private readonly IServiceProvider _provider;
     private readonly ILogger<AcceptanceTests> _logger;
     private readonly IEventStore<TodoListEventItem> _todoListItemEventStore;
+    private readonly IReadOnlyRepository<TodoListItem> _todoListItemRepository;
+    private readonly IChangeFeedService _changeFeedService;
+    private readonly IReadOnlyRepository<TodoCosmosItem> _todoItemsRepository;
 
     private string ConnectionString =>
         Environment.GetEnvironmentVariable("CosmosConnectionString") ??
@@ -42,7 +48,7 @@ public partial class AcceptanceTests
             options.AddXUnit(outputHelper, loggerOptions =>
             {
                 loggerOptions.Filter = (s, _) =>
-                    s is null || !s.StartsWith("System.Net");
+                    s is null || (!s.StartsWith("System.Net") && !s.StartsWith("Microsoft.Azure.CosmosRepository"));
             });
 
             options.SetMinimumLevel(LogLevel.Debug);
@@ -56,15 +62,29 @@ public partial class AcceptanceTests
                 options.DatabaseId = DatabaseName;
 
                 options.ContainerBuilder
-                    .ConfigureEventItemStore<TodoListEventItem>("todo-list-events");
+                    .ConfigureEventItemStore<TodoListEventItem>("todo-list-events")
+                    .ConfigureProjectionStore<TodoListItem>("projections")
+                    .ConfigureProjectionStore<TodoCosmosItem>("projections");
             });
 
             builder.AddDomainEventTypes(typeof(AcceptanceTests).Assembly);
+
+            builder.AddDefaultDomainEventProjectionBuilder<TodoListEventItem>(options =>
+            {
+                options.ProcessorName = "projections";
+                options.InstanceName = Environment.MachineName;
+                options.PollInterval = TimeSpan.FromMilliseconds(500);
+            });
+
+            builder.AddDomainEventProjectionHandlers(typeof(AcceptanceTests).Assembly);
         });
 
         _provider = services.BuildServiceProvider();
         _logger = _provider.GetRequiredService<ILogger<AcceptanceTests>>();
         _todoListItemEventStore = _provider.GetRequiredService<IEventStore<TodoListEventItem>>();
+        _todoListItemRepository = _provider.GetRequiredService<IReadOnlyRepository<TodoListItem>>();
+        _todoItemsRepository = _provider.GetRequiredService<IReadOnlyRepository<TodoCosmosItem>>();
+        _changeFeedService = _provider.GetRequiredService<IChangeFeedService>();
     }
 
     [Fact]
@@ -77,6 +97,8 @@ public partial class AcceptanceTests
             .UseClientAsync(x =>
                 x.DeleteDatabaseIfExistsAsync(DatabaseName, _logger));
 
+        await _changeFeedService.StartAsync(default);
+
         try
         {
             await Execute();
@@ -88,6 +110,7 @@ public partial class AcceptanceTests
         }
         finally
         {
+            await _changeFeedService.StopAsync();
             await clientProvider
                 .UseClientAsync(x =>
                     x.DeleteDatabaseIfExistsAsync(DatabaseName, _logger));

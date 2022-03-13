@@ -4,13 +4,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Aggregates;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Mappers;
 using Microsoft.Azure.CosmosRepository.Extensions;
+using Polly;
+using Xunit.Sdk;
 
 namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests;
 
@@ -20,28 +24,20 @@ public partial class AcceptanceTests
     private readonly TodoListMapper _mapper = new();
     private readonly List<Guid> _atomicEventIds = new();
 
+    private readonly AsyncPolicy _defaultPolicy = Policy
+        .Handle<CosmosException>(x =>
+            x.StatusCode is HttpStatusCode.NotFound)
+        .Or<XunitException>()
+        .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(i * 2));
+
+
     private async Task Execute()
     {
         await CreateAndVerifyTodoItemLists();
         await AddItemToAllListsAndVerify("Task 1");
-    }
-
-    private async Task AddItemToAllListsAndVerify(string title)
-    {
-        foreach (string name in _names)
-        {
-            TodoListAggregate list = await _todoListItemEventStore.ReadAggregateAsync(name, _mapper);
-
-            list.AddItem(title);
-
-            await _todoListItemEventStore.PersistAsync(list, list.Name);
-
-            list = await _todoListItemEventStore.ReadAggregateAsync<TodoListAggregate>(name);
-            list.Items.Should().Contain(x => x.Title == title);
-            list.Items.Count.Should().Be(1);
-            list.Events.Should().HaveCount(2);
-            _atomicEventIds.Should().Contain(list.AtomicEvent.Id);
-        }
+        await CompleteTaskForItems(1);
+        await _defaultPolicy.ExecuteAsync(CheckTodoListsProjectionBuilder);
+        await _defaultPolicy.ExecuteAsync(() => CheckTodoItemsProjectionBuilders("Task 1"));
     }
 
     private async Task CreateAndVerifyTodoItemLists()
@@ -88,5 +84,56 @@ public partial class AcceptanceTests
         list3.NewEvents.Should().BeEmpty();
         list3.Events.Should().HaveCount(1);
         _atomicEventIds.Add(list3.AtomicEvent.Id);
+    }
+
+    private async Task AddItemToAllListsAndVerify(string title)
+    {
+        foreach (string name in _names)
+        {
+            TodoListAggregate list = await _todoListItemEventStore.ReadAggregateAsync(name, _mapper);
+
+            list.AddItem(title);
+
+            await _todoListItemEventStore.PersistAsync(list, list.Name);
+
+            list = await _todoListItemEventStore.ReadAggregateAsync<TodoListAggregate>(name);
+            list.Items.Should().Contain(x => x.Title == title);
+            list.Items.Count.Should().Be(1);
+            list.Events.Should().HaveCount(2);
+            _atomicEventIds.Should().Contain(list.AtomicEvent.Id);
+        }
+    }
+
+    private async Task CompleteTaskForItems(int taskId)
+    {
+        foreach (string name in _names)
+        {
+            TodoListAggregate list = await _todoListItemEventStore.ReadAggregateAsync(name, _mapper);
+
+            list.CompleteItem(taskId);
+
+            await _todoListItemEventStore.PersistAsync(list, list.Name);
+        }
+    }
+
+    private async Task CheckTodoListsProjectionBuilder()
+    {
+        foreach (string name in _names)
+        {
+            TodoListItem list = await _todoListItemRepository.GetAsync(name, nameof(TodoListItem));
+            list.Name.Should().Be(name);
+        }
+    }
+
+    private async Task CheckTodoItemsProjectionBuilders(string taskTitle)
+    {
+        foreach (string name in _names)
+        {
+            IEnumerable<TodoCosmosItem> items =
+                await _todoItemsRepository.GetAsync(x => x.PartitionKey == name).ToListAsync();
+            items.Should().Contain(x => x.Title == taskTitle);
+            items.Should().Contain(x => x.IsComplete);
+            items.Should().HaveCount(1);
+        }
     }
 }

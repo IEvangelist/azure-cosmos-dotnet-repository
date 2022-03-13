@@ -20,11 +20,11 @@ public interface IDomainEventProjectionBuilder<in TEvent, in TEventItem>
     /// </summary>
     /// <remarks>This is invoked off the back fo the change feed processor library.</remarks>
     /// <param name="domainEvent">The event that was written.</param>
-    /// <param name="eventSource">The event source with all it's properties</param>
+    /// <param name="eventItem">The event source with all it's properties</param>
     /// <param name="cancellationToken">A token used to cancel the async operation.</param>
     /// <returns>A <see cref="ValueTask"/> that represents the async operation</returns>
     ValueTask HandleAsync(
         TEvent domainEvent,
-        TEventItem eventSource,
+        TEventItem eventItem,
         CancellationToken cancellationToken = default);
 }

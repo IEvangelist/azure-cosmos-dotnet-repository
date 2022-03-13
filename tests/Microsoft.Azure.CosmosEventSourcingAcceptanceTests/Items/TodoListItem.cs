@@ -10,14 +10,15 @@ public class TodoListItem : Item
 {
     public string Name { get; set; }
 
-    public string PartitonKey { get; set; }
+    public string PartitionKey { get; set; }
 
     protected override string GetPartitionKeyValue() =>
-        PartitonKey;
+        PartitionKey;
 
     public TodoListItem(string name)
     {
+        Id = name;
         Name = name;
-        PartitonKey = nameof(TodoListItem);
+        PartitionKey = nameof(TodoListItem);
     }
 }
