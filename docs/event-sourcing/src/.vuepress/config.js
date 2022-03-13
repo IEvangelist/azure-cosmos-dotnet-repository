@@ -34,7 +34,21 @@ module.exports = {
       {
         title: 'Getting Started',
         path: '/getting-started/',
-        collapsable: false
+        collapsable: false,
+        children: [
+          '/getting-started/',
+          {
+            title: 'Guide',
+            path: '/getting-started/guide/00-overview/',
+            collapsable: true,
+            children: [
+              '/getting-started/guide/01-domain-implementation',
+              '/getting-started/guide/02-store-config',
+              '/getting-started/guide/03-replaying-events',
+              '/getting-started/guide/04-read-projection'
+            ]
+          },
+        ]
       },
       {
         title: 'Event Store',

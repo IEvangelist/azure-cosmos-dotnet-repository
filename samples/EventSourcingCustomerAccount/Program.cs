@@ -1,9 +1,11 @@
 using EventSourcingCustomerAccount.Aggregates;
 using EventSourcingCustomerAccount.Items;
 using EventSourcingCustomerAccount.Models;
+using EventSourcingCustomerAccount.Projections;
 using EventSourcingCustomerAccount.Requests;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
+using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -18,11 +20,27 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
         options.DatabaseId = "customer-accounts-sample-db";
         options.ContainerBuilder
             .ConfigureEventItemStore<CustomerAccountEventItem>(
-                "customer-account-events");
+                "customer-account-events")
+            .ConfigureProjectionStore<CustomerAccountReadItem>(
+                containerName: "projections",
+                partitionKey: "/username");
     });
+
+    eventSourcingBuilder
+        .AddEventItemProjectionBuilder<CustomerAccountEventItem, CustomerAccountReadProjectionBuilder>(
+            options =>
+            {
+                options.ProcessorName =
+                    "customer-account-read-projection-builder";
+
+                options.InstanceName =
+                    Environment.MachineName;
+            });
 
     eventSourcingBuilder.AddDomainEventTypes(typeof(Program).Assembly);
 });
+
+builder.Services.AddCosmosRepositoryChangeFeedHostedService();
 
 WebApplication app = builder.Build();
 
