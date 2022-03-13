@@ -1,6 +1,12 @@
+---
+title: Guide Overview
+lang: en-GB
+description: This guide aims to talk your through creating an event sourcing application using this library. It aims to cover at a high level the concepts and required elements of an implementation using some of the components of this library.
+---
+
 # Overview
 
-This guide aims to talk your through creating an event sourcing application using this library. It aims to cover at a high level the concepts and required elements of an implementation using some of the components of this library.
+{{ $frontmatter.description }}
 
 ## Project Setup
 

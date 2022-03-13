@@ -1,6 +1,12 @@
+---
+title: Overview
+lang: en-GB
+description: This set of libraries helps implementing an event sourcing architecture with Cosmos DB. It aims to lower the entry barrier and the improve time to market of an application that would benefit from an ES architecture.
+---
+
 # Overview
 
-This set of libraries helps implementing an event sourcing architecture with Cosmos DB. It aims to lower the entry barrier and the improve time to market of an application that would benefit from an ES architecture.
+{{ $frontmatter.description }}
 
 :::tip Credits
 This library is built on top of the popular Cosmos DB repository pattern implementation [`IEvangelist.Azure.CosmosRepository`](https://ievangelist.github.io/azure-cosmos-dotnet-repository/) package.
