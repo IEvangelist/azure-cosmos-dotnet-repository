@@ -89,9 +89,9 @@ public abstract class AggregateRoot : IAggregateRoot
     /// <![CDATA[
     /// public class MyAggregate : AggregateRoot
     /// {
-    ///     protected override void Apply(DomainEvent domainEvent)
+    ///     protected override void Apply(DomainEvent domainDomainEvent)
     ///     {
-    ///         switch (domainEvent)
+    ///         switch (domainDomainEvent)
     ///         {
     ///             case ShipEvents.ShipCreated created:
     ///                Apply(created);
@@ -110,8 +110,8 @@ public abstract class AggregateRoot : IAggregateRoot
     ///                break;
     ///             default:
     ///                throw new ArgumentOutOfRangeException(
-    ///                    nameof(domainEvent),
-    ///                    $"No apply method found for {domainEvent.GetType().Name}");
+    ///                    nameof(domainDomainEvent),
+    ///                    $"No apply method found for {domainDomainEvent.GetType().Name}");
     ///         }
     ///     }
     /// }

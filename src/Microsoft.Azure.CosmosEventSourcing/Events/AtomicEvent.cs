@@ -25,6 +25,7 @@ public record class AtomicEvent : DomainEvent
         ETag = eTag;
     }
 
+    [JsonProperty("id")]
     internal Guid Id { get; init; }
 
     internal string ETag { get; init; }

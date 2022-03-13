@@ -79,6 +79,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingJobsTracker", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingCustomerAccount", "samples\Microsoft.Azure.CosmosEventSourcing\EventSourcingCustomerAccount\EventSourcingCustomerAccount.csproj", "{7A2873BC-70A1-489B-9609-E9D7D382C826}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosEventSourcingAcceptanceTests", "tests\Microsoft.Azure.CosmosEventSourcingAcceptanceTests\Microsoft.Azure.CosmosEventSourcingAcceptanceTests.csproj", "{99ADC0F0-9433-49AD-86FA-34009CD293BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -173,6 +175,10 @@ Global
 		{7A2873BC-70A1-489B-9609-E9D7D382C826}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A2873BC-70A1-489B-9609-E9D7D382C826}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A2873BC-70A1-489B-9609-E9D7D382C826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99ADC0F0-9433-49AD-86FA-34009CD293BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99ADC0F0-9433-49AD-86FA-34009CD293BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99ADC0F0-9433-49AD-86FA-34009CD293BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99ADC0F0-9433-49AD-86FA-34009CD293BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -202,6 +208,7 @@ Global
 		{FEB072AC-B573-48BF-948D-B5FFF9102303} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
 		{D276C752-4DB7-4380-AF76-91492E8F8554} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}
 		{7A2873BC-70A1-489B-9609-E9D7D382C826} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}
+		{99ADC0F0-9433-49AD-86FA-34009CD293BA} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6AAE7641-B62C-48BA-8FE6-0F819E5B45EF}

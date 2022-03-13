@@ -35,7 +35,7 @@ public class EventItemTests
         //Assert
         item.Id.Should().NotBeNull();
         item.PartitionKey.Should().Be("A");
-        item.EventPayload.Should().Be(evt);
+        item.DomainEvent.Should().Be(evt);
         item.EventName.Should().Be(evt.EventName);
     }
 }

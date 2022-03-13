@@ -14,13 +14,19 @@ namespace Microsoft.Azure.CosmosEventSourcing.Items;
 /// </summary>
 public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
 {
+
+    [JsonProperty("ttl", NullValueHandling = NullValueHandling.Ignore)]
+    private int? _timeToLive;
+
+    private DomainEvent _domainEvent = null!;
+
     /// <summary>
     /// The payload of the event to be stored.
     /// </summary>
     [JsonConverter(typeof(DomainEventConverter))]
-    public IDomainEvent EventPayload
+    public DomainEvent DomainEvent
     {
-        get => _eventPayload;
+        get => _domainEvent;
         set
         {
             if (value is AtomicEvent atomicEvent)
@@ -28,12 +34,13 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
                 Id = atomicEvent.Id.ToString();
             }
 
-            _eventPayload = value;
+            EventName = value.EventName;
+            _domainEvent = value;
         }
     }
 
     /// <inheritdoc />
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; }
 
     /// <inheritdoc />
     public string Type { get; set; } = null!;
@@ -59,45 +66,12 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
         set => _timeToLive = (int?) value?.TotalSeconds;
     }
 
-    [JsonProperty("ttl", NullValueHandling = NullValueHandling.Ignore)]
-    private int? _timeToLive;
-
-    private IDomainEvent _eventPayload = null!;
-
-    /// <summary>
-    /// Creates an event item.
-    /// </summary>
-    /// <param name="eventPayload">The payload of the event.</param>
-    /// <param name="partitionKey">The value to use as the partition key for the event.</param>
-    /// <param name="etag"></param>
-    /// <exception cref="ArgumentNullException">Occurs when the partition key value is a empty string or null.</exception>
-    protected EventItem(
-        IDomainEvent eventPayload,
-        string partitionKey,
-        string etag)
-    {
-        if (string.IsNullOrWhiteSpace(partitionKey))
-        {
-            throw new ArgumentNullException(nameof(partitionKey), "The partition key must be provided");
-        }
-
-        if (eventPayload is AtomicEvent atomicEvent)
-        {
-            Id = atomicEvent.Id.ToString();
-        }
-
-        EventPayload = eventPayload;
-        EventName = eventPayload.EventName;
-        PartitionKey = partitionKey;
-        Type = GetType().Name;
-        Etag = etag;
-    }
-
     /// <summary>
     /// Creates an <see cref="EventItem"/>
     /// </summary>
-    public EventItem()
+    protected EventItem()
     {
-
+        Type = GetType().Name;
+        Id = Guid.NewGuid().ToString();
     }
 }

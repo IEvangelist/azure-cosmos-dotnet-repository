@@ -30,7 +30,7 @@ internal partial class DefaultEventStore<TEventItem>
             cancellationToken);
 
         List<DomainEvent> payloads = events
-            .Select(x => x.DomainEventPayload)
+            .Select(x => x.DomainEvent)
             .ToList();
 
         Type type = typeof(TAggregateRoot);

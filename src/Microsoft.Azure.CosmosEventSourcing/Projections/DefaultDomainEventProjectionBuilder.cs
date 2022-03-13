@@ -23,7 +23,7 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProje
 
     public async ValueTask ProjectAsync(TEventItem sourcedEvent, CancellationToken cancellationToken = default)
     {
-        string payloadTypeName = sourcedEvent.EventPayload.GetType().Name;
+        string payloadTypeName = sourcedEvent.DomainEvent.GetType().Name;
         Type handlerType = BuildEventProjectionHandlerType(sourcedEvent);
         IEnumerable<object?> handlers = _serviceProvider.GetServices(handlerType).ToList();
 
@@ -40,7 +40,7 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProje
             try
             {
                 object? result = handlerType.GetMethod("HandleAsync")?
-                    .Invoke(handler, new object[] {sourcedEvent.EventPayload, sourcedEvent, cancellationToken});
+                    .Invoke(handler, new object[] {sourcedEvent.DomainEvent, sourcedEvent, cancellationToken});
 
                 if (result is ValueTask valueTask)
                 {
@@ -59,5 +59,5 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProje
     }
 
     private static Type BuildEventProjectionHandlerType(TEventItem eventSource) =>
-        typeof(IDomainEventProjectionBuilder<,>).MakeGenericType(eventSource.EventPayload.GetType(), eventSource.GetType());
+        typeof(IDomainEventProjectionBuilder<,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType());
 }

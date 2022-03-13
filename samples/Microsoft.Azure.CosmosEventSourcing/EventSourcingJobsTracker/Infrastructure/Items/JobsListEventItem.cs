@@ -7,20 +7,19 @@ using Newtonsoft.Json;
 
 namespace EventSourcingJobsTracker.Infrastructure.Items;
 
-public class JobsListEventItem : DefaultEventItem
+public class JobsListEventItem : EventItem
 {
     public JobsListEventItem(
-        IDomainEvent domainEvent,
-        Guid id) :
-        base(domainEvent, id.ToString())
-    {
+        DomainEvent domainDomainEvent,
+        Guid id)
 
+    {
+        PartitionKey = id.ToString();
+        DomainEvent = domainDomainEvent;
     }
 
     [JsonConstructor]
-    private JobsListEventItem(
-        IDomainEvent eventPayload,
-        string partitionKey) : base(eventPayload, partitionKey)
+    private JobsListEventItem()
     {
 
     }

@@ -7,7 +7,7 @@ using Microsoft.Azure.CosmosRepository;
 namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 
 internal partial class DefaultEventStore<TEventItem> :
-    IEventStore<TEventItem> where TEventItem : DefaultEventItem
+    IEventStore<TEventItem> where TEventItem : EventItem
 {
     private readonly IRepository<TEventItem> _repository;
 
