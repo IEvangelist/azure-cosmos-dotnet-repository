@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj" />
+    <ProjectReference Include="..\..\..\src\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj" />
   </ItemGroup>
 
 

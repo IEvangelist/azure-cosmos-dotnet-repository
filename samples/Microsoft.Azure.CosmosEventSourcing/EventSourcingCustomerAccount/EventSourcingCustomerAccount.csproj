@@ -8,8 +8,8 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosEventSourcing\Microsoft.Azure.CosmosEventSourcing.csproj" />
-      <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosRepository.AspNetCore\Microsoft.Azure.CosmosRepository.AspNetCore.csproj" />
+      <ProjectReference Include="..\..\..\src\Microsoft.Azure.CosmosEventSourcing\Microsoft.Azure.CosmosEventSourcing.csproj" />
+      <ProjectReference Include="..\..\..\src\Microsoft.Azure.CosmosRepository.AspNetCore\Microsoft.Azure.CosmosRepository.AspNetCore.csproj" />
     </ItemGroup>
 
     <ItemGroup>

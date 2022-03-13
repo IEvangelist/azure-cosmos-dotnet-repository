@@ -8,7 +8,7 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosRepository.AspNetCore\Microsoft.Azure.CosmosRepository.AspNetCore.csproj" />
+      <ProjectReference Include="..\..\..\src\Microsoft.Azure.CosmosRepository.AspNetCore\Microsoft.Azure.CosmosRepository.AspNetCore.csproj" />
       <ProjectReference Include="..\ChangedFeedSamples.Shared\ChangedFeedSamples.Shared.csproj" />
     </ItemGroup>
 
