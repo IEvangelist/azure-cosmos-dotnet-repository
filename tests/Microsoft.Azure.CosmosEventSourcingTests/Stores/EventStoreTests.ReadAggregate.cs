@@ -12,6 +12,7 @@ using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
+using Microsoft.Azure.CosmosEventSourcingTests.Extensions;
 using Microsoft.Azure.CosmosRepository;
 using Moq;
 using Xunit;
@@ -61,15 +62,15 @@ public partial class EventStoreTests
         }
     }
 
-    private class TestAggregateRootMapper : IAggregateRootMapper<TestAggregate>
+    private class TestAggregateRootMapper : IAggregateRootMapper<TestAggregate, ReplayableEventItem>
     {
-        public IEnumerable<EventItem> MapFrom(TestAggregate aggregateRoot)
+        public IEnumerable<ReplayableEventItem> MapFrom(TestAggregate aggregateRoot)
         {
             throw new NotImplementedException();
         }
 
-        public TestAggregate MapTo(IEnumerable<DomainEvent> domainEvents) =>
-            TestAggregate.Replay(domainEvents.ToList());
+        public TestAggregate MapTo(IEnumerable<ReplayableEventItem> domainEvents) =>
+            TestAggregate.Replay(domainEvents.Select(x => x.DomainEventPayload).ToList());
     }
 
     private class AggregateWithNoReplayMethod : AggregateRoot
@@ -88,10 +89,13 @@ public partial class EventStoreTests
 
         Mock<IRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IRepository<ReplayableEventItem>>();
 
+        ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty, "etag"), "A");
+        atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
+
         List<ReplayableEventItem> events = new()
         {
-            new(new ReplayableEvent(), "A"),
-            new(new AtomicEvent(Guid.Empty, ""), "A"),
+            new ReplayableEventItem(new ReplayableEvent(), "A"),
+            atomicEvent,
         };
 
         repository
@@ -114,10 +118,13 @@ public partial class EventStoreTests
 
         Mock<IRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IRepository<ReplayableEventItem>>();
 
+        ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty, "etag"), "A");
+        atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
+
         List<ReplayableEventItem> events = new()
         {
-            new(new ReplayableEvent(), "A"),
-            new(new AtomicEvent(Guid.Empty, ""), "A"),
+            new ReplayableEventItem(new ReplayableEvent(), "A"),
+            atomicEvent
         };
 
         repository
@@ -125,8 +132,10 @@ public partial class EventStoreTests
                 o.GetAsync(x => x.PartitionKey == "A", default))
             .ReturnsAsync(events);
 
+        DomainEvent b = events[1].DomainEventPayload;
+
         //Act
-        TestAggregate a = await sut.ReadAggregateAsync<TestAggregate>("A", new TestAggregateRootMapper());
+        TestAggregate a = await sut.ReadAggregateAsync("A", new TestAggregateRootMapper());
 
         //Assert
         a.ReplayedEvents.Should().Be(1);

@@ -40,6 +40,15 @@ internal partial class DefaultEventStore<TEventItem>
                 GetEventItemPartitionKeyValue(aggregateRoot),
                 cancellationToken);
 
+    public ValueTask PersistAsync<TAggregateRoot>(
+        TAggregateRoot aggregateRoot,
+        IAggregateRootMapper<TAggregateRoot, TEventItem> mapper,
+        CancellationToken cancellationToken = default)
+        where TAggregateRoot : IAggregateRoot =>
+        _repository.UpdateAsBatchAsync(
+            mapper.MapFrom(aggregateRoot),
+            cancellationToken);
+
     public async ValueTask PersistAsync(
         IAggregateRoot aggregateRoot,
         string partitionKeyValue,

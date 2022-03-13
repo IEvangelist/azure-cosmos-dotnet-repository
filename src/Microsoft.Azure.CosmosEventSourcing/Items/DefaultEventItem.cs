@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Items;
@@ -36,7 +37,7 @@ public abstract class DefaultEventItem : EventItem
         {
             return atomicEvent with
             {
-                ETag = Etag ?? throw new NullReferenceException(),
+                ETag = Etag ?? throw new AtomicEventEtagRequiredException(),
                 Id = Guid.Parse(Id)
             };
         }

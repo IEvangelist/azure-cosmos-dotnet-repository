@@ -12,6 +12,6 @@ namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 public interface IEventStore<TEventItem> :
     IReadOnlyEventStore<TEventItem>,
     IWriteOnlyEventStore<TEventItem>
-    where TEventItem : EventItem
+    where TEventItem : DefaultEventItem
 {
 }

@@ -15,7 +15,7 @@ public static class Testing
 {
     public record SampleEvent(string FirstProp = "A", string SecondProp = "B") : DomainEvent;
 
-    public class SampleEventItem : EventItem
+    public class SampleEventItem : DefaultEventItem
     {
         public SampleEventItem(
             IDomainEvent eventPayload,

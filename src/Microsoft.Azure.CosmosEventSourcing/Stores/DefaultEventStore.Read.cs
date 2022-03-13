@@ -30,7 +30,7 @@ internal partial class DefaultEventStore<TEventItem>
             cancellationToken);
 
         List<DomainEvent> payloads = events
-            .Select(x => (DomainEvent) x.EventPayload)
+            .Select(x => x.DomainEventPayload)
             .ToList();
 
         Type type = typeof(TAggregateRoot);
@@ -46,18 +46,14 @@ internal partial class DefaultEventStore<TEventItem>
 
     public async ValueTask<TAggregateRoot> ReadAggregateAsync<TAggregateRoot>(
         string partitionKey,
-        IAggregateRootMapper<TAggregateRoot> rootMapper,
+        IAggregateRootMapper<TAggregateRoot, TEventItem> rootMapper,
         CancellationToken cancellationToken = default) where TAggregateRoot : IAggregateRoot
     {
         IEnumerable<TEventItem> events = await _repository.GetAsync(
             x => x.PartitionKey == partitionKey,
             cancellationToken);
 
-        List<DomainEvent> payloads = events
-            .Select(x => (DomainEvent) x.EventPayload)
-            .ToList();
-
-        return rootMapper.MapTo(payloads);
+        return rootMapper.MapTo(events);
     }
 
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(
