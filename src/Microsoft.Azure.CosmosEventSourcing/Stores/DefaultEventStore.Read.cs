@@ -44,6 +44,22 @@ internal partial class DefaultEventStore<TEventItem>
         return (TAggregateRoot) method.Invoke(null, new object[] {payloads});
     }
 
+    public async ValueTask<TAggregateRoot> ReadAggregateAsync<TAggregateRoot>(
+        string partitionKey,
+        IAggregateRootMapper<TAggregateRoot> rootMapper,
+        CancellationToken cancellationToken = default) where TAggregateRoot : IAggregateRoot
+    {
+        IEnumerable<TEventItem> events = await _repository.GetAsync(
+            x => x.PartitionKey == partitionKey,
+            cancellationToken);
+
+        List<DomainEvent> payloads = events
+            .Select(x => (DomainEvent) x.EventPayload)
+            .ToList();
+
+        return rootMapper.MapTo(payloads);
+    }
+
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(
         string partitionKey,
         Expression<Func<TEventItem, bool>> predicate,

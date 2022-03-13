@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -34,7 +35,7 @@ public partial class EventStoreTests
     }
 
 
-    private class ReplayAggregate : AggregateRoot
+    private class TestAggregate : AggregateRoot
     {
         public int ReplayedEvents { get; private set; }
 
@@ -48,16 +49,27 @@ public partial class EventStoreTests
             }
         }
 
-        public static ReplayAggregate Replay(List<DomainEvent> domainEvents)
+        public static TestAggregate Replay(List<DomainEvent> domainEvents)
         {
-            ReplayAggregate a = new();
+            TestAggregate a = new();
             a.Apply(domainEvents);
             return a;
         }
 
-        private ReplayAggregate()
+        private TestAggregate()
         {
         }
+    }
+
+    private class TestAggregateRootMapper : IAggregateRootMapper<TestAggregate>
+    {
+        public IEnumerable<EventItem> MapFrom(TestAggregate aggregateRoot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TestAggregate MapTo(IEnumerable<DomainEvent> domainEvents) =>
+            TestAggregate.Replay(domainEvents.ToList());
     }
 
     private class AggregateWithNoReplayMethod : AggregateRoot
@@ -88,7 +100,33 @@ public partial class EventStoreTests
             .ReturnsAsync(events);
 
         //Act
-        ReplayAggregate a = await sut.ReadAggregateAsync<ReplayAggregate>("A");
+        TestAggregate a = await sut.ReadAggregateAsync<TestAggregate>("A");
+
+        //Assert
+        a.ReplayedEvents.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task ReadAggregateAsync_AggregateMapper_MapsAggregateCorrectly()
+    {
+        //Arrange
+        IEventStore<ReplayableEventItem> sut = _autoMocker.CreateInstance<DefaultEventStore<ReplayableEventItem>>();
+
+        Mock<IRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IRepository<ReplayableEventItem>>();
+
+        List<ReplayableEventItem> events = new()
+        {
+            new(new ReplayableEvent(), "A"),
+            new(new AtomicEvent(Guid.Empty, ""), "A"),
+        };
+
+        repository
+            .Setup(o =>
+                o.GetAsync(x => x.PartitionKey == "A", default))
+            .ReturnsAsync(events);
+
+        //Act
+        TestAggregate a = await sut.ReadAggregateAsync<TestAggregate>("A", new TestAggregateRootMapper());
 
         //Assert
         a.ReplayedEvents.Should().Be(1);

@@ -36,6 +36,19 @@ public interface IReadOnlyEventStore<TEventItem> where TEventItem : EventItem
         where TAggregateRoot : IAggregateRoot;
 
     /// <summary>
+    /// Reads an <see cref="IAggregateRoot"/> created via a <see cref="IAggregateRootMapper{TAggregateRoot}"/>.
+    /// </summary>
+    /// <param name="partitionKey">The partitionKey used to read all the events.</param>
+    /// <param name="rootMapper">The rootMapper to use to map events to an <see cref="IAggregateRoot"/></param>
+    /// <param name="cancellationToken">A token that can be used to cancel this async request.</param>
+    /// <typeparam name="TAggregateRoot">The type of the <see cref="IAggregateRoot"/> to read.</typeparam>
+    ValueTask<TAggregateRoot> ReadAggregateAsync<TAggregateRoot>(
+        string partitionKey,
+        IAggregateRootMapper<TAggregateRoot> rootMapper,
+        CancellationToken cancellationToken = default)
+        where TAggregateRoot : IAggregateRoot;
+
+    /// <summary>
     /// Reads all events for a given partition key.
     /// </summary>
     /// <param name="partitionKey">The value to use as the partition key in the query.</param>
