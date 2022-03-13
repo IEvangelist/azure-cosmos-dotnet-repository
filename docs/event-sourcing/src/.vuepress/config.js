@@ -12,10 +12,10 @@ module.exports = {
   themeConfig: {
     logo: '/small-logo.jpg',
     repo: 'https://github.com/IEvangelist/azure-cosmos-dotnet-repository',
-    editLinks: false,
+    editLinks: true,
     docsDir: '',
-    editLinkText: '',
-    lastUpdated: false,
+    editLinkText: 'Contribute to this page',
+    lastUpdated: true,
     nav: [
       {
         text: 'Docs',
