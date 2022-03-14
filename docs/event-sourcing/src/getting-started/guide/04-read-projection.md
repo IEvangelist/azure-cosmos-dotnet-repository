@@ -111,7 +111,7 @@ public class CustomerAccountReadProjectionBuilder :
         CustomerAccountEventItem sourcedEvent,
         CancellationToken cancellationToken = default)
     {
-        switch (sourcedEvent.DomainEventPayload)
+        switch (sourcedEvent.DomainEvent)
         {
             case CustomerAccountCreated created:
                 await CreateProjection(created);

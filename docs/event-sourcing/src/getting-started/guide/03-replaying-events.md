@@ -42,7 +42,7 @@ app.MapPut(
 
         CustomerAccount account = CustomerAccount.Replay(
             eventsItems.Select(x =>
-                x.DomainEventPayload).ToList());
+                x.DomainEvent).ToList());
     });
 ```
 
@@ -115,7 +115,7 @@ app.MapPut(
 
         CustomerAccount account = CustomerAccount.Replay(
             eventsItems.Select(x =>
-                x.DomainEventPayload).ToList());
+                x.DomainEvent).ToList());
         
         account.AssignAddress(
             request.AddressLine1,

@@ -46,6 +46,6 @@ public class DefaultJobListRepository : IJobListRepository
                 $"There is no job list with the ID {jobListId}");
         }
 
-        return JobsList.Replay(events.Select(x => x.DomainEventPayload).ToList());
+        return JobsList.Replay(events.Select(x => x.DomainEvent).ToList());
     }
 }

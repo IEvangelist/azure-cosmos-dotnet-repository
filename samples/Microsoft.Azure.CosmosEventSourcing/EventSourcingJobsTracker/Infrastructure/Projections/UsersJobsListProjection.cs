@@ -17,7 +17,7 @@ public class UsersJobsListProjection : IDomainEventProjectionBuilder<JobListCrea
 
     public async ValueTask HandleAsync(
         JobListCreatedEvent domainEvent,
-        JobsListEventItem eventSource,
+        JobsListEventItem eventItem,
         CancellationToken cancellationToken = default)
     {
         (Guid guid, string? name, string? category, string? username) = domainEvent;

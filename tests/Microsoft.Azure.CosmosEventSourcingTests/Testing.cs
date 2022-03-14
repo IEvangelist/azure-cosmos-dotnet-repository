@@ -1,9 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
-using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Attributes;
 using Microsoft.Azure.CosmosEventSourcing.Events;
@@ -15,13 +13,14 @@ public static class Testing
 {
     public record SampleEvent(string FirstProp = "A", string SecondProp = "B") : DomainEvent;
 
-    public class SampleEventItem : DefaultEventItem
+    public class SampleEventItem : EventItem
     {
         public SampleEventItem(
-            IDomainEvent eventPayload,
-            string partitionKey) : base(eventPayload, partitionKey)
+            DomainEvent domainEvent,
+            string partitionKey)
         {
-
+            DomainEvent = domainEvent;
+            PartitionKey = partitionKey;
         }
     }
 
@@ -40,7 +39,7 @@ public static class Testing
 
         protected override void Apply(DomainEvent domainEvent)
         {
-            if (domainEvent is Testing.SampleEvent sampleEvent)
+            if (domainEvent is SampleEvent sampleEvent)
             {
                 FirstProp = sampleEvent.FirstProp;
                 SecondProp = sampleEvent.SecondProp;
@@ -86,9 +85,9 @@ public static class Testing
         [EventItemPartitionKey]
         public string SecondProp { get; private set; } = null!;
 
-        public void SetEvents(IReadOnlyList<Testing.SampleEvent> domainEvents)
+        public void SetEvents(IReadOnlyList<SampleEvent> domainEvents)
         {
-            foreach (DomainEvent domainEvent in domainEvents)
+            foreach (SampleEvent domainEvent in domainEvents)
             {
                 AddEvent(domainEvent);
             }

@@ -10,20 +10,6 @@ namespace Microsoft.Azure.CosmosEventSourcingTests.Items;
 public class EventItemTests
 {
     [Fact]
-    public void Ctor_EmptyPartitionKey_ThrowsArgumentNullException()
-    {
-        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new Testing.SampleEventItem(new Testing.SampleEvent(), string.Empty));
-        ex.Message.Should().Be("The partition key must be provided (Parameter 'partitionKey')");
-    }
-
-    [Fact]
-    public void Ctor_NullPartitionKey_ThrowsArgumentNullException()
-    {
-        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new Testing.SampleEventItem(new Testing.SampleEvent(), null!));
-        ex.Message.Should().Be("The partition key must be provided (Parameter 'partitionKey')");
-    }
-
-    [Fact]
     public void Ctor_ValidValues_CreatesSource()
     {
         //Arrange
@@ -35,7 +21,7 @@ public class EventItemTests
         //Assert
         item.Id.Should().NotBeNull();
         item.PartitionKey.Should().Be("A");
-        item.EventPayload.Should().Be(evt);
+        item.DomainEvent.Should().Be(evt);
         item.EventName.Should().Be(evt.EventName);
     }
 }

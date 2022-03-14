@@ -1,19 +1,19 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Text.Json.Serialization;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Items;
-using Newtonsoft.Json;
 
-namespace BasicEventSourcingSample.Infrastructure;
+namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
 
-public class ShipEventItem : EventItem
+public class TodoListEventItem : EventItem
 {
-    public ShipEventItem(
+    public TodoListEventItem(
         DomainEvent domainEvent,
-        string partitionKey)
+        string name)
     {
         DomainEvent = domainEvent;
-        PartitionKey = partitionKey;
+        PartitionKey = name;
     }
 }

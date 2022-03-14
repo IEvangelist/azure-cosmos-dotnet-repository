@@ -9,7 +9,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Extensions;
 /// <summary>
 /// A set of extension methods that can be used on an <see cref="EventItem"/>
 /// </summary>
-public static class EventSourceExtensions
+public static class EventItemExtensions
 {
     /// <summary>
     /// Cast's the payload of an <see cref="EventItem"/> to a <see cref="IDomainEvent"/>
@@ -18,8 +18,8 @@ public static class EventSourceExtensions
     /// <typeparam name="TEvent">The event type the payload will be cast to.</typeparam>
     /// <returns>The TEvent instance.</returns>
     public static TEvent GetEventPayload<TEvent>(this EventItem eventItem)
-        where TEvent : IDomainEvent =>
-        (TEvent) eventItem.EventPayload;
+        where TEvent : DomainEvent =>
+        (TEvent) eventItem.DomainEvent;
 
     /// <summary>
     /// Cast's the payload of an <see cref="EventItem"/> to a <see cref="IDomainEvent"/>
@@ -29,8 +29,8 @@ public static class EventSourceExtensions
     /// <returns>The TEvent instance.</returns>
     /// <remarks>If the event payload cannot be converted to the TEvent type null is returned.</remarks>
     public static TEvent? TryGetEventPayload<TEvent>(this EventItem eventItem)
-        where TEvent : class, IDomainEvent =>
-        eventItem.EventPayload switch
+        where TEvent : DomainEvent =>
+        eventItem.DomainEvent switch
         {
             TEvent eventPayload => eventPayload,
             null => null,

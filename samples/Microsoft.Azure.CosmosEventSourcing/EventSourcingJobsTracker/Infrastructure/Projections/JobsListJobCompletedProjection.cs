@@ -20,7 +20,7 @@ public class JobsListJobCompletedProjection : IDomainEventProjectionBuilder<JobC
 
     public async ValueTask HandleAsync(
         JobCompletedEvent domainEvent,
-        JobsListEventItem eventSource,
+        JobsListEventItem eventItem,
         CancellationToken cancellationToken = default)
     {
         (Guid id, string? _, JobListInfo? jobListInfo) = domainEvent;

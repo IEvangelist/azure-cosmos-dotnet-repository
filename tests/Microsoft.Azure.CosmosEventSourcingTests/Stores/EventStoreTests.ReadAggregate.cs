@@ -25,13 +25,14 @@ public partial class EventStoreTests
 {
     private record ReplayableEvent : DomainEvent;
 
-    internal class ReplayableEventItem : DefaultEventItem
+    internal class ReplayableEventItem : EventItem
     {
         public ReplayableEventItem(
-            IDomainEvent eventPayload,
-            string partitionKey) :
-            base(eventPayload, partitionKey)
+            DomainEvent domainEvent,
+            string partitionKey)
         {
+            PartitionKey = partitionKey;
+            DomainEvent = domainEvent;
         }
     }
 
@@ -70,7 +71,7 @@ public partial class EventStoreTests
         }
 
         public TestAggregate MapTo(IEnumerable<ReplayableEventItem> domainEvents) =>
-            TestAggregate.Replay(domainEvents.Select(x => x.DomainEventPayload).ToList());
+            TestAggregate.Replay(domainEvents.Select(x => x.DomainEvent).ToList());
     }
 
     private class AggregateWithNoReplayMethod : AggregateRoot
@@ -87,7 +88,7 @@ public partial class EventStoreTests
         //Arrange
         IEventStore<ReplayableEventItem> sut = _autoMocker.CreateInstance<DefaultEventStore<ReplayableEventItem>>();
 
-        Mock<IRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IRepository<ReplayableEventItem>>();
+        Mock<IReadOnlyRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IReadOnlyRepository<ReplayableEventItem>>();
 
         ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty, "etag"), "A");
         atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
@@ -116,7 +117,7 @@ public partial class EventStoreTests
         //Arrange
         IEventStore<ReplayableEventItem> sut = _autoMocker.CreateInstance<DefaultEventStore<ReplayableEventItem>>();
 
-        Mock<IRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IRepository<ReplayableEventItem>>();
+        Mock<IReadOnlyRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IReadOnlyRepository<ReplayableEventItem>>();
 
         ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty, "etag"), "A");
         atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
@@ -131,8 +132,6 @@ public partial class EventStoreTests
             .Setup(o =>
                 o.GetAsync(x => x.PartitionKey == "A", default))
             .ReturnsAsync(events);
-
-        DomainEvent b = events[1].DomainEventPayload;
 
         //Act
         TestAggregate a = await sut.ReadAggregateAsync("A", new TestAggregateRootMapper());
