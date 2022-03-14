@@ -40,7 +40,7 @@ module.exports = {
           {
             title: 'Guide',
             path: '/getting-started/guide/00-overview/',
-            collapsable: true,
+            collapsable: false,
             children: [
               '/getting-started/guide/01-domain-implementation',
               '/getting-started/guide/02-store-config',
@@ -62,6 +62,11 @@ module.exports = {
       {
         title: 'Projections',
         path: '/projections/',
+        collapsable: false
+      },
+      {
+        title: 'Learning Resources',
+        path: '/learning/',
         collapsable: false
       }
     ]
