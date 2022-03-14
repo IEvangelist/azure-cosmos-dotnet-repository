@@ -80,17 +80,17 @@ jobs:
         run: |
           dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type!=Container&Type!=CosmosEventSourcing"
           
-      #- name: Prune databases
-      #  working-directory: ./tools/CosmosTestHelper
-      #  env:
-       #   CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-       # run: dotnet run
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
 
-      #- name: Test Cosmos Event Sourcing
-      #  env:
-         # CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-       # run: |
-        #  dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=CosmosEventSourcing"
+      - name: Test Cosmos Event Sourcing
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: |
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=CosmosEventSourcing"
           
       - name: Prune databases
         working-directory: ./tools/CosmosTestHelper
