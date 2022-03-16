@@ -1,8 +1,8 @@
 ---
 title: "Querying"
-weight: 3
+weight: 4
 chapter: true
-pre: "<b>3. </b>"
+pre: "<b>4. </b>"
 ---
 # Querying Data in the Cosmos Repository
 
