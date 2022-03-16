@@ -146,3 +146,38 @@ For more information, see [JSON configuration provider](https://docs.microsoft.c
   }
 }
 ```
+
+## Advanced partitioning strategy
+
+As a consumer of Azure Cosmos DB, you can choose how to partition your data. By default, this repository SDK will partition items using their `Item.Id` value as the `/id` partition in the storage container. However, you can override this default behavior by:
+
+1. Declaratively specifying the partition key path with `PartitionKeyPathAttribute`
+1. Override the `Item.GetPartitionKeyValue()` method
+1. Ensure the the property value of the composite or synthetic key is serialized to match the partition key path
+1. Set `RepositoryOptions__ContainerPerItemType` to `true`, to ensure that your item with explicit partitioning is correctly maintained
+
+As an example, considering the following:
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
+using Newtonsoft.Json;
+using System;
+
+namespace Example
+{
+    [PartitionKeyPath("/synthetic")]
+    public class Person : Item
+    {
+        public string FirstName { get; set; } = null!;
+        public string? MiddleName { get; set; }
+        public string LastName { get; set; } = null!;
+
+        [JsonProperty("synthetic")]
+        public string SyntheticPartitionKey =>
+            $"{FirstName}-{LastName}"; // Also known as a "composite key".
+
+        protected override string GetPartitionKeyValue() => SyntheticPartitionKey;
+    }
+}
+```
