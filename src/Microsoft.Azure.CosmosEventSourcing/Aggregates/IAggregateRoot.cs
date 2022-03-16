@@ -24,5 +24,5 @@ public interface IAggregateRoot
     /// <summary>
     /// An event that is used to provide optimistic concurrency control for the entire <see cref="IAggregateRoot"/>
     /// </summary>
-    AtomicEvent? AtomicEvent { get; }
+    AtomicEvent AtomicEvent { get; }
 }

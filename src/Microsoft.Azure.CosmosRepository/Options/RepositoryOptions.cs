@@ -17,6 +17,16 @@ namespace Microsoft.Azure.CosmosRepository.Options
     public class RepositoryOptions
     {
         /// <summary>
+        /// The configuration key used for the connection string.
+        /// </summary>
+        public const string CosmosConnectionStringConfigKey = "RepositoryOptions:CosmosConnectionString";
+
+        /// <summary>
+        /// The configuration key used for the database ID.
+        /// </summary>
+        public const string DatabaseIdConfigKey = "RepositoryOptions:DatabaseId";
+
+        /// <summary>
         /// Gets or sets the cosmos connection string. Primary or secondary connection strings are valid.
         /// </summary>
         public string? CosmosConnectionString { get; set; }
