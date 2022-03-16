@@ -77,17 +77,6 @@ public abstract class CosmosRepositoryAcceptanceTest
         _logger = _provider.GetRequiredService<ILogger<CosmosRepositoryAcceptanceTest>>();
     }
 
-    protected static async Task WaitFor(int seconds)
-    {
-        int counter = 0;
-
-        while (counter < seconds)
-        {
-            counter++;
-            await Task.Delay(3000);
-        }
-    }
-
     internal ICosmosClientProvider GetClient() =>
         _provider.GetRequiredService<ICosmosClientProvider>();
 

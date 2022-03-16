@@ -11,6 +11,8 @@ using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Polly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -30,7 +32,7 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
             builder.WithContainer(ProductsInfoContainer);
             builder.WithPartitionKey(DefaultPartitionKey);
             builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(10));
-            builder.WithChangeFeedMonitoring(feedOptions => feedOptions.PollInterval = TimeSpan.FromSeconds(1));
+            builder.WithChangeFeedMonitoring(feedOptions => feedOptions.PollInterval = TimeSpan.FromMilliseconds(500));
         });
 
         options.ContainerBuilder.Configure<RatingByCategory>(builder =>
@@ -40,6 +42,10 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
             builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(10));
         });
     };
+
+    private readonly AsyncPolicy _readCountPolicy = Policy
+        .Handle<Exception>()
+        .WaitAndRetryAsync(5, i => TimeSpan.FromSeconds(i * 2));
 
     private readonly IRepository<RatingByCategory> _ratingsByCategoryRepository;
     private readonly IChangeFeedService _changeFeedService;
@@ -76,13 +82,16 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
 
             await _ratingsRepository.CreateAsync(tvRating);
 
-            await WaitFor(3);
 
-            IEnumerable<RatingByCategory> results = await _ratingsByCategoryRepository
-                .GetAsync(x => x.PartitionKey == TechnologyCategoryId &&
-                               x.ProductId == product.Id);
+            await _readCountPolicy.ExecuteAsync(async () =>
+            {
+                _logger.LogInformation("Checking projections");
+                IEnumerable<RatingByCategory> results = await _ratingsByCategoryRepository
+                    .GetAsync(x => x.PartitionKey == TechnologyCategoryId &&
+                                   x.ProductId == product.Id);
 
-            results.Count().Should().Be(1);
+                results.Count().Should().Be(1);
+            });
         }
         finally
         {

@@ -13,6 +13,7 @@ using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Aggregates;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Mappers;
 using Microsoft.Azure.CosmosRepository.Extensions;
+using Microsoft.Extensions.Logging;
 using Polly;
 using Xunit.Sdk;
 
@@ -25,10 +26,8 @@ public partial class AcceptanceTests
     private readonly List<Guid> _atomicEventIds = new();
 
     private readonly AsyncPolicy _defaultPolicy = Policy
-        .Handle<CosmosException>(x =>
-            x.StatusCode is HttpStatusCode.NotFound)
-        .Or<XunitException>()
-        .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(i * 2));
+        .Handle<Exception>()
+        .WaitAndRetryAsync(5, i => TimeSpan.FromSeconds(i * 2));
 
 
     private async Task Execute()
@@ -118,6 +117,7 @@ public partial class AcceptanceTests
 
     private async Task CheckTodoListsProjectionBuilder()
     {
+        _logger.LogInformation("Checking todo list projections");
         foreach (string name in _names)
         {
             TodoListItem list = await _todoListItemRepository.GetAsync(name, nameof(TodoListItem));
@@ -127,6 +127,7 @@ public partial class AcceptanceTests
 
     private async Task CheckTodoItemsProjectionBuilders(string taskTitle)
     {
+        _logger.LogInformation("Checking todo items (complete/created) projections");
         foreach (string name in _names)
         {
             IEnumerable<TodoCosmosItem> items =
