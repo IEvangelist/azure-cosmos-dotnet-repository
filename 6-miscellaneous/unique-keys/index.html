@@ -8,21 +8,21 @@
 <link rel="shortcut icon" href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
 <link rel=icon href=/azure-cosmos-dotnet-repository/images/favicon.ico type=image/x-icon>
 <title>Azure Cosmos DB Repository-Pattern .NET SDK</title>
-<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/theme.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1647408500 rel=stylesheet>
-<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1647408500 rel=stylesheet>
-<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1647408500></script>
+<link href=/azure-cosmos-dotnet-repository/css/nucleus.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/fontawesome-all.min.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hybrid.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/featherlight.min.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/perfect-scrollbar.min.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/auto-complete.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/atom-one-dark-reasonable.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/tabs.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/hugo-theme.css?1647463070 rel=stylesheet>
+<link href=/azure-cosmos-dotnet-repository/css/theme-custom.css?1647463070 rel=stylesheet>
+<script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1647463070></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/5-miscellaneous/unique-keys/>
+<body data-url=/azure-cosmos-dotnet-repository/6-miscellaneous/unique-keys/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -38,10 +38,10 @@
 <input data-search-input id=search-by type=search placeholder=Search...>
 <span data-search-clear><i class="fas fa-times"></i></span>
 </div>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1647408500></script>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1647408500></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/lunr.min.js?1647463070></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/auto-complete.js?1647463070></script>
 <script type=text/javascript>var baseurl="https://ievangelist.github.io/azure-cosmos-dotnet-repository/"</script>
-<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1647408500></script>
+<script type=text/javascript src=/azure-cosmos-dotnet-repository/js/search.js?1647463070></script>
 </div>
 <div class=highlightable>
 <ul class=topics>
@@ -57,6 +57,12 @@ Partitioning
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
+<li data-nav-id=/azure-cosmos-dotnet-repository/1-getting-started/authentication/ title=Authentication class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/1-getting-started/authentication/>
+Authentication
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
 </ul>
 </li>
 <li data-nav-id=/azure-cosmos-dotnet-repository/2-container-config/ title="Container Configuration" class=dd-item>
@@ -65,58 +71,84 @@ Partitioning
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/ title=Querying class=dd-item>
-<a href=/azure-cosmos-dotnet-repository/3-queries/>
-<b>3. </b>Querying
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/3-item-types/>
+<b>3. </b>Items
 <i class="fas fa-check read-icon"></i>
 </a>
 <ul>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/ title="Specification Pattern" class=dd-item>
-<a href=/azure-cosmos-dotnet-repository/3-queries/specification-pattern/>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/full-item/ title=FullItem class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/3-item-types/full-item/>
+<b>1. </b>FullItem
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/etags/ title=ETagItem class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/3-item-types/etags/>
+<b>1. </b>ETagItem
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/time-stamps/ title=TimeStampedItem class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/3-item-types/time-stamps/>
+<b>2. </b>TimeStampedItem
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/time-to-live/ title=TimeToLiveItem class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/3-item-types/time-to-live/>
+<b>3. </b>TimeToLiveItem
+<i class="fas fa-check read-icon"></i>
+</a>
+</li>
+</ul>
+</li>
+<li data-nav-id=/azure-cosmos-dotnet-repository/4-queries/ title=Querying class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/4-queries/>
+<b>4. </b>Querying
+<i class="fas fa-check read-icon"></i>
+</a>
+<ul>
+<li data-nav-id=/azure-cosmos-dotnet-repository/4-queries/specification-pattern/ title="Specification Pattern" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/4-queries/specification-pattern/>
 Specification Pattern
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
 </ul>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/4-change-feed/ title="Change Feed" class=dd-item>
-<a href=/azure-cosmos-dotnet-repository/4-change-feed/>
-<b>4. </b>Change Feed
+<li data-nav-id=/azure-cosmos-dotnet-repository/5-change-feed/ title="Change Feed" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/5-change-feed/>
+<b>5. </b>Change Feed
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/ title=Miscellaneous class="dd-item
+<li data-nav-id=/azure-cosmos-dotnet-repository/6-miscellaneous/ title=Miscellaneous class="dd-item
 parent">
-<a href=/azure-cosmos-dotnet-repository/5-miscellaneous/>
+<a href=/azure-cosmos-dotnet-repository/6-miscellaneous/>
 <b>5. </b>Miscellaneous
 <i class="fas fa-check read-icon"></i>
 </a>
 <ul>
-<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/ title=Logging class=dd-item>
-<a href=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/>
+<li data-nav-id=/azure-cosmos-dotnet-repository/6-miscellaneous/logging/ title=Logging class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/6-miscellaneous/logging/>
 Logging
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/5-miscellaneous/unique-keys/ title="Unique Keys Policies" class="dd-item
+<li data-nav-id=/azure-cosmos-dotnet-repository/6-miscellaneous/unique-keys/ title="Unique Keys Policies" class="dd-item
 parent
 active">
-<a href=/azure-cosmos-dotnet-repository/5-miscellaneous/unique-keys/>
+<a href=/azure-cosmos-dotnet-repository/6-miscellaneous/unique-keys/>
 Unique Keys Policies
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
 </ul>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/6-major-release-notes/ title="Major Release Notes" class=dd-item>
-<a href=/azure-cosmos-dotnet-repository/6-major-release-notes/>
+<li data-nav-id=/azure-cosmos-dotnet-repository/7-major-release-notes/ title="Major Release Notes" class=dd-item>
+<a href=/azure-cosmos-dotnet-repository/7-major-release-notes/>
 <b>6. </b>Major Release Notes
-<i class="fas fa-check read-icon"></i>
-</a>
-</li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/7-event-sourcing/ title="Event Sourcing" class=dd-item>
-<a href=/azure-cosmos-dotnet-repository/7-event-sourcing/>
-<b>7. </b>Event Sourcing
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
@@ -152,7 +184,7 @@ Unique Keys Policies
 <div>
 <div id=top-bar>
 <div id=top-github-link>
-<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository5-miscellaneous/unique-keys/_index.md target=blank>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository6-miscellaneous/unique-keys/_index.md target=blank>
 <i class="fas fa-code-branch"></i>
 <span id=top-github-link-text>Edit this page</span>
 </a>
@@ -165,7 +197,7 @@ Unique Keys Policies
 </span>
 <span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/5-miscellaneous/>Miscellaneous</a> > Unique Keys Policies
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/6-miscellaneous/>Miscellaneous</a> > Unique Keys Policies
 </span>
 </div>
 <div class=progress>
@@ -320,22 +352,22 @@ repository.CreateAsync(bobInYorkshireWhoIs22);
 </div>
 </div>
 <div id=navigation>
-<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/5-miscellaneous/logging/ title=Logging> <i class="fa fa-chevron-left"></i></a>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/6-major-release-notes/ title="Major Release Notes" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/6-miscellaneous/logging/ title=Logging> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/7-major-release-notes/ title="Major Release Notes" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
 <div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
 </div>
-<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1647408500></script>
-<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1647408500></script>
-<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1647408500></script>
-<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1647408500></script>
-<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1647408500></script>
-<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1647408500></script>
+<script src=/azure-cosmos-dotnet-repository/js/clipboard.min.js?1647463070></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.min.js?1647463070></script>
+<script src=/azure-cosmos-dotnet-repository/js/perfect-scrollbar.jquery.min.js?1647463070></script>
+<script src=/azure-cosmos-dotnet-repository/js/jquery.sticky.js?1647463070></script>
+<script src=/azure-cosmos-dotnet-repository/js/featherlight.min.js?1647463070></script>
+<script src=/azure-cosmos-dotnet-repository/js/highlight.pack.js?1647463070></script>
 <script>hljs.initHighlightingOnLoad()</script>
-<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1647408500></script>
-<script src=/azure-cosmos-dotnet-repository/js/learn.js?1647408500></script>
-<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1647408500></script>
+<script src=/azure-cosmos-dotnet-repository/js/modernizr.custom-3.6.0.js?1647463070></script>
+<script src=/azure-cosmos-dotnet-repository/js/learn.js?1647463070></script>
+<script src=/azure-cosmos-dotnet-repository/js/hugo-learn.js?1647463070></script>
 </body>
 </html>

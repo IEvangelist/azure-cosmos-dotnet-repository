@@ -22,7 +22,7 @@
 <script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1647463070></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/tags/>
+<body data-url=/azure-cosmos-dotnet-repository/3-item-types/etags/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -71,7 +71,8 @@ Authentication
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class="dd-item
+parent">
 <a href=/azure-cosmos-dotnet-repository/3-item-types/>
 <b>3. </b>Items
 <i class="fas fa-check read-icon"></i>
@@ -83,7 +84,7 @@ Authentication
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/etags/ title=ETagItem class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/etags/ title=ETagItem class="dd-item active">
 <a href=/azure-cosmos-dotnet-repository/3-item-types/etags/>
 <b>1. </b>ETagItem
 <i class="fas fa-check read-icon"></i>
@@ -180,38 +181,75 @@ Unique Keys Policies
 <div class="padding highlightable">
 <div>
 <div id=top-bar>
+<div id=top-github-link>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository3-item-types/etags.md target=blank>
+<i class="fas fa-code-branch"></i>
+<span id=top-github-link-text>Edit this page</span>
+</a>
+</div>
 <div id=breadcrumbs itemscope itemtype=http://data-vocabulary.org/Breadcrumb>
 <span id=sidebar-toggle-span>
 <a href=# id=sidebar-toggle data-sidebar-toggle>
 <i class="fas fa-bars"></i>
 </a>
 </span>
-<span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Tags
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/3-item-types/>Items</a> > ETagItem
 </span>
-</div>
-<div class=progress>
-<div class=wrapper>
-</div>
 </div>
 </div>
 </div>
 <div id=head-tags>
 </div>
+<div id=chapter>
 <div id=body-inner>
-<h1>
-tag ::
-Tags
-</h1>
-<ul>
-</ul>
+<h2 id=optimistic-concurrency-control-with-etags>Optimistic Concurrency Control with ETags</h2>
+<p>The default repository now supports etags and will pass them when <code>IItemWithEtag</code> is implemented correctly or the base classes <code>EtagItem</code> or <code>FullItem</code> are used. The etag check is enforced on all updates when <code>TItem</code> is of the correct type. It can however be bypassed by setting the <code>ignoreEtag</code> optional parameter in the relevant async methods. The InMemory repository also supports OCC with Etags. The <a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/OptimisticConcurrencyControl>OptimisticCurrencyControl sample</a> shows these features.</p>
+<h3 id=getting-the-new-etag>Getting the new etag</h3>
+<p>When creating a new object, if storing in memory, it is important to store the result from the create call to ensure you have the correct etag for future updated.</p>
+<p>For example your code should look something like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>TItem currentItem = <span style=color:#66d9ef>new</span> TItem(...);
+currentItem = <span style=color:#ae81ff>_</span>repository.CreateAsync(currentItem);
+</code></pre></div><h3 id=sequential-updates>Sequential updates</h3>
+<p>When doing sequential updates to the same item it is important to use the result from the update method (when OptimizeBandwith is false) or refetch the updated data each time (when OptimizeBandwith is true) otherwise the etag value will not be updated. The following code shows what to do in each case:</p>
+<h4 id=optimize-bandwith-off>Optimize Bandwith Off</h4>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>TItem currentItem = <span style=color:#ae81ff>_</span>repository.CreateAsync(itemConfig);
+currentItem = <span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+currentItem = <span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+</code></pre></div><h4 id=optimize-bandwith-on>Optimize Bandwith On</h4>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>TItem currentItem = <span style=color:#ae81ff>_</span>repository.CreateAsync(itemConfig);
+<span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+currentItem = <span style=color:#ae81ff>_</span>repository.GetAsync(currentItem.Id);
+<span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+currentItem = <span style=color:#ae81ff>_</span>repository.GetAsync(currentItem);
+currentItem = <span style=color:#ae81ff>_</span>repository.UpdateAsync(currentItem);
+</code></pre></div><h3 id=catching-mismatched-etag-errors>Catching mismatched etag errors</h3>
+<p>The following code shows how to catch the error when the etags do not match.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>  <span style=color:#66d9ef>try</span>
+  {
+      currentBankAccount = <span style=color:#66d9ef>await</span> repository.UpdateAsync(currentBankAccount);
+      Console.WriteLine(<span style=color:#e6db74>$&#34;Updated bank account: {currentBankAccount}.&#34;</span>);
+  }
+  <span style=color:#66d9ef>catch</span> (CosmosException exception) when (exception.StatusCode == HttpStatusCode.PreconditionFailed)
+  {
+      Console.WriteLine(<span style=color:#e6db74>&#34;Failed to update balance as the etags did not match.&#34;</span>);
+  }
+</code></pre></div><h3 id=ignoring-the-etag>Ignoring the etag</h3>
+<p>The following code shows how to ignore the etag when doing an update.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>await</span> repository.UpdateAsync(currentBankAccount, ignoreEtag: <span style=color:#66d9ef>true</span>);
+</code></pre></div><h3 id=passing-the-etag-to-a-patch-update>Passing the etag to a patch update</h3>
+<p>The following code shows how to pass the etag when doing a update to specific properties.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>await</span> repository.UpdateAsync(currentBankAccount.Id,
+  builder =&gt; builder.Replace(account =&gt; account.Balance, currentBankAccount.Balance - <span style=color:#ae81ff>250</span>), etag: currentBankAccount.Etag);
+</code></pre></div>
 <footer class=footline>
 </footer>
 </div>
 </div>
+</div>
 <div id=navigation>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/3-item-types/full-item/ title=FullItem> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/3-item-types/time-stamps/ title=TimeStampedItem style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>

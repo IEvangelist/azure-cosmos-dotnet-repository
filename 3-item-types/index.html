@@ -22,7 +22,7 @@
 <script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1647463070></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/tags/>
+<body data-url=/azure-cosmos-dotnet-repository/3-item-types/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -71,7 +71,9 @@ Authentication
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class="dd-item
+parent
+active">
 <a href=/azure-cosmos-dotnet-repository/3-item-types/>
 <b>3. </b>Items
 <i class="fas fa-check read-icon"></i>
@@ -180,38 +182,58 @@ Unique Keys Policies
 <div class="padding highlightable">
 <div>
 <div id=top-bar>
+<div id=top-github-link>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository3-item-types/_index.md target=blank>
+<i class="fas fa-code-branch"></i>
+<span id=top-github-link-text>Edit this page</span>
+</a>
+</div>
 <div id=breadcrumbs itemscope itemtype=http://data-vocabulary.org/Breadcrumb>
 <span id=sidebar-toggle-span>
 <a href=# id=sidebar-toggle data-sidebar-toggle>
 <i class="fas fa-bars"></i>
 </a>
 </span>
-<span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Tags
+<a href=/azure-cosmos-dotnet-repository/></a> > Items
 </span>
-</div>
-<div class=progress>
-<div class=wrapper>
-</div>
 </div>
 </div>
 </div>
 <div id=head-tags>
 </div>
+<div id=chapter>
 <div id=body-inner>
-<h1>
-tag ::
-Tags
-</h1>
-<ul>
-</ul>
+<h1 id=items>Items</h1>
+<p>The library provides a set of base types that can be used to tell the library that you want that model to be stored in Cosmos DB. These are know as <code>Item</code> types.</p>
+<p>The simplest item types is the standard base <code>Item</code>. See an example of using <code>Item</code> below.</p>
+<blockquote>
+<p>See the rest of this section which covers the rest of the <code>Item</code> types.</p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Product</span> : Item
+{
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> Name { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> CategoryId { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> PartitionKey { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>double</span> Price { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> StockInformation Stock { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>string</span> GetPartitionKeyValue() =&gt;
+        CategoryId;
+}
+</code></pre></div>
 <footer class=footline>
 </footer>
 </div>
 </div>
+</div>
 <div id=navigation>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/2-container-config/ title="Container Configuration"> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/3-item-types/full-item/ title=FullItem style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>

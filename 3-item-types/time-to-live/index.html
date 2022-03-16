@@ -22,7 +22,7 @@
 <script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1647463070></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/tags/>
+<body data-url=/azure-cosmos-dotnet-repository/3-item-types/time-to-live/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -71,7 +71,8 @@ Authentication
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class="dd-item
+parent">
 <a href=/azure-cosmos-dotnet-repository/3-item-types/>
 <b>3. </b>Items
 <i class="fas fa-check read-icon"></i>
@@ -95,7 +96,7 @@ Authentication
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/time-to-live/ title=TimeToLiveItem class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/time-to-live/ title=TimeToLiveItem class="dd-item active">
 <a href=/azure-cosmos-dotnet-repository/3-item-types/time-to-live/>
 <b>3. </b>TimeToLiveItem
 <i class="fas fa-check read-icon"></i>
@@ -180,38 +181,85 @@ Unique Keys Policies
 <div class="padding highlightable">
 <div>
 <div id=top-bar>
+<div id=top-github-link>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository3-item-types/time-to-live.md target=blank>
+<i class="fas fa-code-branch"></i>
+<span id=top-github-link-text>Edit this page</span>
+</a>
+</div>
 <div id=breadcrumbs itemscope itemtype=http://data-vocabulary.org/Breadcrumb>
 <span id=sidebar-toggle-span>
 <a href=# id=sidebar-toggle data-sidebar-toggle>
 <i class="fas fa-bars"></i>
 </a>
 </span>
-<span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Tags
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/3-item-types/>Items</a> > TimeToLiveItem
 </span>
-</div>
-<div class=progress>
-<div class=wrapper>
-</div>
 </div>
 </div>
 </div>
 <div id=head-tags>
 </div>
+<div id=chapter>
 <div id=body-inner>
-<h1>
-tag ::
-Tags
-</h1>
-<ul>
-</ul>
+<h2 id=time-to-live>Time To Live</h2>
+<p>The time to live property can be set at both an item and container level. At a container level this can be done through the container options builder:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>options.ContainerBuilder.Configure&lt;BankAccount&gt;(
+  x =&gt; x.WithContainerDefaultTimeToLive(TimeSpan.FromHours(<span style=color:#ae81ff>2</span>)));
+</code></pre></div><p>In the above example the container would have a default item lifespan of 2 hours. This can be overriden at the item level by using the <code>TimeToLive</code> property when correctly implemented. This is available through the <code>FullItem</code> and <code>TimeToLiveItem</code> base classes. The example below shows this been overriden so the item has a lifespan of 4 hours rather than the default of 2:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>BankAccount currentBankAccount = <span style=color:#66d9ef>await</span> repository.CreateAsync(
+  <span style=color:#66d9ef>new</span> BankAccount()
+    {
+        Name = <span style=color:#e6db74>&#34;Current Account&#34;</span>,
+        Balance = <span style=color:#ae81ff>500.0</span>,
+        TimeToLive = TimeSpan.FromHours(<span style=color:#ae81ff>4</span>)
+    });
+</code></pre></div><p>If you didn&rsquo;t want that specific item to ever expire the following code can be used:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>BankAccount currentBankAccount = <span style=color:#66d9ef>await</span> repository.CreateAsync(
+  <span style=color:#66d9ef>new</span> BankAccount()
+    {
+        Name = <span style=color:#e6db74>&#34;Current Account&#34;</span>,
+        Balance = <span style=color:#ae81ff>500.0</span>,
+        TimeToLive = TimeSpan.FromSeconds(-<span style=color:#ae81ff>1</span>)
+    });
+</code></pre></div><p>The demo <code>BankAccount</code> class can be found in the <a href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/OptimisticConcurrencyControl>OptimisticCurrencyControl sample</a> and its implementation looks like the following:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository;
+<span style=color:#66d9ef>using</span> Microsoft.Azure.CosmosRepository.Attributes;
+
+<span style=color:#66d9ef>namespace</span> OptimisticConcurrencyControl;
+<span style=color:#a6e22e>
+</span><span style=color:#a6e22e>[Container(&#34;accounts&#34;)]</span>
+<span style=color:#a6e22e>[PartitionKeyPath(&#34;/id&#34;)]</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BankAccount</span> : FullItem
+{
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> Name { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; } = <span style=color:#66d9ef>string</span>.Empty;
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>double</span> Balance { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> Withdraw(<span style=color:#66d9ef>double</span> amount)
+    {
+        <span style=color:#66d9ef>if</span> (Balance - amount &lt; <span style=color:#ae81ff>0.0</span>) <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> InvalidOperationException(<span style=color:#e6db74>&#34;Cannot go overdrawn&#34;</span>);
+
+        Balance -= amount;
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> Deposit(<span style=color:#66d9ef>double</span> amount)
+    {
+        Balance += amount;
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>string</span> ToString() =&gt;
+        <span style=color:#e6db74>$&#34;Account (Name = {Name}, Balance = {Balance}, Etag = {Etag})&#34;</span>;
+}
+</code></pre></div><p>This <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/sql/time-to-live>page</a> goes into more detail about the various combinations.</p>
 <footer class=footline>
 </footer>
 </div>
 </div>
+</div>
 <div id=navigation>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/3-item-types/time-stamps/ title=TimeStampedItem> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/4-queries/ title=Querying style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>

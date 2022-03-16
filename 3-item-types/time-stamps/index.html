@@ -22,7 +22,7 @@
 <script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1647463070></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/tags/>
+<body data-url=/azure-cosmos-dotnet-repository/3-item-types/time-stamps/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -71,7 +71,8 @@ Authentication
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/ title=Items class="dd-item
+parent">
 <a href=/azure-cosmos-dotnet-repository/3-item-types/>
 <b>3. </b>Items
 <i class="fas fa-check read-icon"></i>
@@ -89,7 +90,7 @@ Authentication
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/time-stamps/ title=TimeStampedItem class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/3-item-types/time-stamps/ title=TimeStampedItem class="dd-item active">
 <a href=/azure-cosmos-dotnet-repository/3-item-types/time-stamps/>
 <b>2. </b>TimeStampedItem
 <i class="fas fa-check read-icon"></i>
@@ -180,38 +181,39 @@ Unique Keys Policies
 <div class="padding highlightable">
 <div>
 <div id=top-bar>
+<div id=top-github-link>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository3-item-types/time-stamps.md target=blank>
+<i class="fas fa-code-branch"></i>
+<span id=top-github-link-text>Edit this page</span>
+</a>
+</div>
 <div id=breadcrumbs itemscope itemtype=http://data-vocabulary.org/Breadcrumb>
 <span id=sidebar-toggle-span>
 <a href=# id=sidebar-toggle data-sidebar-toggle>
 <i class="fas fa-bars"></i>
 </a>
 </span>
-<span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Tags
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/3-item-types/>Items</a> > TimeStampedItem
 </span>
-</div>
-<div class=progress>
-<div class=wrapper>
-</div>
 </div>
 </div>
 </div>
 <div id=head-tags>
 </div>
+<div id=chapter>
 <div id=body-inner>
-<h1>
-tag ::
-Tags
-</h1>
-<ul>
-</ul>
+<h2 id=time-stamped-item>Time Stamped Item</h2>
+<p>The last updated value is retrieved from the _ts property that Cosmos DB sets; as documented <a href="https://docs.microsoft.com/en-us/rest/api/cosmos-db/documents#:~:text=the%20document%20resource.-,_ts,updated%20timestamp%20of%20the%20resource.%20The%20value%20is%20a%20timestamp.,-_self">here</a>. This property is deserialised and is available in the raw seconds (<code>LastUpdatedTimeRaw</code>) since epoch and a human readable format (<code>LastUpdatedTimeUtc</code>). Both the base classes <code>FullItem</code> and <code>TimeStampedItem</code> contain these properties.</p>
+<p>The <code>CreatedTimeUtc</code> time property available in both the base classes <code>FullItem</code> and <code>TimeStampedItem</code> is set when <code>CreateAsync</code> is called on the repository. However, this property can be set prior to calling <code>CreateAsync</code> in which case it wont be overwritten; allowing you to set your own <code>CreatedTimeUtc</code> value. This does mean that when using existing date the <code>CreatedTimeUtc</code> property will be null.</p>
 <footer class=footline>
 </footer>
 </div>
 </div>
+</div>
 <div id=navigation>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/3-item-types/etags/ title=ETagItem> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/3-item-types/time-to-live/ title=TimeToLiveItem style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>

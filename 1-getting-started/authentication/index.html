@@ -22,7 +22,7 @@
 <script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1647463070></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/tags/>
+<body data-url=/azure-cosmos-dotnet-repository/1-getting-started/authentication/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -45,7 +45,8 @@
 </div>
 <div class=highlightable>
 <ul class=topics>
-<li data-nav-id=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" class="dd-item
+parent">
 <a href=/azure-cosmos-dotnet-repository/1-getting-started/>
 <b>1. </b>Getting Started
 <i class="fas fa-check read-icon"></i>
@@ -57,7 +58,9 @@ Partitioning
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/1-getting-started/authentication/ title=Authentication class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/1-getting-started/authentication/ title=Authentication class="dd-item
+parent
+active">
 <a href=/azure-cosmos-dotnet-repository/1-getting-started/authentication/>
 Authentication
 <i class="fas fa-check read-icon"></i>
@@ -180,6 +183,12 @@ Unique Keys Policies
 <div class="padding highlightable">
 <div>
 <div id=top-bar>
+<div id=top-github-link>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository1-getting-started/authentication/_index.md target=blank>
+<i class="fas fa-code-branch"></i>
+<span id=top-github-link-text>Edit this page</span>
+</a>
+</div>
 <div id=breadcrumbs itemscope itemtype=http://data-vocabulary.org/Breadcrumb>
 <span id=sidebar-toggle-span>
 <a href=# id=sidebar-toggle data-sidebar-toggle>
@@ -188,11 +197,16 @@ Unique Keys Policies
 </span>
 <span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Tags
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/1-getting-started/>Getting Started</a> > Authentication
 </span>
 </div>
 <div class=progress>
 <div class=wrapper>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#authenticating-using-an-identity>Authenticating using an identity</a></li>
+</ul>
+</nav>
 </div>
 </div>
 </div>
@@ -201,17 +215,47 @@ Unique Keys Policies
 </div>
 <div id=body-inner>
 <h1>
-tag ::
-Tags
+Authentication
 </h1>
-<ul>
-</ul>
+<h2 id=authenticating-using-an-identity>Authenticating using an identity</h2>
+<p>The Azure Cosmos DB .NET SDK also supports authentication using identities, which are considered superior from an audit and granularity of permissions perspective. Authenticating using a connection string essentially provides full access to perform operations within the <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/role-based-access-control>data plane</a>
+of your Cosmos DB Account. More information on the Azure control plane and data plane is available <a href=https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/control-plane-and-data-plane>here</a>.</p>
+<p>This library also supports authentication using an identity. To authenticate using an identity (User, Group, Application Registration, or Managed Identity) you will need to set the <code>AccountEndpoint</code> and <code>TokenCredential</code> options that are available on the <code>RepositoryOptions</code> class.</p>
+<p>In a basic scenario, there are three steps that need to be completed:</p>
+<ol>
+<li>
+<p>If the identity that you would like to use, does not exist in Azure Active Directory, create it now.</p>
+</li>
+<li>
+<p>Use the Azure CLI to <a href="https://docs.microsoft.com/en-us/cli/azure/cosmosdb/sql/role/assignment?view=azure-cli-latest#az_cosmosdb_sql_role_assignment_create">assign</a> the appropriate role to your identity at the desired scope. - In most cases, using the <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac#built-in-role-definitions>built-in roles</a> will be sufficient. However, there is support for creating custom role definitions using the Azure CLI, you can read more on this <a href=https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac#role-definitions>here</a>.</p>
+</li>
+<li>
+<p>Configure your application using the <code>AddCosmosRepository</code> method in your <code>Startup.cs</code> file:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>using</span> Azure.Identity;
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> ConfigureServices(IServiceCollection services)
+{
+    DefaultAzureCredential credential = <span style=color:#66d9ef>new</span>();
+
+    services.AddCosmosRepository(
+        options =&gt;
+        {
+            options.TokenCredential = credential;
+            options.AccountEndpoint = <span style=color:#e6db74>&#34;&lt; account endpoint URI &gt;&#34;</span>;
+            options.ContainerId = <span style=color:#e6db74>&#34;data-store&#34;</span>;
+            options.DatabaseId = <span style=color:#e6db74>&#34;samples&#34;</span>;
+        });
+}
+</code></pre></div></li>
+</ol>
+<p>The example above is using the <code>DefaultAzureCredential</code> object provided by the <a href=https://www.nuget.org/packages/Azure.Identity>Azure Identity</a> NuGet package, which provides seamless integration with Azure Active Directory. More information on this package is available <a href=https://docs.microsoft.com/en-us/dotnet/api/overview/azure/identity-readme>here</a>.</p>
 <footer class=footline>
 </footer>
 </div>
 </div>
 <div id=navigation>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/1-getting-started/ title="Getting Started" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/1-getting-started/partioning/ title=Partitioning> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/2-container-config/ title="Container Configuration" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
