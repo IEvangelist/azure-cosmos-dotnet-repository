@@ -29,7 +29,7 @@ public class CustomerAccount : AggregateRoot
 
 The above example defines a private constructor and a `static Replay(...)` method. This method takes a set of events and calls `Apply(...)` this overload will take the events, order them using the `Sequence` number and then apply's each event in order to our `AggregateRoot`. This builds it back up to current state, in this example it will re-apply our `CustomerAccountCreated` event.
 
-The next step is to read the events back using the `IEventStore<TEventItem>`. This is shown on the below endpoint, it also using the `Replay(...)` method we have defined on our `CustomerAccount`.
+The next step is to read the events back using the `IEventStore<TEventItem>`. This is shown on the below endpoint, it's also using the `Replay(...)` method we have defined on our `CustomerAccount`.
 
 ```csharp
 app.MapPut(
@@ -219,5 +219,5 @@ curl -X 'PUT' \
 ```
 
 :::tip Tip
-Take your event sourcing implementation further with [Projections](../projections/README.md)
+Take your event sourcing implementation further with [Projections](../../projections/README.md)
 :::

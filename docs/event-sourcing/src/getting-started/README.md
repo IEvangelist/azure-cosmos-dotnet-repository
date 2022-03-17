@@ -1,7 +1,7 @@
 ---
 title: Overview
 lang: en-GB
-description: This set of libraries helps implementing an event sourcing architecture with Cosmos DB. It aims to lower the entry barrier and the improve time to market of an application that would benefit from an ES architecture.
+description: This set of libraries helps implementing an event sourcing architecture with Cosmos DB. It aims to lower the entry barrier and to improve time to market of an application that would benefit from an ES architecture.
 ---
 
 # Overview
