@@ -52,7 +52,7 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
 // Excluded for brevity
 ```
 
-The fist step is to give the database a name, this example then configures the event store using the container builder. This stores all events for a `CustomerAccount` in a container called `customer-accounts-events`.
+The first step is to give the database a name, this example then configures the event store using the container builder. This stores all events for a `CustomerAccount` in a container called `customer-accounts-events`.
 
 The last part of this example makes a call to `.AddDomainEventTypes(...)`, this scans the assemblies provided for all types that implement `IDomainEvent`. This is required to perform the polymorphic de-serialization of different event payload on each `EventItem`.
 
