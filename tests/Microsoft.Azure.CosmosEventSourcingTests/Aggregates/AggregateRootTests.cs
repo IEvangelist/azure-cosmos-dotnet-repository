@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Microsoft.Azure.CosmosEventSourcingTests.Aggregates;
 
@@ -76,6 +78,10 @@ public class AggregateTests
         //Assert
         root.NewEvents.Should().HaveCount(1);
         root.Messages.Should().Contain("A");
+        DomainEvent evt = root.NewEvents.First();
+        evt.Sequence.Should().Be(1);
+        evt.EventId.Should().NotBeEmpty();
+        evt.OccuredUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMilliseconds(500));
     }
 
     [Fact]
