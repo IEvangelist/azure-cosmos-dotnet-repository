@@ -58,7 +58,7 @@ public static class TodoItemProjections
             CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("TodoItemAdded being processed with ID {TodoId} and title {TodoTitle}",
-                domainEvent.EventId,
+                domainEvent.Id,
                 domainEvent.Title);
 
             await _repository.UpdateAsync(new TodoCosmosItem(
@@ -88,11 +88,11 @@ public static class TodoItemProjections
             CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("TodoItemCompleted being processed with ID {TodoId} and title {TodoTitle}",
-                domainEvent.EventId,
+                domainEvent.Id,
                 domainEvent.Title);
 
             TodoCosmosItem item = await _repository.GetAsync(
-                domainEvent.EventId.ToString(),
+                domainEvent.Id.ToString(),
                 eventItem.PartitionKey,
                 cancellationToken);
 
