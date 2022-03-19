@@ -69,7 +69,6 @@ public partial class AcceptanceTests
         list1.Items.Should().BeEmpty();
         list1.NewEvents.Should().BeEmpty();
         list1.Events.Should().HaveCount(1);
-        list1.Events.Should().Contain(x => todoLists[0].Events.Select(existingEvent => existingEvent.EventId).Contains(x.EventId));
         _atomicEventIds.Add(list1.AtomicEvent.EventId);
 
         TodoListAggregate list2 = await _todoListItemEventStore.ReadAggregateAsync(_names[1], _mapper);

@@ -29,7 +29,7 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
         get => _domainEvent;
         set
         {
-            Id = value.EventId.ToString();
+            Id = value.EventId;
             EventName = value.EventName;
             _domainEvent = value;
         }
