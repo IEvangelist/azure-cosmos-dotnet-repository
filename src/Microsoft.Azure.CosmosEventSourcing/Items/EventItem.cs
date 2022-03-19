@@ -29,11 +29,7 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
         get => _domainEvent;
         set
         {
-            if (value is AtomicEvent atomicEvent)
-            {
-                Id = atomicEvent.Id.ToString();
-            }
-
+            Id = value.EventId.ToString();
             EventName = value.EventName;
             _domainEvent = value;
         }

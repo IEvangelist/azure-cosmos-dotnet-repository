@@ -16,17 +16,14 @@ public record class AtomicEvent : DomainEvent
     /// <summary>
     /// Creates an <see cref="AtomicEvent"/>
     /// </summary>
-    /// <param name="id">The ID of the event</param>
+    /// <param name="eventId">The ID of the event</param>
     /// <param name="eTag">The cosmos ETag</param>
     [JsonConstructor]
-    public AtomicEvent(Guid id, string eTag)
+    public AtomicEvent(string eventId, string eTag)
     {
-        Id = id;
+        EventId = eventId;
         ETag = eTag;
     }
-
-    [JsonProperty("id")]
-    internal Guid Id { get; init; }
 
     internal string ETag { get; init; }
 }

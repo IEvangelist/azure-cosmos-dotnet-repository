@@ -10,6 +10,10 @@ namespace Microsoft.Azure.CosmosEventSourcing.Events;
 /// </summary>
 public record DomainEvent: IDomainEvent
 {
+    /// <inheritdoc />
+    [JsonProperty("eventId")]
+    public string EventId { get; init; } = Guid.NewGuid().ToString();
+
     ///<inheritdoc />
     public string EventName => GetType().Name;
 
