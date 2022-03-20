@@ -9,7 +9,7 @@
 This package wraps the [NuGet: Microsoft.Azure.Cosmos package](https://www.nuget.org/packages/Microsoft.Azure.Cosmos),
 exposing a simple dependency-injection enabled `IRepository<T>` interface.
 
-__Documentation__
+## Documentation
 
 The core library `IEvangelist.Azure.CosmosRepository` and `IEvangelist.Azure.CosmosEventSourcing` both host there own documentation site. See below:
 
