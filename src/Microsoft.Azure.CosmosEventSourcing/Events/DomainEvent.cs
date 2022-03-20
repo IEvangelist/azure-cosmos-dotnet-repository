@@ -8,13 +8,15 @@ namespace Microsoft.Azure.CosmosEventSourcing.Events;
 /// <summary>
 /// A default implementation of a <see cref="IDomainEvent"/>
 /// </summary>
-public record DomainEvent: IDomainEvent
+public record DomainEvent : IDomainEvent
 {
+    /// <inheritdoc />
+    public string EventId { get; init; } = Guid.NewGuid().ToString();
+
     ///<inheritdoc />
     public string EventName => GetType().Name;
 
     /// <inheritdoc />
-    [JsonProperty("sequence")]
     public int Sequence { get; init; }
 
     /// <inheritdoc />

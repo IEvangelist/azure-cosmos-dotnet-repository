@@ -9,6 +9,11 @@ namespace Microsoft.Azure.CosmosEventSourcing.Events;
 public interface IDomainEvent
 {
     /// <summary>
+    /// A unique ID to identify this event.
+    /// </summary>
+    string EventId { get; }
+
+    /// <summary>
     /// The name of the event.
     /// </summary>
     string EventName { get; }

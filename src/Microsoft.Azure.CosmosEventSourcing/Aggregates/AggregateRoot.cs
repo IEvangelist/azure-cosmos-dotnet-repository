@@ -45,6 +45,7 @@ public abstract class AggregateRoot : IAggregateRoot
 
         DomainEvent evt = domainEvent with
         {
+            EventId = Guid.NewGuid().ToString(),
             Sequence = _events.Count + 1,
             OccuredUtc = DateTime.UtcNow
         };
@@ -122,7 +123,7 @@ public abstract class AggregateRoot : IAggregateRoot
 
     private void CreateAtomicMarkerEvent()
     {
-        _atomicEvent = new AtomicEvent(Guid.NewGuid(), string.Empty) with
+        _atomicEvent = new AtomicEvent(Guid.NewGuid().ToString(), string.Empty) with
         {
             Sequence = int.MaxValue,
             OccuredUtc = DateTime.UtcNow

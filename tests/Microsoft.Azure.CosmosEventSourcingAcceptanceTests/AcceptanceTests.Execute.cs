@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.Cosmos;
@@ -23,7 +24,7 @@ public partial class AcceptanceTests
 {
     private readonly string[] _names = {"List 1", "List 2", "List 3"};
     private readonly TodoListMapper _mapper = new();
-    private readonly List<Guid> _atomicEventIds = new();
+    private readonly List<string> _atomicEventIds = new();
 
     private readonly AsyncPolicy _defaultPolicy = Policy
         .Handle<Exception>()
@@ -68,21 +69,21 @@ public partial class AcceptanceTests
         list1.Items.Should().BeEmpty();
         list1.NewEvents.Should().BeEmpty();
         list1.Events.Should().HaveCount(1);
-        _atomicEventIds.Add(list1.AtomicEvent.Id);
+        _atomicEventIds.Add(list1.AtomicEvent.EventId);
 
         TodoListAggregate list2 = await _todoListItemEventStore.ReadAggregateAsync(_names[1], _mapper);
         list2.Name.Should().Be(_names[1]);
         list2.Items.Should().BeEmpty();
         list2.NewEvents.Should().BeEmpty();
         list2.Events.Should().HaveCount(1);
-        _atomicEventIds.Add(list2.AtomicEvent.Id);
+        _atomicEventIds.Add(list2.AtomicEvent.EventId);
 
         TodoListAggregate list3 = await _todoListItemEventStore.ReadAggregateAsync<TodoListAggregate>(_names[2]);
         list3.Name.Should().Be(_names[2]);
         list3.Items.Should().BeEmpty();
         list3.NewEvents.Should().BeEmpty();
         list3.Events.Should().HaveCount(1);
-        _atomicEventIds.Add(list3.AtomicEvent.Id);
+        _atomicEventIds.Add(list3.AtomicEvent.EventId);
     }
 
     private async Task AddItemToAllListsAndVerify(string title)
@@ -99,7 +100,7 @@ public partial class AcceptanceTests
             list.Items.Should().Contain(x => x.Title == title);
             list.Items.Count.Should().Be(1);
             list.Events.Should().HaveCount(2);
-            _atomicEventIds.Should().Contain(list.AtomicEvent.Id);
+            _atomicEventIds.Should().Contain(list.AtomicEvent.EventId);
         }
     }
 

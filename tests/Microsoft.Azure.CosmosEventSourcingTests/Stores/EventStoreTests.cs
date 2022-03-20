@@ -44,7 +44,7 @@ public partial class EventStoreTests
 
     private readonly List<Testing.SampleEventItem> _eventItemsWithAtomicEvents = new()
     {
-        new Testing.SampleEventItem(new AtomicEvent(Guid.NewGuid(), string.Empty), Pk),
+        new Testing.SampleEventItem(new AtomicEvent(Guid.NewGuid().ToString(), string.Empty), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),

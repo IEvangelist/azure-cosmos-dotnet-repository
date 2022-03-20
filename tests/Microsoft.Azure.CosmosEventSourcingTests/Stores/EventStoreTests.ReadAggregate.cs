@@ -90,7 +90,7 @@ public partial class EventStoreTests
 
         Mock<IReadOnlyRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IReadOnlyRepository<ReplayableEventItem>>();
 
-        ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty, "etag"), "A");
+        ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty.ToString(), "etag"), "A");
         atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
 
         List<ReplayableEventItem> events = new()
@@ -119,7 +119,7 @@ public partial class EventStoreTests
 
         Mock<IReadOnlyRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IReadOnlyRepository<ReplayableEventItem>>();
 
-        ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty, "etag"), "A");
+        ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty.ToString(), "etag"), "A");
         atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
 
         List<ReplayableEventItem> events = new()

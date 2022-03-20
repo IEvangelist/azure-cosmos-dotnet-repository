@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Microsoft.Azure.CosmosEventSourcingTests.Aggregates;
 
@@ -76,6 +78,10 @@ public class AggregateTests
         //Assert
         root.NewEvents.Should().HaveCount(1);
         root.Messages.Should().Contain("A");
+        DomainEvent evt = root.NewEvents.First();
+        evt.Sequence.Should().Be(1);
+        evt.EventId.Should().NotBeEmpty();
+        evt.OccuredUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMilliseconds(500));
     }
 
     [Fact]
@@ -90,7 +96,7 @@ public class AggregateTests
         //Assert
         root.AtomicEvent.Should().NotBeNull();
         root.AtomicEvent.ETag.Should().BeEmpty();
-        root.AtomicEvent.Id.Should().NotBeEmpty();
+        root.AtomicEvent.EventId.Should().NotBeEmpty();
         root.AtomicEvent.Sequence.Should().Be(int.MaxValue);
     }
 
@@ -98,7 +104,7 @@ public class AggregateTests
     public void Replay_ExistingEvents_AppliesCorrectly()
     {
         //Arrange
-        AtomicEvent atomicEvent = new(Guid.NewGuid(), Guid.NewGuid().ToString());
+        AtomicEvent atomicEvent = new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
         List<DomainEvent> events = new()
         {
             new AggregateRootEvent("A"),
@@ -121,7 +127,7 @@ public class AggregateTests
     public void Replay_ExistingEvents_AppliesInCorrectSequence()
     {
         //Arrange
-        AtomicEvent atomicEvent = new(Guid.NewGuid(), Guid.NewGuid().ToString());
+        AtomicEvent atomicEvent = new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
         List<DomainEvent> events = new()
         {
             new OrderedRootEvent("A") {Sequence = 1},
@@ -172,7 +178,7 @@ public class AggregateTests
     public void AddNewEvent_AggregateRootHasBeenReplayedExistingEvents_AddsNewEventAndSetsAtomicEventProperty()
     {
         //Arrange
-        AtomicEvent atomicEvent = new(Guid.NewGuid(), Guid.NewGuid().ToString());
+        AtomicEvent atomicEvent = new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
         List<DomainEvent> events = new()
         {
             new OrderedRootEvent("A") {Sequence = 1},
@@ -190,7 +196,7 @@ public class AggregateTests
 
         //Assert
         root.Messages.Should().Contain("E");
-        root.AtomicEvent.Id.Should().Be(atomicEvent.Id);
+        root.AtomicEvent.EventId.Should().Be(atomicEvent.EventId);
         root.AtomicEvent.OccuredUtc.Should().NotBe(atomicEvent.OccuredUtc);
     }
 
