@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Items;
+using Microsoft.Azure.CosmosEventSourcing.Projections;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Options;
 
@@ -9,7 +10,10 @@ namespace Microsoft.Azure.CosmosEventSourcing.Options;
 /// The options that can be used to configure the change feed processor consuming new events.
 /// </summary>
 /// <typeparam name="TEventItem">Teh type of <see cref="EventItem"/></typeparam>
-public class EventSourcingProcessorOptions<TEventItem> where TEventItem : EventItem
+/// <typeparam name="TProjectionKey">The projection used for the processor.</typeparam>
+public class EventSourcingProcessorOptions<TEventItem, TProjectionKey>
+    where TEventItem : EventItem
+    where TProjectionKey : IProjectionKey
 {
     /// <summary>
     /// The instance name of the processor.

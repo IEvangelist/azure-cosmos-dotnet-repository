@@ -15,7 +15,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
     where TSourcedEvent : EventItem
     where TProjectionKey : IProjectionKey
 {
-    private readonly EventSourcingProcessorOptions<TSourcedEvent> _options;
+    private readonly EventSourcingProcessorOptions<TSourcedEvent, TProjectionKey> _options;
     private readonly ICosmosContainerService _containerService;
     private readonly ILeaseContainerProvider _leaseContainerProvider;
     private readonly ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> _logger;
@@ -23,7 +23,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
     private ChangeFeedProcessor? _processor;
 
     public DefaultEventSourcingProcessor(
-        EventSourcingProcessorOptions<TSourcedEvent> options,
+        EventSourcingProcessorOptions<TSourcedEvent, TProjectionKey> options,
         ICosmosContainerService containerService,
         ILeaseContainerProvider leaseContainerProvider,
         ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> logger,
