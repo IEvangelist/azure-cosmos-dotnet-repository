@@ -4,6 +4,7 @@ using EventSourcingJobsTracker.Application.Services;
 using EventSourcingJobsTracker.Core.Aggregates;
 using EventSourcingJobsTracker.Endpoints;
 using EventSourcingJobsTracker.Infrastructure.Items;
+using EventSourcingJobsTracker.Infrastructure.Projections.Keys;
 using EventSourcingJobsTracker.Infrastructure.Repositories;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
@@ -31,7 +32,7 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
     eventSourcingBuilder.AddDomainEventTypes(typeof(JobsList).Assembly);
     eventSourcingBuilder.AddDomainEventProjectionHandlers(typeof(JobsList).Assembly);
 
-    eventSourcingBuilder.AddDefaultDomainEventProjectionBuilder<JobsListEventItem>(options =>
+    eventSourcingBuilder.AddDefaultDomainEventProjectionBuilder<JobsListEventItem, JobsListProjectionKey>(options =>
     {
         options.InstanceName = appName;
         options.ProcessorName = Environment.MachineName;

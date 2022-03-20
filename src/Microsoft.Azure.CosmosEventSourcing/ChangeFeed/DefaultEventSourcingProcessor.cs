@@ -3,6 +3,7 @@
 
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Items;
+using Microsoft.Azure.CosmosEventSourcing.Options;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Azure.CosmosRepository.Services;
@@ -10,22 +11,23 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 
-internal class DefaultEventSourcingProcessor<TSourcedEvent> : IEventSourcingProcessor
+internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IEventSourcingProcessor
     where TSourcedEvent : EventItem
+    where TProjectionKey : IProjectionKey
 {
     private readonly EventSourcingProcessorOptions<TSourcedEvent> _options;
     private readonly ICosmosContainerService _containerService;
     private readonly ILeaseContainerProvider _leaseContainerProvider;
-    private readonly ILogger<DefaultEventSourcingProcessor<TSourcedEvent>> _logger;
-    private readonly IEventItemProjectionBuilder<TSourcedEvent> _projectionBuilder;
+    private readonly ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> _logger;
+    private readonly IEventItemProjectionBuilder<TSourcedEvent, TProjectionKey> _projectionBuilder;
     private ChangeFeedProcessor? _processor;
 
     public DefaultEventSourcingProcessor(
         EventSourcingProcessorOptions<TSourcedEvent> options,
         ICosmosContainerService containerService,
         ILeaseContainerProvider leaseContainerProvider,
-        ILogger<DefaultEventSourcingProcessor<TSourcedEvent>> logger,
-        IEventItemProjectionBuilder<TSourcedEvent> projectionBuilder)
+        ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> logger,
+        IEventItemProjectionBuilder<TSourcedEvent, TProjectionKey> projectionBuilder)
     {
         _options = options;
         _containerService = containerService;
@@ -44,7 +46,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent> : IEventSourcingProc
                 OnChangesAsync(changes, token, itemContainer.Id))
             .WithLeaseContainer(leaseContainer)
             .WithInstanceName(_options.InstanceName)
-            .WithErrorNotification((token, exception) => OnErrorAsync(exception, itemContainer.Id));
+            .WithErrorNotification((_, exception) => OnErrorAsync(exception, itemContainer.Id));
 
         if (_options.PollInterval.HasValue)
         {
@@ -53,12 +55,17 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent> : IEventSourcingProc
 
         _processor = builder.Build();
 
-        _logger.LogInformation("Starting change feed processor for container {ContainerName}", itemContainer.Id);
+        _logger.LogInformation("Starting change feed processor for container {ContainerName} with key {ProjectionKey} and processor name {ProcessorName}",
+            itemContainer.Id,
+            typeof(TProjectionKey).Name,
+            _options.ProcessorName);
 
         await _processor.StartAsync();
 
-        _logger.LogInformation("Successfully started change feed processor for container {ContainerName}",
-            itemContainer.Id);
+        _logger.LogInformation("Successfully started change feed processor for container {ContainerName} with key {ProjectionKey} and processor name {ProcessorName}",
+            itemContainer.Id,
+            typeof(TProjectionKey).Name,
+            _options.ProcessorName);
     }
 
     private async Task OnChangesAsync(
