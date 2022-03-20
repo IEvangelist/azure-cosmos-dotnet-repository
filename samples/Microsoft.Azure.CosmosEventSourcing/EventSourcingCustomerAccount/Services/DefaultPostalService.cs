@@ -7,8 +7,20 @@ namespace EventSourcingCustomerAccount.Services;
 
 public class DefaultPostalService : IPostalService
 {
-    public ValueTask SendWelcomeLetterAsync(string firstName, string surname, CustomerAddress customerAddress)
+    private readonly ILogger<DefaultPostalService> _logger;
+
+    public DefaultPostalService(ILogger<DefaultPostalService> logger) =>
+        _logger = logger;
+
+    public ValueTask SendWelcomeLetterAsync(
+        string firstName,
+        string surname,
+        CustomerAddress customerAddress)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Sending welcome letter to {Name} with address {AddressDetails}",
+            $"{firstName} {surname}",
+            customerAddress);
+
+        return ValueTask.CompletedTask;
     }
 }
