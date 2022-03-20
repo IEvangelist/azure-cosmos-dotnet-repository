@@ -1,16 +1,17 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosEventSourcing.Items;
+using Microsoft.Azure.CosmosEventSourcing.Projections;
+
 namespace Microsoft.Azure.CosmosEventSourcing.Options;
 
 /// <summary>
 /// Options used to configure where failed projections will be stored.
 /// </summary>
-public class DeadLetterOptions
+public class DeadLetterOptions<TEventItem, TProjectionKey>
+    where TEventItem : EventItem
+    where TProjectionKey : IProjectionKey
 {
-    /// <summary>
-    /// The name of the container to store dead-lettered events.
-    /// </summary>
-    public string ContainerName { get; set; } = "dead-lettered-events";
 
 }
