@@ -9,7 +9,10 @@ namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 /// Allows projections to built from an <see cref="EventItem"/>
 /// </summary>
 /// <typeparam name="TEventItem"></typeparam>
-public interface IEventItemProjectionBuilder<in TEventItem> where TEventItem : EventItem
+/// <typeparam name="TProjectionKey">A typed used to key this type of projection.</typeparam>
+public interface IEventItemProjectionBuilder<in TEventItem, TProjectionKey>
+    where TEventItem : EventItem
+    where TProjectionKey : IProjectionKey
 {
     /// <summary>
     /// A method to process a new event after it has been saved into Cosmos.

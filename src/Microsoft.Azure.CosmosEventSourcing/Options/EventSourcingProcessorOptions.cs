@@ -3,7 +3,7 @@
 
 using Microsoft.Azure.CosmosEventSourcing.Items;
 
-namespace Microsoft.Azure.CosmosEventSourcing;
+namespace Microsoft.Azure.CosmosEventSourcing.Options;
 
 /// <summary>
 /// The options that can be used to configure the change feed processor consuming new events.

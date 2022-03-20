@@ -3,12 +3,13 @@
 
 using EventSourcingJobsTracker.Core.Events;
 using EventSourcingJobsTracker.Infrastructure.Items;
+using EventSourcingJobsTracker.Infrastructure.Projections.Keys;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository;
 
 namespace EventSourcingJobsTracker.Infrastructure.Projections;
 
-public class UsersJobsListProjection : IDomainEventProjectionBuilder<JobListCreatedEvent, JobsListEventItem>
+public class UsersJobsListProjection : IDomainEventProjectionBuilder<JobListCreatedEvent, JobsListEventItem, JobsListProjectionKey>
 {
     private readonly IWriteOnlyRepository<JobsListReadItem> _repository;
 

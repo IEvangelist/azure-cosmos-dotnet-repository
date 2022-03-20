@@ -27,7 +27,9 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
     });
 
     eventSourcingBuilder
-        .AddEventItemProjectionBuilder<CustomerAccountEventItem, CustomerAccountReadProjectionBuilder>(
+        .AddEventItemProjectionBuilder<CustomerAccountEventItem,
+            ReadProjectionKey,
+            CustomerAccountReadProjectionBuilder>(
             options =>
             {
                 options.ProcessorName =

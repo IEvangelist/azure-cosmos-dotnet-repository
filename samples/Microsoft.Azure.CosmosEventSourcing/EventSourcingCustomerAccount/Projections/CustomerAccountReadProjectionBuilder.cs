@@ -9,8 +9,10 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace EventSourcingCustomerAccount.Projections;
 
+public record ReadProjectionKey : IProjectionKey;
+
 public class CustomerAccountReadProjectionBuilder :
-    IEventItemProjectionBuilder<CustomerAccountEventItem>
+    IEventItemProjectionBuilder<CustomerAccountEventItem, ReadProjectionKey>
 {
     private readonly IRepository<CustomerAccountReadItem> _repository;
 

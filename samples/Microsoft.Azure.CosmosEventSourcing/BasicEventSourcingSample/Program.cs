@@ -1,5 +1,6 @@
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
+using BasicEventSourcingSample.Projections;
 using BasicEventSourcingSample.Projections.Models;
 using CleanArchitecture.Exceptions.AspNetCore;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
@@ -28,7 +29,7 @@ services.AddCosmosEventSourcing(eventSourcingBuilder =>
 
     eventSourcingBuilder.AddDomainEventTypes();
     eventSourcingBuilder.AddDomainEventProjectionHandlers();
-    eventSourcingBuilder.AddDefaultDomainEventProjectionBuilder<ShipEventItem>(options =>
+    eventSourcingBuilder.AddDefaultDomainEventProjectionBuilder<ShipEventItem, ShipInformationProjectionKey>(options =>
     {
         options.ProcessorName = "shipping-demo";
         options.InstanceName = Environment.MachineName;

@@ -13,6 +13,7 @@ using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Aggregates;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Mappers;
+using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Projections;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Extensions.Logging;
 using Polly;
@@ -129,6 +130,7 @@ public partial class AcceptanceTests
     private async Task CheckTodoItemsProjectionBuilders(string taskTitle)
     {
         _logger.LogInformation("Checking todo items (complete/created) projections");
+
         foreach (string name in _names)
         {
             IEnumerable<TodoCosmosItem> items =
@@ -137,5 +139,7 @@ public partial class AcceptanceTests
             items.Should().Contain(x => x.IsComplete);
             items.Should().HaveCount(1);
         }
+
+        CompletedProjections.Invocations.Should().Be(3);
     }
 }

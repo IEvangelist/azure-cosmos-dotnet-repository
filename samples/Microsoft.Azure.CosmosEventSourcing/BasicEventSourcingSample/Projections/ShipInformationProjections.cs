@@ -9,9 +9,11 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace BasicEventSourcingSample.Projections;
 
+public record ShipInformationProjectionKey : IProjectionKey;
+
 public class ShipInformationProjections
 {
-    public class ShipCreatedBuilder : IDomainEventProjectionBuilder<ShipEvents.ShipCreated, ShipEventItem>
+    public class ShipCreatedBuilder : IDomainEventProjectionBuilder<ShipEvents.ShipCreated,ShipEventItem, ShipInformationProjectionKey>
     {
         private readonly IRepository<ShipInformation> _repository;
 
@@ -32,7 +34,7 @@ public class ShipInformationProjections
         }
     }
 
-    public class ShipDockedBuilder : IDomainEventProjectionBuilder<ShipEvents.DockedInPort, ShipEventItem>
+    public class ShipDockedBuilder : IDomainEventProjectionBuilder<ShipEvents.DockedInPort, ShipEventItem, ShipInformationProjectionKey>
     {
         private readonly IRepository<ShipInformation> _repository;
 
@@ -57,7 +59,7 @@ public class ShipInformationProjections
         }
     }
 
-    public class ShipLoadedBuilder : IDomainEventProjectionBuilder<ShipEvents.Loaded, ShipEventItem>
+    public class ShipLoadedBuilder : IDomainEventProjectionBuilder<ShipEvents.Loaded, ShipEventItem, ShipInformationProjectionKey>
     {
         private readonly IRepository<ShipInformation> _repository;
 

@@ -1,20 +1,22 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
-internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProjectionBuilder<TEventItem>
+internal class DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey> : IEventItemProjectionBuilder<TEventItem, TProjectionKey>
     where TEventItem : EventItem
+    where TProjectionKey : IProjectionKey
 {
-    private readonly ILogger<DefaultDomainEventProjectionBuilder<TEventItem>> _logger;
+    private readonly ILogger<DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey>> _logger;
     private readonly IServiceProvider _serviceProvider;
 
     public DefaultDomainEventProjectionBuilder(
-        ILogger<DefaultDomainEventProjectionBuilder<TEventItem>> logger,
+        ILogger<DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey>> logger,
         IServiceProvider serviceProvider)
     {
         _logger = logger;
@@ -29,8 +31,11 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProje
 
         if (handlers.Any() is false)
         {
-            _logger.LogDebug("No IDomainEventProjectionBuilder<{EventType}> found",
-                payloadTypeName);
+            if (payloadTypeName is not nameof(AtomicEvent))
+            {
+                _logger.LogDebug("No IDomainEventProjectionBuilder<{EventType}> found",
+                    payloadTypeName);
+            }
 
             return;
         }
@@ -59,5 +64,5 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem> : IEventItemProje
     }
 
     private static Type BuildEventProjectionHandlerType(TEventItem eventSource) =>
-        typeof(IDomainEventProjectionBuilder<,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType());
+        typeof(IDomainEventProjectionBuilder<,,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType(), typeof(TProjectionKey));
 }

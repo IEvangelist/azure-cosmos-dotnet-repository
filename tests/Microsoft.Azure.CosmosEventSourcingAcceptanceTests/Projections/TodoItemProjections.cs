@@ -11,35 +11,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Projections;
 
+public record TodoItemProjectionsKey : IProjectionKey;
+
 public static class TodoItemProjections
 {
-    public class Created : IDomainEventProjectionBuilder<TodoListCreated, TodoListEventItem>
-    {
-        private readonly IWriteOnlyRepository<TodoListItem> _repository;
-        private readonly ILogger<Created> _logger;
-
-        public Created(
-            IWriteOnlyRepository<TodoListItem> repository,
-            ILogger<Created> logger)
-        {
-            _repository = repository;
-            _logger = logger;
-        }
-
-        public async ValueTask HandleAsync(
-            TodoListCreated created,
-            TodoListEventItem eventItem,
-            CancellationToken cancellationToken = default)
-        {
-            _logger.LogInformation("TodoListCreated being processed with ID {TodoId} and name {TodoName}",
-                eventItem.Id,
-                created.Name);
-
-            await _repository.CreateAsync(new TodoListItem(created.Name), cancellationToken);
-        }
-    }
-
-    public class Added : IDomainEventProjectionBuilder<TodoItemAdded, TodoListEventItem>
+    public class Added : IDomainEventProjectionBuilder<TodoItemAdded, TodoListEventItem, TodoItemProjectionsKey>
     {
         private readonly IWriteOnlyRepository<TodoCosmosItem> _repository;
         private readonly ILogger<Added> _logger;
@@ -69,7 +45,7 @@ public static class TodoItemProjections
         }
     }
 
-    public class Completed : IDomainEventProjectionBuilder<TodoItemCompleted, TodoListEventItem>
+    public class Completed : IDomainEventProjectionBuilder<TodoItemCompleted, TodoListEventItem, TodoItemProjectionsKey>
     {
         private readonly IRepository<TodoCosmosItem> _repository;
         private readonly ILogger<Completed> _logger;
