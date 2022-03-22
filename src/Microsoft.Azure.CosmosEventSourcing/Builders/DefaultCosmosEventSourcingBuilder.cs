@@ -41,10 +41,10 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
 
 
     public ICosmosEventSourcingBuilder AddDefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey>(
-        Action<EventSourcingProcessorOptions<TEventItem>>? optionsAction = null)
+        Action<EventSourcingProcessorOptions<TEventItem, TProjectionKey>>? optionsAction = null)
         where TEventItem : EventItem where TProjectionKey : IProjectionKey
     {
-        EventSourcingProcessorOptions<TEventItem> options = new();
+        EventSourcingProcessorOptions<TEventItem, TProjectionKey> options = new();
         optionsAction?.Invoke(options);
 
         _services.AddSingleton(options);

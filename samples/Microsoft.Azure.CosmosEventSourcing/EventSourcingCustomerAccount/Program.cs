@@ -39,6 +39,16 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
                     Environment.MachineName;
             });
 
+    eventSourcingBuilder
+        .AddEventItemProjectionBuilder<CustomerAccountEventItem,
+            WelcomeLetterProjectionKey,
+            WelcomeLetterProjection>(
+            options =>
+            {
+                options.ProcessorName = "welcome-letter-builder";
+                options.InstanceName = Environment.MachineName;
+            });
+
     eventSourcingBuilder.AddDomainEventTypes(typeof(Program).Assembly);
 });
 
