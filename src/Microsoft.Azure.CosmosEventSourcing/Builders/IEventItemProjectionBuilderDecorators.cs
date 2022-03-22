@@ -20,9 +20,9 @@ public interface IEventItemProjectionBuilderDecorators<TEventItem, TProjectionKe
     ICosmosEventSourcingBuilder EventSourcingBuilder { get; }
 
     /// <summary>
-    ///
+    /// Decorators an instance of an <see cref="IEventItemProjectionBuilder{TEventItem,TProjectionKey}"/> with an implementation that will catch any exceptions and write them
+    /// to a dead letter container.
     /// </summary>
-    /// <returns></returns>
     IEventItemProjectionBuilderDecorators<TEventItem, TProjectionKey> WithDeadLetterDecorator(
         Action<DeadLetterOptions<TEventItem, TProjectionKey>>? optionsAction = null);
 }
