@@ -55,11 +55,11 @@ public class DeadLetteredEventItem<TEventItem> : Item
     /// <summary>
     /// Creates an instance of an <see cref="DeadLetteredEventItem{TEventItem}"/>
     /// </summary>
-    /// <param name="eventItem"></param>
-    /// <param name="processorName"></param>
-    /// <param name="instanceName"></param>
-    /// <param name="projectionKeyName"></param>
-    /// <param name="exception"></param>
+    /// <param name="eventItem">The event item that failed processing.</param>
+    /// <param name="processorName">The name of the processor that failed.</param>
+    /// <param name="instanceName">The instance name that failed.</param>
+    /// <param name="projectionKeyName">The name of the projection key used.</param>
+    /// <param name="exception">The exception that caused the failure.</param>
     public DeadLetteredEventItem(
         TEventItem eventItem,
         string processorName,
@@ -67,7 +67,6 @@ public class DeadLetteredEventItem<TEventItem> : Item
         string projectionKeyName,
         ExceptionDetails exception)
     {
-        //TODO: finish XML comments.
         EventItem = eventItem;
         ProcessorName = processorName;
         InstanceName = instanceName;
