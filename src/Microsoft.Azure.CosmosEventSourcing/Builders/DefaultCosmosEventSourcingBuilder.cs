@@ -22,12 +22,12 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         _services = services;
 
     public IEventItemProjectionBuilderDecorators<TEventItem, TProjectionKey> AddEventItemProjectionBuilder<TEventItem,TProjectionKey, TProjectionBuilder>(
-        Action<EventSourcingProcessorOptions<TEventItem>>? optionsAction = null)
+        Action<EventSourcingProcessorOptions<TEventItem, TProjectionKey>>? optionsAction = null)
         where TEventItem : EventItem
         where TProjectionBuilder : class, IEventItemProjectionBuilder<TEventItem, TProjectionKey>
         where TProjectionKey : IProjectionKey
     {
-        EventSourcingProcessorOptions<TEventItem> options = new();
+        EventSourcingProcessorOptions<TEventItem, TProjectionKey> options = new();
         optionsAction?.Invoke(options);
 
         _services.AddSingleton(options);
