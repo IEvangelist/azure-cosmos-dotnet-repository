@@ -29,7 +29,7 @@ services.AddCosmosEventSourcing(eventSourcingBuilder =>
 
     eventSourcingBuilder.AddDomainEventTypes();
     eventSourcingBuilder.AddDomainEventProjectionHandlers();
-    eventSourcingBuilder.AddDefaultDomainEventProjectionBuilder<ShipEventItem, ShipInformationProjectionKey>(options =>
+    eventSourcingBuilder.AddDefaultDomainEventProjection<ShipEventItem, ShipInformationProjectionKey>(options =>
     {
         options.ProcessorName = "shipping-demo";
         options.InstanceName = Environment.MachineName;

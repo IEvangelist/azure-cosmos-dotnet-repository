@@ -12,7 +12,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 /// <typeparam name="TEvent">The type of <see cref="IDomainEvent"/></typeparam>
 /// <typeparam name="TEventItem">The <see cref="EventItem"/>The event was part of</typeparam>
 /// <typeparam name="TProjectionKey">The key to use for this projection.</typeparam>
-public interface IDomainEventProjectionBuilder<in TEvent, in TEventItem, in TProjectionKey>
+public interface IDomainEventProjection<in TEvent, in TEventItem, in TProjectionKey>
     where TEvent : IDomainEvent
     where TEventItem : EventItem
     where TProjectionKey : IProjectionKey

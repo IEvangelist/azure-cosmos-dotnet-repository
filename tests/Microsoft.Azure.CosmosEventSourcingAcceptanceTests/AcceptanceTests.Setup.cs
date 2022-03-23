@@ -69,21 +69,21 @@ public partial class AcceptanceTests
 
             builder.AddDomainEventTypes(typeof(AcceptanceTests).Assembly);
 
-            builder.AddDefaultDomainEventProjectionBuilder<TodoListEventItem, TodoItemProjectionsKey>(options =>
+            builder.AddDefaultDomainEventProjection<TodoListEventItem, TodoItemProjectionsKey>(options =>
             {
                 options.ProcessorName = "event-based-projections";
                 options.InstanceName = Environment.MachineName;
                 options.PollInterval = TimeSpan.FromMilliseconds(500);
             });
 
-            builder.AddDefaultDomainEventProjectionBuilder<TodoListEventItem, CompletedProjectionsKey>(options =>
+            builder.AddDefaultDomainEventProjection<TodoListEventItem, CompletedProjectionsKey>(options =>
             {
                 options.ProcessorName = "completed-event-based-projections";
                 options.InstanceName = Environment.MachineName;
                 options.PollInterval = TimeSpan.FromMilliseconds(500);
             });
 
-            builder.AddEventItemProjectionBuilder<TodoListEventItem, DefaultKey, TodoListEventItemProjectionBuilder>(
+            builder.AddEventItemProjection<TodoListEventItem, DefaultKey, TodoListEventItemProjection>(
                 options =>
                 {
                     options.ProcessorName = "default-projections";

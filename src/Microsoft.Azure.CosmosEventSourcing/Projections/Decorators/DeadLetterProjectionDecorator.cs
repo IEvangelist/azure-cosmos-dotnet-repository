@@ -9,28 +9,28 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Projections.Decorators;
 
-internal class DeadLetterProjectionBuilderDecorator<TEventItem, TProjectionKey> :
-    IEventItemProjectionBuilder<TEventItem, TProjectionKey>
+internal class DeadLetterProjectionDecorator<TEventItem, TProjectionKey> :
+    IEventItemProjection<TEventItem, TProjectionKey>
     where TEventItem : EventItem
     where TProjectionKey : IProjectionKey
 
 {
-    private readonly ILogger<DeadLetterProjectionBuilderDecorator<TEventItem, TProjectionKey>> _logger;
+    private readonly ILogger<DeadLetterProjectionDecorator<TEventItem, TProjectionKey>> _logger;
     private readonly EventSourcingProcessorOptions<TEventItem, TProjectionKey> _processorOptions;
-    private readonly IEventItemProjectionBuilder<TEventItem, TProjectionKey> _innerBuilder;
+    private readonly IEventItemProjection<TEventItem, TProjectionKey> _inner;
     private readonly DeadLetterOptions<TEventItem, TProjectionKey> _options;
     private readonly IWriteOnlyRepository<DeadLetteredEventItem<TEventItem>> _repository;
 
-    public DeadLetterProjectionBuilderDecorator(
-        ILogger<DeadLetterProjectionBuilderDecorator<TEventItem, TProjectionKey>> logger,
+    public DeadLetterProjectionDecorator(
+        ILogger<DeadLetterProjectionDecorator<TEventItem, TProjectionKey>> logger,
         EventSourcingProcessorOptions<TEventItem, TProjectionKey> processorOptions,
-        IEventItemProjectionBuilder<TEventItem, TProjectionKey> innerBuilder,
+        IEventItemProjection<TEventItem, TProjectionKey> inner,
         DeadLetterOptions<TEventItem, TProjectionKey> options,
         IWriteOnlyRepository<DeadLetteredEventItem<TEventItem>> repository)
     {
         _logger = logger;
         _processorOptions = processorOptions;
-        _innerBuilder = innerBuilder;
+        _inner = inner;
         _options = options;
         _repository = repository;
     }
@@ -39,7 +39,7 @@ internal class DeadLetterProjectionBuilderDecorator<TEventItem, TProjectionKey> 
     {
         try
         {
-            await _innerBuilder.ProjectAsync(eventItem, cancellationToken);
+            await _inner.ProjectAsync(eventItem, cancellationToken);
         }
         catch (Exception e)
         {

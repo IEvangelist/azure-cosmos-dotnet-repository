@@ -14,7 +14,7 @@ The most basic form of a projection is to build another model from the events yo
 If you haven't already followed the [Getting Started - Guide](../getting-started/guide/00-overview.md), it may be best to give that a read, as this example follow's on from it.
 :::
 
-Taking the example of the `CustomerAccount` let's say that you wanted to send a welcome letter once a customer has provided there address details. This can be done by processing that addition of the `CustomerAccountAddressAssigned` event. Let's see an example implementation of an `IEventItemProjectionBuilder<TEventItem, TProjectionKey>` below.
+Taking the example of the `CustomerAccount` let's say that you wanted to send a welcome letter once a customer has provided there address details. This can be done by processing that addition of the `CustomerAccountAddressAssigned` event. Let's see an example implementation of an `IEventItemProjection<TEventItem, TProjectionKey>` below.
 
 ```csharp
 using EventSourcingCustomerAccount.Events;
@@ -29,7 +29,7 @@ namespace EventSourcingCustomerAccount.Projections;
 public record WelcomeLetterProjectionKey : IProjectionKey;
 
 public class WelcomeLetterProjection :
-    IEventItemProjectionBuilder<CustomerAccountEventItem, WelcomeLetterProjectionKey>
+    IEventItemProjection<CustomerAccountEventItem, WelcomeLetterProjectionKey>
 {
     private readonly IReadOnlyRepository<CustomerAccountReadItem> _repository;
     private readonly IPostalService _postalService;
@@ -96,7 +96,7 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
     // Other config excluded for brevity
 
     eventSourcingBuilder
-        .AddEventItemProjectionBuilder<CustomerAccountEventItem,
+        .AddEventItemProjection<CustomerAccountEventItem,
             WelcomeLetterProjectionKey,
             WelcomeLetterProjection>(
             options =>
@@ -118,7 +118,7 @@ There are two keys point to take not of here. The fist is the processor name, th
 
 ## Handling Failures
 
-It is vitally important that exceptions thrown when processing an event from the change feed is handled properly by the consumer. Depending on the criticality of the role your projection builder is playing determines how you need to handle the failure of processing an event. 
+It is vitally important that exceptions thrown when processing an event from the change feed is handled properly by the consumer. Depending on the criticality of the role your projection is playing determines how you need to handle the failure of processing an event. 
 
 
 ```csharp

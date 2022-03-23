@@ -21,26 +21,26 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
     public DefaultCosmosEventSourcingBuilder(IServiceCollection services) =>
         _services = services;
 
-    public IEventItemProjectionBuilderDecorators<TEventItem, TProjectionKey> AddEventItemProjectionBuilder<TEventItem,TProjectionKey, TProjectionBuilder>(
+    public IEventItemProjectionBuilder<TEventItem, TProjectionKey> AddEventItemProjection<TEventItem,TProjectionKey, TProjection>(
         Action<EventSourcingProcessorOptions<TEventItem, TProjectionKey>>? optionsAction = null)
         where TEventItem : EventItem
-        where TProjectionBuilder : class, IEventItemProjectionBuilder<TEventItem, TProjectionKey>
+        where TProjection : class, IEventItemProjection<TEventItem, TProjectionKey>
         where TProjectionKey : IProjectionKey
     {
         EventSourcingProcessorOptions<TEventItem, TProjectionKey> options = new();
         optionsAction?.Invoke(options);
 
         _services.AddSingleton(options);
-        _services.AddSingleton<IEventItemProjectionBuilder<TEventItem, TProjectionKey>, TProjectionBuilder>();
+        _services.AddSingleton<IEventItemProjection<TEventItem, TProjectionKey>, TProjection>();
         _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventItem, TProjectionKey>>();
 
-        return new EventItemProjectionBuilderDecorator<TEventItem, TProjectionKey>(
+        return new EventItemProjectionBuilder<TEventItem, TProjectionKey>(
             _services,
             this);
     }
 
 
-    public ICosmosEventSourcingBuilder AddDefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey>(
+    public ICosmosEventSourcingBuilder AddDefaultDomainEventProjection<TEventItem, TProjectionKey>(
         Action<EventSourcingProcessorOptions<TEventItem, TProjectionKey>>? optionsAction = null)
         where TEventItem : EventItem where TProjectionKey : IProjectionKey
     {
@@ -49,7 +49,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
 
         _services.AddSingleton(options);
         _services
-            .AddSingleton<IEventItemProjectionBuilder<TEventItem, TProjectionKey>, DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey>>();
+            .AddSingleton<IEventItemProjection<TEventItem, TProjectionKey>, DefaultDomainEventProjection<TEventItem, TProjectionKey>>();
         _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventItem, TProjectionKey>>();
         return this;
     }
@@ -81,7 +81,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         }
 
         _services.Scan(x => x.FromAssemblies(assemblies)
-            .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventProjectionBuilder<,,>)))
+            .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventProjection<,,>)))
             .AsImplementedInterfaces()
             .WithSingletonLifetime());
 

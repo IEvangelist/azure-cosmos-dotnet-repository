@@ -11,12 +11,12 @@ namespace EventSourcingCustomerAccount.Projections;
 
 public record ReadProjectionKey : IProjectionKey;
 
-public class CustomerAccountReadProjectionBuilder :
-    IEventItemProjectionBuilder<CustomerAccountEventItem, ReadProjectionKey>
+public class CustomerAccountReadProjection :
+    IEventItemProjection<CustomerAccountEventItem, ReadProjectionKey>
 {
     private readonly IRepository<CustomerAccountReadItem> _repository;
 
-    public CustomerAccountReadProjectionBuilder(
+    public CustomerAccountReadProjection(
         IRepository<CustomerAccountReadItem> repository) =>
         _repository = repository;
 

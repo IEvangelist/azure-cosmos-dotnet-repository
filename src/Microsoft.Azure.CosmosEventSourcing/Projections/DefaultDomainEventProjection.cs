@@ -8,15 +8,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
-internal class DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey> : IEventItemProjectionBuilder<TEventItem, TProjectionKey>
+internal class DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEventItemProjection<TEventItem, TProjectionKey>
     where TEventItem : EventItem
     where TProjectionKey : IProjectionKey
 {
-    private readonly ILogger<DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey>> _logger;
+    private readonly ILogger<DefaultDomainEventProjection<TEventItem, TProjectionKey>> _logger;
     private readonly IServiceProvider _serviceProvider;
 
-    public DefaultDomainEventProjectionBuilder(
-        ILogger<DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey>> logger,
+    public DefaultDomainEventProjection(
+        ILogger<DefaultDomainEventProjection<TEventItem, TProjectionKey>> logger,
         IServiceProvider serviceProvider)
     {
         _logger = logger;
@@ -33,7 +33,7 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey> :
         {
             if (payloadTypeName is not nameof(AtomicEvent))
             {
-                _logger.LogDebug("No IDomainEventProjectionBuilder<{EventType}> found",
+                _logger.LogDebug("No IDomainEventProjection<{EventType}> found",
                     payloadTypeName);
             }
 
@@ -64,5 +64,5 @@ internal class DefaultDomainEventProjectionBuilder<TEventItem, TProjectionKey> :
     }
 
     private static Type BuildEventProjectionHandlerType(TEventItem eventSource) =>
-        typeof(IDomainEventProjectionBuilder<,,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType(), typeof(TProjectionKey));
+        typeof(IDomainEventProjection<,,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType(), typeof(TProjectionKey));
 }

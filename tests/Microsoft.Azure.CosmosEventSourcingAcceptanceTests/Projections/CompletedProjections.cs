@@ -12,7 +12,7 @@ namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Projections;
 
 public record CompletedProjectionsKey : IProjectionKey;
 
-public class CompletedProjections : IDomainEventProjectionBuilder<TodoItemCompleted, TodoListEventItem, CompletedProjectionsKey>
+public class CompletedProjections : IDomainEventProjection<TodoItemCompleted, TodoListEventItem, CompletedProjectionsKey>
 {
     private readonly ILogger<CompletedProjections> _logger;
     public static int Invocations { get; set; }

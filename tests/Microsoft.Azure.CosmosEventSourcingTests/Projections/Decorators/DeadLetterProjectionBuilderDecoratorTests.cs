@@ -43,7 +43,7 @@ public class DeadLetterProjectionBuilderDecoratorTests
 
     public record DecoratorProjectionKey : IProjectionKey;
 
-    public class DecoratorProjectionBuilder : IEventItemProjectionBuilder<DecoratorEventItem, DecoratorProjectionKey>
+    public class DecoratorProjection : IEventItemProjection<DecoratorEventItem, DecoratorProjectionKey>
     {
         public ValueTask ProjectAsync(DecoratorEventItem eventItem, CancellationToken cancellationToken = default)
         {
@@ -66,7 +66,7 @@ public class DeadLetterProjectionBuilderDecoratorTests
                         "dead-letter");
             });
 
-            es.AddEventItemProjectionBuilder<DecoratorEventItem, DecoratorProjectionKey, DecoratorProjectionBuilder>(
+            es.AddEventItemProjection<DecoratorEventItem, DecoratorProjectionKey, DecoratorProjection>(
                     options =>
                     {
                         options.ProcessorName = "a";
@@ -85,8 +85,8 @@ public class DeadLetterProjectionBuilderDecoratorTests
             (InMemoryRepository<DeadLetteredEventItem<DecoratorEventItem>>)
             provider.GetRequiredService<IWriteOnlyRepository<DeadLetteredEventItem<DecoratorEventItem>>>();
 
-        IEventItemProjectionBuilder<DecoratorEventItem, DecoratorProjectionKey> projection =
-            provider.GetRequiredService<IEventItemProjectionBuilder<DecoratorEventItem, DecoratorProjectionKey>>();
+        IEventItemProjection<DecoratorEventItem, DecoratorProjectionKey> projection =
+            provider.GetRequiredService<IEventItemProjection<DecoratorEventItem, DecoratorProjectionKey>>();
 
         DecoratorEventItem failedEventItem = new()
         {

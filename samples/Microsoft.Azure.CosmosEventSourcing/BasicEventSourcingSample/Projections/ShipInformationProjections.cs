@@ -13,11 +13,11 @@ public record ShipInformationProjectionKey : IProjectionKey;
 
 public class ShipInformationProjections
 {
-    public class ShipCreatedBuilder : IDomainEventProjectionBuilder<ShipEvents.ShipCreated,ShipEventItem, ShipInformationProjectionKey>
+    public class ShipCreated : IDomainEventProjection<ShipEvents.ShipCreated,ShipEventItem, ShipInformationProjectionKey>
     {
         private readonly IRepository<ShipInformation> _repository;
 
-        public ShipCreatedBuilder(IRepository<ShipInformation> repository) =>
+        public ShipCreated(IRepository<ShipInformation> repository) =>
             _repository = repository;
 
         public async ValueTask HandleAsync(
@@ -34,11 +34,11 @@ public class ShipInformationProjections
         }
     }
 
-    public class ShipDockedBuilder : IDomainEventProjectionBuilder<ShipEvents.DockedInPort, ShipEventItem, ShipInformationProjectionKey>
+    public class ShipDocked : IDomainEventProjection<ShipEvents.DockedInPort, ShipEventItem, ShipInformationProjectionKey>
     {
         private readonly IRepository<ShipInformation> _repository;
 
-        public ShipDockedBuilder(IRepository<ShipInformation> repository) =>
+        public ShipDocked(IRepository<ShipInformation> repository) =>
             _repository = repository;
 
         public async ValueTask HandleAsync(
@@ -59,11 +59,11 @@ public class ShipInformationProjections
         }
     }
 
-    public class ShipLoadedBuilder : IDomainEventProjectionBuilder<ShipEvents.Loaded, ShipEventItem, ShipInformationProjectionKey>
+    public class ShipLoaded : IDomainEventProjection<ShipEvents.Loaded, ShipEventItem, ShipInformationProjectionKey>
     {
         private readonly IRepository<ShipInformation> _repository;
 
-        public ShipLoadedBuilder(IRepository<ShipInformation> repository) =>
+        public ShipLoaded(IRepository<ShipInformation> repository) =>
             _repository = repository;
 
         public async ValueTask HandleAsync(

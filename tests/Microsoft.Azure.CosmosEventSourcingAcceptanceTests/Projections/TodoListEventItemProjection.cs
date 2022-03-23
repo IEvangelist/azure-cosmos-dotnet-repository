@@ -13,15 +13,15 @@ namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Projections;
 
 public record DefaultKey : IProjectionKey;
 
-public class TodoListEventItemProjectionBuilder : IEventItemProjectionBuilder<TodoListEventItem, DefaultKey>
+public class TodoListEventItemProjection : IEventItemProjection<TodoListEventItem, DefaultKey>
 {
 
     private readonly IWriteOnlyRepository<TodoListItem> _repository;
-    private readonly ILogger<TodoListEventItemProjectionBuilder> _logger;
+    private readonly ILogger<TodoListEventItemProjection> _logger;
 
-    public TodoListEventItemProjectionBuilder(
+    public TodoListEventItemProjection(
         IWriteOnlyRepository<TodoListItem> repository,
-        ILogger<TodoListEventItemProjectionBuilder> logger)
+        ILogger<TodoListEventItemProjection> logger)
     {
         _repository = repository;
         _logger = logger;

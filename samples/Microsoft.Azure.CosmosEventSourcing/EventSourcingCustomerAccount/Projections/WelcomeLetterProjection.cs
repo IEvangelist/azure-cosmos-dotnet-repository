@@ -13,7 +13,7 @@ namespace EventSourcingCustomerAccount.Projections;
 public record WelcomeLetterProjectionKey : IProjectionKey;
 
 public class WelcomeLetterProjection :
-    IEventItemProjectionBuilder<CustomerAccountEventItem, WelcomeLetterProjectionKey>
+    IEventItemProjection<CustomerAccountEventItem, WelcomeLetterProjectionKey>
 {
     private readonly IReadOnlyRepository<CustomerAccountReadItem> _repository;
     private readonly IPostalService _postalService;
