@@ -22,6 +22,7 @@ internal class DomainEventConverter : JsonConverter
     {
         JToken? j = JToken.ReadFrom(reader);
         string? type = j["eventName"]?.ToString();
+        type ??= j["EventName"]?.ToString();
         Type payloadType = ConvertableTypes.First(x => x.Name == type);
         return j.ToObject(payloadType);
     }

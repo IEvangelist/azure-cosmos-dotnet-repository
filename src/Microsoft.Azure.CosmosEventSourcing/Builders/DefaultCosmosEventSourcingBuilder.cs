@@ -21,7 +21,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
     public DefaultCosmosEventSourcingBuilder(IServiceCollection services) =>
         _services = services;
 
-    public ICosmosEventSourcingBuilder AddEventItemProjectionBuilder<TEventItem,TProjectionKey, TProjectionBuilder>(
+    public IEventItemProjectionBuilderDecorators<TEventItem, TProjectionKey> AddEventItemProjectionBuilder<TEventItem,TProjectionKey, TProjectionBuilder>(
         Action<EventSourcingProcessorOptions<TEventItem, TProjectionKey>>? optionsAction = null)
         where TEventItem : EventItem
         where TProjectionBuilder : class, IEventItemProjectionBuilder<TEventItem, TProjectionKey>
@@ -33,7 +33,10 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         _services.AddSingleton(options);
         _services.AddSingleton<IEventItemProjectionBuilder<TEventItem, TProjectionKey>, TProjectionBuilder>();
         _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventItem, TProjectionKey>>();
-        return this;
+
+        return new EventItemProjectionBuilderDecorator<TEventItem, TProjectionKey>(
+            _services,
+            this);
     }
 
 

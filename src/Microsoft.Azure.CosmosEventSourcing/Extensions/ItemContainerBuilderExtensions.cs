@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Items;
+using Microsoft.Azure.CosmosEventSourcing.Projections.Decorators;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Builders;
 
@@ -52,6 +53,30 @@ public static class ItemContainerBuilderExtensions
         Action<ContainerOptionsBuilder>? containerOptionsBuilder = default)
         where TProjection : IItem =>
         containerBuilder.Configure<TProjection>(options =>
+        {
+            options.WithContainer(containerName);
+            options.WithPartitionKey(partitionKey);
+            containerOptionsBuilder?.Invoke(options);
+        });
+
+    /// <summary>
+    /// Configures where a <see cref="ConfigureDeadLetteredEventItemStore{TEventItem,TDeadLetteredEventItem}"/> is stored.
+    /// </summary>
+    /// <param name="containerBuilder">The builder used to customise a containers.</param>
+    /// <param name="containerName">The name of the container to store the events.</param>
+    /// <param name="partitionKey">The partition key used to partition this projection.</param>
+    /// <param name="containerOptionsBuilder">The options to build the container.</param>
+    /// <typeparam name="TEventItem">The <see cref="EventItem"/> that this item will hold dead lettered messages for</typeparam>
+    /// <typeparam name="TDeadLetteredEventItem">The type of <seealso cref="DeadLetteredEventItem{TEventItem}"/></typeparam>
+    /// <returns></returns>
+    public static IItemContainerBuilder ConfigureDeadLetteredEventItemStore<TEventItem, TDeadLetteredEventItem>(
+        this IItemContainerBuilder containerBuilder,
+        string containerName,
+        string partitionKey = CosmosEventSourcingPartitionKeys.Default,
+        Action<ContainerOptionsBuilder>? containerOptionsBuilder = default)
+        where TEventItem : EventItem
+        where TDeadLetteredEventItem : DeadLetteredEventItem<TEventItem> =>
+        containerBuilder.Configure<TDeadLetteredEventItem>(options =>
         {
             options.WithContainer(containerName);
             options.WithPartitionKey(partitionKey);

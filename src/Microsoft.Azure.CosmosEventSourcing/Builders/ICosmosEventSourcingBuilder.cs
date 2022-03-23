@@ -25,7 +25,7 @@ public interface ICosmosEventSourcingBuilder
     /// <typeparam name="TProjectionBuilder">The custom type of <see cref="IEventItemProjectionBuilder{TEventItem, TProjectionKey}"/></typeparam>
     /// <typeparam name="TProjectionKey">The key that identifies this projection.</typeparam>
     /// <returns></returns>
-    public ICosmosEventSourcingBuilder AddEventItemProjectionBuilder<TEventItem, TProjectionKey, TProjectionBuilder>(
+    public IEventItemProjectionBuilderDecorators<TEventItem, TProjectionKey> AddEventItemProjectionBuilder<TEventItem, TProjectionKey, TProjectionBuilder>(
         Action<EventSourcingProcessorOptions<TEventItem, TProjectionKey>>? optionsAction = null)
         where TEventItem : EventItem
         where TProjectionBuilder : class, IEventItemProjectionBuilder<TEventItem, TProjectionKey>
