@@ -32,7 +32,7 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
     eventSourcingBuilder.AddDomainEventTypes(typeof(JobsList).Assembly);
     eventSourcingBuilder.AddDomainEventProjectionHandlers(typeof(JobsList).Assembly);
 
-    eventSourcingBuilder.AddDefaultDomainEventProjectionBuilder<JobsListEventItem, JobsListProjectionKey>(options =>
+    eventSourcingBuilder.AddDefaultDomainEventProjection<JobsListEventItem, JobsListProjectionKey>(options =>
     {
         options.InstanceName = appName;
         options.ProcessorName = Environment.MachineName;

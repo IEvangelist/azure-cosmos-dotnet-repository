@@ -15,7 +15,7 @@ public record TodoItemProjectionsKey : IProjectionKey;
 
 public static class TodoItemProjections
 {
-    public class Added : IDomainEventProjectionBuilder<TodoItemAdded, TodoListEventItem, TodoItemProjectionsKey>
+    public class Added : IDomainEventProjection<TodoItemAdded, TodoListEventItem, TodoItemProjectionsKey>
     {
         private readonly IWriteOnlyRepository<TodoCosmosItem> _repository;
         private readonly ILogger<Added> _logger;
@@ -45,7 +45,7 @@ public static class TodoItemProjections
         }
     }
 
-    public class Completed : IDomainEventProjectionBuilder<TodoItemCompleted, TodoListEventItem, TodoItemProjectionsKey>
+    public class Completed : IDomainEventProjection<TodoItemCompleted, TodoListEventItem, TodoItemProjectionsKey>
     {
         private readonly IRepository<TodoCosmosItem> _repository;
         private readonly ILogger<Completed> _logger;

@@ -10,7 +10,7 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace EventSourcingJobsTracker.Infrastructure.Projections;
 
-public class JobsListJobCompletedProjection : IDomainEventProjectionBuilder<JobCompletedEvent, JobsListEventItem, JobsListProjectionKey>
+public class JobsListJobCompletedProjection : IDomainEventProjection<JobCompletedEvent, JobsListEventItem, JobsListProjectionKey>
 {
     private readonly IRepository<JobItem> _repository;
 

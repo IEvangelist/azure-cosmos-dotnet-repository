@@ -19,7 +19,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
     private readonly ICosmosContainerService _containerService;
     private readonly ILeaseContainerProvider _leaseContainerProvider;
     private readonly ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> _logger;
-    private readonly IEventItemProjectionBuilder<TSourcedEvent, TProjectionKey> _projectionBuilder;
+    private readonly IEventItemProjection<TSourcedEvent, TProjectionKey> _projection;
     private ChangeFeedProcessor? _processor;
 
     public DefaultEventSourcingProcessor(
@@ -27,13 +27,13 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
         ICosmosContainerService containerService,
         ILeaseContainerProvider leaseContainerProvider,
         ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> logger,
-        IEventItemProjectionBuilder<TSourcedEvent, TProjectionKey> projectionBuilder)
+        IEventItemProjection<TSourcedEvent, TProjectionKey> projection)
     {
         _options = options;
         _containerService = containerService;
         _leaseContainerProvider = leaseContainerProvider;
         _logger = logger;
-        _projectionBuilder = projectionBuilder;
+        _projection = projection;
     }
 
     public async Task StartAsync()
@@ -80,7 +80,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
         {
             try
             {
-                await _projectionBuilder.ProjectAsync(change, cancellationToken);
+                await _projection.ProjectAsync(change, cancellationToken);
             }
             catch (Exception e)
             {

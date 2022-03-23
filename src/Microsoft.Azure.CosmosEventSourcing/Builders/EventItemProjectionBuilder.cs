@@ -9,14 +9,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Builders;
 
-internal class EventItemProjectionBuilderDecorator<TEventItem, TProjectionKey> :
-    IEventItemProjectionBuilderDecorators<TEventItem, TProjectionKey>
+internal class EventItemProjectionBuilder<TEventItem, TProjectionKey> :
+    IEventItemProjectionBuilder<TEventItem, TProjectionKey>
     where TEventItem : EventItem
     where TProjectionKey : IProjectionKey
 {
     private readonly IServiceCollection _services;
 
-    public EventItemProjectionBuilderDecorator(
+    public EventItemProjectionBuilder(
         IServiceCollection services,
         ICosmosEventSourcingBuilder eventSourcingBuilder)
     {
@@ -25,11 +25,11 @@ internal class EventItemProjectionBuilderDecorator<TEventItem, TProjectionKey> :
     }
 
     public ICosmosEventSourcingBuilder EventSourcingBuilder { get; }
-    public IEventItemProjectionBuilderDecorators<TEventItem, TProjectionKey> WithDeadLetterDecorator(
+    public IEventItemProjectionBuilder<TEventItem, TProjectionKey> WithDeadLetterDecorator(
         Action<DeadLetterOptions<TEventItem, TProjectionKey>>? optionsAction = null)
     {
-        _services.Decorate<IEventItemProjectionBuilder<TEventItem, TProjectionKey>,
-                DeadLetterProjectionBuilderDecorator<TEventItem, TProjectionKey>>();
+        _services.Decorate<IEventItemProjection<TEventItem, TProjectionKey>,
+                DeadLetterProjectionDecorator<TEventItem, TProjectionKey>>();
 
         DeadLetterOptions<TEventItem, TProjectionKey> options = new();
         optionsAction?.Invoke(options);

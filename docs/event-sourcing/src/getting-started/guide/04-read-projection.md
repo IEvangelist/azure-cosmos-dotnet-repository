@@ -84,9 +84,9 @@ In the above example we are saying use a new container called `projections` and 
 
 ## Building the Read Model
 
-In order to build a projection the first step is to implement the interface`IEventItemProjectionBuilder<TEventItem, TProjectionKey>`. Once you have this you get the opportunity to process the events that you want. This follows a similar pattern to the `Apply(...)` methods used in the domain implementation. However, here we can only process the events that we care about for our current projection. See the example projection below.
+In order to build a projection the first step is to implement the interface`IEventItemProjection<TEventItem, TProjectionKey>`. Once you have this you get the opportunity to process the events that you want. This follows a similar pattern to the `Apply(...)` methods used in the domain implementation. However, here we can only process the events that we care about for our current projection. See the example projection below.
 
-> The TProjectionKey is used to allow multiple projection builders on the same host.
+> The TProjectionKey is used to allow multiple projections on the same host.
 
 ```csharp
 // Copyright (c) IEvangelist. All rights reserved.
@@ -102,12 +102,12 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace EventSourcingCustomerAccount.Projections;
 
-public class CustomerAccountReadProjectionBuilder :
-    IEventItemProjectionBuilder<CustomerAccountEventItem, ReadProjectionKey>
+public class CustomerAccountReadProjection :
+    IEventItemProjection<CustomerAccountEventItem, ReadProjectionKey>
 {
     private readonly IRepository<CustomerAccountReadItem> _repository;
 
-    public CustomerAccountReadProjectionBuilder(
+    public CustomerAccountReadProjection(
         IRepository<CustomerAccountReadItem> repository) =>
         _repository = repository;
 
@@ -156,9 +156,9 @@ public class CustomerAccountReadProjectionBuilder :
 }
 ```
 
-## Configuring Projection Builders
+## Configuring Projection
 
-Now we have our `IEventItemProjectionBuilder<CustomerAccountEventItem, ReadProjectionKey>` we need to tell the library to use it. This is done via again extending the `.AddCosmosEventSourcing(...)` implementation. See an example of this below.
+Now we have our `IEventItemProjection<CustomerAccountEventItem, ReadProjectionKey>` we need to tell the library to use it. This is done via again extending the `.AddCosmosEventSourcing(...)` implementation. See an example of this below.
 
 ```csharp
 builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
@@ -166,9 +166,9 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
     // Excluded for brevity
 
     eventSourcingBuilder
-        .AddEventItemProjectionBuilder<CustomerAccountEventItem,
+        .AddEventItemProjection<CustomerAccountEventItem,
             ReadProjectionKey,
-            CustomerAccountReadProjectionBuilder>(
+            CustomerAccountReadProjection>(
             options =>
             {
                 options.ProcessorName =
@@ -182,7 +182,7 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
 });
 ```
 
-The above example uses the `AddEventItemProjectionBuilder<TEventItem, TProjectionKey, TProjectionBuilder>(...)` method. Your first specify the `EventItem` type you are going to process and second the builder that will process the events.
+The above example uses the `AddEventItemProjection<TEventItem, TProjectionKey, TProjection>(...)` method. Your first specify the `EventItem` type you are going to process and second the builder that will process the events.
 
 You then specify a processor name, this is the description of the processors intent. The next is the instance name, this is the physical processor. This is used when load balancing changes across multiple nodes. You can read more on how the [Azure Cosmos DBs change feed processor library uses this here.](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/change-feed-processor)
 

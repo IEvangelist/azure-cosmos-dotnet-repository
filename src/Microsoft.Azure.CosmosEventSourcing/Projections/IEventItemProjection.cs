@@ -10,7 +10,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 /// </summary>
 /// <typeparam name="TEventItem"></typeparam>
 /// <typeparam name="TProjectionKey">A typed used to key this type of projection.</typeparam>
-public interface IEventItemProjectionBuilder<in TEventItem, TProjectionKey>
+public interface IEventItemProjection<in TEventItem, TProjectionKey>
     where TEventItem : EventItem
     where TProjectionKey : IProjectionKey
 {
