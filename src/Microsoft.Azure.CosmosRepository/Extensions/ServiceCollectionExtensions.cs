@@ -9,6 +9,7 @@ using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
+using Microsoft.Azure.CosmosRepository.InMemory;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -107,7 +108,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(InMemoryRepository<>))
                 .AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
                 .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
-                .AddSingleton(typeof(InMemoryChangeFeed<>));
+                .AddSingleton(typeof(InMemoryChangeFeed<>))
+                .AddSingleton(typeof(IItemStoreWriterStrategy<>), typeof(ItemStoreWriterStrategy<>))
+                .AddSingleton(typeof(IItemStore<>), typeof(ItemStore<>))
+                .AddSingleton<IItemStoreWriterStrategyStep<IItemWithTimeStamps>, ItemStoreWithTimeStampsWriterStrategyStep>();
 
             return services;
         }

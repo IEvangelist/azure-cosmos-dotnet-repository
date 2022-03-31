@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
 [Collection("CosmosTest")]
-public abstract class CosmosRepositoryAcceptanceTest
+public abstract class CosmosRepositoryInMemoryAcceptanceTest
 {
     protected const string ProductsInfoContainer = "products-info";
     protected const string DefaultPartitionKey = "/partitionKey";
@@ -29,7 +29,7 @@ public abstract class CosmosRepositoryAcceptanceTest
     protected readonly ServiceProvider _provider;
     protected readonly IRepository<Product> _productsRepository;
     protected readonly IRepository<Rating> _ratingsRepository;
-    protected readonly ILogger<CosmosRepositoryAcceptanceTest> _logger;
+    protected readonly ILogger<CosmosRepositoryInMemoryAcceptanceTest> _logger;
 
     protected EquivalencyAssertionOptions<Product> DefaultProductEquivalencyOptions(
         EquivalencyAssertionOptions<Product> options)
@@ -42,10 +42,9 @@ public abstract class CosmosRepositoryAcceptanceTest
         return options;
     }
 
-    protected CosmosRepositoryAcceptanceTest(
+    protected CosmosRepositoryInMemoryAcceptanceTest(
         ITestOutputHelper testOutputHelper,
-        Action<RepositoryOptions>? builderOptions = null,
-        Action<IServiceCollection>? serviceCollectionModifier = null)
+        Action<RepositoryOptions>? builderOptions = null)
     {
         ConfigurationBuilder config = new();
         config.AddEnvironmentVariables();
@@ -56,6 +55,8 @@ public abstract class CosmosRepositoryAcceptanceTest
         services.AddSingleton(builtConfig);
 
         services.AddCosmosRepository(builderOptions);
+        services.RemoveCosmosRepositories();
+        services.AddInMemoryCosmosRepository();
 
         services.AddCosmosRepositoryItemChangeFeedProcessors(typeof(CosmosRepositoryAcceptanceTest).Assembly);
 
@@ -71,13 +72,11 @@ public abstract class CosmosRepositoryAcceptanceTest
             options.SetMinimumLevel(LogLevel.Debug);
         });
 
-        serviceCollectionModifier?.Invoke(services);
-
         _provider = services.BuildServiceProvider();
 
         _productsRepository = _provider.GetRequiredService<IRepository<Product>>();
         _ratingsRepository = _provider.GetRequiredService<IRepository<Rating>>();
-        _logger = _provider.GetRequiredService<ILogger<CosmosRepositoryAcceptanceTest>>();
+        _logger = _provider.GetRequiredService<ILogger<CosmosRepositoryInMemoryAcceptanceTest>>();
     }
 
     internal ICosmosClientProvider GetClient() =>

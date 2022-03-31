@@ -14,6 +14,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
 using Microsoft.Azure.CosmosRepository.Extensions;
+using Microsoft.Azure.CosmosRepository.InMemory;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Paging;
 using Microsoft.Azure.CosmosRepository.Specification;
@@ -29,15 +30,22 @@ namespace Microsoft.Azure.CosmosRepository
         where TItem : IItem
     {
         private readonly ISpecificationEvaluator _specificationEvaluator;
+        private readonly IItemStore<TItem> _itemStore;
         internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         internal ConcurrentDictionary<string, string> Items { get; } = new();
         internal Action<ChangeFeedItemArgs<TItem>>? Changes { get; set; }
 
-        public InMemoryRepository() =>
+        public InMemoryRepository()
+        {
             _specificationEvaluator = new SpecificationEvaluator();
+            _itemStore = new ItemStore<TItem>(null!);
+        }
 
-        public InMemoryRepository(ISpecificationEvaluator specificationEvaluator) =>
+        public InMemoryRepository(ISpecificationEvaluator specificationEvaluator, IItemStore<TItem> itemStore)
+        {
             _specificationEvaluator = specificationEvaluator;
+            _itemStore = itemStore;
+        }
 
         private string SerializeItem(
             TItem item,
@@ -181,6 +189,8 @@ namespace Microsoft.Azure.CosmosRepository
             {
                 Changes?.Invoke(new ChangeFeedItemArgs<TItem>(value));
             }
+
+            await _itemStore.WriteAsync(value, value.Id, value.PartitionKey);
 
             return value;
         }
