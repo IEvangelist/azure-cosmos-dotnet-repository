@@ -14,7 +14,7 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
         ValueTask<TItem> ReadAsync(string id, string? partitionKey = null);
     }
 
-    internal class ItemStore<TItem> : IItemStore<TItem> where TItem : IItem
+    internal sealed class ItemStore<TItem> : IItemStore<TItem> where TItem : IItem
     {
         private readonly IItemStoreWriterStrategy<TItem> _writerStrategy;
 
