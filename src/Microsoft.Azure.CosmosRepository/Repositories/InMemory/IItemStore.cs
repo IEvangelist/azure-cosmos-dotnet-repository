@@ -45,9 +45,17 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
             return await ReadAsync(id, partitionKey);
         }
 
-        public ValueTask<TItem> ReadAsync(string id, string? partitionKey = null)
+        public ValueTask<TItem?> ReadAsync(string id, string? partitionKey = null)
         {
-            throw new NotImplementedException();
+            if (partitionKey is not null && 
+                _itemStore.ContainsKey(partitionKey))
+            {
+                return _itemStore[partitionKey].TryGetValue(id, out var item)
+                    ? item
+                    : null;
+            }
+            
+            return null;
         }
     }
 }

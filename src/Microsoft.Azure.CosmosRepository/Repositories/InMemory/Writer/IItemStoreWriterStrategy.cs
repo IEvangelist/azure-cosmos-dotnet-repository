@@ -15,10 +15,10 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
 {
     internal interface IItemStoreWriterStrategy<TItem> where TItem : IItem
     {
-        ValueTask<string> WriteAsync(TItem item, string id, string? partitionKey = null);
+        ValueTask<string> TransformAsync(TItem item, string id, string? partitionKey = null);
     }
 
-    internal class ItemStoreWriterStrategy<TItem> : IItemStoreWriterStrategy<TItem> where TItem : IItem
+    internal sealed class ItemStoreWriterStrategy<TItem> : IItemStoreWriterStrategy<TItem> where TItem : IItem
     {
         private readonly IServiceProvider _serviceProvider;
         public ItemStoreWriterStrategy(IServiceProvider serviceProvider)
@@ -42,7 +42,7 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
             return services;
         }
 
-        public async ValueTask<string> WriteAsync(TItem item, string id, string? partitionKey = null)
+        public async ValueTask<string> TransformAsync(TItem item, string id, string? partitionKey = null)
         {
             IEnumerable<IItemStoreWriterStrategyStep> strategySteps = ResolveWriterStrategySteps();
 
