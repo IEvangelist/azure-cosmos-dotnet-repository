@@ -10,6 +10,7 @@ using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Azure.CosmosRepository.InMemory;
+using Microsoft.Azure.CosmosRepository.InMemory.Reader;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Azure.CosmosRepository.Processors;
@@ -104,14 +105,17 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services
-                .AddSingleton(typeof(IReadOnlyRepository<>), typeof(InMemoryRepository<>))
-                .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(InMemoryRepository<>))
-                .AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
+                .AddSingleton(typeof(IReadOnlyRepository<>), typeof(ImprovedInMemoryRepository<>))
+                .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(ImprovedInMemoryRepository<>))
+                .AddSingleton(typeof(IRepository<>), typeof(ImprovedInMemoryRepository<>))
                 .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
                 .AddSingleton(typeof(InMemoryChangeFeed<>))
-                .AddSingleton(typeof(IItemStoreWriterStrategy<>), typeof(ItemStoreWriterStrategy<>))
                 .AddSingleton(typeof(IItemStore<>), typeof(ItemStore<>))
-                .AddSingleton<IItemStoreWriterStrategyStep<IItemWithTimeStamps>, ItemStoreWithTimeStampsWriterStrategyStep>();
+                .AddSingleton(typeof(IJsonSerializer<>), typeof(DefaultJsonSerializer<>))
+                .AddSingleton(typeof(IItemStoreWriterStrategy<>), typeof(ItemStoreWriterStrategy<>))
+                .AddSingleton(typeof(IItemStoreReaderStrategy<>), typeof(ItemStoreReaderStrategy<>))
+                .AddSingleton<IItemStoreWriterStrategyStep<IItemWithTimeStamps>, ItemWithTimeStampsWriterStrategyStep>()
+                .AddSingleton<IItemStoreWriterStrategyStep<IItemWithEtag>, ItemWithEtagWriterStrategyStep>();
 
             return services;
         }

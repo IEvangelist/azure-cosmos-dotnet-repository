@@ -32,7 +32,7 @@ public class InMemoryRepositoryBasicsTests : CosmosRepositoryInMemoryAcceptanceT
             500,
             stockInformation);
 
-        await _productsRepository.CreateAsync(product);
+        Product item = await _productsRepository.CreateAsync(product);
 
         IEnumerable<Product> products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
 

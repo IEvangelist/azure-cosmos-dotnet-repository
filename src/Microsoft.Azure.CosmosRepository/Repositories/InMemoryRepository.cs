@@ -38,7 +38,7 @@ namespace Microsoft.Azure.CosmosRepository
         public InMemoryRepository()
         {
             _specificationEvaluator = new SpecificationEvaluator();
-            _itemStore = new ItemStore<TItem>(null!);
+            _itemStore = new ItemStore<TItem>(null!, null!, null!);
         }
 
         public InMemoryRepository(ISpecificationEvaluator specificationEvaluator, IItemStore<TItem> itemStore)
