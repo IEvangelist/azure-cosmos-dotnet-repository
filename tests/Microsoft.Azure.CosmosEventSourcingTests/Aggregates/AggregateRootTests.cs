@@ -95,7 +95,7 @@ public class AggregateTests
 
         //Assert
         root.AtomicEvent.Should().NotBeNull();
-        root.AtomicEvent.ETag.Should().BeEmpty();
+        root.AtomicEvent.ETag.Should().NotBeEmpty();
         root.AtomicEvent.EventId.Should().NotBeEmpty();
         root.AtomicEvent.Sequence.Should().Be(int.MaxValue);
     }
