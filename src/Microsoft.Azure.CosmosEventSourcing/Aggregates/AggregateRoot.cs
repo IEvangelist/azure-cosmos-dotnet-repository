@@ -123,7 +123,7 @@ public abstract class AggregateRoot : IAggregateRoot
 
     private void CreateAtomicMarkerEvent()
     {
-        _atomicEvent = new AtomicEvent(Guid.NewGuid().ToString(), string.Empty) with
+        _atomicEvent = new AtomicEvent(nameof(AtomicEvent), Guid.NewGuid().ToString())
         {
             Sequence = int.MaxValue,
             OccuredUtc = DateTime.UtcNow

@@ -25,5 +25,6 @@ public record class AtomicEvent : DomainEvent
         ETag = eTag;
     }
 
+    [JsonIgnore]
     internal string ETag { get; init; }
 }

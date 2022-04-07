@@ -19,6 +19,7 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
     private int? _timeToLive;
 
     private DomainEvent _domainEvent = null!;
+    private string? _etag = null!;
 
     /// <summary>
     /// The payload of the event to be stored.
@@ -26,8 +27,21 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
     [JsonConverter(typeof(DomainEventConverter))]
     public DomainEvent DomainEvent
     {
-        get => _domainEvent;
-        set
+        get
+        {
+            if (_domainEvent is AtomicEvent atomicEvent && string.IsNullOrWhiteSpace(atomicEvent.ETag))
+            {
+                // Use the ETag from the Item to pass back with the domain event to the aggregate.
+                _domainEvent = atomicEvent with
+                {
+                    ETag = Etag ?? string.Empty,
+                    EventId = Id,
+                };
+            }
+
+            return _domainEvent;
+        }
+        init
         {
             Id = value.EventId;
             EventName = value.EventName;
@@ -53,7 +67,20 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
 
     /// <inheritdoc />
     [JsonProperty("_etag")]
-    public string Etag { get; private set; } = null!;
+    public string? Etag
+    {
+        get
+        {
+            if (_etag is null && _domainEvent is AtomicEvent atomicEvent && !string.IsNullOrWhiteSpace(atomicEvent.ETag))
+            {
+                // If the item is being created to be saved back then use the ETag from the AtomicEvent.
+                return atomicEvent.ETag;
+            }
+
+            return _etag;
+        }
+        private set => _etag = value;
+    }
 
     /// <inheritdoc />
     public TimeSpan? TimeToLive
