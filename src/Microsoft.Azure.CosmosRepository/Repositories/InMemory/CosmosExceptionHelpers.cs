@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
             WithStatusCode(HttpStatusCode.PreconditionFailed);
 
         private static CosmosException WithStatusCode(HttpStatusCode httpStatusCode) =>
-            new CosmosException(
+            new (
                 string.Empty,
                 httpStatusCode,
                 0,

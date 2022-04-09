@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository.InMemory.Reader;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
         {
             Type itemType = typeof(TItem);
             Type[] itemTypes = itemType.GetInterfaces();
-            List<IItemStoreWriterStrategyStep> services = new List<IItemStoreWriterStrategyStep>();
+            List<IItemStoreWriterStrategyStep> services = new();
 
             foreach (Type type in itemTypes)
             {
@@ -41,7 +42,11 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
             return services;
         }
 
-        public async ValueTask<JObject> TransformAsync(TItem item, string id, string? partitionKey = null)
+        public async ValueTask<JObject> TransformAsync(
+            TItem item,
+            string id,
+            string? partitionKey = null,
+            CancellationToken cancellationToken = default)
         {
             IEnumerable<IItemStoreWriterStrategyStep> strategySteps = ResolveWriterStrategySteps();
 
@@ -49,7 +54,7 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
 
             foreach (IItemStoreWriterStrategyStep strategyStep in strategySteps)
             {
-                await strategyStep.TransformAsync(itemJObject, item);
+                await strategyStep.TransformAsync(itemJObject, item, cancellationToken);
             }
 
             return itemJObject;

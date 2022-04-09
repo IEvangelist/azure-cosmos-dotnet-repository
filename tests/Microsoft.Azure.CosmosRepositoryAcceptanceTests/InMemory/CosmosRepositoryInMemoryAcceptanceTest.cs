@@ -18,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
-[Collection("CosmosTest")]
+[Collection("CosmosInMemoryTest")]
 public abstract class CosmosRepositoryInMemoryAcceptanceTest : CosmosRepositoryAcceptanceTest
 {
     protected CosmosRepositoryInMemoryAcceptanceTest(ITestOutputHelper testOutputHelper, Action<RepositoryOptions>? builderOptions = null)
@@ -32,4 +32,17 @@ public abstract class CosmosRepositoryInMemoryAcceptanceTest : CosmosRepositoryA
         serviceCollection.RemoveCosmosRepositories();
         serviceCollection.AddInMemoryCosmosRepository();
     }
+
+    protected static readonly Action<RepositoryOptions> DefaultTestInMemoryRepositoryOptions = options =>
+    {
+        options.CosmosConnectionString = GetCosmosConnectionString();
+        options.ContainerPerItemType = true;
+        options.DatabaseId = BuildDatabaseName("products");
+        options.OptimizeBandwidth = false;
+
+        // ReSharper disable once ConstantConditionalAccessQualifier
+        ConfigureProducts?.Invoke(options);
+        // ReSharper disable once ConstantConditionalAccessQualifier
+        ConfigureRatings?.Invoke(options);
+    };
 }

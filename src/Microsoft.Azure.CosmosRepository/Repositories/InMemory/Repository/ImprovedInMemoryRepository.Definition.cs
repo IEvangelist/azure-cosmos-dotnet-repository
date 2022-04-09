@@ -22,23 +22,8 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
             _itemStore = itemStore;
         }
 
-        public ValueTask<TItem> UpdateAsync(TItem value, CancellationToken cancellationToken = default, bool ignoreEtag = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values, CancellationToken cancellationToken = default, bool ignoreEtag = false)
-        {
-            throw new NotImplementedException();
-        }
-
         public ValueTask UpdateAsync(string id, Action<IPatchOperationBuilder<TItem>> builder, string? partitionKeyValue = null,
             CancellationToken cancellationToken = default, string? etag = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ValueTask DeleteAsync(TItem value, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -53,22 +38,7 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
             throw new NotImplementedException();
         }
 
-        public ValueTask<TItem?> TryGetAsync(string id, string? partitionKeyValue = null, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ValueTask<TItem> GetAsync(string id, string? partitionKeyValue = null, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
         public ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

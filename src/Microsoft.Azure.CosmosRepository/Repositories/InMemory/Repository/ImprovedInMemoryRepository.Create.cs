@@ -12,7 +12,7 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
     internal partial class ImprovedInMemoryRepository<TItem>
     {
         public ValueTask<TItem> CreateAsync(TItem value, CancellationToken cancellationToken = default) =>
-            _itemStore.WriteAsync(value, value.Id, value.PartitionKey)!;
+            _itemStore.WriteAsync(value, value.Id, value.PartitionKey, cancellationToken)!;
 
         public async ValueTask<IEnumerable<TItem>> CreateAsync(
             IEnumerable<TItem> values,

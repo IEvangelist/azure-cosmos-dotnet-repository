@@ -3,8 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using FluentAssertions;
 using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 using Xunit;
@@ -16,9 +18,12 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 [Trait("Type", "Functional")]
 public class InMemoryRepositoryBasicsTests : CosmosRepositoryInMemoryAcceptanceTest
 {
+    private readonly ITestOutputHelper _testOutputHelper;
+
     public InMemoryRepositoryBasicsTests(ITestOutputHelper testOutputHelper) :
-        base(testOutputHelper, DefaultTestRepositoryOptions)
+        base(testOutputHelper, DefaultTestInMemoryRepositoryOptions)
     {
+        _testOutputHelper = testOutputHelper;
     }
 
     [Fact]
@@ -27,12 +32,12 @@ public class InMemoryRepositoryBasicsTests : CosmosRepositoryInMemoryAcceptanceT
         StockInformation stockInformation = new(5, DateTime.UtcNow);
 
         Product product = new(
-            "Samsung TV",
+            Guid.NewGuid().ToString(),
             TechnologyCategoryId,
             500,
             stockInformation);
 
-        Product item = await _productsRepository.CreateAsync(product);
+        await _productsRepository.CreateAsync(product);
 
         IEnumerable<Product> products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
 
