@@ -89,14 +89,17 @@ public class InMemoryRepositoryBasicsTests : CosmosRepositoryInMemoryAcceptanceT
 
 
         // First Update - Etag
+        string? previousEtag = etagAfterCreation;
         product.ApplySaleDiscount(0.10);
 
         product = await _productsRepository.UpdateAsync(product);
 
         string? etagAfterUpdate = (await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId)).Single().Etag;
         etagAfterUpdate.Should().Be(product.Etag);
+        previousEtag.Should().NotBe(etagAfterUpdate);
 
         // Second Update - Null Etag
+        previousEtag = etagAfterUpdate;
         SetEtag(product, null);
         product.ApplySaleDiscount(0.10);
 
@@ -104,6 +107,7 @@ public class InMemoryRepositoryBasicsTests : CosmosRepositoryInMemoryAcceptanceT
 
         etagAfterUpdate = (await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId)).Single().Etag;
         etagAfterUpdate.Should().Be(product.Etag);
+        previousEtag.Should().NotBe(etagAfterUpdate);
 
         // Third Update - Invalid Etag
         SetEtag(product, Guid.NewGuid().ToString());
@@ -120,11 +124,12 @@ public class InMemoryRepositoryBasicsTests : CosmosRepositoryInMemoryAcceptanceT
         }
 
         // Third Update - Second Attempt - Invalid Etag - Ignore Etag
+        previousEtag = etagAfterUpdate;
         product = await _productsRepository.UpdateAsync(product, ignoreEtag: true);
 
         etagAfterUpdate = (await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId)).Single().Etag;
         etagAfterUpdate.Should().Be(product.Etag);
-
+        previousEtag.Should().NotBe(etagAfterUpdate);
 
         Product finalProduct =
             (await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId)).Single();
