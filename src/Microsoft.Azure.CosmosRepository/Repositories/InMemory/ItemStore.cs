@@ -88,13 +88,9 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
                 partitionKey,
                 cancellationToken);
 
-            if (typeof(IItemWithEtag).IsAssignableFrom(typeof(TItem)) &&
-                ignoreEtag is false)
+            if (DoEtagsMatch(updatedItem as IItemWithEtag, existingItem as IItemWithEtag, ignoreEtag) is false)
             {
-                if ((updatedItem as IItemWithEtag)!.Etag != (existingItem as IItemWithEtag)!.Etag)
-                {
-                    throw CosmosExceptionHelpers.MismatchedEtags();
-                }
+                throw CosmosExceptionHelpers.MismatchedEtags();
             }
 
             partitionStore[id] = updatedItemJObject;
@@ -155,6 +151,16 @@ namespace Microsoft.Azure.CosmosRepository.InMemory
             }
 
             return new ValueTask();
+        }
+
+        private bool DoEtagsMatch(IItemWithEtag? updatedItem, IItemWithEtag? existingItem, bool ignoreEtag)
+        {
+            if (updatedItem is null || existingItem is null)
+            {
+                return true;
+            }
+
+            return ignoreEtag || updatedItem.Etag is null || updatedItem.Etag == existingItem.Etag;
         }
     }
 }
