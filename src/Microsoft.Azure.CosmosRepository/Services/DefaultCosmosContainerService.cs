@@ -46,8 +46,11 @@ namespace Microsoft.Azure.CosmosRepository.Services
                 ItemConfiguration itemConfiguration = _cosmosItemConfigurationProvider.GetItemConfiguration(itemType);
 
                 Database database =
-                    await _cosmosClientProvider.UseClientAsync(
-                        client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId)).ConfigureAwait(false);
+                    _options.IsAutoResourceCreationIfNotExistsEnabled
+                        ? await _cosmosClientProvider.UseClientAsync(
+                            client => client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId)).ConfigureAwait(false)
+                        : await _cosmosClientProvider.UseClientAsync(
+                            client => Task.FromResult(client.GetDatabase(_options.DatabaseId))).ConfigureAwait(false);
 
                 ContainerProperties containerProperties = new()
                 {
@@ -60,10 +63,13 @@ namespace Microsoft.Azure.CosmosRepository.Services
                 };
 
                 Container container =
-                    await database.CreateContainerIfNotExistsAsync(
-                        containerProperties, itemConfiguration.ThroughputProperties).ConfigureAwait(false);
+                    _options.IsAutoResourceCreationIfNotExistsEnabled
+                        ? await database.CreateContainerIfNotExistsAsync(
+                            containerProperties, itemConfiguration.ThroughputProperties).ConfigureAwait(false)
+                        : await Task.FromResult(database.GetContainer(containerProperties.Id)).ConfigureAwait(false);
 
-                if ((itemConfiguration.SyncContainerProperties is false || _containerSyncLog.ContainsKey(container.Id)) && forceContainerSync is false)
+                if ((itemConfiguration.SyncContainerProperties is false ||
+                     _containerSyncLog.ContainsKey(container.Id)) && forceContainerSync is false)
                 {
                     return container;
                 }
@@ -94,9 +100,11 @@ namespace Microsoft.Azure.CosmosRepository.Services
                 throw new InvalidOperationException("You must provided at least one item type to get a container for");
             }
 
-            string containerName = _cosmosItemConfigurationProvider.GetItemConfiguration(itemTypes.First()).ContainerName;
+            string containerName =
+                _cosmosItemConfigurationProvider.GetItemConfiguration(itemTypes.First()).ContainerName;
 
-            if(itemTypes.Select(x => _cosmosItemConfigurationProvider.GetItemConfiguration(x)).All(x => x.ContainerName == containerName))
+            if (itemTypes.Select(x => _cosmosItemConfigurationProvider.GetItemConfiguration(x))
+                .All(x => x.ContainerName == containerName))
             {
                 return GetContainerAsync(itemTypes.First());
             }

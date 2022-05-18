@@ -113,6 +113,12 @@ namespace Microsoft.Azure.CosmosRepository.Options
         public IItemContainerBuilder ContainerBuilder { get; } = new DefaultItemContainerBuilder();
 
         /// <summary>
+        /// Used to tell the SDK whether or not to try and creates databases and containers if they do not exist.
+        /// </summary>
+        /// <remarks>This feature is very powerful for local development. However, in scenarios where infrastructure as code is used this may not be required.</remarks>
+        public bool IsAutoResourceCreationIfNotExistsEnabled { get; set; } = true;
+
+        /// <summary>
         /// Container options provided by the <see cref="Builders.IItemContainerBuilder"/>
         /// </summary>
         internal IReadOnlyList<ContainerOptionsBuilder> ContainerOptions => ContainerBuilder.Options;
