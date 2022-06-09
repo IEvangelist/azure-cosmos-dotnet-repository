@@ -29,7 +29,7 @@ public partial class AcceptanceTests
 
     private readonly AsyncPolicy _defaultPolicy = Policy
         .Handle<Exception>()
-        .WaitAndRetryAsync(5, i => TimeSpan.FromSeconds(i * 2));
+        .WaitAndRetryAsync(20, i => TimeSpan.FromSeconds(i * 2));
 
 
     private async Task Execute()
