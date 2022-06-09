@@ -33,12 +33,19 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
         private async Task<Container> BuildLeaseContainer()
         {
             Database database =
-                await _cosmosClientProvider.UseClientAsync(
-                        client => client.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId))
-                    .ConfigureAwait(false);
+                _repositoryOptions.IsAutoResourceCreationIfNotExistsEnabled
+                    ? await _cosmosClientProvider.UseClientAsync(
+                            client => client.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId))
+                        .ConfigureAwait(false)
+                    : await _cosmosClientProvider.UseClientAsync(
+                            client => Task.FromResult(client.GetDatabase(_repositoryOptions.DatabaseId)))
+                        .ConfigureAwait(false);
 
             Container container =
-                await database.CreateContainerIfNotExistsAsync(LeaseContainerName, LeastContainerPartitionKey).ConfigureAwait(false);
+                _repositoryOptions.IsAutoResourceCreationIfNotExistsEnabled
+                    ? await database.CreateContainerIfNotExistsAsync(LeaseContainerName, LeastContainerPartitionKey)
+                        .ConfigureAwait(false)
+                    : await Task.FromResult(database.GetContainer(LeaseContainerName));
 
             return container;
         }
