@@ -23,7 +23,17 @@ internal class DomainEventConverter : JsonConverter
         JToken? j = JToken.ReadFrom(reader);
         string? type = j["eventName"]?.ToString();
         type ??= j["EventName"]?.ToString();
-        Type payloadType = ConvertableTypes.First(x => x.Name == type);
+        Type? payloadType = ConvertableTypes.FirstOrDefault(x => x.Name == type);
+
+        if (payloadType is null)
+        {
+            return new NonDeserializableEvent
+            {
+                Name = type ?? "not-defined",
+                Payload = JObject.Parse(reader.ReadAsString())
+            };
+        }
+
         return j.ToObject(payloadType);
     }
 

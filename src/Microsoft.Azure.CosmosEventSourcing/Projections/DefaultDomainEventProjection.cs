@@ -8,7 +8,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
-internal class DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEventItemProjection<TEventItem, TProjectionKey>
+internal class
+    DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEventItemProjection<TEventItem, TProjectionKey>
     where TEventItem : EventItem
     where TProjectionKey : IProjectionKey
 {
@@ -40,6 +41,15 @@ internal class DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEvent
             return;
         }
 
+        if (eventItem.DomainEvent is NonDeserializableEvent nonDeserializableEvent)
+        {
+            _logger.LogError(
+                "The event with name {EventName} could not be deserialized as it was not registered with the custom deserialized payload = {EventPayload}",
+                nonDeserializableEvent.Name,
+                nonDeserializableEvent.Payload.ToString());
+            return;
+        }
+
         await Task.WhenAll(handlers.Select(handler =>
         {
             try
@@ -64,5 +74,6 @@ internal class DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEvent
     }
 
     private static Type BuildEventProjectionHandlerType(TEventItem eventSource) =>
-        typeof(IDomainEventProjection<,,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType(), typeof(TProjectionKey));
+        typeof(IDomainEventProjection<,,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType(),
+            typeof(TProjectionKey));
 }
