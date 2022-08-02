@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -101,6 +102,45 @@ namespace Microsoft.Azure.CosmosRepository
                 items.AsReadOnly(),
                 charge + countResponse?.RequestCharge ?? 0,
                 resultingContinationToken /* This was missing, is this correct? */);
+        }
+
+        /// <inheritdoc/>
+        public async IAsyncEnumerable<(TItem Item, int? Total)> PageAsync(
+            Expression<Func<TItem, bool>>? predicate = null,
+            int? maxNumber = null,
+            bool returnTotal = false,
+            [EnumeratorCancellation]
+            CancellationToken cancellationToken = default)
+        {
+            Container container = await _containerProvider.GetContainerAsync()
+                .ConfigureAwait(false);
+
+            IQueryable<TItem> query = container
+                .GetItemLinqQueryable<TItem>()
+                .Where(_repositoryExpressionProvider
+                    .Build(predicate ?? _repositoryExpressionProvider.Default<TItem>()));
+
+            int? total = null;
+            if (returnTotal)
+            {
+                total = (await query.CountAsync(cancellationToken))?.Resource;
+            }
+
+            query = maxNumber is int max and > 0 ? query.Take(max) : query;
+
+            _logger.LogQueryConstructed(query);
+
+            IEnumerable<TItem>? items = await GetByQueryAsync(
+                query.ToQueryDefinition(), cancellationToken);
+            foreach (TItem? item in items
+                ?.Where(i => i is not null)
+                ?.Select(i => i!)
+                ?? Enumerable.Empty<TItem>())
+            {
+                yield return (item, total);
+            }
+
+            _logger.LogRanToCompletion(query);
         }
     }
 }

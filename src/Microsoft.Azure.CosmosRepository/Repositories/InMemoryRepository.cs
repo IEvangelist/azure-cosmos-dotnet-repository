@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -412,6 +413,45 @@ namespace Microsoft.Azure.CosmosRepository
                 pageSize,
                 items.ToList().AsReadOnly(),
                 0);
+        }
+
+        /// <inheritdoc/>
+        public async IAsyncEnumerable<(TItem Item, int? Total)> PageAsync(
+            Expression<Func<TItem, bool>>? predicate = null,
+            int? maxNumber = null,
+            bool returnTotal = false,
+            [EnumeratorCancellation]
+            CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+
+            IEnumerable<TItem> filteredItems = Items.Values
+                .Select(DeserializeItem)
+                .ToList();
+
+            Expression<Func<TItem, bool>> typeCheck = item =>
+                item.Type == typeof(TItem).Name;
+
+            filteredItems = filteredItems.Where(predicate is not null ?
+                predicate.Compose(typeCheck, Expression.AndAlso).Compile() :
+                typeCheck.Compile());
+
+            IEnumerable<TItem> enumerable = filteredItems.ToList();
+
+            IEnumerable<TItem> items = maxNumber is int max and > 0
+                ? enumerable.Take(max)
+                : enumerable;
+
+            int? total = null;
+            if (maxNumber > 0)
+            {
+                total = items.Count();
+            }
+
+            foreach (TItem? item in items)
+            {
+                yield return (item, total);
+            }
         }
 
         public async ValueTask<TResult> QueryAsync<TResult>(

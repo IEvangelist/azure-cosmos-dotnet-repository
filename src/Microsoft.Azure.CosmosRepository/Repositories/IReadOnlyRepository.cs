@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -228,6 +229,22 @@ namespace Microsoft.Azure.CosmosRepository
             int pageNumber = 1,
             int pageSize = 25,
             bool returnTotal=false,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Offers a load more paging implementation for infinite scroll scenarios.
+        /// Allows for efficient paging making use of cosmos DBs continuation tokens, making this implementation cost effective.
+        /// </summary>
+        /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
+        /// <param name="maxNumber">The max number of items to return from cosmos db.</param>
+        /// <param name="returnTotal">Specifies whether or not to return the total number of items that matched the query. This defaults to false as it can be a very expensive operation.</param>
+        /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+        /// <returns>An <see cref="IAsyncEnumerable{T}"/> where T : <see cref="IItem"/>s</returns>
+        /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
+        IAsyncEnumerable<(TItem Item, int? Total)> PageAsync(
+            Expression<Func<TItem, bool>>? predicate = null,
+            int? maxNumber = null,
+            bool returnTotal = false,
             CancellationToken cancellationToken = default);
     }
 }

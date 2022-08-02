@@ -34,6 +34,11 @@ namespace Microsoft.Azure.CosmosRepository.Logging
             IQueryable<TItem> queryable) where TItem : IItem =>
             LoggerMessageDefinitions.QueryConstructed(logger, typeof(TItem).Name, queryable.ToString(), null!);
 
+        public static void LogRanToCompletion<TItem>(
+            this ILogger logger,
+            IQueryable<TItem> queryable) where TItem : IItem =>
+            LoggerMessageDefinitions.QueryConstructed(logger, typeof(TItem).Name, queryable.ToString(), null!);
+
         public static void LogQueryExecuted<TItem>(
             this ILogger logger,
             IQueryable<TItem> queryable,
