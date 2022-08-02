@@ -37,10 +37,10 @@ namespace Microsoft.Azure.CosmosRepository.Logging
                 "Cosmos query constructed for item type {CosmosItemType}: {CosmosQuery}"
             ); // RanToCompletion
 
-        internal static readonly Action<ILogger, string, string, Exception> RanToCompletion =
+        internal static readonly Action<ILogger, string, string, Exception> QueryRanToCompletion =
             LoggerMessage.Define<string, string>(
                 LogLevel.Information,
-                EventIds.CosmosQueryConstructed,
+                EventIds.QueryRanToCompletion,
                 "Cosmos query ran to completion for item type {CosmosItemType}: {CosmosQuery}"
             );
 

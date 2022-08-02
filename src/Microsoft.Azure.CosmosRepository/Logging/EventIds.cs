@@ -33,8 +33,8 @@ namespace Microsoft.Azure.CosmosRepository.Logging
             15_105,
             nameof(ItemNotFoundHandled));
 
-        public static readonly EventId RanToCompletion = new(
+        public static readonly EventId QueryRanToCompletion = new(
             15_106,
-            nameof(RanToCompletion));
+            nameof(QueryRanToCompletion));
     }
 }

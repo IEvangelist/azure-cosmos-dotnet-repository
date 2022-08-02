@@ -120,27 +120,33 @@ namespace Microsoft.Azure.CosmosRepository
                 .Where(_repositoryExpressionProvider
                     .Build(predicate ?? _repositoryExpressionProvider.Default<TItem>()));
 
-            int? total = null;
-            if (returnTotal)
-            {
-                total = (await query.CountAsync(cancellationToken))?.Resource;
-            }
+            int? total = (await query.CountAsync(cancellationToken))?.Resource;
 
             query = maxNumber is int max and > 0 ? query.Take(max) : query;
 
             _logger.LogQueryConstructed(query);
 
-            IEnumerable<TItem>? items = await GetByQueryAsync(
-                query.ToQueryDefinition(), cancellationToken);
-            foreach (TItem? item in items
-                ?.Where(i => i is not null)
-                ?.Select(i => i!)
-                ?? Enumerable.Empty<TItem>())
+            QueryRequestOptions options = new()
             {
-                yield return (item, total);
+                MaxBufferedItemCount = 100,
+                MaxItemCount = maxNumber,
+                MaxConcurrency = -1
+            };
+
+            using (FeedIterator<TItem> iterator = container.GetItemQueryIterator<TItem>(
+                query.ToQueryDefinition(),
+                requestOptions: options))
+            {
+                while (iterator.HasMoreResults)
+                {
+                    foreach (TItem item in await iterator.ReadNextAsync())
+                    {
+                        yield return (item, total);
+                    }
+                }
             }
 
-            _logger.LogRanToCompletion(query);
+            _logger.LogQueryRanToCompletion(query);
         }
     }
 }
