@@ -20,8 +20,7 @@ namespace Microsoft.Azure.CosmosEventSourcingTests.Stores;
 public partial class EventStoreTests
 {
     private readonly AutoMocker _autoMocker = new();
-    private readonly Mock<IBatchRepository<Testing.SampleEventItem>> _batchRepository;
-    private readonly Mock<IReadOnlyRepository<Testing.SampleEventItem>> _readonlyRepository;
+    private readonly Mock<IRepository<Testing.SampleEventItem>> _repository;
     private const string Pk = "pk";
 
     private readonly List<Testing.SampleEvent> _events = new()
@@ -54,8 +53,7 @@ public partial class EventStoreTests
 
     public EventStoreTests()
     {
-        _batchRepository = _autoMocker.GetMock<IBatchRepository<Testing.SampleEventItem>>();
-        _readonlyRepository = _autoMocker.GetMock<IReadOnlyRepository<Testing.SampleEventItem>>();
+        _repository = _autoMocker.GetMock<IRepository<Testing.SampleEventItem>>();
     }
 
     private IEventStore<Testing.SampleEventItem> CreateSut() =>
@@ -71,7 +69,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(_eventItemsWithAtomicEvents);
 
         //Assert
-        _batchRepository.Verify(o =>
+        _repository.Verify(o =>
             o.UpdateAsBatchAsync(
                 _eventItemsWithAtomicEvents,
                 default));
@@ -87,7 +85,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(new List<Testing.SampleEventItem>());
 
         //Assert
-        _batchRepository.Verify(o =>
+        _repository.Verify(o =>
             o.UpdateAsBatchAsync(
                 It.IsAny<List<Testing.SampleEventItem>>(),
                 default),
@@ -112,7 +110,7 @@ public partial class EventStoreTests
         //Arrange
         IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
-        _readonlyRepository
+        _repository
             .Setup(o =>
                 o.GetAsync(x => x.PartitionKey == Pk, default))
             .ReturnsAsync(_eventItemsWithAtomicEvents);
@@ -150,7 +148,7 @@ public partial class EventStoreTests
             _eventItems.Take(2).ToList(),
             0);
 
-        _readonlyRepository
+        _repository
             .SetupSequence(o => o.PageAsync(
                 x => x.PartitionKey == Pk,
                 5,

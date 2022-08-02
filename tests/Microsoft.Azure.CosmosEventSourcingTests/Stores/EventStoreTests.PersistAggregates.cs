@@ -28,7 +28,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(aggregate);
 
         //Assert
-        _batchRepository.Verify(o =>
+        _repository.Verify(o =>
             o.UpdateAsBatchAsync(
                 It.Is<IEnumerable<Testing.SampleEventItem>>(x =>
 
@@ -70,7 +70,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(aggregate, aggregate.FirstProp);
 
         //Assert
-        _batchRepository.Verify(o =>
+        _repository.Verify(o =>
                 o.UpdateAsBatchAsync(
                     It.Is<IEnumerable<Testing.SampleEventItem>>(x =>
                         x.All(y => y.PartitionKey == aggregate.FirstProp)),

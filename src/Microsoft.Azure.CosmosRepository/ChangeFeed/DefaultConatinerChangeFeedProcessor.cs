@@ -121,7 +121,9 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 
             handlerType ??= Handlers[itemType];
 
-            IEnumerable<object> handlers = _serviceProvider.GetServices(handlerType).ToList();
+            IEnumerable<object> handlers = _serviceProvider.GetServices(handlerType)
+                ?.Where(t => t is not null)?.Select(t => t!)?.ToList()
+                ?? Enumerable.Empty<object>();
 
             _logger.LogDebug("Invoking IItemChangeFeedProcessor's ({ProcessorsCount}) for item type {ItemType}",
                 handlers.Count(), itemType);

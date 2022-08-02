@@ -13,10 +13,9 @@ internal partial class DefaultEventStore<TEventItem> :
     private readonly IReadOnlyRepository<TEventItem> _readOnlyRepository;
 
     public DefaultEventStore(
-        IBatchRepository<TEventItem> batchRepository,
-        IReadOnlyRepository<TEventItem> readOnlyRepository)
+        IRepository<TEventItem> repository)
     {
-        _batchRepository = batchRepository;
-        _readOnlyRepository = readOnlyRepository;
+        _batchRepository = repository;
+        _readOnlyRepository = repository;
     }
 }

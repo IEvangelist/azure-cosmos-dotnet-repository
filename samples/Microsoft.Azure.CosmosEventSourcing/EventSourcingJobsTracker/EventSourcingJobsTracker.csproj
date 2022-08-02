@@ -12,10 +12,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="IEvangelist.Azure.CosmosRepository.AspNetCore" Version="3.3.0" />
+      <PackageReference Include="IEvangelist.Azure.CosmosRepository.AspNetCore" Version="3.6.0" />
       <PackageReference Include="Mumby0168.CleanArchitecture.Exceptions" Version="1.0.0" />
       <PackageReference Include="Mumby0168.CleanArchitecture.Exceptions.AspNetCore" Version="1.1.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
 </Project>
