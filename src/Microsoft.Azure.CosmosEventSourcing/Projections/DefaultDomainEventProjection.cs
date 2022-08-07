@@ -32,21 +32,21 @@ internal class
 
         if (handlers.Any() is false)
         {
+            if (eventItem.DomainEvent is NonDeserializableEvent nonDeserializableEvent)
+            {
+                _logger.LogError(
+                    "The event with name {EventName} could not be deserialized as it was not registered with the custom deserializer payload = {EventPayload}",
+                    nonDeserializableEvent.Name,
+                    nonDeserializableEvent.Payload.ToString());
+                return;
+            }
+
             if (payloadTypeName is not nameof(AtomicEvent))
             {
                 _logger.LogDebug("No IDomainEventProjection<{EventType}> found",
                     payloadTypeName);
             }
 
-            return;
-        }
-
-        if (eventItem.DomainEvent is NonDeserializableEvent nonDeserializableEvent)
-        {
-            _logger.LogError(
-                "The event with name {EventName} could not be deserialized as it was not registered with the custom deserialiser payload = {EventPayload}",
-                nonDeserializableEvent.Name,
-                nonDeserializableEvent.Payload.ToString());
             return;
         }
 

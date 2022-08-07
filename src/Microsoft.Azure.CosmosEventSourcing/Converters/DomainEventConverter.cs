@@ -20,21 +20,32 @@ internal class DomainEventConverter : JsonConverter
         object existingValue,
         JsonSerializer serializer)
     {
-        JToken? j = JToken.ReadFrom(reader);
-        string? type = j["eventName"]?.ToString();
-        type ??= j["EventName"]?.ToString();
-        Type? payloadType = ConvertableTypes.FirstOrDefault(x => x.Name == type);
+        try
+        {
+            JToken? j = JToken.ReadFrom(reader);
+            string? type = j["eventName"]?.ToString();
+            type ??= j["EventName"]?.ToString();
+            Type? payloadType = ConvertableTypes.FirstOrDefault(x => x.Name == type);
 
-        if (payloadType is null)
+            if (payloadType is null)
+            {
+                return new NonDeserializableEvent
+                {
+                    Name = type ?? "not-defined",
+                    Payload = j.ToObject<JObject>()
+                };
+            }
+
+            return j.ToObject(payloadType);
+        }
+        catch (Exception e)
         {
             return new NonDeserializableEvent
             {
-                Name = type ?? "not-defined",
-                Payload = JObject.Parse(reader.ReadAsString())
+                Exception = e,
+                JsonReader = reader
             };
         }
-
-        return j.ToObject(payloadType);
     }
 
     public override bool CanConvert(Type objectType) =>

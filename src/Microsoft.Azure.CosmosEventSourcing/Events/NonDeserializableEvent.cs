@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Events;
@@ -19,4 +20,15 @@ public record NonDeserializableEvent : DomainEvent
     /// The payload of the event whose type could not be found
     /// </summary>
     public JObject Payload { get; init; } = JObject.FromObject(new {});
+
+    /// <summary>
+    /// An exception thrown as part of deserializing an event.
+    /// </summary>
+    public Exception? Exception { get; set; }
+
+    /// <summary>
+    /// The JSON reader that was used to try and deserialize the event.
+
+    /// </summary>
+    public JsonReader? JsonReader { get; set; }
 }
