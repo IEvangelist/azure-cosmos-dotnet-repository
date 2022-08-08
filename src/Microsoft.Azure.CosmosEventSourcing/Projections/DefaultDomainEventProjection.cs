@@ -28,7 +28,8 @@ internal class
     {
         string payloadTypeName = eventItem.DomainEvent.GetType().Name;
         Type handlerType = BuildEventProjectionHandlerType(eventItem);
-        IEnumerable<object?> handlers = _serviceProvider.GetServices(handlerType).ToList();
+        using IServiceScope scope = _serviceProvider.CreateScope();
+        IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(handlerType).ToList();
 
         if (handlers.Any() is false)
         {
