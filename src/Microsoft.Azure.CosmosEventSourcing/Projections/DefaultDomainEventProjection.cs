@@ -8,7 +8,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
-internal class DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEventItemProjection<TEventItem, TProjectionKey>
+internal class
+    DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEventItemProjection<TEventItem, TProjectionKey>
     where TEventItem : EventItem
     where TProjectionKey : IProjectionKey
 {
@@ -27,10 +28,20 @@ internal class DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEvent
     {
         string payloadTypeName = eventItem.DomainEvent.GetType().Name;
         Type handlerType = BuildEventProjectionHandlerType(eventItem);
-        IEnumerable<object?> handlers = _serviceProvider.GetServices(handlerType).ToList();
+        using IServiceScope scope = _serviceProvider.CreateScope();
+        IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(handlerType).ToList();
 
         if (handlers.Any() is false)
         {
+            if (eventItem.DomainEvent is NonDeserializableEvent nonDeserializableEvent)
+            {
+                _logger.LogError(
+                    "The event with name {EventName} could not be deserialized as it was not registered with the custom deserializer payload = {EventPayload}",
+                    nonDeserializableEvent.Name,
+                    nonDeserializableEvent.Payload.ToString());
+                return;
+            }
+
             if (payloadTypeName is not nameof(AtomicEvent))
             {
                 _logger.LogDebug("No IDomainEventProjection<{EventType}> found",
@@ -64,5 +75,6 @@ internal class DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEvent
     }
 
     private static Type BuildEventProjectionHandlerType(TEventItem eventSource) =>
-        typeof(IDomainEventProjection<,,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType(), typeof(TProjectionKey));
+        typeof(IDomainEventProjection<,,>).MakeGenericType(eventSource.DomainEvent.GetType(), eventSource.GetType(),
+            typeof(TProjectionKey));
 }
