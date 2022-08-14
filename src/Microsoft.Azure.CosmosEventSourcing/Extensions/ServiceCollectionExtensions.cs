@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Runtime.CompilerServices.Context;
 using Microsoft.Azure.CosmosEventSourcing.Builders;
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 using Microsoft.Azure.CosmosEventSourcing.Converters;
@@ -29,9 +30,10 @@ public static class ServiceCollectionExtensions
         DefaultCosmosEventSourcingBuilder builder = new(services);
         DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
         eventSourcingBuilder.Invoke(builder);
-        services.AddSingleton(typeof(IEventStore<>), typeof(DefaultEventStore<>));
-        services.AddSingleton(typeof(IWriteOnlyEventStore<>), typeof(DefaultEventStore<>));
-        services.AddSingleton(typeof(IReadOnlyEventStore<>), typeof(DefaultEventStore<>));
+        services.AddScoped<IContextService, DefaultContextService>();
+        services.AddScoped(typeof(IEventStore<>), typeof(DefaultEventStore<>));
+        services.AddScoped(typeof(IWriteOnlyEventStore<>), typeof(DefaultEventStore<>));
+        services.AddScoped(typeof(IReadOnlyEventStore<>), typeof(DefaultEventStore<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, DefaultEventSourcingProvider>();
         return services;
     }

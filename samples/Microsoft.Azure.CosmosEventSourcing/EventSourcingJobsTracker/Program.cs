@@ -43,9 +43,9 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
 builder.Services.AddCosmosRepositoryChangeFeedHostedService();
 
 builder.Services
-    .AddSingleton<IJobsTrackerService, DefaultJobsTrackerService>()
-    .AddSingleton<IJobListRepository, DefaultJobListRepository>()
-    .AddSingleton<IJobTrackerReadService, DefaultJobTrackerReadService>();
+    .AddScoped<IJobsTrackerService, DefaultJobsTrackerService>()
+    .AddScoped<IJobListRepository, DefaultJobListRepository>()
+    .AddScoped<IJobTrackerReadService, DefaultJobTrackerReadService>();
 
 
 WebApplication app = builder.Build();

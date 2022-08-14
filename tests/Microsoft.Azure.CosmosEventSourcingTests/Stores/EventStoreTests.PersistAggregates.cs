@@ -1,11 +1,13 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing.Attributes;
+using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Moq;
@@ -76,6 +78,32 @@ public partial class EventStoreTests
                         x.All(y => y.PartitionKey == aggregate.FirstProp)),
                     default),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task PersistAsync_AggregateWhenCorrelationIdIsSet_SavesAllEventsWithCorrelationId()
+    {
+        //Arrange
+        IEventStore<Testing.SampleEventItem> sut = CreateSut();
+
+        string correlationId = Guid.NewGuid().ToString();
+        _contextService.SetupGet(o => o.CorrelationId).Returns(correlationId);
+
+        Testing.TestAggregateWithNoPk aggregate = new();
+        aggregate.SetEvents(_events);
+
+        //Act
+        await sut.PersistAsync(aggregate, aggregate.FirstProp);
+
+        //Assert
+        _batchRepository.Verify(o =>
+                o.UpdateAsBatchAsync(
+                    It.Is<IEnumerable<Testing.SampleEventItem>>(x =>
+                        x.Where(e => !(e.DomainEvent is AtomicEvent))
+                        .All(e => e.CorrelationId == correlationId)),
+                    default),
+            Times.Once);
+
     }
 
     [Fact]
