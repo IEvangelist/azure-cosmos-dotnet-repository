@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Runtime.CompilerServices.Context;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Azure.CosmosEventSourcing.Options;
@@ -82,6 +83,9 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
             using IServiceScope scope = _serviceProvider.CreateScope();
             IEventItemProjection<TSourcedEvent, TProjectionKey> projection = scope.ServiceProvider
                 .GetRequiredService<IEventItemProjection<TSourcedEvent, TProjectionKey>>();
+
+            IContextService contextService = scope.ServiceProvider.GetRequiredService<IContextService>();
+            contextService.CorrelationId = change.CorrelationId;
 
             try
             {
