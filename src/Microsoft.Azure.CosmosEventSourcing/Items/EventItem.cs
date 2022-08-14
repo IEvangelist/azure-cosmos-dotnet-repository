@@ -19,7 +19,7 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
     private int? _timeToLive;
 
     private DomainEvent _domainEvent = null!;
-    private string? _etag = null!;
+    private string? _etag;
 
     /// <summary>
     /// The payload of the event to be stored.
@@ -53,7 +53,7 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
     public string Id { get; set; }
 
     /// <inheritdoc />
-    public string Type { get; set; } = null!;
+    public string Type { get; set; }
 
     /// <summary>
     /// The value used to partition the event.
@@ -88,6 +88,11 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
         get => _timeToLive.HasValue ? TimeSpan.FromSeconds(_timeToLive.Value) : null;
         set => _timeToLive = (int?) value?.TotalSeconds;
     }
+
+    /// <summary>
+    /// An ID that correlates a request/scope with an event.
+    /// </summary>
+    public string? CorrelationId { get; set; }
 
     /// <summary>
     /// Creates an <see cref="EventItem"/>
