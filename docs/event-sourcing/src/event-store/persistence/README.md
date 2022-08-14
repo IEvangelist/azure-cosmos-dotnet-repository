@@ -62,3 +62,24 @@ As a consumer of this library there are a few ways to handle this exception grac
 :::warning Caution
 It is _important_ in any of the above solutions that the full operation is retried. i.e. read the new state of the aggregate and re-apply the new events on the _new_ version of the aggregate.
 :::
+
+## Correlation
+
+The event sourcing provider supports correlation IDs. These can be setup by consuming the scoped service `IContextService` and setting the `IContextService.CorrelationId` property. This will then be written into Cosmos DB for each event that was created in that context. This is also automatically populated when consuming changes from the change feed (projections).
+
+See below for some example middleware that makes use of the popular `CorrelationId` package for ASPNET CORE, to set a correlation ID for every HTTP request.
+
+```csharp
+app.Use(async (context, next) =>
+{
+    ICorrelationContextAccessor correlationContextAccessor =
+        context.RequestServices.GetRequiredService<ICorrelationContextAccessor>();
+    
+    IContextService contextService = context.RequestServices
+        .GetRequiredService<IContextService>();
+
+    contextService.CorrelationId = correlationContextAccessor.CorrelationContext.CorrelationId;
+
+    await next.Invoke();
+});
+```
