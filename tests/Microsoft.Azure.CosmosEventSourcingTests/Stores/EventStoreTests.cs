@@ -74,7 +74,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(_eventItemsWithAtomicEvents);
 
         //Assert
-        _repository.Verify(o =>
+        _batchRepository.Verify(o =>
             o.UpdateAsBatchAsync(
                 _eventItemsWithAtomicEvents,
                 default));
@@ -114,7 +114,7 @@ public partial class EventStoreTests
         await sut.PersistAsync(new List<Testing.SampleEventItem>());
 
         //Assert
-        _repository.Verify(o =>
+        _batchRepository.Verify(o =>
             o.UpdateAsBatchAsync(
                 It.IsAny<List<Testing.SampleEventItem>>(),
                 default),
@@ -139,7 +139,7 @@ public partial class EventStoreTests
         //Arrange
         IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
-        _repository
+        _readonlyRepository
             .Setup(o =>
                 o.GetAsync(x => x.PartitionKey == Pk, default))
             .ReturnsAsync(_eventItemsWithAtomicEvents);
@@ -177,7 +177,7 @@ public partial class EventStoreTests
             _eventItems.Take(2).ToList(),
             0);
 
-        _repository
+        _readonlyRepository
             .SetupSequence(o => o.PageAsync(
                 x => x.PartitionKey == Pk,
                 5,
