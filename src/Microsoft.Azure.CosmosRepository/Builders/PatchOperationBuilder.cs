@@ -17,11 +17,23 @@ namespace Microsoft.Azure.CosmosRepository.Builders
     internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> where TItem : IItem
     {
         private readonly List<PatchOperation> _patchOperations = new();
-        private readonly CamelCaseNamingStrategy _namingStrategy = new();
+        private readonly NamingStrategy _namingStrategy;
 
         internal readonly List<InternalPatchOperation> _rawPatchOperations = new();
 
         public IReadOnlyList<PatchOperation> PatchOperations => _patchOperations;
+
+        public PatchOperationBuilder()
+        {
+            _namingStrategy = new CamelCaseNamingStrategy();
+        }
+
+        public PatchOperationBuilder(CosmosPropertyNamingPolicy? cosmosPropertyNamingPolicy)
+        {
+            _namingStrategy = cosmosPropertyNamingPolicy == CosmosPropertyNamingPolicy.Default
+                ? new DefaultNamingStrategy()
+                : new CamelCaseNamingStrategy();
+        }
 
         public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
@@ -32,24 +44,14 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             return this;
         }
 
-        private string GetPropertyToReplace(PropertyInfo propertyInfo)
+        private string GetPropertyToReplace(MemberInfo propertyInfo)
         {
-            object[] attributes = propertyInfo.GetCustomAttributes(true);
+            JsonPropertyAttribute[] attributes =
+                propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
 
-            if (attributes.Any() is false)
-            {
-                return _namingStrategy.GetPropertyName(propertyInfo.Name, false);
-            }
-
-            foreach (object attribute in attributes)
-            {
-                if (attribute is JsonPropertyAttribute jsonAttribute)
-                {
-                    return jsonAttribute.PropertyName;
-                }
-            }
-
-            return _namingStrategy.GetPropertyName(propertyInfo.Name, false);
+            return attributes.Length == 0
+                ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
+                : attributes.First().PropertyName;
         }
     }
 }

@@ -64,7 +64,9 @@ namespace Microsoft.Azure.CosmosRepository
             CancellationToken cancellationToken = default,
             string? etag = default)
         {
-            IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>();
+            CosmosPropertyNamingPolicy? propertyNamingPolicy =
+                _optionsMonitor.CurrentValue.SerializationOptions?.PropertyNamingPolicy;
+            IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>(propertyNamingPolicy);
 
             builder(patchOperationBuilder);
 
