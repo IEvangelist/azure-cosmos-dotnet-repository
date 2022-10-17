@@ -1,8 +1,12 @@
+using System.Runtime.CompilerServices.Context;
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
 using BasicEventSourcingSample.Projections;
 using BasicEventSourcingSample.Projections.Models;
 using CleanArchitecture.Exceptions.AspNetCore;
+using CorrelationId;
+using CorrelationId.Abstractions;
+using CorrelationId.DependencyInjection;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
@@ -16,6 +20,7 @@ services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepository
 services.AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = "EventSourcingShipSample");
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
+services.AddDefaultCorrelationId();
 
 services.AddCosmosEventSourcing(eventSourcingBuilder =>
 {
@@ -38,7 +43,7 @@ services.AddCosmosEventSourcing(eventSourcingBuilder =>
 
 services.AddCosmosRepositoryChangeFeedHostedService();
 
-services.AddSingleton<IShipRepository, ShipRepository>();
+services.AddScoped<IShipRepository, ShipRepository>();
 
 WebApplication app = builder.Build();
 
@@ -47,6 +52,17 @@ app.Map("/", () => Results.Redirect("/swagger"));
 app.UseCleanArchitectureExceptionsHandler();
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseCorrelationId();
+
+app.Use(async (context, next) =>
+{
+    ICorrelationContextAccessor correlationContextAccessor =
+        context.RequestServices.GetRequiredService<ICorrelationContextAccessor>();
+    IContextService contextService = context.RequestServices.GetRequiredService<IContextService>();
+    contextService.CorrelationId = correlationContextAccessor.CorrelationContext.CorrelationId;
+    await next.Invoke();
+});
 
 app.MapGet("/api/ships", async (IShipRepository shipRepository) =>
 {

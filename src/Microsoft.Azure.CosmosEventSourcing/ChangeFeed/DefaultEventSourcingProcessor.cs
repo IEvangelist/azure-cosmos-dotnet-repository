@@ -1,12 +1,14 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Runtime.CompilerServices.Context;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Azure.CosmosEventSourcing.Options;
 using Microsoft.Azure.CosmosEventSourcing.Projections;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 using Microsoft.Azure.CosmosRepository.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
@@ -19,7 +21,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
     private readonly ICosmosContainerService _containerService;
     private readonly ILeaseContainerProvider _leaseContainerProvider;
     private readonly ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> _logger;
-    private readonly IEventItemProjection<TSourcedEvent, TProjectionKey> _projection;
+    private readonly IServiceProvider _serviceProvider;
     private ChangeFeedProcessor? _processor;
 
     public DefaultEventSourcingProcessor(
@@ -27,13 +29,13 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
         ICosmosContainerService containerService,
         ILeaseContainerProvider leaseContainerProvider,
         ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> logger,
-        IEventItemProjection<TSourcedEvent, TProjectionKey> projection)
+        IServiceProvider serviceProvider)
     {
         _options = options;
         _containerService = containerService;
         _leaseContainerProvider = leaseContainerProvider;
         _logger = logger;
-        _projection = projection;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task StartAsync()
@@ -78,9 +80,16 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
 
         foreach (TSourcedEvent change in changes)
         {
+            using IServiceScope scope = _serviceProvider.CreateScope();
+            IEventItemProjection<TSourcedEvent, TProjectionKey> projection = scope.ServiceProvider
+                .GetRequiredService<IEventItemProjection<TSourcedEvent, TProjectionKey>>();
+
+            IContextService contextService = scope.ServiceProvider.GetRequiredService<IContextService>();
+            contextService.CorrelationId = change.CorrelationId;
+
             try
             {
-                await _projection.ProjectAsync(change, cancellationToken);
+                await projection.ProjectAsync(change, cancellationToken);
             }
             catch (Exception e)
             {

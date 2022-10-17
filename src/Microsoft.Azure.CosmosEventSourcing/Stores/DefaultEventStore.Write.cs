@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Reflection;
+using System.Runtime.CompilerServices.Context;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Attributes;
 using Microsoft.Azure.CosmosEventSourcing.Events;
@@ -27,7 +28,7 @@ internal partial class DefaultEventStore<TEventItem>
         }
 
         await _batchRepository.UpdateAsBatchAsync(
-            eventItems,
+            SetCorrelationId(_contextService, eventItems),
             cancellationToken);
     }
 
@@ -45,7 +46,7 @@ internal partial class DefaultEventStore<TEventItem>
         CancellationToken cancellationToken = default)
         where TAggregateRoot : IAggregateRoot =>
         _batchRepository.UpdateAsBatchAsync(
-            mapper.MapFrom(aggregateRoot),
+            SetCorrelationId(_contextService, mapper.MapFrom(aggregateRoot)),
             cancellationToken);
 
     public async ValueTask PersistAsync(
@@ -53,10 +54,33 @@ internal partial class DefaultEventStore<TEventItem>
         string partitionKeyValue,
         CancellationToken cancellationToken = default) =>
             await PersistAsync(
-                BuildEvents(aggregateRoot, partitionKeyValue),
+                SetCorrelationId(_contextService, BuildEvents(aggregateRoot, partitionKeyValue)),
                 cancellationToken);
 
-    private static List<TEventItem> BuildEvents(IAggregateRoot aggregateRoot, string partitionKey)
+    private static IEnumerable<TEventItem> SetCorrelationId(
+        IContextService contextService,
+        IEnumerable<TEventItem> eventItems)
+    {
+        if (string.IsNullOrWhiteSpace(contextService.CorrelationId))
+        {
+            return eventItems;
+        }
+
+        IEnumerable<TEventItem> items = eventItems.ToList();
+        foreach (TEventItem item in items)
+        {
+            if (item is not null && item.DomainEvent is not AtomicEvent)
+            {
+                item.CorrelationId = contextService.CorrelationId;
+            }
+        }
+
+        return items;
+    }
+
+    private static IEnumerable<TEventItem> BuildEvents(
+        IAggregateRoot aggregateRoot,
+        string partitionKey)
     {
         List<TEventItem?> events = aggregateRoot.NewEvents
             .Select(x =>

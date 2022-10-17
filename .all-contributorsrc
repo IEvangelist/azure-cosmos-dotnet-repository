@@ -231,6 +231,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "idormenco",
+      "name": "Ion Dormenco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1877190?v=4",
+      "profile": "https://github.com/idormenco",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -238,5 +247,6 @@
   "projectOwner": "IEvangelist",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }

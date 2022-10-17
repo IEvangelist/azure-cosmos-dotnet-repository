@@ -31,7 +31,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         optionsAction?.Invoke(options);
 
         _services.AddSingleton(options);
-        _services.AddSingleton<IEventItemProjection<TEventItem, TProjectionKey>, TProjection>();
+        _services.AddScoped<IEventItemProjection<TEventItem, TProjectionKey>, TProjection>();
         _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventItem, TProjectionKey>>();
 
         return new EventItemProjectionBuilder<TEventItem, TProjectionKey>(
@@ -49,7 +49,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
 
         _services.AddSingleton(options);
         _services
-            .AddSingleton<IEventItemProjection<TEventItem, TProjectionKey>, DefaultDomainEventProjection<TEventItem, TProjectionKey>>();
+            .AddScoped<IEventItemProjection<TEventItem, TProjectionKey>, DefaultDomainEventProjection<TEventItem, TProjectionKey>>();
         _services.AddSingleton<IEventSourcingProcessor, DefaultEventSourcingProcessor<TEventItem, TProjectionKey>>();
         return this;
     }
@@ -83,7 +83,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
         _services.Scan(x => x.FromAssemblies(assemblies)
             .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventProjection<,,>)))
             .AsImplementedInterfaces()
-            .WithSingletonLifetime());
+            .WithScopedLifetime());
 
         return this;
     }

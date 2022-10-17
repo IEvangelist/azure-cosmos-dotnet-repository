@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Runtime.CompilerServices.Context;
 using Microsoft.Azure.CosmosEventSourcing.Items;
 using Microsoft.Azure.CosmosRepository;
 
@@ -11,11 +12,15 @@ internal partial class DefaultEventStore<TEventItem> :
 {
     private readonly IBatchRepository<TEventItem> _batchRepository;
     private readonly IReadOnlyRepository<TEventItem> _readOnlyRepository;
+    private readonly IContextService _contextService;
 
     public DefaultEventStore(
-        IRepository<TEventItem> repository)
+        IBatchRepository<TEventItem> batchRepository,
+        IReadOnlyRepository<TEventItem> readOnlyRepository,
+        IContextService contextService)
     {
-        _batchRepository = repository;
-        _readOnlyRepository = repository;
+        _batchRepository = batchRepository;
+        _readOnlyRepository = readOnlyRepository;
+        _contextService = contextService;
     }
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices.Context;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing.Events;
@@ -20,7 +21,9 @@ namespace Microsoft.Azure.CosmosEventSourcingTests.Stores;
 public partial class EventStoreTests
 {
     private readonly AutoMocker _autoMocker = new();
-    private readonly Mock<IRepository<Testing.SampleEventItem>> _repository;
+    private readonly Mock<IBatchRepository<Testing.SampleEventItem>> _batchRepository;
+    private readonly Mock<IReadOnlyRepository<Testing.SampleEventItem>> _readonlyRepository;
+    private readonly Mock<IContextService> _contextService;
     private const string Pk = "pk";
 
     private readonly List<Testing.SampleEvent> _events = new()
@@ -53,7 +56,9 @@ public partial class EventStoreTests
 
     public EventStoreTests()
     {
-        _repository = _autoMocker.GetMock<IRepository<Testing.SampleEventItem>>();
+        _batchRepository = _autoMocker.GetMock<IBatchRepository<Testing.SampleEventItem>>();
+        _readonlyRepository = _autoMocker.GetMock<IReadOnlyRepository<Testing.SampleEventItem>>();
+        _contextService = _autoMocker.GetMock<IContextService>();
     }
 
     private IEventStore<Testing.SampleEventItem> CreateSut() =>
@@ -73,6 +78,30 @@ public partial class EventStoreTests
             o.UpdateAsBatchAsync(
                 _eventItemsWithAtomicEvents,
                 default));
+    }
+
+    [Fact]
+    public async Task PersistAsync_EventsAndCorrelationId_SavesAllEventsWithCorrelationId()
+    {
+        //Arrange
+        IEventStore<Testing.SampleEventItem> sut = CreateSut();
+
+        string correlationId = Guid.NewGuid().ToString();
+        _contextService.SetupGet(o => o.CorrelationId).Returns(correlationId);
+
+        //Act
+        await sut.PersistAsync(_eventItemsWithAtomicEvents);
+
+        //Assert
+        _batchRepository.Verify(o =>
+            o.UpdateAsBatchAsync(
+                _eventItemsWithAtomicEvents,
+                default));
+
+        _eventItemsWithAtomicEvents
+            .Where(x => x.DomainEvent is not AtomicEvent)
+            .All(x => x.CorrelationId == correlationId)
+            .Should().BeTrue();
     }
 
     [Fact]
