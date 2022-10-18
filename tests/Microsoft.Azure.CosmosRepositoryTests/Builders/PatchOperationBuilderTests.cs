@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Builders;
@@ -46,7 +45,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Builders
             builder.Replace(x => x.TestProperty, "100");
 
             //Assert
-            PatchOperation operation = builder.PatchOperations.First();
+            PatchOperation operation = builder.PatchOperations[0];
             Assert.Equal(PatchOperationType.Replace, operation.OperationType);
             Assert.Equal("/thisIsTheName", operation.Path);
         }
@@ -61,7 +60,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Builders
             builder.Replace(x => x.TestIntProperty, 50);
 
             //Assert
-            PatchOperation operation = builder.PatchOperations.First();
+            PatchOperation operation = builder.PatchOperations[0];
             Assert.Equal(PatchOperationType.Replace, operation.OperationType);
             Assert.Equal("/testIntProperty", operation.Path);
         }
@@ -76,7 +75,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Builders
             builder.Replace(x => x.TestProperty, "Test Value");
 
             //Assert
-            PatchOperation operation = builder.PatchOperations.First();
+            PatchOperation operation = builder.PatchOperations[0];
             Assert.Equal(PatchOperationType.Replace, operation.OperationType);
             Assert.Equal("/testProperty", operation.Path);
         }
@@ -91,7 +90,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Builders
             builder.Replace(x => x.TestProperty, "Test Value");
 
             //Assert
-            PatchOperation operation = builder.PatchOperations.First();
+            PatchOperation operation = builder.PatchOperations[0];
             Assert.Equal(PatchOperationType.Replace, operation.OperationType);
             Assert.Equal("/testProperty", operation.Path);
         }
