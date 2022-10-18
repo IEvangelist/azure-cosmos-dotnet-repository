@@ -49,7 +49,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             JsonPropertyAttribute[] attributes =
                 propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
 
-            return attributes.Length == 0
+            return attributes.Length is 0
                 ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
                 : attributes[0].PropertyName;
         }
