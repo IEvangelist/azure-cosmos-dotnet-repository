@@ -23,10 +23,8 @@ namespace Microsoft.Azure.CosmosRepository.Builders
 
         public IReadOnlyList<PatchOperation> PatchOperations => _patchOperations;
 
-        public PatchOperationBuilder()
-        {
+        public PatchOperationBuilder() =>
             _namingStrategy = new CamelCaseNamingStrategy();
-        }
 
         public PatchOperationBuilder(CosmosPropertyNamingPolicy? cosmosPropertyNamingPolicy) => 
             _namingStrategy = cosmosPropertyNamingPolicy == CosmosPropertyNamingPolicy.Default
