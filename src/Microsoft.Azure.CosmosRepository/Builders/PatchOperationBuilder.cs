@@ -28,12 +28,10 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             _namingStrategy = new CamelCaseNamingStrategy();
         }
 
-        public PatchOperationBuilder(CosmosPropertyNamingPolicy? cosmosPropertyNamingPolicy)
-        {
+        public PatchOperationBuilder(CosmosPropertyNamingPolicy? cosmosPropertyNamingPolicy) => 
             _namingStrategy = cosmosPropertyNamingPolicy == CosmosPropertyNamingPolicy.Default
                 ? new DefaultNamingStrategy()
                 : new CamelCaseNamingStrategy();
-        }
 
         public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
