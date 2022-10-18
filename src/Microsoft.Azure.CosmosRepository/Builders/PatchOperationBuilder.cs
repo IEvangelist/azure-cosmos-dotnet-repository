@@ -51,7 +51,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
 
             return attributes.Length == 0
                 ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
-                : attributes.First().PropertyName;
+                : attributes[0].PropertyName;
         }
     }
 }
