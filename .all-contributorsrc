@@ -249,6 +249,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "evancjohnson",
+      "name": "Evan Johnson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17952965?v=4",
+      "profile": "http://evancjohnson.com",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
