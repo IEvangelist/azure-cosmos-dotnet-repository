@@ -6,14 +6,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Internals;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
+[assembly: InternalsVisibleTo("Microsoft.Azure.CosmosRepositoryTests")]
 namespace Microsoft.Azure.CosmosRepository.Builders
 {
+
     internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> where TItem : IItem
     {
         private readonly List<PatchOperation> _patchOperations = new();
@@ -26,36 +29,32 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         public PatchOperationBuilder() =>
             _namingStrategy = new CamelCaseNamingStrategy();
 
-        public PatchOperationBuilder(CosmosPropertyNamingPolicy? cosmosPropertyNamingPolicy) => 
+        public PatchOperationBuilder(CosmosPropertyNamingPolicy? cosmosPropertyNamingPolicy) =>
             _namingStrategy = cosmosPropertyNamingPolicy == CosmosPropertyNamingPolicy.Default
                 ? new DefaultNamingStrategy()
                 : new CamelCaseNamingStrategy();
 
         public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
-            PropertyInfo property = expression.GetPropertyInfo();
-            string propertyToReplace = GetPropertyToReplace(property);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Replace));
-            _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
+            string propertyToReplace = GetPropertyToReplace(expression);
+            return Replace(propertyToReplace, value);
+        }
+        public IPatchOperationBuilder<TItem> Replace<TValue>(string path, TValue value)
+        {
+            _patchOperations.Add(PatchOperation.Replace($"/{path}", value));
             return this;
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
-            PropertyInfo property = expression.GetPropertyInfo();
-            string propertyToReplace = GetPropertyToReplace(property);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Set));
-            _patchOperations.Add(PatchOperation.Set($"/{propertyToReplace}", value));
-            return this;
+            string propertyToReplace = GetPropertyToReplace(expression);
+            return Set(propertyToReplace, value);
         }
 
         public IPatchOperationBuilder<TItem> Add<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
-            PropertyInfo property = expression.GetPropertyInfo();
-            string propertyToReplace = GetPropertyToReplace(property);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Replace));
-            _patchOperations.Add(PatchOperation.Add($"/{propertyToReplace}", value));
-            return this;
+            string propertyToReplace = GetPropertyToReplace(expression);
+            return Add(propertyToReplace, value);
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(string path, TValue? value)
@@ -72,14 +71,11 @@ namespace Microsoft.Azure.CosmosRepository.Builders
 
         public IPatchOperationBuilder<TItem> Remove<TValue>(Expression<Func<TItem, TValue>> expression)
         {
-            PropertyInfo property = expression.GetPropertyInfo();
-            string propertyToReplace = GetPropertyToReplace(property);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, null, PatchOperationType.Remove));
-            _patchOperations.Add(PatchOperation.Remove($"/{propertyToReplace}"));
-            return this;
+            string propertyToReplace = GetPropertyToReplace(expression);
+            return Remove(propertyToReplace);
         }
 
-        public IPatchOperationBuilder<TItem> Remove<TValue>(string path)
+        public IPatchOperationBuilder<TItem> Remove(string path)
         {
             _patchOperations.Add(PatchOperation.Remove($"/{path}"));
             return this;
@@ -101,16 +97,30 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         /// Get the property name to replace. This only works for a single level of nesting.
         /// </summary>
         /// <remarks>If you're looking for nesting call the respective method with a given path instead.</remarks>
-        /// <param name="propertyInfo">The property to get the path of.</param>
+        /// <param name="expression">The property to get the path of.</param>
         /// <returns>Returns the path of the property name.</returns>
-        private string GetPropertyToReplace(MemberInfo propertyInfo)
+        internal string GetPropertyToReplace<TValue>(Expression<Func<TItem, TValue>> expression)
         {
+            PropertyInfo property = expression.GetPropertyInfo();
+
             JsonPropertyAttribute[] attributes =
-                propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
+                property.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
 
             return attributes.Length is 0
-                ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
+                ? _namingStrategy.GetPropertyName(property.Name, false)
                 : attributes[0].PropertyName;
+        }
+
+        public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, double value)
+        {
+            string propertyToReplace = GetPropertyToReplace(expression);
+            return Increment(propertyToReplace, value);
+        }
+
+        public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, long value)
+        {
+            string propertyToReplace = GetPropertyToReplace(expression);
+            return Increment(propertyToReplace, value);
         }
     }
 }
