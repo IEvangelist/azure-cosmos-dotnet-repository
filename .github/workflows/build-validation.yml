@@ -30,12 +30,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Core
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: | 
-          3.1.402
-          6.0.x
+        dotnet-version: |
+          7.0.x
 
     - name: Install dependencies
       run: dotnet restore
@@ -57,9 +56,8 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: | 
-            3.1.402
-            6.0.x
+          dotnet-version: |
+            7.0.x
 
       - name: Install dependencies
         run: dotnet restore
@@ -102,6 +100,4 @@ jobs:
         env:
           CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
         run: |
-          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=Container"
-        
-  
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=Container"  
