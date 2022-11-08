@@ -10,60 +10,59 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Azure.CosmosRepository
+namespace Microsoft.Azure.CosmosRepository;
+
+internal sealed partial class DefaultRepository<TItem>
 {
-    internal sealed partial class DefaultRepository<TItem>
+    /// <inheritdoc/>
+    public ValueTask<bool> ExistsAsync(
+        string id,
+        string? partitionKeyValue = null,
+        CancellationToken cancellationToken = default) =>
+        ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
+
+    /// <inheritdoc/>
+    public async ValueTask<bool> ExistsAsync(
+        string id,
+        PartitionKey partitionKey,
+        CancellationToken cancellationToken = default)
     {
-        /// <inheritdoc/>
-        public ValueTask<bool> ExistsAsync(
-            string id,
-            string? partitionKeyValue = null,
-            CancellationToken cancellationToken = default) =>
-            ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
+        Container container =
+            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-        /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(
-            string id,
-            PartitionKey partitionKey,
-            CancellationToken cancellationToken = default)
+        if (partitionKey == default)
         {
-            Container container =
-                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
-
-            if (partitionKey == default)
-            {
-                partitionKey = new PartitionKey(id);
-            }
-
-            try
-            {
-                _ = await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
-                    .ConfigureAwait(false);
-            }
-            catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
-            {
-                return false;
-            }
-
-            return true;
+            partitionKey = new PartitionKey(id);
         }
 
-        /// <inheritdoc/>
-        public async ValueTask<bool> ExistsAsync(
-            Expression<Func<TItem, bool>> predicate,
-            CancellationToken cancellationToken = default)
+        try
         {
-            Container container =
-                await _containerProvider.GetContainerAsync().ConfigureAwait(false);
-
-            IQueryable<TItem> query =
-                container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate));
-
-            TryLogDebugDetails(_logger, () => $"Read: {query}");
-
-            int count = await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
-            return count > 0;
+            _ = await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
         }
+        catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc/>
+    public async ValueTask<bool> ExistsAsync(
+        Expression<Func<TItem, bool>> predicate,
+        CancellationToken cancellationToken = default)
+    {
+        Container container =
+            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+        IQueryable<TItem> query =
+            container.GetItemLinqQueryable<TItem>()
+                .Where(_repositoryExpressionProvider.Build(predicate));
+
+        TryLogDebugDetails(_logger, () => $"Read: {query}");
+
+        int count = await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
+        return count > 0;
     }
 }

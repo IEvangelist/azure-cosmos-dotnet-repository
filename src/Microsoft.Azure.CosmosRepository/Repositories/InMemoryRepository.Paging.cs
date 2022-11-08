@@ -11,54 +11,53 @@ using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Paging;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Azure.CosmosRepository
+namespace Microsoft.Azure.CosmosRepository;
+
+internal partial class InMemoryRepository<TItem>
 {
-    internal partial class InMemoryRepository<TItem>
+    /// <inheritdoc/>
+    public ValueTask<IPage<TItem>> PageAsync(
+        Expression<Func<TItem, bool>>? predicate = null,
+        int pageSize = 25,
+        string? continuationToken = null,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default)
     {
-        /// <inheritdoc/>
-        public ValueTask<IPage<TItem>> PageAsync(
-            Expression<Func<TItem, bool>>? predicate = null,
-            int pageSize = 25,
-            string? continuationToken = null,
-            bool returnTotal = false,
-            CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
+    }
 
-        /// <inheritdoc/>
-        public async ValueTask<IPageQueryResult<TItem>> PageAsync(
-            Expression<Func<TItem, bool>>? predicate = null,
-            int pageNumber = 1,
-            int pageSize = 25,
-            bool returnTotal = false,
-            CancellationToken cancellationToken = default)
-        {
-            await Task.CompletedTask;
+    /// <inheritdoc/>
+    public async ValueTask<IPageQueryResult<TItem>> PageAsync(
+        Expression<Func<TItem, bool>>? predicate = null,
+        int pageNumber = 1,
+        int pageSize = 25,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default)
+    {
+        await Task.CompletedTask;
 
-            IEnumerable<TItem> filteredItems = Items.Values
-                .Select(DeserializeItem)
-                .ToList();
+        IEnumerable<TItem> filteredItems = Items.Values
+            .Select(DeserializeItem)
+            .ToList();
 
-            Expression<Func<TItem, bool>> typeCheck = item =>
-                item.Type == typeof(TItem).Name;
+        Expression<Func<TItem, bool>> typeCheck = item =>
+            item.Type == typeof(TItem).Name;
 
-            filteredItems = filteredItems.Where(predicate is not null
-                ? predicate.Compose(typeCheck, Expression.AndAlso).Compile()
-                : typeCheck.Compile());
+        filteredItems = filteredItems.Where(predicate is not null
+            ? predicate.Compose(typeCheck, Expression.AndAlso).Compile()
+            : typeCheck.Compile());
 
-            IEnumerable<TItem> enumerable = filteredItems.ToList();
+        IEnumerable<TItem> enumerable = filteredItems.ToList();
 
-            IEnumerable<TItem> items = enumerable
-                .Skip(pageSize * (pageNumber - 1))
-                .Take(pageSize);
+        IEnumerable<TItem> items = enumerable
+            .Skip(pageSize * (pageNumber - 1))
+            .Take(pageSize);
 
-            return new PageQueryResult<TItem>(
-                returnTotal ? enumerable.Count() : null,
-                pageNumber,
-                pageSize,
-                items.ToList().AsReadOnly(),
-                0);
-        }
+        return new PageQueryResult<TItem>(
+            returnTotal ? enumerable.Count() : null,
+            pageNumber,
+            pageSize,
+            items.ToList().AsReadOnly(),
+            0);
     }
 }

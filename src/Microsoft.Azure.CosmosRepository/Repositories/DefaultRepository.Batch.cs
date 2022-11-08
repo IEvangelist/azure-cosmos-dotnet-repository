@@ -10,104 +10,103 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Exceptions;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Azure.CosmosRepository
+namespace Microsoft.Azure.CosmosRepository;
+
+internal partial class DefaultRepository<TItem>
 {
-    internal partial class DefaultRepository<TItem>
+    /// <inheritdoc />
+    public async ValueTask UpdateAsBatchAsync(
+        IEnumerable<TItem> items,
+        CancellationToken cancellationToken = default)
     {
-        /// <inheritdoc />
-        public async ValueTask UpdateAsBatchAsync(
-            IEnumerable<TItem> items,
-            CancellationToken cancellationToken = default)
+        List<TItem> list = items.ToList();
+
+        string partitionKey = GetPartitionKeyValue(list);
+
+        Container container = await _containerProvider.GetContainerAsync();
+
+        TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
+
+        foreach (TItem item in list)
         {
-            List<TItem> list = items.ToList();
+            TransactionalBatchItemRequestOptions options = new();
 
-            string partitionKey = GetPartitionKeyValue(list);
-
-            Container container = await _containerProvider.GetContainerAsync();
-
-            TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
-
-            foreach (TItem item in list)
+            if (item is IItemWithEtag itemWithEtag)
             {
-                TransactionalBatchItemRequestOptions options = new();
-
-                if (item is IItemWithEtag itemWithEtag)
-                {
-                    options.IfMatchEtag = itemWithEtag.Etag;
-                }
-
-                batch.UpsertItem(item, options);
+                options.IfMatchEtag = itemWithEtag.Etag;
             }
 
-            using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new BatchOperationException<TItem>(response);
-            }
+            batch.UpsertItem(item, options);
         }
 
-        /// <inheritdoc />
-        public async ValueTask CreateAsBatchAsync(
-            IEnumerable<TItem> items,
-            CancellationToken cancellationToken = default)
+        using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
         {
-            List<TItem> list = items.ToList();
+            throw new BatchOperationException<TItem>(response);
+        }
+    }
 
-            string partitionKey = GetPartitionKeyValue(list);
+    /// <inheritdoc />
+    public async ValueTask CreateAsBatchAsync(
+        IEnumerable<TItem> items,
+        CancellationToken cancellationToken = default)
+    {
+        List<TItem> list = items.ToList();
 
-            Container container = await _containerProvider.GetContainerAsync();
+        string partitionKey = GetPartitionKeyValue(list);
 
-            TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
+        Container container = await _containerProvider.GetContainerAsync();
 
-            foreach (TItem item in list)
-            {
-                batch.CreateItem(item);
-            }
+        TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
 
-            using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new BatchOperationException<TItem>(response);
-            }
+        foreach (TItem item in list)
+        {
+            batch.CreateItem(item);
         }
 
-        public async ValueTask DeleteAsBatchAsync(
-            IEnumerable<TItem> items,
-            CancellationToken cancellationToken = default)
+        using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
         {
-            List<TItem> list = items.ToList();
+            throw new BatchOperationException<TItem>(response);
+        }
+    }
 
-            string partitionKey = GetPartitionKeyValue(list);
+    public async ValueTask DeleteAsBatchAsync(
+        IEnumerable<TItem> items,
+        CancellationToken cancellationToken = default)
+    {
+        List<TItem> list = items.ToList();
 
-            Container container = await _containerProvider.GetContainerAsync();
+        string partitionKey = GetPartitionKeyValue(list);
 
-            TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
+        Container container = await _containerProvider.GetContainerAsync();
 
-            foreach (TItem item in list)
-            {
-                batch.DeleteItem(item.Id);
-            }
+        TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
 
-            using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new BatchOperationException<TItem>(response);
-            }
+        foreach (TItem item in list)
+        {
+            batch.DeleteItem(item.Id);
         }
 
-        private static string GetPartitionKeyValue(List<TItem> items)
-        {
-            if (!items.Any())
-            {
-                throw new ArgumentException(
-                    "Unable to perform batch operation with no items",
-                    nameof(items));
-            }
+        using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken);
 
-            return items[0].PartitionKey;
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new BatchOperationException<TItem>(response);
         }
+    }
+
+    private static string GetPartitionKeyValue(List<TItem> items)
+    {
+        if (!items.Any())
+        {
+            throw new ArgumentException(
+                "Unable to perform batch operation with no items",
+                nameof(items));
+        }
+
+        return items[0].PartitionKey;
     }
 }

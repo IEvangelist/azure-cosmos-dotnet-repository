@@ -16,83 +16,82 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Azure.CosmosRepository
+namespace Microsoft.Azure.CosmosRepository;
+
+/// <inheritdoc/>
+internal sealed partial class DefaultRepository<TItem> : IRepository<TItem>
+    where TItem : IItem
 {
-    /// <inheritdoc/>
-    internal sealed partial class DefaultRepository<TItem> : IRepository<TItem>
-        where TItem : IItem
+    readonly ICosmosContainerProvider<TItem> _containerProvider;
+    readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
+    readonly ILogger<DefaultRepository<TItem>> _logger;
+    readonly ICosmosQueryableProcessor _cosmosQueryableProcessor;
+    readonly IRepositoryExpressionProvider _repositoryExpressionProvider;
+    readonly ISpecificationEvaluator _specificationEvaluator;
+
+    (bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
+        (_optionsMonitor.CurrentValue.OptimizeBandwidth, new ItemRequestOptions
+        {
+            EnableContentResponseOnWrite = !_optionsMonitor.CurrentValue.OptimizeBandwidth
+        });
+
+    public DefaultRepository(
+        IOptionsMonitor<RepositoryOptions> optionsMonitor,
+        ICosmosContainerProvider<TItem> containerProvider,
+        ILogger<DefaultRepository<TItem>> logger,
+        ICosmosQueryableProcessor cosmosQueryableProcessor,
+        IRepositoryExpressionProvider repositoryExpressionProvider,
+        ISpecificationEvaluator specificationEvaluator)
     {
-        readonly ICosmosContainerProvider<TItem> _containerProvider;
-        readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
-        readonly ILogger<DefaultRepository<TItem>> _logger;
-        readonly ICosmosQueryableProcessor _cosmosQueryableProcessor;
-        readonly IRepositoryExpressionProvider _repositoryExpressionProvider;
-        readonly ISpecificationEvaluator _specificationEvaluator;
+        _optionsMonitor = optionsMonitor;
+        _containerProvider = containerProvider;
+        _logger = logger;
+        _cosmosQueryableProcessor = cosmosQueryableProcessor;
+        _repositoryExpressionProvider = repositoryExpressionProvider;
+        _specificationEvaluator = specificationEvaluator;
+    }
 
-        (bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
-            (_optionsMonitor.CurrentValue.OptimizeBandwidth, new ItemRequestOptions
-            {
-                EnableContentResponseOnWrite = !_optionsMonitor.CurrentValue.OptimizeBandwidth
-            });
-
-        public DefaultRepository(
-            IOptionsMonitor<RepositoryOptions> optionsMonitor,
-            ICosmosContainerProvider<TItem> containerProvider,
-            ILogger<DefaultRepository<TItem>> logger,
-            ICosmosQueryableProcessor cosmosQueryableProcessor,
-            IRepositoryExpressionProvider repositoryExpressionProvider,
-            ISpecificationEvaluator specificationEvaluator)
+    static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
+    {
+        // ReSharper disable once ConstantConditionalAccessQualifier
+        if (logger?.IsEnabled(LogLevel.Debug) ?? false)
         {
-            _optionsMonitor = optionsMonitor;
-            _containerProvider = containerProvider;
-            _logger = logger;
-            _cosmosQueryableProcessor = cosmosQueryableProcessor;
-            _repositoryExpressionProvider = repositoryExpressionProvider;
-            _specificationEvaluator = specificationEvaluator;
+            // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
+            logger.LogDebug(getMessage());
         }
+    }
 
-        static void TryLogDebugDetails(ILogger logger, Func<string> getMessage)
+    static async Task<(List<TItem> items, double charge, string? continuationToken)> GetAllItemsAsync(
+        IQueryable<TItem> query,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        string? continuationToken = null;
+        List<TItem> results = new();
+        int readItemsCount = 0;
+        double charge = 0;
+        using FeedIterator<TItem> iterator = query.ToFeedIterator();
+        while (readItemsCount < pageSize && iterator.HasMoreResults)
         {
-            // ReSharper disable once ConstantConditionalAccessQualifier
-            if (logger?.IsEnabled(LogLevel.Debug) ?? false)
-            {
-                // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
-                logger.LogDebug(getMessage());
-            }
-        }
+            FeedResponse<TItem> next =
+                await iterator.ReadNextAsync(cancellationToken)
+                    .ConfigureAwait(false);
 
-        static async Task<(List<TItem> items, double charge, string? continuationToken)> GetAllItemsAsync(
-            IQueryable<TItem> query,
-            int pageSize,
-            CancellationToken cancellationToken = default)
-        {
-            string? continuationToken = null;
-            List<TItem> results = new();
-            int readItemsCount = 0;
-            double charge = 0;
-            using FeedIterator<TItem> iterator = query.ToFeedIterator();
-            while (readItemsCount < pageSize && iterator.HasMoreResults)
+            foreach (TItem result in next)
             {
-                FeedResponse<TItem> next =
-                    await iterator.ReadNextAsync(cancellationToken)
-                        .ConfigureAwait(false);
-
-                foreach (TItem result in next)
+                if (readItemsCount == pageSize)
                 {
-                    if (readItemsCount == pageSize)
-                    {
-                        break;
-                    }
-
-                    results.Add(result);
-                    readItemsCount++;
+                    break;
                 }
 
-                charge += next.RequestCharge;
-                continuationToken = next.ContinuationToken;
+                results.Add(result);
+                readItemsCount++;
             }
 
-            return (results, charge, continuationToken);
+            charge += next.RequestCharge;
+            continuationToken = next.ContinuationToken;
         }
+
+        return (results, charge, continuationToken);
     }
 }

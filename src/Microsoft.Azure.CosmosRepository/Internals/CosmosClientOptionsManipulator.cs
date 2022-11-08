@@ -4,13 +4,12 @@
 using System;
 using Microsoft.Azure.Cosmos;
 
-namespace Microsoft.Azure.CosmosRepository.Internals
-{
-    class CosmosClientOptionsManipulator
-    {
-        internal Action<CosmosClientOptions> Configure { get; }
+namespace Microsoft.Azure.CosmosRepository.Internals;
 
-        internal CosmosClientOptionsManipulator(Action<CosmosClientOptions>? configure) =>
-            Configure = configure ?? (options => { /* if not provided, act as a pass-thru */ });
-    }
+class CosmosClientOptionsManipulator
+{
+    internal Action<CosmosClientOptions> Configure { get; }
+
+    internal CosmosClientOptionsManipulator(Action<CosmosClientOptions>? configure) =>
+        Configure = configure ?? (options => { /* if not provided, act as a pass-thru */ });
 }

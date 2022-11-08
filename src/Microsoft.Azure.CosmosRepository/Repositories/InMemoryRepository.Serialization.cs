@@ -5,32 +5,31 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Azure.CosmosRepository
+namespace Microsoft.Azure.CosmosRepository;
+
+internal partial class InMemoryRepository<TItem>
 {
-    internal partial class InMemoryRepository<TItem>
+    private string SerializeItem(
+        TItem item,
+        string? etag = null,
+        long? ts = null)
     {
-        private string SerializeItem(
-            TItem item,
-            string? etag = null,
-            long? ts = null)
+        JObject jObject = JObject.FromObject(item);
+        if (etag != null)
         {
-            JObject jObject = JObject.FromObject(item);
-            if (etag != null)
-            {
-                jObject["_etag"] = JToken.FromObject(etag);
-            }
-
-            if (ts.HasValue)
-            {
-                jObject["_ts"] = JToken.FromObject(ts);
-            }
-
-            return jObject.ToString();
+            jObject["_etag"] = JToken.FromObject(etag);
         }
 
-        internal TItem DeserializeItem(string jsonItem) => JsonConvert.DeserializeObject<TItem>(jsonItem);
+        if (ts.HasValue)
+        {
+            jObject["_ts"] = JToken.FromObject(ts);
+        }
 
-        internal TDeserializeTo DeserializeItem<TDeserializeTo>(string jsonItem) =>
-            JsonConvert.DeserializeObject<TDeserializeTo>(jsonItem);
+        return jObject.ToString();
     }
+
+    internal TItem DeserializeItem(string jsonItem) => JsonConvert.DeserializeObject<TItem>(jsonItem);
+
+    internal TDeserializeTo DeserializeItem<TDeserializeTo>(string jsonItem) =>
+        JsonConvert.DeserializeObject<TDeserializeTo>(jsonItem);
 }

@@ -1,32 +1,31 @@
 ﻿using Newtonsoft.Json;
 
-namespace AzureFunctionTier.Model
+namespace AzureFunctionTier.Model;
+
+public class PostUserRequest
 {
-    public class PostUserRequest
-    {
-        [JsonProperty("firstName")]
-        public string FirstName { get; set; }
+    [JsonProperty("firstName")]
+    public required string FirstName { get; set; }
 
-        [JsonProperty("lastName")]
-        public string LastName { get; set; }
+    [JsonProperty("lastName")]
+    public required string LastName { get; set; }
 
-        [JsonProperty("emailAddress")]
-        public string EmailAddress { get; set; }
+    [JsonProperty("emailAddress")]
+    public required string EmailAddress { get; set; }
 
-        #region Converters
+    #region Converters
 
-        /// <summary>
-        /// Create a <see cref="User"/> out of a <see cref="PostUserRequest"/>.
-        /// </summary>
-        /// <param name="postUserRequest">The <see cref="PostUserRequest"/> to start with.</param>
-        public static implicit operator User(PostUserRequest postUserRequest) =>
-            new User
-            {
-                FirstName = postUserRequest?.FirstName,
-                LastName = postUserRequest?.LastName,
-                EmailAddress = postUserRequest?.EmailAddress,
-            };
+    /// <summary>
+    /// Create a <see cref="User"/> out of a <see cref="PostUserRequest"/>.
+    /// </summary>
+    /// <param name="postUserRequest">The <see cref="PostUserRequest"/> to start with.</param>
+    public static implicit operator User(PostUserRequest postUserRequest) =>
+        new()
+        {
+            FirstName = postUserRequest?.FirstName ?? "Jane",
+            LastName = postUserRequest?.LastName ?? "Doe",
+            EmailAddress = postUserRequest?.EmailAddress ?? "jane.doe@example.com",
+        };
 
-        #endregion
-    }
+    #endregion
 }

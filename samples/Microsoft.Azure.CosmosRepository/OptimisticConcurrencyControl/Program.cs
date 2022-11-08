@@ -167,7 +167,7 @@ async Task ConcurrencyWithOptimizeBandwidthOnTrapDemo()
     Console.WriteLine($"Optimized bandwidth ON.");
     IRepository<BankAccount> repository = BuildRepository(true);
 
-    BankAccount bankAccountInfo = new BankAccount()
+    BankAccount bankAccountInfo = new()
     {
         Name = "Current Account",
         Balance = 500.0

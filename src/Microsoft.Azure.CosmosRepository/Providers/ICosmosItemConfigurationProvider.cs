@@ -4,15 +4,14 @@
 using System;
 using Microsoft.Azure.CosmosRepository.Options;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
-{
-    /// <summary>
-    /// Holds all of the configuration information for an item.
-    /// </summary>
-    interface ICosmosItemConfigurationProvider
-    {
-        ItemConfiguration GetItemConfiguration<TItem>() where TItem : IItem;
+namespace Microsoft.Azure.CosmosRepository.Providers;
 
-        ItemConfiguration GetItemConfiguration(Type itemType);
-    }
+/// <summary>
+/// Holds all of the configuration information for an item.
+/// </summary>
+interface ICosmosItemConfigurationProvider
+{
+    ItemConfiguration GetItemConfiguration<TItem>() where TItem : IItem;
+
+    ItemConfiguration GetItemConfiguration(Type itemType);
 }

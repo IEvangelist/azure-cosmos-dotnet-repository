@@ -7,38 +7,37 @@ using Microsoft.Azure.CosmosRepository.Builders;
 using Microsoft.Azure.CosmosRepository.Options;
 using Microsoft.Extensions.Options;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
+namespace Microsoft.Azure.CosmosRepository.Providers;
+
+/// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosPartitionKeyPathProvider" />
+class DefaultCosmosPartitionKeyPathProvider :
+    ICosmosPartitionKeyPathProvider
 {
-    /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosPartitionKeyPathProvider" />
-    class DefaultCosmosPartitionKeyPathProvider :
-        ICosmosPartitionKeyPathProvider
+    private readonly IOptions<RepositoryOptions> _options;
+
+    public DefaultCosmosPartitionKeyPathProvider(IOptions<RepositoryOptions> options)
     {
-        private readonly IOptions<RepositoryOptions> _options;
+        _options = options ?? throw new ArgumentNullException(nameof(options));
+    }
 
-        public DefaultCosmosPartitionKeyPathProvider(IOptions<RepositoryOptions> options)
+    /// <inheritdoc />
+    public string GetPartitionKeyPath<TItem>() where TItem : IItem =>
+        GetPartitionKeyPath(typeof(TItem));
+
+    public string GetPartitionKeyPath(Type itemType)
+    {
+        Type attributeType = typeof(PartitionKeyPathAttribute);
+
+        ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);
+
+        if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
         {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            return optionsBuilder.PartitionKey!;
         }
 
-        /// <inheritdoc />
-        public string GetPartitionKeyPath<TItem>() where TItem : IItem =>
-            GetPartitionKeyPath(typeof(TItem));
-
-        public string GetPartitionKeyPath(Type itemType)
-        {
-            Type attributeType = typeof(PartitionKeyPathAttribute);
-
-            ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);
-
-            if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
-            {
-                return optionsBuilder.PartitionKey!;
-            }
-
-            return Attribute.GetCustomAttribute(
-                itemType, attributeType) is PartitionKeyPathAttribute partitionKeyPathAttribute
-                ? partitionKeyPathAttribute.Path
-                : "/id";
-        }
+        return Attribute.GetCustomAttribute(
+            itemType, attributeType) is PartitionKeyPathAttribute partitionKeyPathAttribute
+            ? partitionKeyPathAttribute.Path
+            : "/id";
     }
 }

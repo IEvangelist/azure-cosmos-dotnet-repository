@@ -3,22 +3,21 @@
 
 using System;
 
-namespace Microsoft.Azure.CosmosRepository.Exceptions
+namespace Microsoft.Azure.CosmosRepository.Exceptions;
+
+/// <summary>
+/// An exception stating that the mix of verifyEtag and the Etag value on the item were incompatible.
+/// <remarks>
+/// Please ensure your Item implementation implements IItemWithEtag.
+/// </remarks>
+/// </summary>
+public class InvalidEtagConfigurationException : Exception
 {
     /// <summary>
-    /// An exception stating that the mix of verifyEtag and the Etag value on the item were incompatible.
-    /// <remarks>
-    /// Please ensure your Item implementation implements IItemWithEtag.
-    /// </remarks>
+    /// Constructor specifying the message to set in the exception.
     /// </summary>
-    public class InvalidEtagConfigurationException : Exception
+    /// <param name="message">The message for the exception.</param>
+    public InvalidEtagConfigurationException(string message) : base(message)
     {
-        /// <summary>
-        /// Constructor specifying the message to set in the exception.
-        /// </summary>
-        /// <param name="message">The message for the exception.</param>
-        public InvalidEtagConfigurationException(string message) : base(message)
-        {
-        }
     }
 }

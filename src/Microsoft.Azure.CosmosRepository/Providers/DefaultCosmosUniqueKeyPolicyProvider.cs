@@ -8,59 +8,58 @@ using System.Reflection;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Attributes;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
+namespace Microsoft.Azure.CosmosRepository.Providers;
+
+/// <inheritdoc />
+class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
 {
     /// <inheritdoc />
-    class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
+    public UniqueKeyPolicy? GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
+        GetUniqueKeyPolicy(typeof(TItem));
+
+    public UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType)
     {
-        /// <inheritdoc />
-        public UniqueKeyPolicy? GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
-            GetUniqueKeyPolicy(typeof(TItem));
+        Type attributeType = typeof(UniqueKeyAttribute);
 
-        public UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType)
+        Dictionary<string, List<string>> keyNameToPathsMap = new();
+
+        foreach ((UniqueKeyAttribute? uniqueKey, string propertyName) in itemType.GetProperties()
+                     .Where(x => Attribute.IsDefined(x, attributeType))
+                     .Select(x => (x.GetCustomAttribute<UniqueKeyAttribute>(), x.Name)))
         {
-            Type attributeType = typeof(UniqueKeyAttribute);
+            if (uniqueKey is null or { KeyName: null }) continue;
 
-            Dictionary<string, List<string>> keyNameToPathsMap = new();
+            string propertyValue = uniqueKey.PropertyPath ?? $"/{propertyName}";
 
-            foreach ((UniqueKeyAttribute? uniqueKey, string propertyName) in itemType.GetProperties()
-                         .Where(x => Attribute.IsDefined(x, attributeType))
-                         .Select(x => (x.GetCustomAttribute<UniqueKeyAttribute>(), x.Name)))
+            if (keyNameToPathsMap.TryGetValue(uniqueKey.KeyName, out List<string>? value)
+                && value is not null)
             {
-                if (uniqueKey is null or { KeyName: null }) continue;
-
-                string propertyValue = uniqueKey.PropertyPath ?? $"/{propertyName}";
-
-                if (keyNameToPathsMap.TryGetValue(uniqueKey.KeyName, out List<string>? value)
-                    && value is not null)
-                {
-                    value.Add(propertyValue);
-                    continue;
-                }
-
-                keyNameToPathsMap[uniqueKey.KeyName] = new List<string> { propertyValue };
+                value.Add(propertyValue);
+                continue;
             }
 
-            if (!keyNameToPathsMap.Any())
-            {
-                return null;
-            }
-
-            UniqueKeyPolicy policy = new();
-
-            foreach (KeyValuePair<string, List<string>> keyNameToPaths in keyNameToPathsMap)
-            {
-                UniqueKey key = new();
-
-                foreach (string path in keyNameToPaths.Value)
-                {
-                    key.Paths.Add(path);
-                }
-
-                policy.UniqueKeys.Add(key);
-            }
-
-            return policy;
+            keyNameToPathsMap[uniqueKey.KeyName] = new List<string> { propertyValue };
         }
+
+        if (!keyNameToPathsMap.Any())
+        {
+            return null;
+        }
+
+        UniqueKeyPolicy policy = new();
+
+        foreach (KeyValuePair<string, List<string>> keyNameToPaths in keyNameToPathsMap)
+        {
+            UniqueKey key = new();
+
+            foreach (string path in keyNameToPaths.Value)
+            {
+                key.Paths.Add(path);
+            }
+
+            policy.UniqueKeys.Add(key);
+        }
+
+        return policy;
     }
 }

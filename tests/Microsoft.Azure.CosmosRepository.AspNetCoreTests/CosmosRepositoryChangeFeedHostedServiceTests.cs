@@ -17,7 +17,7 @@ public class CosmosRepositoryChangeFeedHostedServiceTests
     {
         //Arrange
         Mock<IChangeFeedService> changeFeedService = new();
-        CosmosRepositoryChangeFeedHostedService changeFeedHostedService = new CosmosRepositoryChangeFeedHostedService(changeFeedService.Object);
+        CosmosRepositoryChangeFeedHostedService changeFeedHostedService = new(changeFeedService.Object);
 
         //Act
         await changeFeedHostedService.StartAsync(default);

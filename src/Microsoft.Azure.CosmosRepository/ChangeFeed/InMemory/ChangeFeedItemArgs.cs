@@ -3,16 +3,15 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory
+namespace Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
+
+internal class ChangeFeedItemArgs<TItem> where TItem : IItem
 {
-    internal class ChangeFeedItemArgs<TItem> where TItem : IItem
-    {
-        public IEnumerable<TItem> ItemChanges { get; private set; }
+    public IEnumerable<TItem> ItemChanges { get; private set; }
 
-        public ChangeFeedItemArgs(IEnumerable<TItem> itemChanges) =>
-            ItemChanges = itemChanges;
+    public ChangeFeedItemArgs(IEnumerable<TItem> itemChanges) =>
+        ItemChanges = itemChanges;
 
-        public ChangeFeedItemArgs(TItem item) =>
-            ItemChanges = new[] { item };
-    }
+    public ChangeFeedItemArgs(TItem item) =>
+        ItemChanges = new[] { item };
 }

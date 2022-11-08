@@ -10,71 +10,70 @@ using Moq;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Providers
+namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
+
+public class DefaultCosmosPartitionKeyPathProviderTests
 {
-    public class DefaultCosmosPartitionKeyPathProviderTests
+    private readonly Mock<IOptions<RepositoryOptions>> _options;
+    private readonly RepositoryOptions _repositoryOptions;
+
+    public DefaultCosmosPartitionKeyPathProviderTests()
     {
-        private readonly Mock<IOptions<RepositoryOptions>> _options;
-        private readonly RepositoryOptions _repositoryOptions;
-
-        public DefaultCosmosPartitionKeyPathProviderTests()
-        {
-            _options = new();
-            _repositoryOptions = new();
-            _options.SetupGet(o => o.Value).Returns(_repositoryOptions);
-        }
-
-        [Fact]
-        public void CosmosCosmosPartitionKeyPathProviderCorrectlyGetsPathWhenOptionsAreDefined()
-        {
-            _repositoryOptions.ContainerBuilder.Configure<Person>(options => options.WithPartitionKey("/firstName"));
-
-            ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
-
-            string path = provider.GetPartitionKeyPath<Person>();
-            Assert.Equal("/firstName", path);
-        }
-
-        [Fact]
-        public void CosmosCosmosPartitionKeyPathProviderCorrectlyGetsPathWhenOptionsAreDefinedButNull()
-        {
-            _repositoryOptions.ContainerBuilder.Configure<Person>(options => options.WithPartitionKey(""));
-
-            ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
-
-            string path = provider.GetPartitionKeyPath<AnotherPerson>();
-            Assert.Equal("/email", path);
-        }
-
-        [Fact]
-        public void CosmosPartitionKeyPathProviderCorrectlyGetsPathWhenAttributeIsDefined()
-        {
-            ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
-
-            string path = provider.GetPartitionKeyPath<PickleChipsItem>();
-            Assert.Equal("/pickles", path);
-            Assert.Equal("[\"Hey, where's the chips?!\"]", new Cosmos.PartitionKey(((IItem)new PickleChipsItem()).PartitionKey).ToString());
-        }
+        _options = new();
+        _repositoryOptions = new();
+        _options.SetupGet(o => o.Value).Returns(_repositoryOptions);
     }
 
-    [PartitionKeyPath("/email")]
-    public class AnotherPerson : Item
+    [Fact]
+    public void CosmosCosmosPartitionKeyPathProviderCorrectlyGetsPathWhenOptionsAreDefined()
     {
+        _repositoryOptions.ContainerBuilder.Configure<Person>(options => options.WithPartitionKey("/firstName"));
 
+        ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
+
+        string path = provider.GetPartitionKeyPath<Person>();
+        Assert.Equal("/firstName", path);
     }
 
-    [PartitionKeyPath("/email")]
-    public class Person : Item
+    [Fact]
+    public void CosmosCosmosPartitionKeyPathProviderCorrectlyGetsPathWhenOptionsAreDefinedButNull()
     {
+        _repositoryOptions.ContainerBuilder.Configure<Person>(options => options.WithPartitionKey(""));
 
+        ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
+
+        string path = provider.GetPartitionKeyPath<AnotherPerson>();
+        Assert.Equal("/email", path);
     }
 
-    [PartitionKeyPath("/pickles")]
-    public class PickleChipsItem : Item
+    [Fact]
+    public void CosmosPartitionKeyPathProviderCorrectlyGetsPathWhenAttributeIsDefined()
     {
-        [JsonProperty(PropertyName = "pickles")]
-        public string PartitionBits { get; set; } = "Hey, where's the chips?!";
+        ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
 
-        protected override string GetPartitionKeyValue() => PartitionBits;
+        string path = provider.GetPartitionKeyPath<PickleChipsItem>();
+        Assert.Equal("/pickles", path);
+        Assert.Equal("[\"Hey, where's the chips?!\"]", new Cosmos.PartitionKey(((IItem)new PickleChipsItem()).PartitionKey).ToString());
     }
+}
+
+[PartitionKeyPath("/email")]
+public class AnotherPerson : Item
+{
+
+}
+
+[PartitionKeyPath("/email")]
+public class Person : Item
+{
+
+}
+
+[PartitionKeyPath("/pickles")]
+public class PickleChipsItem : Item
+{
+    [JsonProperty(PropertyName = "pickles")]
+    public string PartitionBits { get; set; } = "Hey, where's the chips?!";
+
+    protected override string GetPartitionKeyValue() => PartitionBits;
 }

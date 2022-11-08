@@ -4,10 +4,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
+namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
+
+interface IChangeFeedOptionsProvider
 {
-    interface IChangeFeedOptionsProvider
-    {
-        ChangeFeedOptions GetOptionsForItems(IReadOnlyList<Type> items);
-    }
+    ChangeFeedOptions GetOptionsForItems(IReadOnlyList<Type> items);
 }

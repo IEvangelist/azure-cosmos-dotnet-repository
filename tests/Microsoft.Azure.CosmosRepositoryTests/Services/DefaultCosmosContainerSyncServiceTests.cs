@@ -7,24 +7,23 @@ using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Moq;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Services
+namespace Microsoft.Azure.CosmosRepositoryTests.Services;
+
+public class DefaultCosmosContainerSyncServiceTests
 {
-    public class DefaultCosmosContainerSyncServiceTests
+    Mock<ICosmosContainerService> _containerService = new();
+    readonly DefaultCosmosContainerSyncService _syncService;
+
+    public DefaultCosmosContainerSyncServiceTests()
     {
-        Mock<ICosmosContainerService> _containerService = new();
-        readonly DefaultCosmosContainerSyncService _syncService;
+        _syncService = new DefaultCosmosContainerSyncService(_containerService.Object);
+    }
 
-        public DefaultCosmosContainerSyncServiceTests()
-        {
-            _syncService = new DefaultCosmosContainerSyncService(_containerService.Object);
-        }
+    [Fact]
+    public async Task SyncContainerPropertiesAsync_Item_SyncsItem()
+    {
+        await _syncService.SyncContainerPropertiesAsync<TestItemWithEtag>();
 
-        [Fact]
-        public async Task SyncContainerPropertiesAsync_Item_SyncsItem()
-        {
-            await _syncService.SyncContainerPropertiesAsync<TestItemWithEtag>();
-
-            _containerService.Verify(o => o.GetContainerAsync<TestItemWithEtag>(true));
-        }
+        _containerService.Verify(o => o.GetContainerAsync<TestItemWithEtag>(true));
     }
 }

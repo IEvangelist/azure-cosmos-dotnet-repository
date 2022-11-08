@@ -8,81 +8,80 @@ using Microsoft.Azure.CosmosRepositoryTests.Abstractions;
 using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Providers
+namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
+
+public class DefaultCosmosThroughputProviderTests : WithRepositoryOptions
 {
-    public class DefaultCosmosThroughputProviderTests : WithRepositoryOptions
+    readonly DefaultCosmosThroughputProvider _provider;
+
+    public DefaultCosmosThroughputProviderTests() =>
+        _provider = new DefaultCosmosThroughputProvider(_options.Object);
+
+    [Fact]
+    public void GetThroughputPropertiesGivenItemWithNoSettingsReturnManualThroughputPropertiesSetTo400RUs()
     {
-        readonly DefaultCosmosThroughputProvider _provider;
+        ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
 
-        public DefaultCosmosThroughputProviderTests() =>
-            _provider = new DefaultCosmosThroughputProvider(_options.Object);
+        Assert.Equal(400, throughputProperties!.Throughput);
+        Assert.Null(throughputProperties.AutoscaleMaxThroughput);
+    }
 
-        [Fact]
-        public void GetThroughputPropertiesGivenItemWithNoSettingsReturnManualThroughputPropertiesSetTo400RUs()
-        {
-            ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
+    [Fact]
+    public void GetThroughputPropertiesItemAutoscaleThroughputProperties()
+    {
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithAutoscaleThroughput());
+        ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
 
-            Assert.Equal(400, throughputProperties!.Throughput);
-            Assert.Null(throughputProperties.AutoscaleMaxThroughput);
-        }
+        Assert.Equal(4000, throughputProperties!.AutoscaleMaxThroughput);
+        Assert.Null(throughputProperties.Throughput);
+    }
 
-        [Fact]
-        public void GetThroughputPropertiesItemAutoscaleThroughputProperties()
-        {
-            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithAutoscaleThroughput());
-            ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
+    [Fact]
+    public void GetThroughputPropertiesItemManualThroughputProperties()
+    {
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithManualThroughput(500));
+        ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
 
-            Assert.Equal(4000, throughputProperties!.AutoscaleMaxThroughput);
-            Assert.Null(throughputProperties.Throughput);
-        }
+        Assert.Equal(500, throughputProperties!.Throughput);
+        Assert.Null(throughputProperties.AutoscaleMaxThroughput);
+    }
 
-        [Fact]
-        public void GetThroughputPropertiesItemManualThroughputProperties()
-        {
-            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithManualThroughput(500));
-            ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
+    [Fact]
+    public void GetThroughputPropertiesItemsWithConflictingAutoScaleValues()
+    {
+        _repositoryOptions.ContainerBuilder
+            .Configure<TestItemWithEtag>(builder => builder.WithAutoscaleThroughput())
+            .Configure<AnotherTestItem>(builder => builder.WithAutoscaleThroughput(5000));
 
-            Assert.Equal(500, throughputProperties!.Throughput);
-            Assert.Null(throughputProperties.AutoscaleMaxThroughput);
-        }
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => _provider.GetThroughputProperties<TestItemWithEtag>());
 
-        [Fact]
-        public void GetThroughputPropertiesItemsWithConflictingAutoScaleValues()
-        {
-            _repositoryOptions.ContainerBuilder
-                .Configure<TestItemWithEtag>(builder => builder.WithAutoscaleThroughput())
-                .Configure<AnotherTestItem>(builder => builder.WithAutoscaleThroughput(5000));
+        Assert.Contains("autoscale", exception.Message);
+        Assert.Contains("4000", exception.Message);
+        Assert.Contains("5000", exception.Message);
+    }
 
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => _provider.GetThroughputProperties<TestItemWithEtag>());
+    [Fact]
+    public void GetThroughputPropertiesItemsWithConflictingManualValues()
+    {
+        _repositoryOptions.ContainerBuilder
+            .Configure<TestItemWithEtag>(builder => builder.WithManualThroughput(500))
+            .Configure<AnotherTestItem>(builder => builder.WithManualThroughput(700));
 
-            Assert.Contains("autoscale", exception.Message);
-            Assert.Contains("4000", exception.Message);
-            Assert.Contains("5000", exception.Message);
-        }
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => _provider.GetThroughputProperties<TestItemWithEtag>());
 
-        [Fact]
-        public void GetThroughputPropertiesItemsWithConflictingManualValues()
-        {
-            _repositoryOptions.ContainerBuilder
-                .Configure<TestItemWithEtag>(builder => builder.WithManualThroughput(500))
-                .Configure<AnotherTestItem>(builder => builder.WithManualThroughput(700));
+        Assert.Contains("manual", exception.Message);
+        Assert.Contains("500", exception.Message);
+        Assert.Contains("700", exception.Message);
+    }
 
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => _provider.GetThroughputProperties<TestItemWithEtag>());
+    [Fact]
+    public void GetThroughputPropertiesContainerWithServerlessConfiguration()
+    {
+        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(
+            builder => builder.WithServerlessThroughput());
 
-            Assert.Contains("manual", exception.Message);
-            Assert.Contains("500", exception.Message);
-            Assert.Contains("700", exception.Message);
-        }
+        ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<AnotherTestItem>();
 
-        [Fact]
-        public void GetThroughputPropertiesContainerWithServerlessConfiguration()
-        {
-            _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(
-                builder => builder.WithServerlessThroughput());
-
-            ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<AnotherTestItem>();
-
-            Assert.Null(throughputProperties);
-        }
+        Assert.Null(throughputProperties);
     }
 }

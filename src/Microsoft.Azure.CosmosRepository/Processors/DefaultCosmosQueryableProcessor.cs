@@ -8,51 +8,50 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
-namespace Microsoft.Azure.CosmosRepository.Processors
+namespace Microsoft.Azure.CosmosRepository.Processors;
+
+class DefaultCosmosQueryableProcessor : ICosmosQueryableProcessor
 {
-    class DefaultCosmosQueryableProcessor : ICosmosQueryableProcessor
+    public async ValueTask<(IEnumerable<TItem> items, double charge)> IterateAsync<TItem>(IQueryable<TItem> queryable, CancellationToken cancellationToken = default) where TItem : IItem
     {
-        public async ValueTask<(IEnumerable<TItem> items, double charge)> IterateAsync<TItem>(IQueryable<TItem> queryable, CancellationToken cancellationToken = default) where TItem : IItem
+        using FeedIterator<TItem> iterator = queryable.ToFeedIterator();
+
+        List<TItem> results = new();
+        double charge = 0;
+
+        while (iterator.HasMoreResults)
         {
-            using FeedIterator<TItem> iterator = queryable.ToFeedIterator();
+            FeedResponse<TItem> feedResponse = await iterator
+                .ReadNextAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            List<TItem> results = new();
-            double charge = 0;
+            charge += feedResponse.RequestCharge;
 
-            while (iterator.HasMoreResults)
+            foreach (TItem result in feedResponse.Resource)
             {
-                FeedResponse<TItem> feedResponse = await iterator
-                    .ReadNextAsync(cancellationToken)
-                    .ConfigureAwait(false);
-
-                charge += feedResponse.RequestCharge;
-
-                foreach (TItem result in feedResponse.Resource)
-                {
-                    results.Add(result);
-                }
+                results.Add(result);
             }
-
-            return (results, charge);
         }
 
-        public async ValueTask<int> CountAsync<TItem>(IQueryable<TItem> queryable, CancellationToken cancellationToken = default) where TItem : IItem =>
-            await queryable.CountAsync(cancellationToken);
+        return (results, charge);
+    }
 
-        public async ValueTask<IEnumerable<TItem>> IterateAsync<TItem>(Container container, QueryDefinition queryDefinition,
-            CancellationToken cancellationToken = default) where TItem : IItem
+    public async ValueTask<int> CountAsync<TItem>(IQueryable<TItem> queryable, CancellationToken cancellationToken = default) where TItem : IItem =>
+        await queryable.CountAsync(cancellationToken);
+
+    public async ValueTask<IEnumerable<TItem>> IterateAsync<TItem>(Container container, QueryDefinition queryDefinition,
+        CancellationToken cancellationToken = default) where TItem : IItem
+    {
+        using FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition);
+
+        List<TItem> results = new();
+
+        while (queryIterator.HasMoreResults)
         {
-            using FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition);
-
-            List<TItem> results = new();
-
-            while (queryIterator.HasMoreResults)
-            {
-                FeedResponse<TItem> response = await queryIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
-                results.AddRange(response.Resource);
-            }
-
-            return results;
+            FeedResponse<TItem> response = await queryIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+            results.AddRange(response.Resource);
         }
+
+        return results;
     }
 }

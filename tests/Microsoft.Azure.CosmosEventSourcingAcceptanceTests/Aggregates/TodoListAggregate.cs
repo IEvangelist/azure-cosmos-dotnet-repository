@@ -41,7 +41,7 @@ public class TodoListAggregate : AggregateRoot
 
     public static TodoListAggregate Replay(List<DomainEvent> domainEvents)
     {
-        TodoListAggregate a = new TodoListAggregate();
+        TodoListAggregate a = new();
         a.Apply(domainEvents);
         return a;
     }

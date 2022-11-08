@@ -4,26 +4,25 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.Azure.CosmosRepository.Builders
+namespace Microsoft.Azure.CosmosRepository.Builders;
+
+/// <inheritdoc/>
+internal class DefaultItemContainerBuilder : IItemContainerBuilder
 {
-    /// <inheritdoc/>
-    internal class DefaultItemContainerBuilder : IItemContainerBuilder
+    private readonly List<ContainerOptionsBuilder> _options = new();
+
+    public IReadOnlyList<ContainerOptionsBuilder> Options => _options;
+
+    public IItemContainerBuilder Configure<TItem>(Action<ContainerOptionsBuilder> containerOptions) where TItem : IItem
     {
-        private readonly List<ContainerOptionsBuilder> _options = new();
+        if (containerOptions is null) throw new ArgumentNullException(nameof(containerOptions));
 
-        public IReadOnlyList<ContainerOptionsBuilder> Options => _options;
+        ContainerOptionsBuilder optionsBuilder = new(typeof(TItem));
 
-        public IItemContainerBuilder Configure<TItem>(Action<ContainerOptionsBuilder> containerOptions) where TItem : IItem
-        {
-            if (containerOptions is null) throw new ArgumentNullException(nameof(containerOptions));
+        containerOptions(optionsBuilder);
 
-            ContainerOptionsBuilder optionsBuilder = new(typeof(TItem));
+        _options.Add(optionsBuilder);
 
-            containerOptions(optionsBuilder);
-
-            _options.Add(optionsBuilder);
-
-            return this;
-        }
+        return this;
     }
 }

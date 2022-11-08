@@ -11,59 +11,58 @@ using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.CosmosRepository.Specification;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Azure.CosmosRepository
+namespace Microsoft.Azure.CosmosRepository;
+
+internal sealed partial class DefaultRepository<TItem>
 {
-    internal sealed partial class DefaultRepository<TItem>
+    /// <inheritdoc/>
+    public async ValueTask<int> CountAsync(
+        CancellationToken cancellationToken = default)
     {
-        /// <inheritdoc/>
-        public async ValueTask<int> CountAsync(
-            CancellationToken cancellationToken = default)
-        {
-            Container container =
-                await _containerProvider.GetContainerAsync()
-                    .ConfigureAwait(false);
+        Container container =
+            await _containerProvider.GetContainerAsync()
+                .ConfigureAwait(false);
 
-            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
+        IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
 
-            TryLogDebugDetails(_logger, () => $"Read: {query}");
+        TryLogDebugDetails(_logger, () => $"Read: {query}");
 
-            return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
-        }
+        return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
+    }
 
-        private async ValueTask<Response<int>> CountAsync<TResult>(
-            ISpecification<TItem, TResult> specification,
-            CancellationToken cancellationToken = default)
-            where TResult : IQueryResult<TItem>
-        {
-            Container container =
-                await _containerProvider.GetContainerAsync()
-                    .ConfigureAwait(false);
+    private async ValueTask<Response<int>> CountAsync<TResult>(
+        ISpecification<TItem, TResult> specification,
+        CancellationToken cancellationToken = default)
+        where TResult : IQueryResult<TItem>
+    {
+        Container container =
+            await _containerProvider.GetContainerAsync()
+                .ConfigureAwait(false);
 
-            IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
+        IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
 
-            query = _specificationEvaluator.GetQuery(query, specification, evaluateCriteriaOnly: true);
+        query = _specificationEvaluator.GetQuery(query, specification, evaluateCriteriaOnly: true);
 
-            TryLogDebugDetails(_logger, () => $"Read: {query}");
-            return await query.CountAsync(cancellationToken);
-        }
+        TryLogDebugDetails(_logger, () => $"Read: {query}");
+        return await query.CountAsync(cancellationToken);
+    }
 
-        /// <inheritdoc/>
-        public async ValueTask<int> CountAsync(
-            Expression<Func<TItem, bool>> predicate,
-            CancellationToken cancellationToken = default)
-        {
-            Container container =
-                await _containerProvider.GetContainerAsync()
-                    .ConfigureAwait(false);
+    /// <inheritdoc/>
+    public async ValueTask<int> CountAsync(
+        Expression<Func<TItem, bool>> predicate,
+        CancellationToken cancellationToken = default)
+    {
+        Container container =
+            await _containerProvider.GetContainerAsync()
+                .ConfigureAwait(false);
 
-            IQueryable<TItem> query =
-                container.GetItemLinqQueryable<TItem>()
-                    .Where(_repositoryExpressionProvider.Build(predicate));
+        IQueryable<TItem> query =
+            container.GetItemLinqQueryable<TItem>()
+                .Where(_repositoryExpressionProvider.Build(predicate));
 
-            TryLogDebugDetails(_logger, () => $"Read: {query}");
+        TryLogDebugDetails(_logger, () => $"Read: {query}");
 
-            return await _cosmosQueryableProcessor.CountAsync(
-                query, cancellationToken);
-        }
+        return await _cosmosQueryableProcessor.CountAsync(
+            query, cancellationToken);
     }
 }

@@ -3,22 +3,21 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Azure.CosmosRepository
+namespace Microsoft.Azure.CosmosRepository;
+
+/// <summary>
+/// Represent a full set of data from a cosmos query
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+public interface IQueryResult<out TItem> where TItem : IItem
 {
     /// <summary>
-    /// Represent a full set of data from a cosmos query
+    /// The items that are in the current page.
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
-    public interface IQueryResult<out TItem> where TItem : IItem
-    {
-        /// <summary>
-        /// The items that are in the current page.
-        /// </summary>
-        IReadOnlyList<TItem> Items { get; }
+    IReadOnlyList<TItem> Items { get; }
 
-        /// <summary>
-        /// The amount of RU's the given query cost.
-        /// </summary>
-        double Charge { get; }
-    }
+    /// <summary>
+    /// The amount of RU's the given query cost.
+    /// </summary>
+    double Charge { get; }
 }
