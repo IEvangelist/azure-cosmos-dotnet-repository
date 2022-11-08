@@ -44,9 +44,9 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         }
     }
 
-    class DogComparer : IEqualityComparer<Dog>
+    class DogComparer : IEqualityComparer<Dog?>
     {
-        public bool Equals(Dog? x,  Dog? y)
+        public bool Equals(Dog? x, Dog? y)
         {
             return x?.Id == y?.Id;
         }
@@ -342,7 +342,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal(addedDog.Type, dog.Type);
 
             long calculatedTs = _dogRepository.CurrentTs;
-            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
+            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(calculatedTs);
             Assert.InRange(returnedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
             Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
 
@@ -671,7 +671,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             string originalEtag = Guid.NewGuid().ToString();
             Dog dog = new("labrador");
             _dogRepository.Items.TryAddAsJson(dog.Id, dog);
-            Dog updatedDog = new("labradoodle") {Id = dog.Id};
+            Dog updatedDog = new("labradoodle") { Id = dog.Id };
 
             //Act
             Dog returnedDog = await _dogRepository.UpdateAsync(updatedDog);
@@ -689,7 +689,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.True(!string.IsNullOrWhiteSpace(addedDog.Etag) && addedDog.Etag != Guid.Empty.ToString() && addedDog.Etag != originalEtag);
 
             long calculatedTs = _dogRepository.CurrentTs;
-            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
+            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(calculatedTs);
             Assert.InRange(returnedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
             Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
         }
@@ -840,7 +840,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             Assert.Equal("kenny", addedDog.Name);
 
             long calculatedTs = _dogRepository.CurrentTs;
-            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0,0, 0).AddSeconds(calculatedTs);
+            DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(calculatedTs);
             Assert.InRange(addedDog.LastUpdatedTimeUtc, calculatedTsDate.AddSeconds(-1), calculatedTsDate.AddSeconds(1));
             Assert.InRange(addedDog.LastUpdatedTimeRaw, calculatedTs - 1, calculatedTs + 1);
         }
@@ -1026,8 +1026,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             int pageSize = 2;
             int pageNumber = 2;
 
-            List<Dog> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
-                .Where(d => d.Breed == "cocker spaniel")
+            List<Dog?> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog?>(d.Value))
+                .Where(d => d is { Breed: "cocker spaniel" })
                 .Skip(pageSize * (pageNumber - 1))
                 .Take(pageSize)
                 .ToList();
@@ -1068,8 +1068,8 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             int pageSize = 2;
             int pageNumber = 2;
 
-            List<Dog> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
-                .Where(d => d.Breed == "cocker spaniel")
+            List<Dog?> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog?>(d.Value))
+                .Where(d => d is { Breed: "cocker spaniel" })
                 .Skip(pageSize * (pageNumber - 1))
                 .Take(pageSize)
                 .ToList();
@@ -1132,13 +1132,14 @@ namespace Microsoft.Azure.CosmosRepositoryTests
             _dogRepository.Items.TryAddAsJson(dog7.Id, dog7);
             int pageSize = 2;
             int pageNumber = 2;
-            DogSpecification specification = new ("cocker spaniel", 2, 2);
+            DogSpecification specification = new("cocker spaniel", 2, 2);
 
-            List<Dog> expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
-                                                         .Where(d => d.Breed == "cocker spaniel")
-                                                         .Skip(pageSize * (pageNumber - 1))
-                                                         .Take(pageSize)
-                                                         .ToList();
+            List<Dog?> expectedList = _dogRepository.Items
+                .Select(d => JsonConvert.DeserializeObject<Dog?>(d.Value))
+                .Where(d => d is { Breed: "cocker spaniel" })
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToList();
 
             //Act
             IPage<Dog> dogs = await _dogRepository.QueryAsync(specification);

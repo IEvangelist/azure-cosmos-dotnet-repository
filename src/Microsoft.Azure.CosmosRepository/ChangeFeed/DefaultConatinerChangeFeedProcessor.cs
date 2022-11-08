@@ -53,7 +53,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 
             ChangeFeedProcessorBuilder builder = itemContainer
                 .GetChangeFeedProcessorBuilder<JObject>(_changeFeedOptions.ProcessorName,
-                    (changes, token) => OnChangesAsync(changes, token, itemContainer.Id))
+                    (changes, token) => OnChangesAsync(changes, itemContainer.Id, token))
                 .WithLeaseContainer(leaseContainer)
                 .WithInstanceName(_changeFeedOptions.InstanceName)
                 .WithErrorNotification((_, exception) => OnErrorAsync(exception, itemContainer.Id));
@@ -75,8 +75,8 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 
         internal async Task OnChangesAsync(
             IReadOnlyCollection<JObject> changes,
-            CancellationToken cancellationToken,
-            string containerName)
+            string containerName,
+            CancellationToken cancellationToken)
         {
             _logger.LogDebug("Detected changes for container {ContainerName} total ({ChangesCount})",
                 containerName, changes.Count);
@@ -121,10 +121,10 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
 
             handlerType ??= Handlers[itemType];
 
-            IEnumerable<object> handlers = _serviceProvider.GetServices(handlerType).ToList();
+            IList<object?> handlers = _serviceProvider.GetServices(handlerType).ToList();
 
             _logger.LogDebug("Invoking IItemChangeFeedProcessor's ({ProcessorsCount}) for item type {ItemType}",
-                handlers.Count(), itemType);
+                handlers.Count, itemType);
 
             await Task.WhenAll(handlers.Select(handler =>
             {
@@ -142,7 +142,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
                 {
                     _logger.LogError(e,
                         "Failed to handle change for item of type {ItemType} when invoking IItemChangeFeedProcessor {ProcessorTypeName}",
-                        itemType, handler.GetType().Name);
+                        itemType, handler?.GetType()?.Name);
                 }
 
                 return Task.CompletedTask;

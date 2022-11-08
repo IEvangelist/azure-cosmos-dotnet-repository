@@ -41,7 +41,7 @@ internal partial class DefaultEventStore<TEventItem>
             throw new ReplayMethodNotDefinedException(type);
         }
 
-        return (TAggregateRoot) method.Invoke(null, new object[] {payloads});
+        return (TAggregateRoot)method.Invoke(null, new object[] { payloads })!;
     }
 
     public async ValueTask<TAggregateRoot> ReadAggregateAsync<TAggregateRoot>(

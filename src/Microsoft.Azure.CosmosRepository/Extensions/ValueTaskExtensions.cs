@@ -29,7 +29,7 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
         /// <typeparam name="T">The type of entity.</typeparam>
         /// <param name="valueTask">The value task</param>
         /// <returns>Returns the first item in the enumerable or the default.</returns>
-        public static async ValueTask<T> FirstOrDefaultAsync<T>(this ValueTask<IEnumerable<T>> valueTask)
+        public static async ValueTask<T?> FirstOrDefaultAsync<T>(this ValueTask<IEnumerable<T>> valueTask)
         {
             IEnumerable<T> items = await valueTask;
             return items.FirstOrDefault();
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
         /// <typeparam name="T">The entity type.</typeparam>
         /// <param name="valueTask">The value task</param>
         /// <returns>Returns the last element in the sequence.</returns>
-        public static async ValueTask<T> LastOrDefaultAsync<T>(this ValueTask<IEnumerable<T>> valueTask)
+        public static async ValueTask<T?> LastOrDefaultAsync<T>(this ValueTask<IEnumerable<T>> valueTask)
         {
             IEnumerable<T> items = await valueTask;
             return items.LastOrDefault();

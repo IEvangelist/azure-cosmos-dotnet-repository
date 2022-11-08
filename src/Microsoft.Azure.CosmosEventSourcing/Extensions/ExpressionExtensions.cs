@@ -36,7 +36,7 @@ internal static class ExpressionExtensions
         /// <inheritdoc />
         protected override Expression VisitParameter(ParameterExpression parameter)
         {
-            if (_map.TryGetValue(parameter, out ParameterExpression replacement))
+            if (_map.TryGetValue(parameter, out ParameterExpression? replacement))
             {
                 parameter = replacement;
             }

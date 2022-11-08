@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosRepository.Extensions
         /// <inheritdoc />
         protected override Expression VisitParameter(ParameterExpression parameter)
         {
-            if (_map.TryGetValue(parameter, out ParameterExpression replacement))
+            if (_map.TryGetValue(parameter, out ParameterExpression? replacement))
             {
                 parameter = replacement;
             }

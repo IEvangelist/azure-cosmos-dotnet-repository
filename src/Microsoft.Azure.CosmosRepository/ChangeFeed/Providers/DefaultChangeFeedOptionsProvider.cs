@@ -25,7 +25,7 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers
                 .Select(x => x.ChangeFeedOptions!)
                 .ToList();
 
-            ChangeFeedOptions sample = changeFeedOptions.FirstOrDefault();
+            ChangeFeedOptions sample = changeFeedOptions.First();
 
             if (changeFeedOptions.All(x => x.IsTheSameAs(sample)) is false)
             {

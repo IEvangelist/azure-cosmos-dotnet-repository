@@ -32,9 +32,9 @@ namespace Microsoft.Azure.CosmosRepository.ChangeFeed
         /// </summary>
         public string ProcessorName { get; set; } = "cosmos-repository-pattern-processor";
 
-        internal bool IsTheSameAs(ChangeFeedOptions options) =>
-            options.InstanceName == InstanceName &&
-            options.PollInterval == PollInterval &&
-            options.ProcessorName == ProcessorName;
+        internal bool IsTheSameAs(ChangeFeedOptions? options) =>
+            options?.InstanceName == InstanceName &&
+            options?.PollInterval == PollInterval &&
+            options?.ProcessorName == ProcessorName;
     }
 }

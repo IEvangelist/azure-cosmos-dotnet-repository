@@ -68,14 +68,14 @@ namespace Microsoft.Azure.CosmosRepository.Providers
             HttpClient client =
                 serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
 
-            string version =
+            string? version =
                 Assembly.GetExecutingAssembly()
-                        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-                        .InformationalVersion;
+                        ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                        ?.InformationalVersion;
 
             client.DefaultRequestHeaders
                   .UserAgent
-                  .ParseAdd($"ievangelist-cosmos-repository-sdk/{version}");
+                  .ParseAdd($"ievangelist-cosmos-repository-sdk/{version ?? "0.0"}");
 
             return client;
         }

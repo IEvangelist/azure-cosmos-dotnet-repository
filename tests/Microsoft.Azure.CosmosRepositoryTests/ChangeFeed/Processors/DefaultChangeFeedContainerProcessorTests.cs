@@ -21,7 +21,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
         private readonly Mock<ICosmosContainerService> _containerService = new();
         private readonly Mock<ILeaseContainerProvider> _leaseContainerProvider = new();
         private readonly IServiceProvider _serviceProvider;
-        private readonly List<Type> _itemTypes = new() {typeof(TestItem), typeof(AnotherTestItem)};
+        private readonly List<Type> _itemTypes = new() { typeof(TestItem), typeof(AnotherTestItem) };
         private readonly TestItemChangeFeedProcessor _testItemChangeFeedChangeFeedProcessor;
         private readonly ChangeFeedOptions _changeFeedOptions = new(typeof(TestItem));
 
@@ -48,12 +48,12 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
             //Arrange
             DefaultContainerChangeFeedProcessor sut = CreateSut();
 
-            TestItem item = new() {Property = "a"};
+            TestItem item = new() { Property = "a" };
 
-            List<JObject> changes = new() {JObject.FromObject(item)};
+            List<JObject> changes = new() { JObject.FromObject(item) };
 
             //Act
-            await sut.OnChangesAsync(changes, default, "test");
+            await sut.OnChangesAsync(changes, "test", default);
 
             //Assert
             Assert.Equal(1, _testItemChangeFeedChangeFeedProcessor.InvocationCount);
@@ -65,10 +65,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
             //Arrange
             DefaultContainerChangeFeedProcessor sut = CreateSut();
 
-            List<JObject> changes = new() {JObject.FromObject(new {type = "IAmNotSetup"})};
+            List<JObject> changes = new() { JObject.FromObject(new { type = "IAmNotSetup" }) };
 
             //Act
-            await sut.OnChangesAsync(changes, default, "test");
+            await sut.OnChangesAsync(changes, "test", default);
 
             //Assert
             Assert.Equal(0, _testItemChangeFeedChangeFeedProcessor.InvocationCount);
@@ -80,10 +80,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors
             //Arrange
             DefaultContainerChangeFeedProcessor sut = CreateSut();
 
-            List<JObject> changes = new() {JObject.FromObject(new {id = "a"})};
+            List<JObject> changes = new() { JObject.FromObject(new { id = "a" }) };
 
             //Act
-            await sut.OnChangesAsync(changes, default, "test");
+            await sut.OnChangesAsync(changes, "test", default);
 
             //Assert
             Assert.Equal(0, _testItemChangeFeedChangeFeedProcessor.InvocationCount);

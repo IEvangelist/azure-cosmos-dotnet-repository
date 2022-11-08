@@ -16,7 +16,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
-                    .AddInMemoryCollection(new Dictionary<string, string>
+                    .AddInMemoryCollection(new Dictionary<string, string?>
                     {
                         ["RepositoryOptions:CosmosConnectionString"] = "Testing"
                     })
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests
         {
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
-                    .AddInMemoryCollection(new Dictionary<string, string>
+                    .AddInMemoryCollection(new Dictionary<string, string?>
                     {
                         ["RepositoryOptions:AccountEndpoint"] = "Account Endpoint"
                     })

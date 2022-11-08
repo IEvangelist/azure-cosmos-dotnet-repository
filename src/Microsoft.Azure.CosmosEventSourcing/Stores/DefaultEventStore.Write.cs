@@ -125,11 +125,11 @@ internal partial class DefaultEventStore<TEventItem>
         }
 
         PropertyInfo partitionKeyProperty = partitionKeyProperties.Single();
-        Object partitionKey = partitionKeyProperty.GetValue(aggregate) ??
-                              throw new InvalidPartitionKeyValueException(
-                                  partitionKeyProperty.Name,
-                                  aggregate.GetType());
+        object partitionKey = partitionKeyProperty.GetValue(aggregate)
+            ?? throw new InvalidPartitionKeyValueException(
+                partitionKeyProperty.Name,
+                aggregate.GetType());
 
-        return partitionKey.ToString();
+        return partitionKey.ToString()!;
     }
 }

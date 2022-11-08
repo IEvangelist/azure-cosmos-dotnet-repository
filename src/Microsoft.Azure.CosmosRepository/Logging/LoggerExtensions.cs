@@ -32,13 +32,13 @@ namespace Microsoft.Azure.CosmosRepository.Logging
         public static void LogQueryConstructed<TItem>(
             this ILogger logger,
             IQueryable<TItem> queryable) where TItem : IItem =>
-            LoggerMessageDefinitions.QueryConstructed(logger, typeof(TItem).Name, queryable.ToString(), null!);
+            LoggerMessageDefinitions.QueryConstructed(logger, typeof(TItem).Name, queryable.ToString()!, null!);
 
         public static void LogQueryExecuted<TItem>(
             this ILogger logger,
             IQueryable<TItem> queryable,
             double charge) where TItem : IItem =>
-            LoggerMessageDefinitions.QueryExecuted(logger, typeof(TItem).Name, charge, queryable.ToString(), null!);
+            LoggerMessageDefinitions.QueryExecuted(logger, typeof(TItem).Name, charge, queryable.ToString()!, null!);
 
         public static void LogItemNotFoundHandled<TItem>(
             this ILogger logger,

@@ -27,7 +27,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers
         {
             Type attributeType = typeof(ContainerAttribute);
 
-            Attribute attribute =
+            Attribute? attribute =
                 Attribute.GetCustomAttribute(itemType, attributeType);
 
             ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);

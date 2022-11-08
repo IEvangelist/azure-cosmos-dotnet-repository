@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>373fc06c-c3e7-4ecb-bf30-88a8ae4eb700</UserSecretsId>
@@ -17,7 +17,7 @@
       <PackageReference Include="CorrelationId" Version="3.0.1" />
       <PackageReference Include="Mumby0168.CleanArchitecture.Exceptions" Version="1.0.0" />
       <PackageReference Include="Mumby0168.CleanArchitecture.Exceptions.AspNetCore" Version="1.1.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
 </Project>
