@@ -108,12 +108,13 @@ dotnet build
 
 ## Samples
 
-Visit the `Microsoft.Azure.CosmosRepository.Samples` [directory](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples) for samples on how to use the library with:
+Visit the `Microsoft.Azure.CosmosRepository.Samples` [directory](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples) for samples on how to use the library with:
 
-- [Azure Functions](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/AzureFunctionTier)
-- [Services](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/ServiceTier)
-- [Controllers (web apps)](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/WebTier)
-- [Paging](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/Microsoft.Azure.CosmosRepository.Samples/Paging)
+- [Azure Functions](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/Microsoft.Azure.CosmosRepository/AzureFunctionTier)
+- [Services](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/Microsoft.Azure.CosmosRepository/ServiceTier)
+- [Controllers (web apps)](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/Microsoft.Azure.CosmosRepository/WebTier)
+- [Paging](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/Microsoft.Azure.CosmosRepository/Paging)
+
 ## Deep-dive video
 
 [![A deep dive into the Azure Cosmos DB repository pattern NET SDK](images/deep-dive-talk.png)](https://www.youtube.com/watch?v=izdnmBrTweA)
