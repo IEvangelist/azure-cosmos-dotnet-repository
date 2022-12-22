@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="6.0.2" />
+      <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="6.1.0" />
       <PackageReference Include="CorrelationId" Version="3.0.1" />
       <PackageReference Include="Mumby0168.CleanArchitecture.Exceptions" Version="1.0.0" />
       <PackageReference Include="Mumby0168.CleanArchitecture.Exceptions.AspNetCore" Version="1.1.0" />
