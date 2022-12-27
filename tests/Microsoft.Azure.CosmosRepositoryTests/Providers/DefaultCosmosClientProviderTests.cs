@@ -9,48 +9,47 @@ using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Moq;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Providers
+namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
+
+public class DefaultCosmosClientProviderTests
 {
-    public class DefaultCosmosClientProviderTests
+    [Fact]
+    public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithConnectionString()
     {
-        [Fact]
-        public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithConnectionString()
-        {
-            Mock<ICosmosClientOptionsProvider> mock = new Mock<ICosmosClientOptionsProvider>();
-            mock.SetupGet(provider => provider.ClientOptions).Returns(new CosmosClientOptions());
-            DefaultCosmosClientProvider provider =
-                new DefaultCosmosClientProvider(
-                    mock.Object,
-                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
-                    {
-                        CosmosConnectionString =
-                            "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
-                    }));
+        var mock = new Mock<ICosmosClientOptionsProvider>();
+        mock.SetupGet(provider => provider.ClientOptions).Returns(new CosmosClientOptions());
+        var provider =
+            new DefaultCosmosClientProvider(
+                mock.Object,
+                Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
+                {
+                    CosmosConnectionString =
+                        "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
+                }));
 
-            provider.Dispose();
+        provider.Dispose();
 
-            Assert.ThrowsAsync<ObjectDisposedException>(
-                async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
-        }
+        Assert.ThrowsAsync<ObjectDisposedException>(
+            async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+    }
 
-        [Fact]
-        public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithTokenCredential()
-        {
-            Mock<ICosmosClientOptionsProvider> mock = new Mock<ICosmosClientOptionsProvider>();
-            mock.SetupGet(provider => provider.ClientOptions).Returns(new CosmosClientOptions());
-            DefaultCosmosClientProvider provider =
-                new DefaultCosmosClientProvider(
-                    mock.Object,
-                    Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
-                    {
-                        TokenCredential = new TestTokenCredential(),
-                        AccountEndpoint = "https://localtestcosmos.documents.azure.com:443/"
-                    }));
+    [Fact]
+    public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithTokenCredential()
+    {
+        var mock = new Mock<ICosmosClientOptionsProvider>();
+        mock.SetupGet(provider => provider.ClientOptions).Returns(new CosmosClientOptions());
+        var provider =
+            new DefaultCosmosClientProvider(
+                mock.Object,
+                Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
+                {
+                    TokenCredential = new TestTokenCredential(),
+                    AccountEndpoint = "https://localtestcosmos.documents.azure.com:443/"
+                }));
 
-            provider.Dispose();
+        provider.Dispose();
 
-            Assert.ThrowsAsync<ObjectDisposedException>(
-                async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
-        }
+        Assert.ThrowsAsync<ObjectDisposedException>(
+            async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
     }
 }

@@ -86,7 +86,7 @@ public partial class EventStoreTests
         //Arrange
         IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
-        string correlationId = Guid.NewGuid().ToString();
+        var correlationId = Guid.NewGuid().ToString();
         _contextService.SetupGet(o => o.CorrelationId).Returns(correlationId);
 
         Testing.TestAggregateWithNoPk aggregate = new();

@@ -6,19 +6,18 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace WebTier.Integration.Tests.Factories
+namespace WebTier.Integration.Tests.Factories;
+
+public class WebTierApplicationFactory : WebApplicationFactory<Startup>
 {
-    public class WebTierApplicationFactory : WebApplicationFactory<Startup>
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        builder.ConfigureTestServices(services =>
         {
-            builder.ConfigureTestServices(services =>
-            {
-                services
-                    .RemoveCosmosRepositories()
-                    .AddInMemoryCosmosRepository();
-            });
-            base.ConfigureWebHost(builder);
-        }
+            services
+                .RemoveCosmosRepositories()
+                .AddInMemoryCosmosRepository();
+        });
+        base.ConfigureWebHost(builder);
     }
 }

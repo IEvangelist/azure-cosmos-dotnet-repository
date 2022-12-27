@@ -20,10 +20,7 @@ public class BankAccount : FullItem
         Balance -= amount;
     }
 
-    public void Deposit(double amount)
-    {
-        Balance += amount;
-    }
+    public void Deposit(double amount) => Balance += amount;
 
     public override string ToString() =>
         $"Account (Name = {Name}, Balance = {Balance}, Etag = {Etag})";

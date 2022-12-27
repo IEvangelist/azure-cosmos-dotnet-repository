@@ -21,7 +21,7 @@ public static class JobsListsEndpoints
                     CreateJobList request,
                     IJobsTrackerService service) =>
                 {
-                    (string name, string category, string username) = request;
+                    (var name, var category, var username) = request;
 
                     Guid id = await service.CreateJobListAsync(
                         name,

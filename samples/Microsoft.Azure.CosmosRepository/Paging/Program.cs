@@ -28,11 +28,10 @@ await BasicPageAsync();
 Console.WriteLine("Basic continuation token");
 await BasicScrollingAsync();
 
-
 async Task BasicPageAsync()
 {
     double totalCharge = 0;
-    IPageQueryResult<Person> page = await repository.PageAsync(pageNumber: 1,pageSize: 25, returnTotal:true);
+    IPageQueryResult<Person> page = await repository.PageAsync(pageNumber: 1, pageSize: 25, returnTotal: true);
     while (page.HasNextPage is not null && page.HasNextPage.Value)
     {
         foreach (Person person in page.Items)

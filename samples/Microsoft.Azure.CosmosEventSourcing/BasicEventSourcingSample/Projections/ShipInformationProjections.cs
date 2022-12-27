@@ -13,7 +13,7 @@ public record ShipInformationProjectionKey : IProjectionKey;
 
 public class ShipInformationProjections
 {
-    public class ShipCreated : IDomainEventProjection<ShipEvents.ShipCreated,ShipEventItem, ShipInformationProjectionKey>
+    public class ShipCreated : IDomainEventProjection<ShipEvents.ShipCreated, ShipEventItem, ShipInformationProjectionKey>
     {
         private readonly IRepository<ShipInformation> _repository;
 
@@ -46,7 +46,7 @@ public class ShipInformationProjections
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
-            (string name, string port) = domainEvent;
+            (var name, var port) = domainEvent;
 
             ShipInformation shipInfo = await _repository.GetAsync(
                 name,
@@ -71,7 +71,7 @@ public class ShipInformationProjections
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
-            (string name, string port, double cargoWeight) = domainEvent;
+            (var name, var port, var cargoWeight) = domainEvent;
 
             ShipInformation shipInfo = await _repository.GetAsync(
                 name,

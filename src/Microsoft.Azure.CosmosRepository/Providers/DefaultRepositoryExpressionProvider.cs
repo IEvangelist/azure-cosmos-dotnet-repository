@@ -8,38 +8,37 @@ using Microsoft.Azure.CosmosRepository.Exceptions;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosRepository.Options;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
+namespace Microsoft.Azure.CosmosRepository.Providers;
+
+class DefaultRepositoryExpressionProvider : IRepositoryExpressionProvider
 {
-    class DefaultRepositoryExpressionProvider : IRepositoryExpressionProvider
+    private readonly ICosmosItemConfigurationProvider _itemConfigurationProvider;
+
+    public DefaultRepositoryExpressionProvider(ICosmosItemConfigurationProvider itemConfigurationProvider) =>
+        _itemConfigurationProvider = itemConfigurationProvider;
+
+    public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate)
+        where TItem : IItem
     {
-        private readonly ICosmosItemConfigurationProvider _itemConfigurationProvider;
+        ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
 
-        public DefaultRepositoryExpressionProvider(ICosmosItemConfigurationProvider itemConfigurationProvider) =>
-            _itemConfigurationProvider = itemConfigurationProvider;
+        return options.UseStrictTypeChecking ? predicate.Compose(Default<TItem>(), Expression.AndAlso) : predicate;
+    }
 
-        public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate)
-            where TItem : IItem
+    public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem =>
+        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name;
+
+    public TItem CheckItem<TItem>(TItem item) where TItem : IItem
+    {
+        ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
+
+        if (options.UseStrictTypeChecking)
         {
-            ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
-
-            return options.UseStrictTypeChecking ? predicate.Compose(Default<TItem>(), Expression.AndAlso) : predicate;
+            return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name
+                ? item
+                : throw new MissMatchedTypeDiscriminatorException(typeof(TItem).Name, item.Type);
         }
 
-        public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem =>
-            item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name;
-
-        public TItem CheckItem<TItem>(TItem item) where TItem : IItem
-        {
-            ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
-
-            if (options.UseStrictTypeChecking)
-            {
-                return item is {Type: {Length: 0}} || item.Type == typeof(TItem).Name
-                    ? item
-                    : throw new MissMatchedTypeDiscriminatorException(typeof(TItem).Name, item.Type);
-            }
-
-            return item;
-        }
+        return item;
     }
 }

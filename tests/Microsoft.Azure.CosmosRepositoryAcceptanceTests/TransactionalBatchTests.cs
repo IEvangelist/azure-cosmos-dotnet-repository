@@ -73,7 +73,7 @@ public class TransactionalBatchTests : CosmosRepositoryAcceptanceTest
                 _productsRepository.UpdateAsBatchAsync(productsWithNowOutOfDateEtags).AsTask());
 
             await _productsRepository.DeleteAsBatchAsync(updatedProducts);
-            int count = await _productsRepository.CountAsync(x => x.PartitionKey == TechnologyCategoryId);
+            var count = await _productsRepository.CountAsync(x => x.PartitionKey == TechnologyCategoryId);
             count.Should().Be(0);
         }
         finally

@@ -11,7 +11,7 @@ using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-string appName = typeof(Program).Assembly.FullName!;
+var appName = typeof(Program).Assembly.FullName!;
 
 builder.Services
     .AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = appName)

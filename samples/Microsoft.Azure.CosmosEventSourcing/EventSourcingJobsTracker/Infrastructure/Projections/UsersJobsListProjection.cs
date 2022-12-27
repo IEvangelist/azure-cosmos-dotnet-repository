@@ -21,7 +21,7 @@ public class UsersJobsListProjection : IDomainEventProjection<JobListCreatedEven
         JobsListEventItem eventItem,
         CancellationToken cancellationToken = default)
     {
-        (Guid guid, string? name, string? category, string? username) = domainEvent;
+        (Guid guid, var name, var category, var username) = domainEvent;
 
         JobsListReadItem readItem = new(
             guid.ToString(),

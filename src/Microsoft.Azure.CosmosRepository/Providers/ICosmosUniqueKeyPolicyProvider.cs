@@ -4,21 +4,20 @@
 using System;
 using Microsoft.Azure.Cosmos;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
+namespace Microsoft.Azure.CosmosRepository.Providers;
+
+/// <summary>
+/// The cosmos partition key path provider exposes the ability
+/// to get an <see cref="IItem"/>'s partition key path.
+/// </summary>
+interface ICosmosUniqueKeyPolicyProvider
 {
     /// <summary>
-    /// The cosmos partition key path provider exposes the ability
-    /// to get an <see cref="IItem"/>'s partition key path.
+    /// Gets the unique key policy for a given <typeparamref name="TItem"/> type.
     /// </summary>
-    interface ICosmosUniqueKeyPolicyProvider
-    {
-        /// <summary>
-        /// Gets the unique key policy for a given <typeparamref name="TItem"/> type.
-        /// </summary>
-        /// <typeparam name="TItem">The item for which the unique key policy corresponds.</typeparam>
-        /// <returns>A <see cref="UniqueKeyPolicy"/> for the corresponding to the given <typeparamref name="TItem"/>.</returns>
-        UniqueKeyPolicy? GetUniqueKeyPolicy<TItem>() where TItem : IItem;
+    /// <typeparam name="TItem">The item for which the unique key policy corresponds.</typeparam>
+    /// <returns>A <see cref="UniqueKeyPolicy"/> for the corresponding to the given <typeparamref name="TItem"/>.</returns>
+    UniqueKeyPolicy? GetUniqueKeyPolicy<TItem>() where TItem : IItem;
 
-        UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType);
-    }
+    UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType);
 }

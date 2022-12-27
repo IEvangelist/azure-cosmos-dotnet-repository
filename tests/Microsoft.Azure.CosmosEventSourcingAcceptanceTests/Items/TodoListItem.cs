@@ -1,7 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 
 namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;

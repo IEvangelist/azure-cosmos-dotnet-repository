@@ -3,7 +3,6 @@
 
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Items;
-using Newtonsoft.Json;
 
 namespace BasicEventSourcingSample.Infrastructure;
 

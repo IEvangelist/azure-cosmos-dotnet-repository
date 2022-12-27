@@ -19,7 +19,7 @@ public static class EventItemExtensions
     /// <returns>The TEvent instance.</returns>
     public static TEvent GetEventPayload<TEvent>(this EventItem eventItem)
         where TEvent : DomainEvent =>
-        (TEvent) eventItem.DomainEvent;
+        (TEvent)eventItem.DomainEvent;
 
     /// <summary>
     /// Cast's the payload of an <see cref="EventItem"/> to a <see cref="IDomainEvent"/>

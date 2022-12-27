@@ -16,7 +16,7 @@ internal partial class DefaultEventStore<TEventItem>
         IEnumerable<TEventItem> items,
         CancellationToken cancellationToken = default)
     {
-        List<TEventItem> eventItems = items.ToList();
+        var eventItems = items.ToList();
         if (eventItems is { Count: 0 })
         {
             return;
@@ -82,7 +82,7 @@ internal partial class DefaultEventStore<TEventItem>
         IAggregateRoot aggregateRoot,
         string partitionKey)
     {
-        List<TEventItem?> events = aggregateRoot.NewEvents
+        var events = aggregateRoot.NewEvents
             .Select(x =>
                 Activator.CreateInstance(
                     typeof(TEventItem),
@@ -95,19 +95,16 @@ internal partial class DefaultEventStore<TEventItem>
             aggregateRoot.AtomicEvent,
             partitionKey) as TEventItem);
 
-        if (events.Any(x => x == null))
-        {
-            throw new InvalidOperationException(
-                $"At least one of the {typeof(TEventItem).Name} could not be constructed");
-        }
-
-        return events!;
+        return events.Any(x => x is null)
+            ? throw new InvalidOperationException(
+                $"At least one of the {typeof(TEventItem).Name} could not be constructed")
+            : (IEnumerable<TEventItem>)events;
     }
 
     private static string GetEventItemPartitionKeyValue<TAggregate>(TAggregate aggregate)
         where TAggregate : IAggregateRoot
     {
-        List<PropertyInfo> partitionKeyProperties = aggregate
+        var partitionKeyProperties = aggregate
             .GetType()
             .GetProperties()
             .Where(x
@@ -125,11 +122,14 @@ internal partial class DefaultEventStore<TEventItem>
         }
 
         PropertyInfo partitionKeyProperty = partitionKeyProperties.Single();
-        Object partitionKey = partitionKeyProperty.GetValue(aggregate) ??
-                              throw new InvalidPartitionKeyValueException(
-                                  partitionKeyProperty.Name,
-                                  aggregate.GetType());
+        var partitionKey = partitionKeyProperty.GetValue(aggregate) ??
+            throw new InvalidPartitionKeyValueException(
+                partitionKeyProperty.Name,
+                aggregate.GetType());
 
-        return partitionKey.ToString();
+        return partitionKey?.ToString() ??
+            throw new InvalidPartitionKeyValueException(
+                partitionKeyProperty.Name,
+                aggregate.GetType());
     }
 }

@@ -44,12 +44,14 @@ public partial class AcceptanceTests
 
         services.AddLogging(options =>
         {
+            const string ns = $""""
+                {nameof(Microsoft)}.{nameof(Azure)}.{nameof(CosmosRepository)}
+                """";
+            
             options.ClearProviders();
-            options.AddXUnit(outputHelper, loggerOptions =>
-            {
-                loggerOptions.Filter = (s, _) =>
-                    s is null || (!s.StartsWith("System.Net") && !s.StartsWith("Microsoft.Azure.CosmosRepository"));
-            });
+            options.AddXUnit(outputHelper,
+                loggerOptions => loggerOptions.Filter = (s, _) =>
+                s is null || (!s.StartsWith("System.Net") && !s.StartsWith(ns)));
 
             options.SetMinimumLevel(LogLevel.Debug);
         });

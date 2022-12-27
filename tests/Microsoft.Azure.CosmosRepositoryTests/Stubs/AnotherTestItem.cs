@@ -3,9 +3,8 @@
 
 using Microsoft.Azure.CosmosRepository;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Stubs
+namespace Microsoft.Azure.CosmosRepositoryTests.Stubs;
+
+public class AnotherTestItem : Item
 {
-    public class AnotherTestItem : Item
-    {
-    }
 }

@@ -4,11 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Aggregates;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
@@ -17,13 +14,12 @@ using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Projections;
 using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Extensions.Logging;
 using Polly;
-using Xunit.Sdk;
 
 namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests;
 
 public partial class AcceptanceTests
 {
-    private readonly string[] _names = {"List 1", "List 2", "List 3"};
+    private readonly string[] _names = { "List 1", "List 2", "List 3" };
     private readonly TodoListMapper _mapper = new();
     private readonly List<string> _atomicEventIds = new();
 
@@ -43,7 +39,7 @@ public partial class AcceptanceTests
 
     private async Task CreateAndVerifyTodoItemLists()
     {
-        List<TodoListAggregate> todoLists = _names.Select(name =>
+        var todoLists = _names.Select(name =>
             new TodoListAggregate(name)).ToList();
 
         await _todoListItemEventStore.PersistAsync(
@@ -89,7 +85,7 @@ public partial class AcceptanceTests
 
     private async Task AddItemToAllListsAndVerify(string title)
     {
-        foreach (string name in _names)
+        foreach (var name in _names)
         {
             TodoListAggregate list = await _todoListItemEventStore.ReadAggregateAsync(name, _mapper);
 
@@ -107,7 +103,7 @@ public partial class AcceptanceTests
 
     private async Task CompleteTaskForItems(int taskId)
     {
-        foreach (string name in _names)
+        foreach (var name in _names)
         {
             TodoListAggregate list = await _todoListItemEventStore.ReadAggregateAsync(name, _mapper);
 
@@ -120,7 +116,7 @@ public partial class AcceptanceTests
     private async Task CheckTodoListsProjectionBuilder()
     {
         _logger.LogInformation("Checking todo list projections");
-        foreach (string name in _names)
+        foreach (var name in _names)
         {
             TodoListItem list = await _todoListItemRepository.GetAsync(name, nameof(TodoListItem));
             list.Name.Should().Be(name);
@@ -131,7 +127,7 @@ public partial class AcceptanceTests
     {
         _logger.LogInformation("Checking todo items (complete/created) projections");
 
-        foreach (string name in _names)
+        foreach (var name in _names)
         {
             IEnumerable<TodoCosmosItem> items =
                 await _todoItemsRepository.GetAsync(x => x.PartitionKey == name).ToListAsync();

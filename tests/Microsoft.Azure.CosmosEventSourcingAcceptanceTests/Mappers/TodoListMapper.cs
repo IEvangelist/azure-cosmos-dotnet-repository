@@ -13,7 +13,7 @@ public class TodoListMapper : IAggregateRootMapper<TodoListAggregate, TodoListEv
 {
     public IEnumerable<TodoListEventItem> MapFrom(TodoListAggregate aggregateRoot)
     {
-        List<TodoListEventItem> eventItems = aggregateRoot
+        var eventItems = aggregateRoot
             .NewEvents
             .Select(domainEvent =>
                 new TodoListEventItem(

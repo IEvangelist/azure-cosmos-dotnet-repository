@@ -21,8 +21,5 @@ public class Job
         Due = due;
     }
 
-    public void Complete(DateTime at)
-    {
-        CompletedAt = at;
-    }
+    public void Complete(DateTime at) => CompletedAt = at;
 }

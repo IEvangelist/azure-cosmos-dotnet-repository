@@ -86,7 +86,7 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
     public TimeSpan? TimeToLive
     {
         get => _timeToLive.HasValue ? TimeSpan.FromSeconds(_timeToLive.Value) : null;
-        set => _timeToLive = (int?) value?.TotalSeconds;
+        set => _timeToLive = (int?)value?.TotalSeconds;
     }
 
     /// <summary>

@@ -4,13 +4,9 @@
 using System.Collections.Concurrent;
 using Newtonsoft.Json;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Extensions
+namespace Microsoft.Azure.CosmosRepositoryTests.Extensions;
+
+public static class ConcurrentDictionaryExtensions
 {
-    public static class ConcurrentDictionaryExtensions
-    {
-        public static bool TryAddAsJson<TItem>(this ConcurrentDictionary<string, string> items, string id, TItem item)
-        {
-            return items.TryAdd(id, JsonConvert.SerializeObject(item));
-        }
-    }
+    public static bool TryAddAsJson<TItem>(this ConcurrentDictionary<string, string> items, string id, TItem item) => items.TryAdd(id, JsonConvert.SerializeObject(item));
 }

@@ -3,10 +3,9 @@
 
 using Microsoft.Azure.CosmosRepository;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Stubs
+namespace Microsoft.Azure.CosmosRepositoryTests.Stubs;
+
+public class TestItem : FullItem
 {
-    public class TestItem : FullItem
-    {
-        public string Property { get; set; } = default!;
-    }
+    public string Property { get; set; } = default!;
 }

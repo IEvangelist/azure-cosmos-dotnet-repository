@@ -4,22 +4,21 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.Azure.CosmosRepository.Extensions
-{
-    internal static class TypeExtensions
-    {
-        public static void IsItem(this Type type)
-        {
-            if (!typeof(IItem).IsAssignableFrom(type))
-            {
-                throw new InvalidOperationException(
-                    $"The type {type.FullName} does not implement {typeof(IItem).FullName}");
-            }
-        }
+namespace Microsoft.Azure.CosmosRepository.Extensions;
 
-        public static void AreAllItems(this IReadOnlyList<Type> types)
+internal static class TypeExtensions
+{
+    public static void IsItem(this Type type)
+    {
+        if (!typeof(IItem).IsAssignableFrom(type))
         {
-            foreach (Type type in types) type.IsItem();
+            throw new InvalidOperationException(
+                $"The type {type.FullName} does not implement {typeof(IItem).FullName}");
         }
+    }
+
+    public static void AreAllItems(this IReadOnlyList<Type> types)
+    {
+        foreach (Type type in types) type.IsItem();
     }
 }

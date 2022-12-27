@@ -90,7 +90,7 @@ app.MapGet("/api/ships/info/{name}", async (string name, IShipRepository shipRep
 
 app.MapPost("/api/ships", async (CreateShip createShip, IShipRepository shipRepository) =>
 {
-    (string name, DateTime dateTime) = createShip;
+    (var name, DateTime dateTime) = createShip;
     Ship ship = new(name, dateTime);
     await shipRepository.SaveAsync(ship);
 });
@@ -129,7 +129,7 @@ app.MapGet("/api/ship/{shipName}/departures", async (string shipName, IEventStor
         shipName,
         x => x.EventName == nameof(ShipEvents.Departed));
 
-    List<ShipEvents.Departed> departedEvents = events
+    var departedEvents = events
         .Select(x =>
             x.GetEventPayload<ShipEvents.Departed>())
         .OrderBy(x => x.OccuredUtc)

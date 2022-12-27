@@ -3,13 +3,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Security.Permissions;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Entities;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Events;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Aggregates;
 
@@ -41,7 +38,7 @@ public class TodoListAggregate : AggregateRoot
 
     public static TodoListAggregate Replay(List<DomainEvent> domainEvents)
     {
-        TodoListAggregate a = new TodoListAggregate();
+        var a = new TodoListAggregate();
         a.Apply(domainEvents);
         return a;
     }

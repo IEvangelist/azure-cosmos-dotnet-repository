@@ -4,21 +4,20 @@ using Microsoft.Extensions.DependencyInjection;
 using User = AzureFunctionTier.Model.User;
 
 [assembly: FunctionsStartup(typeof(AzureFunctionTier.Startup))]
-namespace AzureFunctionTier
+namespace AzureFunctionTier;
+
+class Startup : FunctionsStartup
 {
-    class Startup : FunctionsStartup
-    {
-        public override void Configure(IFunctionsHostBuilder builder) =>
-            builder.Services.AddCosmosRepository(options =>
-            {
-                options.ContainerPerItemType = true;
-                options.ContainerBuilder.Configure<User>(containerOptions => containerOptions
-                    .WithContainer("users")
-                    .WithPartitionKey("/emailAddress")
-                    .WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(1))
-                    .WithManualThroughput(500)
-                    .WithSyncableContainerProperties()
-                );
-            });
-    }
+    public override void Configure(IFunctionsHostBuilder builder) =>
+        builder.Services.AddCosmosRepository(options =>
+        {
+            options.ContainerPerItemType = true;
+            options.ContainerBuilder.Configure<User>(containerOptions => containerOptions
+                .WithContainer("users")
+                .WithPartitionKey("/emailAddress")
+                .WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(1))
+                .WithManualThroughput(500)
+                .WithSyncableContainerProperties()
+            );
+        });
 }

@@ -3,7 +3,6 @@
 
 using CleanArchitecture.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
-using Microsoft.Azure.CosmosEventSourcing.Events;
 
 namespace BasicEventSourcingSample.Core;
 

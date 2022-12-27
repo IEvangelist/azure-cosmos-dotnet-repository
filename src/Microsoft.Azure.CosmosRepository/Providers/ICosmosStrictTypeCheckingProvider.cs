@@ -3,13 +3,12 @@
 
 using System;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
-{
-    interface ICosmosStrictTypeCheckingProvider
-    {
-        bool UseStrictTypeChecking<TItem>()
-            where TItem : IItem;
+namespace Microsoft.Azure.CosmosRepository.Providers;
 
-        bool UseStrictTypeChecking(Type itemType);
-    }
+interface ICosmosStrictTypeCheckingProvider
+{
+    bool UseStrictTypeChecking<TItem>()
+        where TItem : IItem;
+
+    bool UseStrictTypeChecking(Type itemType);
 }

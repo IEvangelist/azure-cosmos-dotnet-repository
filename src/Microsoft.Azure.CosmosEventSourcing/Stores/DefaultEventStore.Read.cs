@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
-using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.Paging;
@@ -29,19 +28,16 @@ internal partial class DefaultEventStore<TEventItem>
             x => x.PartitionKey == partitionKey,
             cancellationToken);
 
-        List<DomainEvent> payloads = events
+        var payloads = events
             .Select(x => x.DomainEvent)
             .ToList();
 
         Type type = typeof(TAggregateRoot);
         MethodInfo? method = type.GetMethod("Replay");
 
-        if (method is null)
-        {
-            throw new ReplayMethodNotDefinedException(type);
-        }
-
-        return (TAggregateRoot) method.Invoke(null, new object[] {payloads});
+        return method is null
+            ? throw new ReplayMethodNotDefinedException(type)
+            : (TAggregateRoot)method.Invoke(null, new object[] { payloads })!;
     }
 
     public async ValueTask<TAggregateRoot> ReadAggregateAsync<TAggregateRoot>(

@@ -42,7 +42,7 @@ public class SpecificationPagingSamples
         ContinuationTokenSpecification<Person> specification = new(null, pageSize: 25);
         IPage<Person> page = await _repository.QueryAsync(specification);
         specification.UpdateContinuationToken(page.Continuation);
-        int totalItems = 0;
+        var totalItems = 0;
         while (totalItems < page.Total)
         {
             foreach (Person person in page.Items)

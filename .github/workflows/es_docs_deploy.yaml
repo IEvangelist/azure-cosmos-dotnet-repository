@@ -1,17 +1,16 @@
 name: ES Docs Build and Deploy
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'docs/**'
+      - "docs/**"
 
   workflow_dispatch:
-      inputs:
-        reason:
-          description: 'The reason for running the workflow'
-          required: true
-          default: 'Manual run'
-          
+    inputs:
+      reason:
+        description: "The reason for running the workflow"
+        required: true
+        default: "Manual run"
 
 jobs:
   build-and-deploy:

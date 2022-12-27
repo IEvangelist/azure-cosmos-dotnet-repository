@@ -24,7 +24,7 @@ public class JobsListJobCompletedProjection : IDomainEventProjection<JobComplete
         JobsListEventItem eventItem,
         CancellationToken cancellationToken = default)
     {
-        (Guid id, string? _, JobListInfo? jobListInfo) = domainEvent;
+        (Guid id, var _, JobListInfo? jobListInfo) = domainEvent;
 
         JobItem item = await _repository.GetAsync(
             id.ToString(),

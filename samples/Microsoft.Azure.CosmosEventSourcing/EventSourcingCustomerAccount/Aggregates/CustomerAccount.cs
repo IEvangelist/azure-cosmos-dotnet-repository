@@ -3,7 +3,6 @@
 
 using EventSourcingCustomerAccount.Events;
 using EventSourcingCustomerAccount.Models;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 
@@ -39,8 +38,7 @@ public class CustomerAccount : AggregateRoot
         string addressLine2,
         string city,
         string country,
-        string postCode)
-    {
+        string postCode) =>
         // Guards excluded for brevity
 
         AddEvent(new CustomerAccountAddressAssigned(
@@ -50,7 +48,6 @@ public class CustomerAccount : AggregateRoot
             city,
             country,
             postCode));
-    }
 
     protected override void Apply(DomainEvent domainEvent)
     {
@@ -65,15 +62,12 @@ public class CustomerAccount : AggregateRoot
         }
     }
 
-    private void Apply(CustomerAccountAddressAssigned addressAssigned)
-    {
-        Address = new CustomerAddress(
+    private void Apply(CustomerAccountAddressAssigned addressAssigned) => Address = new CustomerAddress(
             addressAssigned.AddressLine1,
             addressAssigned.AddressLine2,
             addressAssigned.City,
             addressAssigned.Country,
             addressAssigned.PostCode);
-    }
 
     private void Apply(CustomerAccountCreated created)
     {

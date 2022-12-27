@@ -8,7 +8,7 @@ CosmosClient client = new(
 using FeedIterator<DatabaseProperties> databases =
     client.GetDatabaseQueryIterator<DatabaseProperties>("SELECT * FROM c");
 
-int total = 0;
+var total = 0;
 
 while (databases.HasMoreResults)
 {

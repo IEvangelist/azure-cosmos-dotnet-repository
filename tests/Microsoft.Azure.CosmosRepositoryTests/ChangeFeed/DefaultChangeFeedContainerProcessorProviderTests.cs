@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
@@ -14,81 +13,80 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed
+namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed;
+
+public class DefaultChangeFeedContainerProcessorProviderTests
 {
-    public class DefaultChangeFeedContainerProcessorProviderTests
+    private readonly RepositoryOptions _repositoryOptions = new();
+    private readonly Mock<ICosmosContainerService> _containerService = new();
+    private readonly Mock<ILeaseContainerProvider> _leaseContainerProvider = new();
+    private readonly Mock<ILoggerFactory> _loggerFactory = new();
+    private readonly Mock<IServiceProvider> _serviceProvider = new();
+    private readonly Mock<IChangeFeedOptionsProvider> _changeFeedOptionsProvider = new();
+
+    private IChangeFeedContainerProcessorProvider CreateSut()
     {
-        private readonly RepositoryOptions _repositoryOptions = new();
-        private readonly Mock<ICosmosContainerService> _containerService = new();
-        private readonly Mock<ILeaseContainerProvider> _leaseContainerProvider = new();
-        private readonly Mock<ILoggerFactory> _loggerFactory = new();
-        private readonly Mock<IServiceProvider> _serviceProvider = new();
-        private readonly Mock<IChangeFeedOptionsProvider> _changeFeedOptionsProvider = new();
+        Mock<IOptionsMonitor<RepositoryOptions>> options = new();
+        options
+            .SetupGet(o => o.CurrentValue)
+            .Returns(_repositoryOptions);
 
-        private IChangeFeedContainerProcessorProvider CreateSut()
+        return new DefaultChangeFeedContainerProcessorProvider(options.Object,
+            _containerService.Object,
+            _leaseContainerProvider.Object,
+            _loggerFactory.Object,
+            _serviceProvider.Object,
+            _changeFeedOptionsProvider.Object);
+    }
+
+    [Fact]
+    public void GetProcessors_ItemSetupForTheChangeFeed_ReturnsCorrectProcessors()
+    {
+        //Arrange
+        IChangeFeedContainerProcessorProvider sut = CreateSut();
+
+        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
         {
-            Mock<IOptionsMonitor<RepositoryOptions>> options = new();
-            options
-                .SetupGet(o => o.CurrentValue)
-                .Returns(_repositoryOptions);
+            builder.WithContainer("a");
+            builder.WithChangeFeedMonitoring();
+        });
 
-            return new DefaultChangeFeedContainerProcessorProvider(options.Object,
-                _containerService.Object,
-                _leaseContainerProvider.Object,
-                _loggerFactory.Object,
-                _serviceProvider.Object,
-                _changeFeedOptionsProvider.Object);
-        }
-
-        [Fact]
-        public void GetProcessors_ItemSetupForTheChangeFeed_ReturnsCorrectProcessors()
+        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
         {
-            //Arrange
-            IChangeFeedContainerProcessorProvider sut = CreateSut();
+            builder.WithContainer("a");
+            builder.WithChangeFeedMonitoring();
+        });
 
-            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
-            {
-                builder.WithContainer("a");
-                builder.WithChangeFeedMonitoring();
-            });
+        _repositoryOptions.ContainerBuilder.Configure<AndAnotherItem>(builder =>
+        {
+            builder.WithContainer("b");
+            builder.WithChangeFeedMonitoring();
+        });
 
-            _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
-            {
-                builder.WithContainer("a");
-                builder.WithChangeFeedMonitoring();
-            });
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
+        {
+            builder.WithContainer("c");
+        });
 
-            _repositoryOptions.ContainerBuilder.Configure<AndAnotherItem>(builder =>
-            {
-                builder.WithContainer("b");
-                builder.WithChangeFeedMonitoring();
-            });
+        //Act
+        var processors = sut.GetProcessors().ToList();
 
-            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
-            {
-                builder.WithContainer("c");
-            });
+        //Assert
+        Assert.Equal(2, processors.Count());
 
-            //Act
-            List<IContainerChangeFeedProcessor> processors = sut.GetProcessors().ToList();
+        IContainerChangeFeedProcessor? aChangeFeedProcessor = processors
+            .FirstOrDefault(x =>
+                x.ItemTypes.Count == 2 &&
+                x.ItemTypes.Contains(typeof(TestItem)) &&
+                x.ItemTypes.Contains(typeof(AnotherTestItem)));
 
-            //Assert
-            Assert.Equal(2, processors.Count());
+        Assert.NotNull(aChangeFeedProcessor);
 
-            IContainerChangeFeedProcessor? aChangeFeedProcessor = processors
-                .FirstOrDefault(x =>
-                    x.ItemTypes.Count == 2 &&
-                    x.ItemTypes.Contains(typeof(TestItem)) &&
-                    x.ItemTypes.Contains(typeof(AnotherTestItem)));
+        IContainerChangeFeedProcessor? bChangeFeedProcessor = processors
+            .FirstOrDefault(x =>
+                x.ItemTypes.Count == 1 &&
+                x.ItemTypes.Contains(typeof(AndAnotherItem)));
 
-            Assert.NotNull(aChangeFeedProcessor);
-
-            IContainerChangeFeedProcessor? bChangeFeedProcessor = processors
-                .FirstOrDefault(x =>
-                    x.ItemTypes.Count == 1 &&
-                    x.ItemTypes.Contains(typeof(AndAnotherItem)));
-
-            Assert.NotNull(bChangeFeedProcessor);
-        }
+        Assert.NotNull(bChangeFeedProcessor);
     }
 }

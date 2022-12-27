@@ -5,7 +5,7 @@ using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-string connectionString = Environment.GetEnvironmentVariable("CosmosConnectionString") ??
+var connectionString = Environment.GetEnvironmentVariable("CosmosConnectionString") ??
                           throw new NullReferenceException("Make sure the connection string is set as an env var");
 
 IServiceCollection services = new ServiceCollection();

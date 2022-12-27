@@ -45,10 +45,7 @@ public class DeadLetterProjectionBuilderDecoratorTests
 
     public class DecoratorProjection : IEventItemProjection<DecoratorEventItem, DecoratorProjectionKey>
     {
-        public ValueTask ProjectAsync(DecoratorEventItem eventItem, CancellationToken cancellationToken = default)
-        {
-            throw new System.NotImplementedException();
-        }
+        public ValueTask ProjectAsync(DecoratorEventItem eventItem, CancellationToken cancellationToken = default) => throw new System.NotImplementedException();
     }
 
     [Fact]
@@ -81,7 +78,7 @@ public class DeadLetterProjectionBuilderDecoratorTests
 
         IServiceProvider provider = services.BuildServiceProvider();
 
-        InMemoryRepository<DeadLetteredEventItem<DecoratorEventItem>> deadLetterRepository =
+        var deadLetterRepository =
             (InMemoryRepository<DeadLetteredEventItem<DecoratorEventItem>>)
             provider.GetRequiredService<IWriteOnlyRepository<DeadLetteredEventItem<DecoratorEventItem>>>();
 

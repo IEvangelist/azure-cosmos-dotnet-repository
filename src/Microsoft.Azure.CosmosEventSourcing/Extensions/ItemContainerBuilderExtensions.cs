@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Items;
-using Microsoft.Azure.CosmosEventSourcing.Projections.Decorators;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Builders;
 

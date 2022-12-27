@@ -1,6 +1,5 @@
 using EventSourcingCustomerAccount.Aggregates;
 using EventSourcingCustomerAccount.Items;
-using EventSourcingCustomerAccount.Models;
 using EventSourcingCustomerAccount.Projections;
 using EventSourcingCustomerAccount.Requests;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
@@ -85,7 +84,7 @@ app.MapPut(
         IEnumerable<CustomerAccountEventItem> eventsItems =
             await eventStore.ReadAsync(request.Username);
 
-        CustomerAccount account = CustomerAccount.Replay(
+        var account = CustomerAccount.Replay(
             eventsItems.Select(x =>
                 x.DomainEvent).ToList());
 

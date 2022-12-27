@@ -7,49 +7,48 @@ using Microsoft.Azure.CosmosRepositoryTests.Abstractions;
 using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Providers
+namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
+
+public class DefaultCosmosContainerDefaultTimeToLiveProviderTests : WithRepositoryOptions
 {
-    public class DefaultCosmosContainerDefaultTimeToLiveProviderTests : WithRepositoryOptions
+    readonly DefaultCosmosContainerDefaultTimeToLiveProvider _provider;
+
+    public DefaultCosmosContainerDefaultTimeToLiveProviderTests() =>
+        _provider = new DefaultCosmosContainerDefaultTimeToLiveProvider(_options.Object);
+
+    [Fact]
+    public void GetDefaultTimeToLiveItemWithNoOptionsReturnsMinus1() =>
+        Assert.Equal(-1, _provider.GetDefaultTimeToLive<TestItemWithEtag>());
+
+    [Fact]
+    public void GetDefaultTimeToLiveItemWithOptionsUsesThatTimeToLive()
     {
-        readonly DefaultCosmosContainerDefaultTimeToLiveProvider _provider;
+        var timeToLive = TimeSpan.FromMinutes(5);
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
+            builder.WithContainerDefaultTimeToLive(timeToLive));
+    }
 
-        public DefaultCosmosContainerDefaultTimeToLiveProviderTests() =>
-            _provider = new DefaultCosmosContainerDefaultTimeToLiveProvider(_options.Object);
+    [Fact]
+    public void GetDefaultTimeToLiveItemWithOptionsThatShareAContainerNameWithEqualValues()
+    {
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
+            builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(5)).WithContainer("a"));
 
-        [Fact]
-        public void GetDefaultTimeToLiveItemWithNoOptionsReturnsMinus1() =>
-            Assert.Equal(-1, _provider.GetDefaultTimeToLive<TestItemWithEtag>());
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
+            builder.WithContainer("a"));
 
-        [Fact]
-        public void GetDefaultTimeToLiveItemWithOptionsUsesThatTimeToLive()
-        {
-            TimeSpan timeToLive = TimeSpan.FromMinutes(5);
-            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
-                builder.WithContainerDefaultTimeToLive(timeToLive));
-        }
+        Assert.Equal(5 * 60, _provider.GetDefaultTimeToLive<TestItemWithEtag>());
+    }
 
-        [Fact]
-        public void GetDefaultTimeToLiveItemWithOptionsThatShareAContainerNameWithEqualValues()
-        {
-            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
-                builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(5)).WithContainer("a"));
+    [Fact]
+    public void GetDefaultTimeToLiveItemWithOptionsThatShareAContainerNameAndHaveConflictingValuesThrows()
+    {
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
+            builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(5)).WithContainer("a"));
 
-            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
-                builder.WithContainer("a"));
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
+            builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(6)).WithContainer("a"));
 
-            Assert.Equal(5 * 60, _provider.GetDefaultTimeToLive<TestItemWithEtag>());
-        }
-
-        [Fact]
-        public void GetDefaultTimeToLiveItemWithOptionsThatShareAContainerNameAndHaveConflictingValuesThrows()
-        {
-            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
-                builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(5)).WithContainer("a"));
-
-            _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
-                builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(6)).WithContainer("a"));
-
-            Assert.Throws<InvalidOperationException>(() => _provider.GetDefaultTimeToLive<TestItemWithEtag>());
-        }
+        Assert.Throws<InvalidOperationException>(() => _provider.GetDefaultTimeToLive<TestItemWithEtag>());
     }
 }

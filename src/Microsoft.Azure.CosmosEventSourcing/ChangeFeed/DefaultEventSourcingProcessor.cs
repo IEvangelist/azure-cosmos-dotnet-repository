@@ -110,5 +110,5 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
     public Task StopAsync() =>
         _processor?.StopAsync() ?? Task.CompletedTask;
 
-    public IReadOnlyList<Type> ItemTypes => new[] {typeof(TSourcedEvent)};
+    public IReadOnlyList<Type> ItemTypes => new[] { typeof(TSourcedEvent) };
 }

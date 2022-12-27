@@ -4,39 +4,38 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator
+namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator;
+
+internal class SpecificationEvaluator : ISpecificationEvaluator
 {
-    internal class SpecificationEvaluator : ISpecificationEvaluator
+    private static readonly IEnumerable<IEvaluator> Evaluators = new IEvaluator[]
     {
-        private static readonly IEnumerable<IEvaluator> Evaluators = new IEvaluator[]
-        {
-            new WhereEvaluator(),
-            new OrderEvaluator(),
-            new PagingEvaluator()
-        };
+        new WhereEvaluator(),
+        new OrderEvaluator(),
+        new PagingEvaluator()
+    };
 
-        public IQueryable<TItem> GetQuery<TItem, TResult>(
-            IQueryable<TItem> query,
-            ISpecification<TItem, TResult> specification,
-            bool evaluateCriteriaOnly = false)
-            where TItem : IItem
-            where TResult : IQueryResult<TItem>
-        {
-            IEnumerable<IEvaluator> evaluators = evaluateCriteriaOnly
-                ? Evaluators.Where(e => e.IsFilterEvaluator).ToList()
-                : Evaluators;
+    public IQueryable<TItem> GetQuery<TItem, TResult>(
+        IQueryable<TItem> query,
+        ISpecification<TItem, TResult> specification,
+        bool evaluateCriteriaOnly = false)
+        where TItem : IItem
+        where TResult : IQueryResult<TItem>
+    {
+        IEnumerable<IEvaluator> evaluators = evaluateCriteriaOnly
+            ? Evaluators.Where(e => e.IsFilterEvaluator).ToList()
+            : Evaluators;
 
-            return evaluators.Aggregate(query, (current, evaluator) => evaluator.GetQuery(current, specification));
-        }
-
-        public TResult GetResult<TItem, TResult>(
-            IReadOnlyList<TItem> res,
-            ISpecification<TItem, TResult> specification,
-            int totalCount,
-            double charge,
-            string continuationToken)
-            where TItem : IItem
-            where TResult : IQueryResult<TItem> =>
-            specification.PostProcessingAction(res, totalCount, charge, continuationToken);
+        return evaluators.Aggregate(query, (current, evaluator) => evaluator.GetQuery(current, specification));
     }
+
+    public TResult GetResult<TItem, TResult>(
+        IReadOnlyList<TItem> res,
+        ISpecification<TItem, TResult> specification,
+        int totalCount,
+        double charge,
+        string continuationToken)
+        where TItem : IItem
+        where TResult : IQueryResult<TItem> =>
+        specification.PostProcessingAction(res, totalCount, charge, continuationToken);
 }

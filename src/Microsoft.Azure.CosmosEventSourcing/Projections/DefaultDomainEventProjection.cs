@@ -26,7 +26,7 @@ internal class
 
     public async ValueTask ProjectAsync(TEventItem eventItem, CancellationToken cancellationToken = default)
     {
-        string payloadTypeName = eventItem.DomainEvent.GetType().Name;
+        var payloadTypeName = eventItem.DomainEvent.GetType().Name;
         Type handlerType = BuildEventProjectionHandlerType(eventItem);
         IEnumerable<object?> handlers = _serviceProvider.GetServices(handlerType).ToList();
 
@@ -54,8 +54,8 @@ internal class
         {
             try
             {
-                object? result = handlerType.GetMethod("HandleAsync")?
-                    .Invoke(handler, new object[] {eventItem.DomainEvent, eventItem, cancellationToken});
+                var result = handlerType.GetMethod("HandleAsync")?
+                    .Invoke(handler, new object[] { eventItem.DomainEvent, eventItem, cancellationToken });
 
                 if (result is ValueTask valueTask)
                 {

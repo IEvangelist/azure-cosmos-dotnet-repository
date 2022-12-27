@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing.Converters;
 using Microsoft.Azure.CosmosEventSourcing.Events;
@@ -52,11 +51,12 @@ public class EventItemTests
         SampleEventItem item = new(evt, "A");
 
         //Act
-        string json = JsonConvert.SerializeObject(item, _jsonSerializerSettings);
+        var json = JsonConvert.SerializeObject(item, _jsonSerializerSettings);
 
         //Assert
-        SampleEventItem deserialized = JsonConvert.DeserializeObject<SampleEventItem>(json, _jsonSerializerSettings);
-        deserialized.DomainEvent.EventId.Should().Be(evt.EventId);
+        SampleEventItem? deserialized = JsonConvert.DeserializeObject<SampleEventItem>(json, _jsonSerializerSettings);
+        deserialized.Should().NotBeNull();
+        deserialized!.DomainEvent.EventId.Should().Be(evt.EventId);
         deserialized.Id.Should().Be(evt.EventId);
         deserialized.DomainEvent.Sequence.Should().Be(1);
         deserialized.DomainEvent.OccuredUtc.Should().Be(evt.OccuredUtc);
@@ -67,7 +67,7 @@ public class EventItemTests
     {
         //Arrange
         DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
-        string etagValue = Guid.NewGuid().ToString();
+        var etagValue = Guid.NewGuid().ToString();
         AtomicEvent evt = new(Guid.NewGuid().ToString(), string.Empty)
         {
             Sequence = int.MaxValue,
@@ -78,11 +78,12 @@ public class EventItemTests
         SampleEventItem item = new(evt, "A");
 
         //Act
-        string json = JsonConvert.SerializeObject(item, _jsonSerializerSettings);
+        var json = JsonConvert.SerializeObject(item, _jsonSerializerSettings);
 
         //Assert
-        SampleEventItem deserialized = JsonConvert.DeserializeObject<SampleEventItem>(json, _jsonSerializerSettings);
-        deserialized.DomainEvent.EventId.Should().Be(evt.EventId);
+        SampleEventItem? deserialized = JsonConvert.DeserializeObject<SampleEventItem>(json, _jsonSerializerSettings);
+        deserialized.Should().NotBeNull();
+        deserialized!.DomainEvent.EventId.Should().Be(evt.EventId);
         deserialized.Id.Should().Be(evt.EventId);
         deserialized.DomainEvent.Sequence.Should().Be(int.MaxValue);
         deserialized.DomainEvent.OccuredUtc.Should().Be(evt.OccuredUtc);
@@ -94,14 +95,14 @@ public class EventItemTests
     {
         //Arrange
         DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
-        string etagValue = Guid.NewGuid().ToString();
+        var etagValue = Guid.NewGuid().ToString();
         AtomicEvent atomicEvent = new(nameof(AtomicEvent), null!)
         {
             Sequence = int.MaxValue,
             OccuredUtc = DateTime.UtcNow
         };
 
-        string? json = JObject.FromObject(new
+        var json = JObject.FromObject(new
         {
             _etag = etagValue,
             domainEvent = atomicEvent,
@@ -113,8 +114,9 @@ public class EventItemTests
         SampleEventItem? item = JsonConvert.DeserializeObject<SampleEventItem>(json);
 
         //Assert
-        item.Etag.Should().Be(etagValue);
-        AtomicEvent ae = (AtomicEvent) item.DomainEvent;
+        item.Should().NotBeNull();
+        item!.Etag.Should().Be(etagValue);
+        var ae = (AtomicEvent)item.DomainEvent;
         ae.ETag.Should().Be(etagValue);
     }
 
@@ -123,14 +125,14 @@ public class EventItemTests
     {
         //Arrange
         DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
-        string etagValue = Guid.NewGuid().ToString();
+        var etagValue = Guid.NewGuid().ToString();
         AtomicEvent atomicEvent = new(nameof(AtomicEvent), null!)
         {
             Sequence = int.MaxValue,
             OccuredUtc = DateTime.UtcNow
         };
 
-        string? json = JObject.FromObject(new
+        var json = JObject.FromObject(new
         {
             _etag = etagValue,
             domainEvent = atomicEvent,
@@ -140,12 +142,13 @@ public class EventItemTests
 
         //Act
         SampleEventItem? item = JsonConvert.DeserializeObject<SampleEventItem>(json);
-        AtomicEvent ae = (AtomicEvent) item.DomainEvent;
+        item.Should().NotBeNull();
+        var ae = (AtomicEvent)item!.DomainEvent;
         SampleEventItem newEventItem = new(ae, "123");
-        string? reSerialized = JsonConvert.SerializeObject(newEventItem);
+        var reSerialized = JsonConvert.SerializeObject(newEventItem);
 
         //Assert
-        JObject eventItemJson = JObject.Parse(reSerialized);
-        eventItemJson["_etag"].Value<string>().Should().Be(etagValue);
+        var eventItemJson = JObject.Parse(reSerialized);
+        eventItemJson["_etag"]!.Value<string>().Should().Be(etagValue);
     }
 }

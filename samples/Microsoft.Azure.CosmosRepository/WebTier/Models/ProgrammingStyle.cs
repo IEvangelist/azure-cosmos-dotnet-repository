@@ -1,14 +1,13 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-namespace WebTier.Models
+namespace WebTier.Models;
+
+public enum ProgrammingStyle
 {
-    public enum ProgrammingStyle
-    {
-        Functional,
-        ObjectOriented,
-        Procedural,
-        Script,
-        Modular
-    }
+    Functional,
+    ObjectOriented,
+    Procedural,
+    Script,
+    Modular
 }

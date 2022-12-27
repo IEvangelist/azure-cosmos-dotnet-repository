@@ -15,13 +15,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\code-metrics.yml = .github\workflows\code-metrics.yml
 		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
 		CosmosRepository.png = CosmosRepository.png
+		Directory.Build.props = Directory.Build.props
 		.github\workflows\docs_deploy.yml = .github\workflows\docs_deploy.yml
+		.github\workflows\es_docs_deploy.yaml = .github\workflows\es_docs_deploy.yaml
 		.github\ISSUE_TEMPLATE\feature_request.md = .github\ISSUE_TEMPLATE\feature_request.md
 		LICENSE = LICENSE
+		.github\workflows\nuget-publish.yml = .github\workflows\nuget-publish.yml
 		.github\workflows\pr-validation.yml = .github\workflows\pr-validation.yml
 		README.md = README.md
-		.github\workflows\nuget-publish.yml = .github\workflows\nuget-publish.yml
-		.github\workflows\es_docs_deploy.yaml = .github\workflows\es_docs_deploy.yaml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTier", "samples\Microsoft.Azure.CosmosRepository\ServiceTier\ServiceTier.csproj", "{AE98C44F-4F35-4AF8-9141-1DBCB00468C8}"
@@ -62,11 +63,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTestHelper", "tools\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Specification", "samples\Microsoft.Azure.CosmosRepository\Specification\Specification.csproj", "{32B70EA1-A1F4-4F18-8F01-4E32043BFE99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosEventSourcing", "src\Microsoft.Azure.CosmosEventSourcing\Microsoft.Azure.CosmosEventSourcing.csproj", "{BA421538-A1AF-45E7-8028-DBCD4B7E5B99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosEventSourcing", "src\Microsoft.Azure.CosmosEventSourcing\Microsoft.Azure.CosmosEventSourcing.csproj", "{BA421538-A1AF-45E7-8028-DBCD4B7E5B99}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventSourcing", "EventSourcing", "{8F8738AD-EBC3-4C24-882B-5D9FAC427E80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicEventSourcingSample", "samples\Microsoft.Azure.CosmosEventSourcing\BasicEventSourcingSample\BasicEventSourcingSample.csproj", "{B6F280AC-1895-470D-AADF-A0E43E295AA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicEventSourcingSample", "samples\Microsoft.Azure.CosmosEventSourcing\BasicEventSourcingSample\BasicEventSourcingSample.csproj", "{B6F280AC-1895-470D-AADF-A0E43E295AA6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{13E01BD9-4BEB-43A1-9004-853366CE5C04}"
 EndProject
@@ -74,13 +75,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventSourcing", "EventSourc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNetCore", "AspNetCore", "{3D8EDE92-2014-4AD5-8EDD-69A2DEA33928}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosEventSourcingTests", "tests\Microsoft.Azure.CosmosEventSourcingTests\Microsoft.Azure.CosmosEventSourcingTests.csproj", "{FEB072AC-B573-48BF-948D-B5FFF9102303}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosEventSourcingTests", "tests\Microsoft.Azure.CosmosEventSourcingTests\Microsoft.Azure.CosmosEventSourcingTests.csproj", "{FEB072AC-B573-48BF-948D-B5FFF9102303}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingJobsTracker", "samples\Microsoft.Azure.CosmosEventSourcing\EventSourcingJobsTracker\EventSourcingJobsTracker.csproj", "{D276C752-4DB7-4380-AF76-91492E8F8554}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventSourcingJobsTracker", "samples\Microsoft.Azure.CosmosEventSourcing\EventSourcingJobsTracker\EventSourcingJobsTracker.csproj", "{D276C752-4DB7-4380-AF76-91492E8F8554}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingCustomerAccount", "samples\Microsoft.Azure.CosmosEventSourcing\EventSourcingCustomerAccount\EventSourcingCustomerAccount.csproj", "{7A2873BC-70A1-489B-9609-E9D7D382C826}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventSourcingCustomerAccount", "samples\Microsoft.Azure.CosmosEventSourcing\EventSourcingCustomerAccount\EventSourcingCustomerAccount.csproj", "{7A2873BC-70A1-489B-9609-E9D7D382C826}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.CosmosEventSourcingAcceptanceTests", "tests\Microsoft.Azure.CosmosEventSourcingAcceptanceTests\Microsoft.Azure.CosmosEventSourcingAcceptanceTests.csproj", "{99ADC0F0-9433-49AD-86FA-34009CD293BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosEventSourcingAcceptanceTests", "tests\Microsoft.Azure.CosmosEventSourcingAcceptanceTests\Microsoft.Azure.CosmosEventSourcingAcceptanceTests.csproj", "{99ADC0F0-9433-49AD-86FA-34009CD293BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -185,7 +186,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{82E2D15C-7E53-4B77-A90A-9BADF185D564} = {13E01BD9-4BEB-43A1-9004-853366CE5C04}
 		{AE98C44F-4F35-4AF8-9141-1DBCB00468C8} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
+		{6287493F-E0CF-4F16-BF06-EA3AB501FA38} = {13E01BD9-4BEB-43A1-9004-853366CE5C04}
 		{11385AFD-CEA1-47EB-847A-D29D2F929F74} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 		{FD8C66BD-D45F-4D99-891B-0C490E2A8072} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 		{1AED0820-CE1C-42F1-A1C1-44BCFEDB2AE1} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
@@ -196,16 +199,14 @@ Global
 		{9BC98AA9-78A9-4AAA-998C-461CC09DFFDE} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 		{9BB9074A-9478-41A3-A108-5E5775DB8353} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
 		{C9ED77BA-3E5A-4977-B3C2-BD0D91A5C432} = {9BC98AA9-78A9-4AAA-998C-461CC09DFFDE}
-		{86B938CF-7671-4B66-B831-C9EB6D73FD85} = {8704E3AA-99EC-4D9A-AB6B-4AC72D0207E0}
-		{32B70EA1-A1F4-4F18-8F01-4E32043BFE99} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
-		{8F8738AD-EBC3-4C24-882B-5D9FAC427E80} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
-		{B6F280AC-1895-470D-AADF-A0E43E295AA6} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}
-		{82E2D15C-7E53-4B77-A90A-9BADF185D564} = {13E01BD9-4BEB-43A1-9004-853366CE5C04}
-		{6287493F-E0CF-4F16-BF06-EA3AB501FA38} = {13E01BD9-4BEB-43A1-9004-853366CE5C04}
-		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3} = {13E01BD9-4BEB-43A1-9004-853366CE5C04}
-		{BA421538-A1AF-45E7-8028-DBCD4B7E5B99} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
 		{A57B9AC9-8CAF-47AA-9F70-EDF9B48C12A7} = {3D8EDE92-2014-4AD5-8EDD-69A2DEA33928}
 		{CDF603BA-5474-45E9-BBA1-2D33CAD12062} = {3D8EDE92-2014-4AD5-8EDD-69A2DEA33928}
+		{C8E5121C-7AE6-4819-9D86-F0D5418D5EC3} = {13E01BD9-4BEB-43A1-9004-853366CE5C04}
+		{86B938CF-7671-4B66-B831-C9EB6D73FD85} = {8704E3AA-99EC-4D9A-AB6B-4AC72D0207E0}
+		{32B70EA1-A1F4-4F18-8F01-4E32043BFE99} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
+		{BA421538-A1AF-45E7-8028-DBCD4B7E5B99} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
+		{8F8738AD-EBC3-4C24-882B-5D9FAC427E80} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
+		{B6F280AC-1895-470D-AADF-A0E43E295AA6} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}
 		{FEB072AC-B573-48BF-948D-B5FFF9102303} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
 		{D276C752-4DB7-4380-AF76-91492E8F8554} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}
 		{7A2873BC-70A1-489B-9609-E9D7D382C826} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}

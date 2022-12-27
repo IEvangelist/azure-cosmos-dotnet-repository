@@ -64,7 +64,7 @@ public class FullSpecificationSamples
         Console.WriteLine($"Total Charge {totalCharge} RU's");
     }
 
-    private class UsersOrderByAgeSpecification: ContinuationTokenSpecification<Person>
+    private class UsersOrderByAgeSpecification : ContinuationTokenSpecification<Person>
     {
         public UsersOrderByAgeSpecification(int age)
         {

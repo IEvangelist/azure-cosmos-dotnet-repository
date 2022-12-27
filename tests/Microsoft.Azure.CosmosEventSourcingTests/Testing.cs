@@ -62,10 +62,7 @@ public static class Testing
             }
         }
 
-        public new void AddEvent(DomainEvent domainEvent)
-        {
-            base.AddEvent(domainEvent);
-        }
+        public new void AddEvent(DomainEvent domainEvent) => base.AddEvent(domainEvent);
 
         protected override void Apply(DomainEvent domainEvent)
         {

@@ -2,90 +2,87 @@ name: Release Package Version
 on:
   push:
     tags:
-     - 3.*     
-jobs:  
-    unit_tests:
-        runs-on: ubuntu-latest
-        steps:
-        - uses: actions/checkout@v2
-        - name: Setup .NET Core
-          uses: actions/setup-dotnet@v1
-          with:
-            dotnet-version: | 
-              3.1.402
-              6.0.x
-        - name: Install dependencies
-          run: dotnet restore
+      - "**"
+jobs:
+  unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            7.0.x
+      - name: Install dependencies
+        run: dotnet restore
 
-        - name: Build
-          run: |
-            dotnet build --configuration Release --no-restore
-        
-        - name: Unit Tests
-          run: |
-            dotnet test --no-restore --verbosity normal --filter "Category!=Acceptance"        
-            
-    acceptance_tests:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - name: Setup .NET Core
-          uses: actions/setup-dotnet@v1
-          with:
-            dotnet-version: |
-              3.1.402
-              6.0.x
-        - name: Install dependencies
-          run: dotnet restore
+      - name: Build
+        run: |
+          dotnet build --configuration Release --no-restore
 
-        - name: Build
-          run: |
-            dotnet build --configuration Release --no-restore        
+      - name: Unit Tests
+        run: |
+          dotnet test --no-restore --verbosity normal --filter "Category!=Acceptance"
 
-        - name: Prune databases
-          working-directory: ./tools/CosmosTestHelper
-          env:
-            CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-          run: dotnet run
+  acceptance_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            7.0.x
+      - name: Install dependencies
+        run: dotnet restore
 
-        - name: Test Functions
-          env:
-            CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-          run: |
-            dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type!=Container&Type!=CosmosEventSourcing"
+      - name: Build
+        run: |
+          dotnet build --configuration Release --no-restore
 
-        - name: Prune databases
-          working-directory: ./tools/CosmosTestHelper
-          env:
-            CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-          run: dotnet run
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
 
-        - name: Prune databases
-          working-directory: ./tools/CosmosTestHelper
-          env:
-            CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-          run: dotnet run
+      - name: Test Functions
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: |
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type!=Container&Type!=CosmosEventSourcing"
 
-        - name: Test Cosmos Event Sourcing
-          env:
-            CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-          run: |
-            dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=CosmosEventSourcing"
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
 
-        - name: Test Container Creation
-          env:
-            CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-          run: |
-            dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=Container"
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
 
-    deploy:
-      needs:
-        - acceptance_tests
-        - unit_tests
-      if: github.event.base_ref == 'refs/heads/main'
-      runs-on: ubuntu-latest
-      steps:    
+      - name: Test Cosmos Event Sourcing
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: |
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=CosmosEventSourcing"
 
+      - name: Test Container Creation
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: |
+          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=Container"
+
+  deploy:
+    needs:
+      - acceptance_tests
+      - unit_tests
+    if: github.event.base_ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
       - name: Print Tag Ref
         run: echo $GITHUB_REF
 
@@ -94,18 +91,17 @@ jobs:
         id: regex-match
         with:
           text: ${{ github.ref }}
-          regex: '([pre0-9.-]+)$'
+          regex: "([pre0-9.-]+)$"
 
       - name: Print Version Number
         run: echo '${{ steps.regex-match.outputs.match }}'
 
       - uses: actions/checkout@v2
-      - name: Setup .NET  
+      - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: | 
-            3.1.402
-            6.0.x
+          dotnet-version: |
+            7.0.x
 
       - name: Restore dependencies
         run: dotnet restore
@@ -125,7 +121,7 @@ jobs:
       - name: Pack Microsoft.Azure.CosmosEventSourcing
         run: |
           dotnet pack ./src/Microsoft.Azure.CosmosEventSourcing/Microsoft.Azure.CosmosEventSourcing.csproj -p:PackageVersion='${{ steps.regex-match.outputs.match }}-pre1' --output packages
-      
+
       - name: Publish Package
         run: |
           nuget push **\*.nupkg -NoSymbols -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
@@ -135,4 +131,3 @@ jobs:
         with:
           name: IEvangelist.Azure.CosmosRepository.V${{ steps.regex-match.outputs.match }}
           path: packages/
-

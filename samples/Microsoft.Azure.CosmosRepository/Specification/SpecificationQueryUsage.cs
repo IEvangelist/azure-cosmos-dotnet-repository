@@ -23,7 +23,7 @@ public class SpecificationFilterSamples
         Console.WriteLine($"Found {personsWithNameTom.Items.Count} with name Tom");
         Console.WriteLine($"Change for query {personsWithNameTom.Charge}");
 
-        int age = 25;
+        var age = 25;
         AllPersonsOlderThanSpecifciation ageSpecification = new(age);
         IQueryResult<Person> peopleOlderThan25 = await _repository.QueryAsync(ageSpecification);
 

@@ -1,8 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using CleanArchitecture.Exceptions;
-using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 
 namespace BasicEventSourcingSample.Core;
@@ -20,7 +18,7 @@ public partial class Ship
 
     private void Apply(ShipEvents.ShipCreated shipCreated)
     {
-        (string? name, DateTime commissioned) = shipCreated;
+        (var name, DateTime commissioned) = shipCreated;
         Name = name;
         Commissioned = commissioned;
     }
