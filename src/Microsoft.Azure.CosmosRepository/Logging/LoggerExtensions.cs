@@ -1,11 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Linq;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-
 namespace Microsoft.Azure.CosmosRepository.Logging;
 
 internal static class LoggerExtensions

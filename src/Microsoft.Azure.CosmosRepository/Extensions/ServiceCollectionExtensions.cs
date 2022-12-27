@@ -1,22 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Linq;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.ChangeFeed;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
-using Microsoft.Azure.CosmosRepository.Internals;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Processors;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepository.Services;
-using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
-using Microsoft.Azure.CosmosRepository.Validators;
-using Microsoft.Extensions.Configuration;
-
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>

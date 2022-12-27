@@ -1,9 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.Generic;
-using Microsoft.Azure.CosmosRepository.Paging;
-
 namespace Microsoft.Azure.CosmosRepository.Specification;
 
 /// <summary>

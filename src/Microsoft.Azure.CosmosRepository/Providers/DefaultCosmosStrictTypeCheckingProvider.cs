@@ -1,11 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using Microsoft.Azure.CosmosRepository.Builders;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Extensions.Options;
-
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 class DefaultCosmosStrictTypeCheckingProvider : ICosmosStrictTypeCheckingProvider

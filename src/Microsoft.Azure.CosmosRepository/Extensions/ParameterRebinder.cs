@@ -1,9 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.Generic;
-using System.Linq.Expressions;
-
 namespace Microsoft.Azure.CosmosRepository.Extensions;
 
 internal class ParameterRebinder : ExpressionVisitor

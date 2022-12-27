@@ -1,13 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Linq.Expressions;
-using Microsoft.Azure.Cosmos.Linq;
-using Microsoft.Azure.CosmosRepository.Exceptions;
-using Microsoft.Azure.CosmosRepository.Extensions;
-using Microsoft.Azure.CosmosRepository.Options;
-
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 class DefaultRepositoryExpressionProvider : IRepositoryExpressionProvider

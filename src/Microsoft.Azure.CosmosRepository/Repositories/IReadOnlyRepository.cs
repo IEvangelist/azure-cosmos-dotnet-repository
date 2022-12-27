@@ -1,15 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Paging;
-using Microsoft.Azure.CosmosRepository.Specification;
-
 namespace Microsoft.Azure.CosmosRepository;
 
 /// <summary>

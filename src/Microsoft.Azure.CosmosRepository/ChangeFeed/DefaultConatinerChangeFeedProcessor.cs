@@ -1,20 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
-using Microsoft.Azure.CosmosRepository.Extensions;
-using Microsoft.Azure.CosmosRepository.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed;
 
 internal class DefaultContainerChangeFeedProcessor : IContainerChangeFeedProcessor

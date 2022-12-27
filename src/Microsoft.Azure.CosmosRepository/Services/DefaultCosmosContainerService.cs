@@ -1,18 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Extensions;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepository.Validators;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
 namespace Microsoft.Azure.CosmosRepository.Services;
 
 class DefaultCosmosContainerService : ICosmosContainerService

@@ -1,9 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using Microsoft.Extensions.Logging;
-
 namespace Microsoft.Azure.CosmosRepository.Logging;
 
 internal static class LoggerMessageDefinitions

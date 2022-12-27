@@ -1,12 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Concurrent;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Extensions;
-using Microsoft.Azure.CosmosRepository.Options;
-
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 class DefaultCosmosItemConfigurationProvider : ICosmosItemConfigurationProvider

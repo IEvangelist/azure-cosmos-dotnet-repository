@@ -1,12 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Concurrent;
-using System.Net;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
-using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository;

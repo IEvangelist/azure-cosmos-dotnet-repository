@@ -3,11 +3,6 @@
 
 // ReSharper disable once CheckNamespace
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository.Exceptions;
-
 namespace Microsoft.Azure.CosmosRepository;
 
 /// <summary>

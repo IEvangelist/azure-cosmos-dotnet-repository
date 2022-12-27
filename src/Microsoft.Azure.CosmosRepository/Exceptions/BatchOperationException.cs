@@ -1,10 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Net;
-using Microsoft.Azure.Cosmos;
-
 namespace Microsoft.Azure.CosmosRepository.Exceptions;
 
 /// <summary>

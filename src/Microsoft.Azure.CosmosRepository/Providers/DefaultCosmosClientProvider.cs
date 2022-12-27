@@ -1,12 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Extensions.Options;
-
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable

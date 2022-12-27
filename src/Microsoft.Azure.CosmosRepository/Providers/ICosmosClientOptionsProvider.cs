@@ -1,6 +1,4 @@
-﻿using Microsoft.Azure.Cosmos;
-
-namespace Microsoft.Azure.CosmosRepository.Providers;
+﻿namespace Microsoft.Azure.CosmosRepository.Providers;
 
 /// <summary>
 /// The cosmos client options provider exposes a means of providing

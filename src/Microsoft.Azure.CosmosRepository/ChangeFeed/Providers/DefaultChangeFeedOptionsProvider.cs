@@ -1,13 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Azure.CosmosRepository.Exceptions;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Extensions.Options;
-
 namespace Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
 
 class DefaultChangeFeedOptionsProvider : IChangeFeedOptionsProvider

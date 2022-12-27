@@ -1,9 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Linq;
-
 namespace Microsoft.Azure.CosmosRepository.Specification.Evaluator;
 
 internal class OrderEvaluator : IEvaluator

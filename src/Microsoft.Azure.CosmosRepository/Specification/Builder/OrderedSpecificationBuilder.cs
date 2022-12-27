@@ -1,9 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Linq.Expressions;
-
 namespace Microsoft.Azure.CosmosRepository.Specification.Builder;
 
 /// <inheritdoc cref="IOrderedSpecificationBuilder{TItem, TResult}"/>

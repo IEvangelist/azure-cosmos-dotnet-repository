@@ -1,9 +1,6 @@
 ﻿// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Microsoft.Azure.CosmosRepository;
 
 /// <inheritdoc/>

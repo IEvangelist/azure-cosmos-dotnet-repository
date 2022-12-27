@@ -1,17 +1,6 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Extensions;
-using Microsoft.Azure.CosmosRepository.Internals;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-
 namespace Microsoft.Azure.CosmosRepository.Builders;
 
 internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> where TItem : IItem
