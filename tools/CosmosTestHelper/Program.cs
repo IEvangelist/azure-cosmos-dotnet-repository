@@ -5,7 +5,7 @@ using Microsoft.Azure.Cosmos;
 
 Console.WriteLine("Starting to query all databases from cosmos account");
 
-CosmosClient client = new(
+using CosmosClient client = new(
     Environment.GetEnvironmentVariable("CosmosConnectionString"));
 
 using FeedIterator<DatabaseProperties> databases =
