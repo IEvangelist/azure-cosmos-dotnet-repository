@@ -1,4 +1,7 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
+using Microsoft.Azure.Cosmos;
 
 Console.WriteLine("Starting to query all databases from cosmos account");
 

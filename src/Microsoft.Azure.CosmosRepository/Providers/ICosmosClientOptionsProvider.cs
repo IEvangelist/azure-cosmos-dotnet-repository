@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Azure.CosmosRepository.Providers;
+﻿// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
+namespace Microsoft.Azure.CosmosRepository.Providers;
 
 /// <summary>
 /// The cosmos client options provider exposes a means of providing

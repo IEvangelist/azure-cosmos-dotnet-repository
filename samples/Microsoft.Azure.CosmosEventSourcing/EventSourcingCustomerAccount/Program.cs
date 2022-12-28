@@ -1,3 +1,6 @@
+// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
 using EventSourcingCustomerAccount.Aggregates;
 using EventSourcingCustomerAccount.Items;
 using EventSourcingCustomerAccount.Projections;

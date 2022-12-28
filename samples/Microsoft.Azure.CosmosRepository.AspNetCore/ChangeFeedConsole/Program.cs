@@ -1,4 +1,7 @@
-﻿using ChangedFeedSamples.Shared.Items;
+﻿// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
+using ChangedFeedSamples.Shared.Items;
 using ChangedFeedSamples.Shared.Processors;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;

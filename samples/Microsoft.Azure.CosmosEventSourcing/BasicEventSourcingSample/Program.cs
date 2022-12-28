@@ -1,3 +1,6 @@
+// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Runtime.CompilerServices.Context;
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
@@ -16,7 +19,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
 
 
-services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString());
+services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString()!);
 services.AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = "EventSourcingShipSample");
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();

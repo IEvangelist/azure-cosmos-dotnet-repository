@@ -1,3 +1,6 @@
+// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
 using CleanArchitecture.Exceptions.AspNetCore;
 using EventSourcingJobsTracker.Application.Infrastructure;
 using EventSourcingJobsTracker.Application.Services;

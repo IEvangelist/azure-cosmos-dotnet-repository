@@ -43,6 +43,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup Condition="'$(ImplicitUsings)' == 'enable' or '$(ImplicitUsings)' == 'true'">
+        <Using Include="Microsoft.Azure.CosmosRepository"/>
+    </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.2" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
