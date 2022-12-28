@@ -1,7 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Azure.CosmosRepository;
 

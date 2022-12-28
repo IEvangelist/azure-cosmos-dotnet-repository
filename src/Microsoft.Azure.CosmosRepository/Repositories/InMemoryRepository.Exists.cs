@@ -20,8 +20,11 @@ internal partial class InMemoryRepository<TItem>
         PartitionKey partitionKey,
         CancellationToken cancellationToken = default)
     {
+#if NET7_0_OR_GREATER
+        await ValueTask.CompletedTask;
+#else
         await Task.CompletedTask;
-
+#endif
         return Items
             .Values
             .Select(DeserializeItem)
@@ -33,7 +36,11 @@ internal partial class InMemoryRepository<TItem>
         Expression<Func<TItem, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
+#if NET7_0_OR_GREATER
+        await ValueTask.CompletedTask;
+#else
         await Task.CompletedTask;
+#endif
         return Items.Values.Select(DeserializeItem).Any(predicate.Compose(
             item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
     }

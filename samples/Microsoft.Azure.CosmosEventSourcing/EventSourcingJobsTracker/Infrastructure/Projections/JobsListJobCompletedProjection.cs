@@ -35,6 +35,6 @@ public class JobsListJobCompletedProjection : IDomainEventProjection<JobComplete
 
         await _repository.UpdateAsync(
             item,
-            cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

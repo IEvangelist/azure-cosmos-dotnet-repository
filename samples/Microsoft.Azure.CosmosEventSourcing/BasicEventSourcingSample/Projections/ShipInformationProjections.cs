@@ -30,7 +30,7 @@ public class ShipInformationProjections
                 domainEvent.Commissioned,
                 domainEvent.OccuredUtc);
 
-            await _repository.UpdateAsync(info, cancellationToken);
+            await _repository.UpdateAsync(info, cancellationToken: cancellationToken);
         }
     }
 
@@ -55,7 +55,7 @@ public class ShipInformationProjections
 
             shipInfo.LatestPort = port;
 
-            await _repository.UpdateAsync(shipInfo, cancellationToken);
+            await _repository.UpdateAsync(shipInfo, cancellationToken: cancellationToken);
         }
     }
 
@@ -81,7 +81,7 @@ public class ShipInformationProjections
             shipInfo.LatestPort = port;
             shipInfo.LatestCargoWeight = cargoWeight;
 
-            await _repository.UpdateAsync(shipInfo, cancellationToken);
+            await _repository.UpdateAsync(shipInfo, cancellationToken: cancellationToken);
         }
     }
 }

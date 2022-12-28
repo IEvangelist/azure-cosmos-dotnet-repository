@@ -520,7 +520,7 @@ public class InMemoryRepositoryTests
         Person updateItem = new("joe2") { Id = item.Id, Type = nameof(Person), Etag = originalEtag };
 
         //Act
-        Person person = await _personRepository.UpdateAsync(updateItem, default, false);
+        Person person = await _personRepository.UpdateAsync(updateItem, false, default);
 
         Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
 
@@ -562,7 +562,7 @@ public class InMemoryRepositoryTests
         Person updateItem = new("joe2") { Id = item.Id, Type = nameof(Person), Etag = null! };
 
         //Act
-        Person person = await _personRepository.UpdateAsync(updateItem, default, false);
+        Person person = await _personRepository.UpdateAsync(updateItem, false, default);
 
         Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
 
@@ -604,7 +604,7 @@ public class InMemoryRepositoryTests
         }
 
         //Act
-        IEnumerable<Person> people = (await _personRepository.UpdateAsync(itemsUpdate, default, false)).ToList();
+        IEnumerable<Person> people = (await _personRepository.UpdateAsync(itemsUpdate, false, default)).ToList();
 
         foreach (Person item in items)
         {
@@ -655,7 +655,7 @@ public class InMemoryRepositoryTests
         }
 
         //Act & Assert
-        await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(itemsUpdate, default, false).AsTask());
+        await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(itemsUpdate, false, default).AsTask());
     }
 
     [Fact]
@@ -851,7 +851,7 @@ public class InMemoryRepositoryTests
         _personRepository.Items.TryAddAsJson(person.Id, person);
 
         //Act
-        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, originalEtag);
+        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, originalEtag, default);
 
         //Assert
         Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
@@ -872,7 +872,7 @@ public class InMemoryRepositoryTests
         _personRepository.Items.TryAddAsJson(person.Id, person);
 
         //Act
-        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, null);
+        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, null, default);
 
         //Assert
         Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
@@ -894,7 +894,7 @@ public class InMemoryRepositoryTests
         _personRepository.Items.TryAddAsJson(person.Id, person);
 
         //Act
-        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, string.Empty);
+        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, string.Empty, default);
 
         //Assert
         Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
@@ -915,7 +915,7 @@ public class InMemoryRepositoryTests
         _personRepository.Items.TryAddAsJson(person.Id, person);
 
         //Act
-        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, "            ");
+        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, "            ", default);
 
         //Assert
         Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
@@ -936,7 +936,7 @@ public class InMemoryRepositoryTests
         _personRepository.Items.TryAddAsJson(person.Id, person);
 
         //Act & Assert
-        CosmosException cosmosException = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, default, Guid.NewGuid().ToString()).AsTask());
+        CosmosException cosmosException = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, Guid.NewGuid().ToString(), default).AsTask());
         Assert.Equal(HttpStatusCode.PreconditionFailed, cosmosException.StatusCode);
 
 

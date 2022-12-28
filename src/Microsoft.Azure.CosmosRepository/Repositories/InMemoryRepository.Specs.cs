@@ -12,7 +12,11 @@ internal partial class InMemoryRepository<TItem>
         CancellationToken cancellationToken = default)
         where TResult : IQueryResult<TItem>
     {
+#if NET7_0_OR_GREATER
+        await ValueTask.CompletedTask;
+#else
         await Task.CompletedTask;
+#endif
 
         if (specification.UseContinuationToken)
         {

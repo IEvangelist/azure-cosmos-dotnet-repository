@@ -33,7 +33,7 @@ public class RatingByCategoryChangeFeedProcessor : IItemChangeFeedProcessor<Rati
             rating.Text,
             rating.CategoryId);
 
-        await _ratingByCategoryRepository.UpdateAsync(ratingByCategory, cancellationToken);
+        await _ratingByCategoryRepository.UpdateAsync(ratingByCategory, cancellationToken: cancellationToken);
 
         _logger.LogInformation("Processed change for rating");
     }

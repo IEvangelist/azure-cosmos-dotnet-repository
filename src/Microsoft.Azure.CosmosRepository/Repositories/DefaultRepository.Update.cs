@@ -9,8 +9,8 @@ internal sealed partial class DefaultRepository<TItem>
     /// <inheritdoc/>
     public async ValueTask<TItem> UpdateAsync(
         TItem value,
-        CancellationToken cancellationToken = default,
-        bool ignoreEtag = false)
+        bool ignoreEtag = false,
+        CancellationToken cancellationToken = default)
     {
         (var optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
         Container container =
@@ -37,11 +37,11 @@ internal sealed partial class DefaultRepository<TItem>
     /// <inheritdoc/>
     public async ValueTask<IEnumerable<TItem>> UpdateAsync(
         IEnumerable<TItem> values,
-        CancellationToken cancellationToken = default,
-        bool ignoreEtag = false)
+        bool ignoreEtag = false,
+        CancellationToken cancellationToken = default)
     {
         IEnumerable<Task<TItem>> updateTasks =
-            values.Select(value => UpdateAsync(value, cancellationToken, ignoreEtag).AsTask())
+            values.Select(value => UpdateAsync(value, ignoreEtag, cancellationToken).AsTask())
                 .ToList();
 
         await Task.WhenAll(updateTasks).ConfigureAwait(false);
@@ -52,8 +52,8 @@ internal sealed partial class DefaultRepository<TItem>
     public async ValueTask UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
         string? partitionKeyValue = null,
-        CancellationToken cancellationToken = default,
-        string? etag = default)
+        string? etag = default,
+        CancellationToken cancellationToken = default)
     {
         CosmosPropertyNamingPolicy? propertyNamingPolicy =
             _optionsMonitor.CurrentValue.SerializationOptions?.PropertyNamingPolicy;

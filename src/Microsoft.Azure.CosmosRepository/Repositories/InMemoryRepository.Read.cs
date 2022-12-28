@@ -31,7 +31,11 @@ internal partial class InMemoryRepository<TItem>
     public async ValueTask<TItem> GetAsync(string id, PartitionKey partitionKey,
         CancellationToken cancellationToken = default)
     {
+#if NET7_0_OR_GREATER
+        await ValueTask.CompletedTask;
+#else
         await Task.CompletedTask;
+#endif
 
         if (partitionKey == default)
         {
@@ -56,7 +60,11 @@ internal partial class InMemoryRepository<TItem>
     public async ValueTask<IEnumerable<TItem>> GetAsync(Expression<Func<TItem, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
+#if NET7_0_OR_GREATER
+        await ValueTask.CompletedTask;
+#else
         await Task.CompletedTask;
+#endif
         return Items.Values.Select(DeserializeItem).Where(predicate.Compose(
             item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
     }

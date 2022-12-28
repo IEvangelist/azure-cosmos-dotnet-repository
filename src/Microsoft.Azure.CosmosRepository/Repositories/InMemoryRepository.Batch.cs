@@ -22,7 +22,7 @@ internal partial class InMemoryRepository<TItem>
     {
         foreach (TItem? item in items)
         {
-            await UpdateAsync(item, cancellationToken);
+            await UpdateAsync(item, cancellationToken: cancellationToken);
         }
     }
 

@@ -23,7 +23,11 @@ internal partial class InMemoryRepository<TItem>
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
+#if NET7_0_OR_GREATER
+        await ValueTask.CompletedTask;
+#else
         await Task.CompletedTask;
+#endif
 
         IEnumerable<TItem> filteredItems = Items.Values
             .Select(DeserializeItem)

@@ -229,7 +229,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithETag.UpdateAsync(itemWithEtag, default, true);
+        await RepositoryForItemWithETag.UpdateAsync(itemWithEtag, true, default);
 
         // Assert
         _container.Verify(
@@ -285,7 +285,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItem.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithoutETag.UpdateAsync(testItems, default, true);
+        await RepositoryForItemWithoutETag.UpdateAsync(testItems, true, default);
 
         // Assert
         _container.Verify(
@@ -352,7 +352,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithETag.UpdateAsync(testItemWithEtags, default, true);
+        await RepositoryForItemWithETag.UpdateAsync(testItemWithEtags, true, default);
 
         // Assert
         _container.Verify(
@@ -431,7 +431,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, default, etag);
+        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, etag, default);
 
         // Assert
         _container.Verify(
@@ -450,7 +450,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, default, etag);
+        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, etag, default);
 
         // Assert
         _container.Verify(
@@ -469,7 +469,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, default, etag);
+        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, etag, default);
 
         // Assert
         _container.Verify(

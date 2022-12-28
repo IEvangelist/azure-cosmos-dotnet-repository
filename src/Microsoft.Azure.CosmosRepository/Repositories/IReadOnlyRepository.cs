@@ -25,7 +25,6 @@ namespace Microsoft.Azure.CosmosRepository;
 /// </example>
 public interface IReadOnlyRepository<TItem> where TItem : IItem
 {
-
     /// <summary>
     /// Attempts to get an <see cref="IItem"/> that corresponds to the given <paramref name="id"/>.
     /// </summary>

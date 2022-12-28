@@ -12,7 +12,11 @@ internal partial class InMemoryRepository<TItem>
         bool raiseChanges,
         bool ignoreEtag = false)
     {
+#if NET7_0_OR_GREATER
+        await ValueTask.CompletedTask;
+#else
         await Task.CompletedTask;
+#endif
 
         if (value is IItemWithEtag valueWithEtag &&
             !string.IsNullOrWhiteSpace(valueWithEtag.Etag) &&
@@ -38,14 +42,14 @@ internal partial class InMemoryRepository<TItem>
 
     /// <inheritdoc/>
     public ValueTask<TItem> UpdateAsync(TItem value,
-        CancellationToken cancellationToken = default,
-        bool ignoreEtag = false) =>
+        bool ignoreEtag = false,
+        CancellationToken cancellationToken = default) =>
         UpdateAsync(value, true, ignoreEtag);
 
     /// <inheritdoc/>
     public async ValueTask<IEnumerable<TItem>> UpdateAsync(IEnumerable<TItem> values,
-        CancellationToken cancellationToken = default,
-        bool ignoreEtag = false)
+        bool ignoreEtag = false,
+        CancellationToken cancellationToken = default)
     {
         IEnumerable<TItem> enumerable = values.ToList();
 
@@ -65,10 +69,14 @@ internal partial class InMemoryRepository<TItem>
     public async ValueTask UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
         string? partitionKeyValue = null,
-        CancellationToken cancellationToken = default,
-        string? etag = default)
+        string? etag = default,
+        CancellationToken cancellationToken = default)
     {
+#if NET7_0_OR_GREATER
+        await ValueTask.CompletedTask;
+#else
         await Task.CompletedTask;
+#endif
 
         partitionKeyValue ??= id;
 
