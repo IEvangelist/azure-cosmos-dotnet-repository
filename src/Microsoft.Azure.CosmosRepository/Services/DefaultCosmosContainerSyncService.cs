@@ -8,7 +8,9 @@ class DefaultCosmosContainerSyncService : ICosmosContainerSyncService
 {
     readonly ICosmosContainerService _containerService;
 
-    public DefaultCosmosContainerSyncService(ICosmosContainerService containerService) => _containerService = containerService;
+    public DefaultCosmosContainerSyncService(ICosmosContainerService containerService) =>
+        _containerService = containerService;
 
-    public Task SyncContainerPropertiesAsync<TItem>() where TItem : IItem => _containerService.GetContainerAsync<TItem>(true);
+    public Task SyncContainerPropertiesAsync<TItem>() where TItem : IItem =>
+        _containerService.GetContainerAsync<TItem>(true);
 }

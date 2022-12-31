@@ -58,7 +58,7 @@ internal class SpecificationBuilder<TItem, TResult> : ISpecificationBuilder<TIte
     /// <inheritdoc/>
     public ISpecificationBuilder<TItem, TResult> ContinuationToken(string continuationToken)
     {
-        if (Specification.UseContinuationToken == false)
+        if (Specification.UseContinuationToken is false)
         {
             throw new ArgumentException("Cannot add continuation token to a non continuation token specification",
                 nameof(continuationToken));

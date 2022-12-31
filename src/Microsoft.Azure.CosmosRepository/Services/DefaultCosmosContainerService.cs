@@ -9,7 +9,7 @@ class DefaultCosmosContainerService : ICosmosContainerService
     readonly ICosmosClientProvider _cosmosClientProvider;
     readonly ILogger<DefaultCosmosContainerService> _logger;
     readonly RepositoryOptions _options;
-    private readonly Dictionary<string, DateTime> _containerSyncLog = new();
+    readonly Dictionary<string, DateTime> _containerSyncLog = new();
 
     public DefaultCosmosContainerService(ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
         ICosmosClientProvider cosmosClientProvider,
@@ -89,12 +89,12 @@ class DefaultCosmosContainerService : ICosmosContainerService
         }
 
         var containerName =
-            _cosmosItemConfigurationProvider.GetItemConfiguration(itemTypes.First()).ContainerName;
+            _cosmosItemConfigurationProvider.GetItemConfiguration(itemTypes[0]).ContainerName;
 
         if (itemTypes.Select(x => _cosmosItemConfigurationProvider.GetItemConfiguration(x))
             .All(x => x.ContainerName == containerName))
         {
-            return GetContainerAsync(itemTypes.First());
+            return GetContainerAsync(itemTypes[0]);
         }
 
         throw new InvalidOperationException(

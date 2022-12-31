@@ -19,7 +19,7 @@ public class SpecificationOrderSamples
         OrderByNameSpecification specification = new();
         IQueryResult<Person> result = await _repository.QueryAsync(specification);
 
-        Console.WriteLine($"Simple order first result {result.Items.First().Name}");
+        Console.WriteLine($"Simple order first result {result.Items[0].Name}");
         Console.WriteLine($"Total Charge {result.Charge} RU's");
     }
 
@@ -45,7 +45,7 @@ public class SpecificationOrderSamples
         OrderByMultipleFieldsSpecification specification = new();
         IQueryResult<Person> result = await _repository.QueryAsync(specification);
 
-        Console.WriteLine($"Multiple order first result {result.Items.First().Name}");
+        Console.WriteLine($"Multiple order first result {result.Items[0].Name}");
         Console.WriteLine($"Total Charge {result.Charge} RU's");
     }
 

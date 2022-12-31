@@ -77,7 +77,7 @@ public class AggregateTests
         //Assert
         root.NewEvents.Should().HaveCount(1);
         root.Messages.Should().Contain("A");
-        DomainEvent evt = root.NewEvents.First();
+        DomainEvent evt = root.NewEvents[0];
         evt.Sequence.Should().Be(1);
         evt.EventId.Should().NotBeEmpty();
         evt.OccuredUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMilliseconds(500));
