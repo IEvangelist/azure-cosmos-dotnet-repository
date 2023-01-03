@@ -27,7 +27,7 @@ class DefaultRepositoryExpressionProvider : IRepositoryExpressionProvider
 
         if (options.UseStrictTypeChecking)
         {
-            return item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name
+            return item is { Type.Length: 0 } || item.Type == typeof(TItem).Name
                 ? item
                 : throw new MissMatchedTypeDiscriminatorException(typeof(TItem).Name, item.Type);
         }

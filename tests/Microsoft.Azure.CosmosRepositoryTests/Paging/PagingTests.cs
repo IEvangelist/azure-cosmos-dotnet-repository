@@ -23,7 +23,7 @@ class Dog : FullItem
     }
 }
 
-public class PagingTests
+public partial class PagingTests
 {
     [Fact]
     public void Page_InitializedConstructorWithRequiredValues_FillProperties()
@@ -238,8 +238,6 @@ public class PagingTests
         Assert.Equal(pageOfDogs.Items, dogs.AsReadOnly());
     }
 
-
-
     [Fact]
     public void PageExtended_InitializedConstructorWithWithoutPageNumber_NextPageIsLastPageAndPreviousPageIsFirstPage()
     {
@@ -279,5 +277,4 @@ public class PagingTests
         Assert.Equal(expectedNextPage, pageOfDogs.NextPageNumber);
         Assert.Equal(pageOfDogs.Items, dogs.AsReadOnly());
     }
-
 }

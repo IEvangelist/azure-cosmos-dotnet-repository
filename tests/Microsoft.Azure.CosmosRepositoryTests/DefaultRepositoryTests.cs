@@ -488,7 +488,7 @@ class MockExpressionProvider : IRepositoryExpressionProvider
         item => item.Type == typeof(TItem).Name;
 
     public TItem CheckItem<TItem>(TItem item) where TItem : IItem =>
-        item is { Type: { Length: 0 } } || item.Type == typeof(TItem).Name
+        item is { Type.Length: 0 } || item.Type == typeof(TItem).Name
             ? item
             : throw new MissMatchedTypeDiscriminatorException(typeof(TItem).Name, item.Type);
 }

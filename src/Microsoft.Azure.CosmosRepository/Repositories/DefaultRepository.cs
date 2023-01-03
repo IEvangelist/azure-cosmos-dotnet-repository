@@ -42,8 +42,7 @@ internal sealed partial class DefaultRepository<TItem> : IRepository<TItem>
         // ReSharper disable once ConstantConditionalAccessQualifier
         if (logger?.IsEnabled(LogLevel.Debug) ?? false)
         {
-            // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
-            logger.LogDebug(getMessage());
+            logger.LogDebug("{Msg}", getMessage());
         }
     }
 

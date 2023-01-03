@@ -38,8 +38,8 @@ public class DefaultCosmosUniqueKeyPolicyProviderTests
         ICosmosUniqueKeyPolicyProvider provider = new DefaultCosmosUniqueKeyPolicyProvider();
 
         UniqueKeyPolicy? policy = provider.GetUniqueKeyPolicy<SomeInterestingClass3>();
-        UniqueKey key1 = policy!.UniqueKeys.Single(key => key.Paths.Count == 2);
-        UniqueKey key2 = policy.UniqueKeys.Single(key => key.Paths.Count == 1);
+        UniqueKey key1 = policy!.UniqueKeys.Single(key => key.Paths.Count is 2);
+        UniqueKey key2 = policy.UniqueKeys.Single(key => key.Paths.Count is 1);
 
         Assert.Contains("/Street", key1.Paths);
         Assert.Contains("/HouseNumber", key1.Paths);

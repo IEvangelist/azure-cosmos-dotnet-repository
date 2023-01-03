@@ -175,7 +175,7 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     /// <param name="continuationToken">The token returned from a previous query, if null starts at the beginning of the data</param>
     /// <param name="returnTotal">Specifies whether or not to return the total number of items that matched the query. This defaults to false as it can be a very expensive operation.</param>
     /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-    /// <returns>A <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
+    /// <returns>An <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
     /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
     ValueTask<IPage<TItem>> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
@@ -195,7 +195,7 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     /// <typeparam name="TResult">Decides which paging information is retrieved. Use <see cref="ContinuationTokenSpecification{T}"/></typeparam>
     /// <param name="specification">A specification used to filtering, ordering and paging. A <see cref="ISpecification{T, TResult}"/></param>
     /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-    /// <returns> The selected TResult implementation that implements <see cref="IQueryResult{T}"/> of <see cref="IItem"/></returns>
+    /// <returns>The selected <typeparamref name="TResult"/> implementation that implements <see cref="IQueryResult{T}"/> of <see cref="IItem"/></returns>
     /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
     ValueTask<TResult> QueryAsync<TResult>(
         ISpecification<TItem, TResult> specification,
@@ -211,7 +211,7 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     /// <param name="pageSize">The size of the page to return from cosmos db.</param>
     /// <param name="returnTotal">Specifies whether or not to return the total number of items that matched the query. This defaults to false as it can be a very expensive operation.</param>
     /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
-    /// <returns>A <see cref="IPageQueryResult{T}"/> of <see cref="IItem"/>s</returns>
+    /// <returns>An <see cref="IPageQueryResult{T}"/> of <see cref="IItem"/>s</returns>
     /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
     ValueTask<IPageQueryResult<TItem>> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
@@ -219,4 +219,48 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
         int pageSize = 25,
         bool returnTotal = false,
         CancellationToken cancellationToken = default);
+
+#if NET7_0_OR_GREATER
+    /// <summary>
+    /// Wraps the existing paging support to return an <see cref="IAsyncEnumerable{T}"/>
+    /// where <c>T</c> is <typeparamref name="TItem"/>.
+    /// </summary>
+    /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
+    /// <param name="limit">The limit of how many items to yield. Defaults to <c>1,000</c>.</param>
+    /// <param name="cancellationToken">The optional <see cref="CancellationToken"/> used to </param>
+    /// <returns>An <see cref="IAsyncEnumerable{T}"/> where <c>T</c> is <typeparamref name="TItem"/>.</returns>
+    /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
+    async IAsyncEnumerable<TItem> PageAsync(
+        Expression<Func<TItem, bool>>? predicate = null,
+        int limit = 1_000,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var collected = 0;
+        var currentPage = 0;
+        var hasMoreResults = true;
+
+        while (hasMoreResults && collected < limit
+            && cancellationToken.IsCancellationRequested is false)
+        {
+            IPageQueryResult<TItem> page = await PageAsync(
+                predicate,
+                pageNumber: ++ currentPage,
+                25,                
+                returnTotal: false,
+                cancellationToken);
+
+            hasMoreResults = page.HasNextPage.GetValueOrDefault();
+
+            foreach (TItem item in page.Items)
+            {
+                if (collected < limit)
+                {
+                    yield return item;
+                }
+
+                collected ++;
+            }
+        }
+    }
+#endif
 }

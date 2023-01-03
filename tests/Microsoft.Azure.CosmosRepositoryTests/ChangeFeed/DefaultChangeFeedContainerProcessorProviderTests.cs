@@ -76,7 +76,7 @@ public class DefaultChangeFeedContainerProcessorProviderTests
 
         IContainerChangeFeedProcessor? aChangeFeedProcessor = processors
             .FirstOrDefault(x =>
-                x.ItemTypes.Count == 2 &&
+                x.ItemTypes.Count is 2 &&
                 x.ItemTypes.Contains(typeof(TestItem)) &&
                 x.ItemTypes.Contains(typeof(AnotherTestItem)));
 
@@ -84,7 +84,7 @@ public class DefaultChangeFeedContainerProcessorProviderTests
 
         IContainerChangeFeedProcessor? bChangeFeedProcessor = processors
             .FirstOrDefault(x =>
-                x.ItemTypes.Count == 1 &&
+                x.ItemTypes.Count is 1 &&
                 x.ItemTypes.Contains(typeof(AndAnotherItem)));
 
         Assert.NotNull(bChangeFeedProcessor);

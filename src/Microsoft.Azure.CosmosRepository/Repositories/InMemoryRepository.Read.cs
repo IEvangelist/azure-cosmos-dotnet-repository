@@ -52,7 +52,7 @@ internal partial class InMemoryRepository<TItem>
             NotFound();
         }
 
-        TItem? toReturn = item is { Type: { Length: 0 } } || item?.Type == typeof(TItem).Name ? item : default;
+        TItem? toReturn = item is { Type.Length: 0 } || item?.Type == typeof(TItem).Name ? item : default;
         return toReturn!;
     }
 
