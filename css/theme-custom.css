@@ -189,3 +189,7 @@ div.notices.tip p:first-child:after {
 code.language-csharp.hljs {
     font-size: 1.1rem;
 }
+
+#body-inner > ol > li > p {
+    text-align: left;
+}
