@@ -1,8 +1,7 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Items;
-using Microsoft.Azure.CosmosEventSourcing.Projections.Decorators;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Builders;
 

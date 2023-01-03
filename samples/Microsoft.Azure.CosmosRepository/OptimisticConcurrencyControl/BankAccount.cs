@@ -1,4 +1,4 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosRepository;
@@ -20,10 +20,7 @@ public class BankAccount : FullItem
         Balance -= amount;
     }
 
-    public void Deposit(double amount)
-    {
-        Balance += amount;
-    }
+    public void Deposit(double amount) => Balance += amount;
 
     public override string ToString() =>
         $"Account (Name = {Name}, Balance = {Balance}, Etag = {Etag})";

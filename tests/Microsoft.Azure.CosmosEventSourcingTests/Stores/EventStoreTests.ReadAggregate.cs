@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -65,10 +65,7 @@ public partial class EventStoreTests
 
     private class TestAggregateRootMapper : IAggregateRootMapper<TestAggregate, ReplayableEventItem>
     {
-        public IEnumerable<ReplayableEventItem> MapFrom(TestAggregate aggregateRoot)
-        {
-            throw new NotImplementedException();
-        }
+        public IEnumerable<ReplayableEventItem> MapFrom(TestAggregate aggregateRoot) => throw new NotImplementedException();
 
         public TestAggregate MapTo(IEnumerable<ReplayableEventItem> domainEvents) =>
             TestAggregate.Replay(domainEvents.Select(x => x.DomainEvent).ToList());
@@ -76,10 +73,7 @@ public partial class EventStoreTests
 
     private class AggregateWithNoReplayMethod : AggregateRoot
     {
-        protected override void Apply(DomainEvent domainEvent)
-        {
-            throw new NotImplementedException();
-        }
+        protected override void Apply(DomainEvent domainEvent) => throw new NotImplementedException();
     }
 
     [Fact]

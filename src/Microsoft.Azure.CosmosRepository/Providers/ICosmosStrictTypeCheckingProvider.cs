@@ -1,15 +1,12 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
+namespace Microsoft.Azure.CosmosRepository.Providers;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
+interface ICosmosStrictTypeCheckingProvider
 {
-    interface ICosmosStrictTypeCheckingProvider
-    {
-        bool UseStrictTypeChecking<TItem>()
-            where TItem : IItem;
+    bool UseStrictTypeChecking<TItem>()
+        where TItem : IItem;
 
-        bool UseStrictTypeChecking(Type itemType);
-    }
+    bool UseStrictTypeChecking(Type itemType);
 }

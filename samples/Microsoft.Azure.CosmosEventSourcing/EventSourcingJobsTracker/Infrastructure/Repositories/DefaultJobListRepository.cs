@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using CleanArchitecture.Exceptions;
@@ -19,7 +19,7 @@ public class DefaultJobListRepository : IJobListRepository
 
     public async ValueTask SaveAsync(JobsList jobList)
     {
-        List<JobsListEventItem> eventItems = jobList
+        var eventItems = jobList
             .NewEvents
             .Select(evt =>
                 new JobsListEventItem(
@@ -40,7 +40,7 @@ public class DefaultJobListRepository : IJobListRepository
             .ReadAsync(jobListId.ToString())
             .ToListAsync();
 
-        if (events is {Count: 0})
+        if (events is { Count: 0 })
         {
             throw new ResourceNotFoundException<JobsList>(
                 $"There is no job list with the ID {jobListId}");

@@ -1,17 +1,16 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Threading.Tasks;
+namespace Microsoft.Azure.CosmosRepository.Services;
 
-namespace Microsoft.Azure.CosmosRepository.Services
+/// <inheritdoc/>
+class DefaultCosmosContainerSyncService : ICosmosContainerSyncService
 {
-    /// <inheritdoc/>
-    class DefaultCosmosContainerSyncService : ICosmosContainerSyncService
-    {
-        readonly ICosmosContainerService _containerService;
+    readonly ICosmosContainerService _containerService;
 
-        public DefaultCosmosContainerSyncService(ICosmosContainerService containerService) => _containerService = containerService;
+    public DefaultCosmosContainerSyncService(ICosmosContainerService containerService) =>
+        _containerService = containerService;
 
-        public Task SyncContainerPropertiesAsync<TItem>() where TItem : IItem => _containerService.GetContainerAsync<TItem>(true);
-    }
+    public Task SyncContainerPropertiesAsync<TItem>() where TItem : IItem =>
+        _containerService.GetContainerAsync<TItem>(true);
 }

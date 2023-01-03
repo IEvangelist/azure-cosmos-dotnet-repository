@@ -1,11 +1,8 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Net;
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Projections.Models;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosEventSourcing;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository;
 
@@ -28,7 +25,7 @@ public class ShipRepository : IShipRepository
     {
         IEnumerable<ShipEventItem> sourcedEvents = await _store.ReadAsync(shipName);
 
-        Ship ship = Ship.Build(sourcedEvents.Select(x =>
+        var ship = Ship.Build(sourcedEvents.Select(x =>
             x.DomainEvent).ToList());
 
         return ship;
@@ -36,7 +33,7 @@ public class ShipRepository : IShipRepository
 
     public ValueTask SaveAsync(Ship ship)
     {
-        List<ShipEventItem> events = ship
+        var events = ship
             .NewEvents
             .Select(x =>
                 new ShipEventItem(x, ship.Name))

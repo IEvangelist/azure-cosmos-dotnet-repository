@@ -1,45 +1,37 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
+namespace Microsoft.Azure.CosmosRepository.ChangeFeed;
 
-namespace Microsoft.Azure.CosmosRepository.ChangeFeed
+class DefaultChangeFeedService : IChangeFeedService
 {
-    class DefaultChangeFeedService : IChangeFeedService
+    private readonly IEnumerable<IChangeFeedContainerProcessorProvider> _changeFeedContainerProcessorProvider;
+    private IEnumerable<IContainerChangeFeedProcessor> _processors;
+
+    public DefaultChangeFeedService(IEnumerable<IChangeFeedContainerProcessorProvider> changeFeedContainerProcessorProvider)
     {
-        private readonly IEnumerable<IChangeFeedContainerProcessorProvider> _changeFeedContainerProcessorProvider;
-        private IEnumerable<IContainerChangeFeedProcessor> _processors;
+        _processors = new List<IContainerChangeFeedProcessor>();
+        _changeFeedContainerProcessorProvider = changeFeedContainerProcessorProvider;
+    }
 
-        public DefaultChangeFeedService(IEnumerable<IChangeFeedContainerProcessorProvider> changeFeedContainerProcessorProvider)
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        _processors = _changeFeedContainerProcessorProvider.SelectMany(x => x.GetProcessors());
+
+        cancellationToken.Register(() => StopAsync().Wait(TimeSpan.FromSeconds(5)));
+
+        return Task.WhenAll(
+            _processors.Select(
+                x => x.StartAsync()));
+    }
+
+    public async Task StopAsync()
+    {
+        foreach (IContainerChangeFeedProcessor processor in _processors)
         {
-            _processors = new List<IContainerChangeFeedProcessor>();
-            _changeFeedContainerProcessorProvider = changeFeedContainerProcessorProvider;
-        }
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            _processors = _changeFeedContainerProcessorProvider.SelectMany(x => x.GetProcessors());
-
-            cancellationToken.Register(() => StopAsync().Wait(TimeSpan.FromSeconds(5)));
-
-            return Task.WhenAll(
-                _processors.Select(
-                    x => x.StartAsync()));
-        }
-
-        public async Task StopAsync()
-        {
-            foreach (IContainerChangeFeedProcessor processor in _processors)
+            if (processor is not null)
             {
-                if (processor is not null)
-                {
-                    await processor.StopAsync();
-                }
+                await processor.StopAsync();
             }
         }
     }

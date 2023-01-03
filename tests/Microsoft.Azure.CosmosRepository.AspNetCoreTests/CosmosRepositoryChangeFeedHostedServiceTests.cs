@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Threading;
@@ -17,7 +17,7 @@ public class CosmosRepositoryChangeFeedHostedServiceTests
     {
         //Arrange
         Mock<IChangeFeedService> changeFeedService = new();
-        CosmosRepositoryChangeFeedHostedService changeFeedHostedService = new CosmosRepositoryChangeFeedHostedService(changeFeedService.Object);
+        var changeFeedHostedService = new CosmosRepositoryChangeFeedHostedService(changeFeedService.Object);
 
         //Act
         await changeFeedHostedService.StartAsync(default);

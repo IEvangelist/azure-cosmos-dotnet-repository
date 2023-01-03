@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Net;
@@ -23,7 +23,7 @@ public static class BookRouteExtensions
     private static async Task<BookDto> CreateBook(CreateBookDto createBookDto,
         IRepository<Book> bookRepository)
     {
-        Book book = createBookDto.ToBook();
+        var book = createBookDto.ToBook();
         Book? createdBook = await bookRepository.CreateAsync(book);
 
         return createdBook.ToBookDto();

@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 namespace EventSourcingJobsTracker.Core.Entities;
@@ -21,8 +21,5 @@ public class Job
         Due = due;
     }
 
-    public void Complete(DateTime at)
-    {
-        CompletedAt = at;
-    }
+    public void Complete(DateTime at) => CompletedAt = at;
 }

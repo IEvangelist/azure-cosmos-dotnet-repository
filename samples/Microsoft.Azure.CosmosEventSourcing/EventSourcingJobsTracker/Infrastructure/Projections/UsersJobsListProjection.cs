@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using EventSourcingJobsTracker.Core.Events;
@@ -21,7 +21,7 @@ public class UsersJobsListProjection : IDomainEventProjection<JobListCreatedEven
         JobsListEventItem eventItem,
         CancellationToken cancellationToken = default)
     {
-        (Guid guid, string? name, string? category, string? username) = domainEvent;
+        (Guid guid, var name, var category, var username) = domainEvent;
 
         JobsListReadItem readItem = new(
             guid.ToString(),

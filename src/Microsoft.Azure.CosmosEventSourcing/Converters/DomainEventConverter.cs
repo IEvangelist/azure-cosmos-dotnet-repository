@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Events;
@@ -22,8 +22,8 @@ internal class DomainEventConverter : JsonConverter
     {
         try
         {
-            JToken? j = JToken.ReadFrom(reader);
-            string? type = j["eventName"]?.ToString();
+            var j = JToken.ReadFrom(reader);
+            var type = j["eventName"]?.ToString();
             type ??= j["EventName"]?.ToString();
             Type? payloadType = ConvertableTypes.FirstOrDefault(x => x.Name == type);
 

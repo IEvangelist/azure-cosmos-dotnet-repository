@@ -1,21 +1,18 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
+namespace Microsoft.Azure.CosmosRepository;
 
-namespace Microsoft.Azure.CosmosRepository
+/// <summary>
+/// An implementation of IItem with the additional property "TimeToLive".
+/// </summary>
+public interface IItemWithTimeToLive : IItem
 {
     /// <summary>
-    /// An implementation of IItem with the additional property "TimeToLive".
+    /// The time an item should exist within the container.
+    /// <remarks>
+    /// When setting this to a positive integer this requires the default TTL at container level to be set to a non-null value.
+    /// </remarks>
     /// </summary>
-    public interface IItemWithTimeToLive : IItem
-    {
-        /// <summary>
-        /// The time an item should exist within the container.
-        /// <remarks>
-        /// When setting this to a positive integer this requires the default TTL at container level to be set to a non-null value.
-        /// </remarks>
-        /// </summary>
-        public TimeSpan? TimeToLive { get; set; }
-    }
+    public TimeSpan? TimeToLive { get; set; }
 }

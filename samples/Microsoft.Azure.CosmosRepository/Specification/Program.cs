@@ -1,4 +1,7 @@
-﻿using Bogus;
+﻿// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
+using Bogus;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

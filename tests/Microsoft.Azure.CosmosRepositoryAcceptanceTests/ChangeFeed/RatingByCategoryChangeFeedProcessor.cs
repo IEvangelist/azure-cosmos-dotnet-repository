@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Threading;
@@ -33,7 +33,7 @@ public class RatingByCategoryChangeFeedProcessor : IItemChangeFeedProcessor<Rati
             rating.Text,
             rating.CategoryId);
 
-        await _ratingByCategoryRepository.UpdateAsync(ratingByCategory, cancellationToken);
+        await _ratingByCategoryRepository.UpdateAsync(ratingByCategory, cancellationToken: cancellationToken);
 
         _logger.LogInformation("Processed change for rating");
     }

@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths:
-    - 'docs/**'
+      - "docs/**"
 
   workflow_dispatch:
-      inputs:
-        reason:
-          description: 'The reason for running the workflow'
-          required: true
-          default: 'Manual run'
+    inputs:
+      reason:
+        description: "The reason for running the workflow"
+        required: true
+        default: "Manual run"
 
 jobs:
   deploy:
@@ -20,16 +20,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: true  
-          fetch-depth: 0  
+          submodules: true
+          fetch-depth: 0
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: '0.92.2'
+          hugo-version: "0.92.2"
 
       - name: Build
-        run:  hugo --source ./docs/cosmos-repo --minify 
+        run: hugo --source ./docs/cosmos-repo --minify
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

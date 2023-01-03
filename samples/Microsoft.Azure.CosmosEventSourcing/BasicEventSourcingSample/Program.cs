@@ -1,3 +1,6 @@
+// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Runtime.CompilerServices.Context;
 using BasicEventSourcingSample.Core;
 using BasicEventSourcingSample.Infrastructure;
@@ -16,7 +19,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
 
 
-services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString());
+services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString()!);
 services.AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = "EventSourcingShipSample");
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
@@ -90,7 +93,7 @@ app.MapGet("/api/ships/info/{name}", async (string name, IShipRepository shipRep
 
 app.MapPost("/api/ships", async (CreateShip createShip, IShipRepository shipRepository) =>
 {
-    (string name, DateTime dateTime) = createShip;
+    (var name, DateTime dateTime) = createShip;
     Ship ship = new(name, dateTime);
     await shipRepository.SaveAsync(ship);
 });
@@ -129,7 +132,7 @@ app.MapGet("/api/ship/{shipName}/departures", async (string shipName, IEventStor
         shipName,
         x => x.EventName == nameof(ShipEvents.Departed));
 
-    List<ShipEvents.Departed> departedEvents = events
+    var departedEvents = events
         .Select(x =>
             x.GetEventPayload<ShipEvents.Departed>())
         .OrderBy(x => x.OccuredUtc)

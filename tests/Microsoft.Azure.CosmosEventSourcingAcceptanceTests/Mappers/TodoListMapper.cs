@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ public class TodoListMapper : IAggregateRootMapper<TodoListAggregate, TodoListEv
 {
     public IEnumerable<TodoListEventItem> MapFrom(TodoListAggregate aggregateRoot)
     {
-        List<TodoListEventItem> eventItems = aggregateRoot
+        var eventItems = aggregateRoot
             .NewEvents
             .Select(domainEvent =>
                 new TodoListEventItem(

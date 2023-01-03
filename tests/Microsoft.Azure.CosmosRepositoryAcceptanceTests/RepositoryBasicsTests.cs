@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -39,7 +39,7 @@ public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
 
             IEnumerable<Product> products = await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId);
 
-            List<Product> productsList = products.ToList();
+            var productsList = products.ToList();
             productsList.Count.Should().Be(1);
 
             Product tvFromList = productsList.First();
@@ -82,11 +82,11 @@ public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
 
             product = await _productsRepository.CreateAsync(product);
 
-            string? etagAfterCreation = (await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId)).Single().Etag;
+            var etagAfterCreation = (await _productsRepository.GetAsync(x => x.PartitionKey == TechnologyCategoryId)).Single().Etag;
 
             product.ApplySaleDiscount(0.10);
 
-            Product productToUpsert = new (product.Name, product.CategoryId, product.Price,
+            Product productToUpsert = new(product.Name, product.CategoryId, product.Price,
                 new StockInformation(product.Stock.Count, product.Stock.LastReplenishedUtc,
                     product.Stock.DueReplenishmentUtc))
             {

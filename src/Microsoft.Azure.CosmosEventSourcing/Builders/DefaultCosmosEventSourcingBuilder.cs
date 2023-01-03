@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Reflection;
@@ -21,7 +21,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
     public DefaultCosmosEventSourcingBuilder(IServiceCollection services) =>
         _services = services;
 
-    public IEventItemProjectionBuilder<TEventItem, TProjectionKey> AddEventItemProjection<TEventItem,TProjectionKey, TProjection>(
+    public IEventItemProjectionBuilder<TEventItem, TProjectionKey> AddEventItemProjection<TEventItem, TProjectionKey, TProjection>(
         Action<EventSourcingProcessorOptions<TEventItem, TProjectionKey>>? optionsAction = null)
         where TEventItem : EventItem
         where TProjection : class, IEventItemProjection<TEventItem, TProjectionKey>
@@ -62,7 +62,7 @@ internal class DefaultCosmosEventSourcingBuilder : ICosmosEventSourcingBuilder
             assemblies = AppDomain.CurrentDomain.GetAssemblies();
         }
 
-        List<Type> types = assemblies
+        var types = assemblies
             .SelectMany(x => x.GetTypes()
                 .Where(type => typeof(IDomainEvent).IsAssignableFrom(type)))
             .ToList();

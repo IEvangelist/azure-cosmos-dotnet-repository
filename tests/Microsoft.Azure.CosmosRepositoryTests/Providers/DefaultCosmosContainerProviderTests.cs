@@ -1,5 +1,6 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
+
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository.Providers;
@@ -8,23 +9,22 @@ using Microsoft.Azure.CosmosRepositoryTests.Stubs;
 using Moq;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Providers
+namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
+
+public class DefaultCosmosContainerProviderTests
 {
-    public class DefaultCosmosContainerProviderTests
+    readonly Mock<ICosmosContainerService> _cosmosContainerService = new();
+    readonly Mock<Container> _container = new();
+
+    [Fact]
+    public async Task GetContainerAsyncGetsCorrectContainer()
     {
-        readonly Mock<ICosmosContainerService> _cosmosContainerService = new();
-        readonly Mock<Container> _container = new();
+        ICosmosContainerProvider<TestItemWithEtag> provider = new DefaultCosmosContainerProvider<TestItemWithEtag>(_cosmosContainerService.Object);
 
-        [Fact]
-        public async Task GetContainerAsyncGetsCorrectContainer()
-        {
-            ICosmosContainerProvider<TestItemWithEtag> provider = new DefaultCosmosContainerProvider<TestItemWithEtag>(_cosmosContainerService.Object);
+        _cosmosContainerService.Setup(o => o.GetContainerAsync<TestItemWithEtag>(false)).ReturnsAsync(_container.Object);
 
-            _cosmosContainerService.Setup(o => o.GetContainerAsync<TestItemWithEtag>(false)).ReturnsAsync(_container.Object);
+        Container container = await provider.GetContainerAsync();
 
-            Container container = await provider.GetContainerAsync();
-
-            Assert.Equal(_container.Object, container);
-        }
+        Assert.Equal(_container.Object, container);
     }
 }

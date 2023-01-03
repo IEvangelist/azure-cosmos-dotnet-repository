@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -15,57 +15,56 @@ using WebTier.Integration.Tests.Factories;
 using WebTier.Models;
 using Xunit;
 
-namespace WebTier.Integration.Tests
+namespace WebTier.Integration.Tests;
+
+public class LanguagesControllerTests : IClassFixture<WebTierApplicationFactory>
 {
-    public class LanguagesControllerTests : IClassFixture<WebTierApplicationFactory>
+    private readonly HttpClient _client;
+    private readonly IRepositoryFactory _repositoryFactory;
+
+    public LanguagesControllerTests(WebTierApplicationFactory factory)
     {
-        private readonly HttpClient _client;
-        private readonly IRepositoryFactory _repositoryFactory;
+        _client = factory.CreateClient();
+        _repositoryFactory = factory.Services.GetRequiredService<IRepositoryFactory>();
+    }
 
-        public LanguagesControllerTests(WebTierApplicationFactory factory)
+    [Fact]
+    public async Task Post_Always_Creates_A_Language()
+    {
+        //Arrange
+        LanguageDto language = new()
         {
-            _client = factory.CreateClient();
-            _repositoryFactory = factory.Services.GetRequiredService<IRepositoryFactory>();
-        }
+            Id = string.Empty,
+            Name = "C#",
+            Description = "A language created by Microsoft.",
+            Aliases = new[] { "C#", ".NET" },
+            PrimaryStyle = ProgrammingStyle.ObjectOriented,
+            InitialReleaseDate = new DateTime(2001, 10, 25)
+        };
 
-        [Fact]
-        public async Task Post_Always_Creates_A_Language()
+        List<LanguageDto> languages = new()
         {
-            //Arrange
-            LanguageDto language = new()
-            {
-                Id = string.Empty,
-                Name = "C#",
-                Description = "A language created by Microsoft.",
-                Aliases = new []{"C#", ".NET"},
-                PrimaryStyle = ProgrammingStyle.ObjectOriented,
-                InitialReleaseDate = new DateTime(2001, 10, 25)
-            };
+            language
+        };
 
-            List<LanguageDto> languages = new()
-            {
-                language
-            };
+        IRepository<Language> repository = _repositoryFactory.RepositoryOf<Language>();
 
-            IRepository<Language> repository = _repositoryFactory.RepositoryOf<Language>();
+        //Act
+        HttpResponseMessage response = await _client.PostAsJsonAsync("api/language", languages);
 
-            //Act
-            HttpResponseMessage response = await _client.PostAsJsonAsync("api/language", languages);
+        //Assert
+        response.EnsureSuccessStatusCode();
+        List<LanguageDto> responseLanguages = await response.Content.ReadFromJsonAsync<List<LanguageDto>>(new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter() }
+        });
+        Assert.NotNull(responseLanguages);
+        LanguageDto responseLanguage = responseLanguages.First();
+        Language databaseLanguage = await repository.GetAsync(responseLanguage.Id);
 
-            //Assert
-            response.EnsureSuccessStatusCode();
-            List<LanguageDto> responseLanguages = await response.Content.ReadFromJsonAsync<List<LanguageDto>>(new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                Converters = { new JsonStringEnumConverter() }
-            });
-            Assert.NotNull(responseLanguages);
-            LanguageDto responseLanguage = responseLanguages.First();
-            Language databaseLanguage = await repository.GetAsync(responseLanguage.Id);
-
-            Assert.Equal(language.Name, databaseLanguage.Name);
-            Assert.Equal(language.Description, databaseLanguage.Description);
-            Assert.Equal(language.PrimaryStyle, databaseLanguage.PrimaryStyle);
-        }
+        Assert.Equal(language.Name, databaseLanguage.Name);
+        Assert.Equal(language.Description, databaseLanguage.Description);
+        Assert.Equal(language.PrimaryStyle, databaseLanguage.PrimaryStyle);
     }
 }

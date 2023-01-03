@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
 using System.Collections.Generic;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepositoryTests.Stubs;
@@ -7,88 +10,87 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests
+namespace Microsoft.Azure.CosmosRepositoryTests;
+
+public class DefaultRepositoryFactoryTests
 {
-    public class DefaultRepositoryFactoryTests
+    [Fact]
+    public void RepositoryFactoryCorrectlyGetsRepositoryUsingConnectionStringTest()
     {
-        [Fact]
-        public void RepositoryFactoryCorrectlyGetsRepositoryUsingConnectionStringTest()
-        {
-            IConfigurationRoot configuration =
-                new ConfigurationBuilder()
-                    .AddInMemoryCollection(new Dictionary<string, string>
-                    {
-                        ["RepositoryOptions:CosmosConnectionString"] = "Testing"
-                    })
-                    .Build();
-            IServiceCollection services = new ServiceCollection();
-            services.AddSingleton<IConfiguration>(configuration);
+        IConfigurationRoot configuration =
+            new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["RepositoryOptions:CosmosConnectionString"] = "Testing"
+                })
+                .Build();
+        IServiceCollection services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
 
-            services.AddCosmosRepository();
+        services.AddCosmosRepository();
 
-            IServiceProvider provider = services.BuildServiceProvider();
-            IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();
+        IServiceProvider provider = services.BuildServiceProvider();
+        IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();
 
-            Assert.NotNull(factory.RepositoryOf<AnotherTestItem>());
-            Assert.NotNull(factory.RepositoryOf<AndAnotherItem>());
-            Assert.NotNull(factory.RepositoryOf<AndACustomEntity>());
-        }
-
-        [Fact]
-        public void RepositoryFactoryCorrectlyGetsRepositoryUsingTokenCredentialAuthenticationTest()
-        {
-            IConfigurationRoot configuration =
-                new ConfigurationBuilder()
-                    .AddInMemoryCollection(new Dictionary<string, string>
-                    {
-                        ["RepositoryOptions:AccountEndpoint"] = "Account Endpoint"
-                    })
-                    .Build();
-            IServiceCollection services = new ServiceCollection();
-            services.AddSingleton<IConfiguration>(configuration);
-
-            services.AddCosmosRepository(options =>
-            {
-                options.TokenCredential = new TestTokenCredential();
-            });
-
-            IServiceProvider provider = services.BuildServiceProvider();
-            IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();
-
-            Assert.NotNull(factory.RepositoryOf<AnotherTestItem>());
-            Assert.NotNull(factory.RepositoryOf<AndAnotherItem>());
-            Assert.NotNull(factory.RepositoryOf<AndACustomEntity>());
-        }
+        Assert.NotNull(factory.RepositoryOf<AnotherTestItem>());
+        Assert.NotNull(factory.RepositoryOf<AndAnotherItem>());
+        Assert.NotNull(factory.RepositoryOf<AndACustomEntity>());
     }
 
-    public class AnotherTestItem : Item { }
-    public class AndAnotherItem : Item { }
-    public class AndACustomEntity : CustomEntityBase { }
-
-    /// <summary>
-    /// Sample custom base object that implements IItem
-    /// </summary>
-    public abstract class CustomEntityBase : IItem
+    [Fact]
+    public void RepositoryFactoryCorrectlyGetsRepositoryUsingTokenCredentialAuthenticationTest()
     {
-        [JsonProperty("id")]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        IConfigurationRoot configuration =
+            new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["RepositoryOptions:AccountEndpoint"] = "Account Endpoint"
+                })
+                .Build();
+        IServiceCollection services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
 
-        [JsonProperty("type")]
-        public string Type { get; set; }
+        services.AddCosmosRepository(options =>
+        {
+            options.TokenCredential = new TestTokenCredential();
+        });
 
-        [JsonProperty("name")]
-        public string Name { get; set; } = null!;
+        IServiceProvider provider = services.BuildServiceProvider();
+        IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();
 
-        [JsonProperty("quest")]
-        public string Quest { get; set; } = null!;
-
-        [JsonProperty("favoritecolor")]
-        public string FavoriteColor { get; set; } = null!;
-
-        string IItem.PartitionKey => GetPartitionKeyValue();
-
-        public CustomEntityBase() => Type = GetType().Name;
-
-        protected virtual string GetPartitionKeyValue() => Id;
+        Assert.NotNull(factory.RepositoryOf<AnotherTestItem>());
+        Assert.NotNull(factory.RepositoryOf<AndAnotherItem>());
+        Assert.NotNull(factory.RepositoryOf<AndACustomEntity>());
     }
+}
+
+public class AnotherTestItem : Item { }
+public class AndAnotherItem : Item { }
+public class AndACustomEntity : CustomEntityBase { }
+
+/// <summary>
+/// Sample custom base object that implements IItem
+/// </summary>
+public abstract class CustomEntityBase : IItem
+{
+    [JsonProperty("id")]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [JsonProperty("type")]
+    public string Type { get; set; }
+
+    [JsonProperty("name")]
+    public string Name { get; set; } = null!;
+
+    [JsonProperty("quest")]
+    public string Quest { get; set; } = null!;
+
+    [JsonProperty("favoritecolor")]
+    public string FavoriteColor { get; set; } = null!;
+
+    string IItem.PartitionKey => GetPartitionKeyValue();
+
+    public CustomEntityBase() => Type = GetType().Name;
+
+    protected virtual string GetPartitionKeyValue() => Id;
 }

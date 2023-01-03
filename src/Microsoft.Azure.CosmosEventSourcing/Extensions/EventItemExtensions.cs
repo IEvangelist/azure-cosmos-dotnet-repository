@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Events;
@@ -19,7 +19,7 @@ public static class EventItemExtensions
     /// <returns>The TEvent instance.</returns>
     public static TEvent GetEventPayload<TEvent>(this EventItem eventItem)
         where TEvent : DomainEvent =>
-        (TEvent) eventItem.DomainEvent;
+        (TEvent)eventItem.DomainEvent;
 
     /// <summary>
     /// Cast's the payload of an <see cref="EventItem"/> to a <see cref="IDomainEvent"/>

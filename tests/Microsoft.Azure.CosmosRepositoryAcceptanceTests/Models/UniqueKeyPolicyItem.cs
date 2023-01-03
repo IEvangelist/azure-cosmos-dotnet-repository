@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosRepository;
@@ -17,7 +17,7 @@ public class UniqueKeyPolicyItem : Item
     public string County { get; set; }
 
     [UniqueKey("colorKey", "/favouriteColor")]
-    public string FavouriteColor  { get; set; }
+    public string FavouriteColor { get; set; }
 
     protected override string GetPartitionKeyValue() => County;
 

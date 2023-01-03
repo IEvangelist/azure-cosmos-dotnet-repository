@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Linq.Expressions;
@@ -12,7 +12,7 @@ internal static class ExpressionExtensions
         Expression<T> second,
         Func<Expression, Expression, Expression> merge)
     {
-        Dictionary<ParameterExpression, ParameterExpression> map =
+        var map =
             first.Parameters
                 .Select((parameter, index) => (parameter, second: second.Parameters[index]))
                 .ToDictionary(p => p.second, p => p.parameter);
@@ -36,7 +36,7 @@ internal static class ExpressionExtensions
         /// <inheritdoc />
         protected override Expression VisitParameter(ParameterExpression parameter)
         {
-            if (_map.TryGetValue(parameter, out ParameterExpression replacement))
+            if (_map.TryGetValue(parameter, out ParameterExpression? replacement))
             {
                 parameter = replacement;
             }

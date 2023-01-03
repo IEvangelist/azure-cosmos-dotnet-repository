@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Threading;
@@ -41,7 +41,7 @@ public static class TodoItemProjections
                 domainEvent.Id,
                 domainEvent.Title,
                 domainEvent.OccuredUtc,
-                eventItem.PartitionKey), cancellationToken);
+                eventItem.PartitionKey), cancellationToken: cancellationToken);
         }
     }
 
@@ -74,7 +74,7 @@ public static class TodoItemProjections
 
             item.CompletedAt = domainEvent.OccuredUtc;
 
-            await _repository.UpdateAsync(item, cancellationToken);
+            await _repository.UpdateAsync(item, cancellationToken: cancellationToken);
         }
     }
 }

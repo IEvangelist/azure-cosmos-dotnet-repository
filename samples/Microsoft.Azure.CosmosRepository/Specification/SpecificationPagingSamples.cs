@@ -1,4 +1,4 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosRepository;
@@ -42,7 +42,7 @@ public class SpecificationPagingSamples
         ContinuationTokenSpecification<Person> specification = new(null, pageSize: 25);
         IPage<Person> page = await _repository.QueryAsync(specification);
         specification.UpdateContinuationToken(page.Continuation);
-        int totalItems = 0;
+        var totalItems = 0;
         while (totalItems < page.Total)
         {
             foreach (Person person in page.Items)

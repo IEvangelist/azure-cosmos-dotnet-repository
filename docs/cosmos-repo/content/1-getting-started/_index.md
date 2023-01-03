@@ -5,6 +5,8 @@ chapter: true
 pre: "<b>1. </b>"
 ---
 
+The quickest way to get started using the `Microsoft.Azure.CosmosRepository` package is to use the `AddCosmosRepository` extension method on the `IServiceCollection` interface. This extension method will register the necessary services and configure the repository SDK for you.
+
 1. Create an Azure Cosmos DB SQL resource.
 1. Obtain the resource connection string from the **Keys** blade, be sure to get a connection string and not the key - these are different. The connection string is a compound key and endpoint URL.
 1. Call `AddCosmosRepository`:
@@ -78,17 +80,17 @@ all items are persisted into the same container. However, when it is `true`, eac
 
 Depending on the [.NET configuration provider](https://docs.microsoft.com/dotnet/core/extensions/configuration-providers?WC.m_id=dapine) your app is using, there are several well-known keys that map to the repository options that configure your usage of the repository SDK. When using environment variables, such as those in Azure App Service configuration or Azure Key Vault secrets, the following keys map to the `RepositoryOptions` instance:
 
-| Key                                                           | Data type                  | Default value                          |
-| ------------------------------------------------------------- | -------------------------- | -------------------------------------- |
-| RepositoryOptions\_\_CosmosConnectionString                   | string                     | `null`                                 |
-| RepositoryOptions\_\_AccountEndpoint                          | string                     | `null`                                 |
-| RepositoryOptions\_\_DatabaseId                               | string                     | `"database"`                           |
-| RepositoryOptions\_\_ContainerId                              | string                     | `"container"`                          |
-| RepositoryOptions\_\_OptimizeBandwidth                        | boolean                    | `true`                                 |
-| RepositoryOptions\_\_ContainerPerItemType                     | boolean                    | `false`                                |
-| RepositoryOptions\_\_AllowBulkExecution                       | boolean                    | `false`                                |
-| RepositoryOptions**SerializationOptions**IgnoreNullValues     | boolean                    | `false`                                |
-| RepositoryOptions**SerializationOptions**Indented             | boolean                    | `false`                                |
+| Key | Data type | Default value |
+|---|---|---|
+| RepositoryOptions\_\_CosmosConnectionString | string | `null` |
+| RepositoryOptions\_\_AccountEndpoint | string | `null` |
+| RepositoryOptions\_\_DatabaseId | string | `"database"` |
+| RepositoryOptions\_\_ContainerId | string | `"container"` |
+| RepositoryOptions\_\_OptimizeBandwidth | boolean | `true` |
+| RepositoryOptions\_\_ContainerPerItemType | boolean | `false` |
+| RepositoryOptions\_\_AllowBulkExecution | boolean | `false` |
+| RepositoryOptions**SerializationOptions**IgnoreNullValues | boolean | `false` |
+| RepositoryOptions**SerializationOptions**Indented | boolean | `false` |
 | RepositoryOptions**SerializationOptions**PropertyNamingPolicy | CosmosPropertyNamingPolicy | `CosmosPropertyNamingPolicy.CamelCase` |
 
 ### Example `appsettings.json`

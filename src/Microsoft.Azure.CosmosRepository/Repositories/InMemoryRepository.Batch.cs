@@ -1,42 +1,38 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Azure.CosmosRepository
+namespace Microsoft.Azure.CosmosRepository;
+
+internal partial class InMemoryRepository<TItem>
 {
-    internal partial class InMemoryRepository<TItem>
+    public async ValueTask CreateAsBatchAsync(
+        IEnumerable<TItem> items,
+        CancellationToken cancellationToken = default)
     {
-        public async ValueTask CreateAsBatchAsync(
-            IEnumerable<TItem> items,
-            CancellationToken cancellationToken = default)
+        foreach (TItem? item in items)
         {
-            foreach (TItem? item in items)
-            {
-                await CreateAsync(item, cancellationToken);
-            }
+            await CreateAsync(item, cancellationToken);
         }
+    }
 
-        public async ValueTask UpdateAsBatchAsync(
-            IEnumerable<TItem> items,
-            CancellationToken cancellationToken = default)
+    public async ValueTask UpdateAsBatchAsync(
+        IEnumerable<TItem> items,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (TItem? item in items)
         {
-            foreach (TItem? item in items)
-            {
-                await UpdateAsync(item, cancellationToken);
-            }
+            await UpdateAsync(item, cancellationToken: cancellationToken);
         }
+    }
 
-        public async ValueTask DeleteAsBatchAsync(
-            IEnumerable<TItem> items,
-            CancellationToken cancellationToken = default)
+    public async ValueTask DeleteAsBatchAsync(
+        IEnumerable<TItem> items,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (TItem? item in items)
         {
-            foreach (TItem? item in items)
-            {
-                await DeleteAsync(item, cancellationToken);
-            }
+            await DeleteAsync(item, cancellationToken);
         }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -12,69 +12,68 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed
+namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed;
+
+public class DefaultChangeFeedOptionsProviderTests
 {
-    public class DefaultChangeFeedOptionsProviderTests
+    private readonly RepositoryOptions _repositoryOptions = new();
+
+    private IChangeFeedOptionsProvider CreateSut()
     {
-        private readonly RepositoryOptions _repositoryOptions = new();
+        Mock<IOptionsMonitor<RepositoryOptions>> monitor = new();
+        monitor.SetupGet(o => o.CurrentValue)
+            .Returns(_repositoryOptions);
 
-        private IChangeFeedOptionsProvider CreateSut()
+        return new DefaultChangeFeedOptionsProvider(monitor.Object);
+    }
+
+    [Fact]
+    public void GetOptionsForItems_ItemTypes_GetsChangeFeedOptions()
+    {
+        //Arrange
+        IChangeFeedOptionsProvider sut = CreateSut();
+
+        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
         {
-            Mock<IOptionsMonitor<RepositoryOptions>> monitor = new();
-            monitor.SetupGet(o => o.CurrentValue)
-                .Returns(_repositoryOptions);
+            builder.WithChangeFeedMonitoring();
+        });
 
-            return new DefaultChangeFeedOptionsProvider(monitor.Object);
-        }
-
-        [Fact]
-        public void GetOptionsForItems_ItemTypes_GetsChangeFeedOptions()
+        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
         {
-            //Arrange
-            IChangeFeedOptionsProvider sut = CreateSut();
+            builder.WithChangeFeedMonitoring();
+        });
 
-            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
-            {
-                builder.WithChangeFeedMonitoring();
-            });
+        //Act
+        ChangeFeedOptions options = sut.GetOptionsForItems(new[] { typeof(TestItem), typeof(AnotherTestItem) });
 
-            _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
-            {
-                builder.WithChangeFeedMonitoring();
-            });
+        //Assert
+        Assert.Equal("default", options.InstanceName);
+    }
 
-            //Act
-            ChangeFeedOptions options = sut.GetOptionsForItems(new[] {typeof(TestItem), typeof(AnotherTestItem)});
+    [Fact]
+    public void GetOptionsForItems_ItemTypesWithDifferentChangeFeedOptions_ThrowsMissMatchedChangeFeedOptionsException()
+    {
+        //Arrange
+        IChangeFeedOptionsProvider sut = CreateSut();
 
-            //Assert
-            Assert.Equal("default", options.InstanceName);
-        }
-
-        [Fact]
-        public void GetOptionsForItems_ItemTypesWithDifferentChangeFeedOptions_ThrowsMissMatchedChangeFeedOptionsException()
+        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
         {
-            //Arrange
-            IChangeFeedOptionsProvider sut = CreateSut();
+            builder.WithChangeFeedMonitoring();
+        });
 
-            _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
+        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
+        {
+            builder.WithChangeFeedMonitoring(options =>
             {
-                builder.WithChangeFeedMonitoring();
+                options.InstanceName = "different";
             });
+        });
 
-            _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
-            {
-                builder.WithChangeFeedMonitoring(options =>
-                {
-                    options.InstanceName = "different";
-                });
-            });
+        IReadOnlyList<Type> types = new[] { typeof(TestItem), typeof(AnotherTestItem) };
 
-            IReadOnlyList<Type> types = new[] {typeof(TestItem), typeof(AnotherTestItem)};
-
-            //Act
-            //Assert
-            Assert.Throws<MissMatchedChangeFeedOptionsException>(() =>
-                sut.GetOptionsForItems(types));
-        }
+        //Act
+        //Assert
+        Assert.Throws<MissMatchedChangeFeedOptionsException>(() =>
+            sut.GetOptionsForItems(types));
     }
 }

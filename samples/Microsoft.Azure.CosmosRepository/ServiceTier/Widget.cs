@@ -1,17 +1,16 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
 using Microsoft.Azure.CosmosRepository;
 
-namespace ServiceTier
+namespace ServiceTier;
+
+public class Widget : Item
 {
-    public class Widget : Item
-    {
-        public string Name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
-        public DateTimeOffset CreatedOrUpdatedOn { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedOrUpdatedOn { get; set; } = DateTimeOffset.UtcNow;
 
-        public override string ToString() => $"{Name} was created or updated on {CreatedOrUpdatedOn}";
-    }
+    public override string ToString() => $"{Name} was created or updated on {CreatedOrUpdatedOn}";
 }

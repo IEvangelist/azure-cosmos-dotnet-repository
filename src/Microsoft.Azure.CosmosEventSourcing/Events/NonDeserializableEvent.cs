@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Newtonsoft.Json;
@@ -19,7 +19,7 @@ public record NonDeserializableEvent : DomainEvent
     /// <summary>
     /// The payload of the event whose type could not be found.
     /// </summary>
-    public JObject Payload { get; init; } = JObject.FromObject(new {});
+    public JObject Payload { get; init; } = JObject.FromObject(new { });
 
     /// <summary>
     /// An exception thrown as part of deserializing an event.

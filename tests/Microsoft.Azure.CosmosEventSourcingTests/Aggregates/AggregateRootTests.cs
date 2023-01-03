@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -9,7 +9,6 @@ using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Xunit;
-using Xunit.Sdk;
 
 namespace Microsoft.Azure.CosmosEventSourcingTests.Aggregates;
 
@@ -70,7 +69,7 @@ public class AggregateTests
     public void Ctor_NewEvent_AddsEventToNewEvents()
     {
         //Arrange
-        string message = "A";
+        var message = "A";
 
         //Act
         SampleAggregateRoot root = new(message);
@@ -78,7 +77,7 @@ public class AggregateTests
         //Assert
         root.NewEvents.Should().HaveCount(1);
         root.Messages.Should().Contain("A");
-        DomainEvent evt = root.NewEvents.First();
+        DomainEvent evt = root.NewEvents[0];
         evt.Sequence.Should().Be(1);
         evt.EventId.Should().NotBeEmpty();
         evt.OccuredUtc.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMilliseconds(500));
@@ -88,7 +87,7 @@ public class AggregateTests
     public void Ctor_FirstEvent_CreatesAtomicEvent()
     {
         //Arrange
-        string message = "A";
+        var message = "A";
 
         //Act
         SampleAggregateRoot root = new(message);
@@ -113,7 +112,7 @@ public class AggregateTests
         };
 
         //Act
-        SampleAggregateRoot root = SampleAggregateRoot.Replay(events);
+        var root = SampleAggregateRoot.Replay(events);
 
         //Assert
         root.NewEvents.Should().BeEmpty();
@@ -138,7 +137,7 @@ public class AggregateTests
         };
 
         //Act
-        SampleAggregateRoot root = SampleAggregateRoot.Replay(events);
+        var root = SampleAggregateRoot.Replay(events);
 
         //Assert
         root.FinalMessage.Should().Be("D");
@@ -188,7 +187,7 @@ public class AggregateTests
             atomicEvent
         };
 
-        SampleAggregateRoot root = SampleAggregateRoot.Replay(events);
+        var root = SampleAggregateRoot.Replay(events);
 
         //Act
         root.AddMessage("E");

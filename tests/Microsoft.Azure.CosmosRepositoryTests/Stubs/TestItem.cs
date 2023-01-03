@@ -1,12 +1,11 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosRepository;
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Stubs
+namespace Microsoft.Azure.CosmosRepositoryTests.Stubs;
+
+public class TestItem : FullItem
 {
-    public class TestItem : FullItem
-    {
-        public string Property { get; set; } = default!;
-    }
+    public string Property { get; set; } = default!;
 }

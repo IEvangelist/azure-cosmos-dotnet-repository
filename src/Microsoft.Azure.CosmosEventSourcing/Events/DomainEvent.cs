@@ -1,7 +1,5 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
-
-using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Events;
 

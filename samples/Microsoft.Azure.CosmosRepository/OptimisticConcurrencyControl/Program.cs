@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
+using System.Net;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Configuration;
@@ -167,7 +170,7 @@ async Task ConcurrencyWithOptimizeBandwidthOnTrapDemo()
     Console.WriteLine($"Optimized bandwidth ON.");
     IRepository<BankAccount> repository = BuildRepository(true);
 
-    BankAccount bankAccountInfo = new BankAccount()
+    var bankAccountInfo = new BankAccount()
     {
         Name = "Current Account",
         Balance = 500.0

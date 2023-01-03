@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -29,7 +29,7 @@ public static class ObjectExtensions
             obj,
             BindingFlags.NonPublic | BindingFlags.Instance,
             null,
-            new object?[]{val!},
+            new object?[] { val! },
             null);
     }
 }

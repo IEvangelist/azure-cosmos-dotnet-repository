@@ -1,23 +1,18 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Options;
+namespace Microsoft.Azure.CosmosRepository.Providers;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
+/// <summary>
+/// The cosmos container provider exposes a means of providing
+/// an instance to the configured <see cref="Container"/> object.
+/// </summary>
+interface ICosmosContainerProvider<TItem> where TItem : IItem
 {
     /// <summary>
-    /// The cosmos container provider exposes a means of providing
-    /// an instance to the configured <see cref="Container"/> object.
+    /// Asynchronously gets the configured <see cref="Container"/> instance that corresponds to the
+    /// cosmos <see cref="RepositoryOptions"/>.
     /// </summary>
-    interface ICosmosContainerProvider<TItem> where TItem : IItem
-    {
-        /// <summary>
-        /// Asynchronously gets the configured <see cref="Container"/> instance that corresponds to the
-        /// cosmos <see cref="RepositoryOptions"/>.
-        /// </summary>
-        /// <returns>A <see cref="Container"/> instance.</returns>
-        Task<Container> GetContainerAsync();
-    }
+    /// <returns>A <see cref="Container"/> instance.</returns>
+    Task<Container> GetContainerAsync();
 }

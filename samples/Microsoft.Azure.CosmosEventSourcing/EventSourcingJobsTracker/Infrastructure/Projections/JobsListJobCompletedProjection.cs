@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using EventSourcingJobsTracker.Core.Events;
@@ -24,7 +24,7 @@ public class JobsListJobCompletedProjection : IDomainEventProjection<JobComplete
         JobsListEventItem eventItem,
         CancellationToken cancellationToken = default)
     {
-        (Guid id, string? _, JobListInfo? jobListInfo) = domainEvent;
+        (Guid id, var _, JobListInfo? jobListInfo) = domainEvent;
 
         JobItem item = await _repository.GetAsync(
             id.ToString(),
@@ -35,6 +35,6 @@ public class JobsListJobCompletedProjection : IDomainEventProjection<JobComplete
 
         await _repository.UpdateAsync(
             item,
-            cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

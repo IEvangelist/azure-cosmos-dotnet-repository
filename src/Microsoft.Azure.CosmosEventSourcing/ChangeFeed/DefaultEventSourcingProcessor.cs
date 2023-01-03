@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Runtime.CompilerServices.Context;
@@ -110,5 +110,5 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
     public Task StopAsync() =>
         _processor?.StopAsync() ?? Task.CompletedTask;
 
-    public IReadOnlyList<Type> ItemTypes => new[] {typeof(TSourcedEvent)};
+    public IReadOnlyList<Type> ItemTypes => new[] { typeof(TSourcedEvent) };
 }

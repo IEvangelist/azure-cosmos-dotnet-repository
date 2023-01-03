@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Converters;
@@ -86,7 +86,7 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
     public TimeSpan? TimeToLive
     {
         get => _timeToLive.HasValue ? TimeSpan.FromSeconds(_timeToLive.Value) : null;
-        set => _timeToLive = (int?) value?.TotalSeconds;
+        set => _timeToLive = (int?)value?.TotalSeconds;
     }
 
     /// <summary>

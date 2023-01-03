@@ -1,4 +1,4 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosRepository;
@@ -64,7 +64,7 @@ public class FullSpecificationSamples
         Console.WriteLine($"Total Charge {totalCharge} RU's");
     }
 
-    private class UsersOrderByAgeSpecification: ContinuationTokenSpecification<Person>
+    private class UsersOrderByAgeSpecification : ContinuationTokenSpecification<Person>
     {
         public UsersOrderByAgeSpecification(int age)
         {

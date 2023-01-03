@@ -1,63 +1,58 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Attributes;
+namespace Microsoft.Azure.CosmosRepository.Providers;
 
-namespace Microsoft.Azure.CosmosRepository.Providers
+/// <inheritdoc />
+class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
 {
+    static readonly Type s_attributeType = typeof(UniqueKeyAttribute);
+
     /// <inheritdoc />
-    class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
+    public UniqueKeyPolicy? GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
+        GetUniqueKeyPolicy(typeof(TItem));
+
+    public UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType)
     {
-        /// <inheritdoc />
-        public UniqueKeyPolicy? GetUniqueKeyPolicy<TItem>() where TItem : IItem =>
-            GetUniqueKeyPolicy(typeof(TItem));
+        Dictionary<string, List<string>> keyNameToPathsMap = new();
 
-        public UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType)
+        foreach ((UniqueKeyAttribute? uniqueKey, var propertyName) in itemType.GetProperties()
+                     .Where(x => Attribute.IsDefined(x, s_attributeType))
+                     .Select(x => (x.GetCustomAttribute<UniqueKeyAttribute>(), x.Name)))
         {
-            Type attributeType = typeof(UniqueKeyAttribute);
+            if (uniqueKey is null) continue;
 
-            Dictionary<string, List<string>> keyNameToPathsMap = new();
+            var propertyValue = (uniqueKey.PropertyPath ?? $"/{propertyName ?? ""}")!;
 
-            foreach ((UniqueKeyAttribute uniqueKey, string propertyName) in itemType.GetProperties()
-                         .Where(x => Attribute.IsDefined(x, attributeType))
-                         .Select(x => (x.GetCustomAttribute<UniqueKeyAttribute>(), x.Name)))
+            if (keyNameToPathsMap.TryGetValue(uniqueKey.KeyName, out List<string>? value)
+                && value is not null)
             {
-                string propertyValue = uniqueKey.PropertyPath ?? $"/{propertyName}";
-
-                if (keyNameToPathsMap.ContainsKey(uniqueKey.KeyName))
-                {
-                    keyNameToPathsMap[uniqueKey.KeyName].Add(propertyValue);
-                    continue;
-                }
-
-                keyNameToPathsMap[uniqueKey.KeyName] = new List<string> {propertyValue};
+                value.Add(propertyValue);
+                continue;
             }
 
-            if (!keyNameToPathsMap.Any())
-            {
-                return null;
-            }
-
-            UniqueKeyPolicy policy = new();
-
-            foreach (KeyValuePair<string, List<string>> keyNameToPaths in keyNameToPathsMap)
-            {
-                UniqueKey key = new();
-
-                foreach (string path in keyNameToPaths.Value)
-                {
-                    key.Paths.Add(path);
-                }
-
-                policy.UniqueKeys.Add(key);
-            }
-
-            return policy;
+            keyNameToPathsMap[uniqueKey.KeyName] = new List<string> { propertyValue };
         }
+
+        if (!keyNameToPathsMap.Any())
+        {
+            return null;
+        }
+
+        UniqueKeyPolicy policy = new();
+
+        foreach (KeyValuePair<string, List<string>> keyNameToPaths in keyNameToPathsMap)
+        {
+            UniqueKey key = new();
+
+            foreach (var path in keyNameToPaths.Value)
+            {
+                key.Paths.Add(path);
+            }
+
+            policy.UniqueKeys.Add(key);
+        }
+
+        return policy;
     }
 }

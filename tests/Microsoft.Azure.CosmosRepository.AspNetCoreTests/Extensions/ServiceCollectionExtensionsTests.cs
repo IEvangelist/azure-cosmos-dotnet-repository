@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System.Reflection;
@@ -22,18 +22,12 @@ public class TestItem2 : Item
 
 public class Processor1 : IItemChangeFeedProcessor<TestItem1>
 {
-    public ValueTask HandleAsync(TestItem1 rating, CancellationToken cancellationToken)
-    {
-        throw new System.NotImplementedException();
-    }
+    public ValueTask HandleAsync(TestItem1 rating, CancellationToken cancellationToken) => throw new System.NotImplementedException();
 }
 
 public class Processor2 : IItemChangeFeedProcessor<TestItem2>
 {
-    public ValueTask HandleAsync(TestItem2 rating, CancellationToken cancellationToken)
-    {
-        throw new System.NotImplementedException();
-    }
+    public ValueTask HandleAsync(TestItem2 rating, CancellationToken cancellationToken) => throw new System.NotImplementedException();
 }
 
 public class ServiceCollectionExtensionsTests

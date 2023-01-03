@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using CleanArchitecture.Exceptions.AspNetCore;
@@ -20,7 +20,7 @@ public static class JobEndpoints
                     CreateJob request,
                     IJobsTrackerService service) =>
                 {
-                    (Guid jobListId, string? title, DateTime due) = request;
+                    (Guid jobListId, var title, DateTime due) = request;
 
                     await service.AddJobAsync(jobListId, title, due);
 

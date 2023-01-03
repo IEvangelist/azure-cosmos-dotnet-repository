@@ -1,11 +1,14 @@
-﻿using ChangedFeedSamples.Shared.Items;
+﻿// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
+using ChangedFeedSamples.Shared.Items;
 using ChangedFeedSamples.Shared.Processors;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-string connectionString = Environment.GetEnvironmentVariable("CosmosConnectionString") ??
+var connectionString = Environment.GetEnvironmentVariable("CosmosConnectionString") ??
                           throw new NullReferenceException("Make sure the connection string is set as an env var");
 
 IServiceCollection services = new ServiceCollection();

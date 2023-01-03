@@ -185,3 +185,7 @@ div.notices.tip p:first-child:after {
     85% { transform: rotate(6deg); }
     100% { transform: rotate(10deg); }
 }
+
+code.language-csharp.hljs {
+    font-size: 1.1rem;
+}

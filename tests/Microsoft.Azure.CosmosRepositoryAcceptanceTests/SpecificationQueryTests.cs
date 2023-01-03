@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -50,7 +50,7 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
             //Assert
             orderedProducts.Items.Count.Should().Be(_products.Count);
             orderedProducts.Items[0].Name.Should().Be("iPhone");
-            orderedProducts.Items.Last().Name.Should().Be("Socks");
+            orderedProducts.Items[orderedProducts.Items.Count - 1].Name.Should().Be("Socks");
         }
         finally
         {
@@ -73,7 +73,7 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
             //Assert
             orderedProducts.Items.Count.Should().Be(_products.Count);
             orderedProducts.Items[0].Name.Should().Be("Socks");
-            orderedProducts.Items.Last().Name.Should().Be("iPhone");
+            orderedProducts.Items[orderedProducts.Items.Count - 1].Name.Should().Be("iPhone");
         }
         finally
         {
@@ -96,7 +96,7 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
             //Assert
             orderedProducts.Items.Count.Should().Be(_products.Count(x => x.CategoryId == "Clothing"));
             orderedProducts.Items[0].Name.Should().Be("Socks");
-            orderedProducts.Items.Last().Name.Should().Be("Jumper");
+            orderedProducts.Items[orderedProducts.Items.Count - 1].Name.Should().Be("Jumper");
         }
         finally
         {

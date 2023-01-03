@@ -3,8 +3,8 @@
     <PropertyGroup>
         <Company>Microsoft Corporation</Company>
         <Product>IEvangelist Azure Cosmos Repository</Product>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <LangVersion>9.0</LangVersion>
+        <TargetFrameworks>$(DefaultTargetFrameworks);$(CompatibilityTargetFrameworks)</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
         <Description>This client library enables client applications to connect to Azure Cosmos via a repository pattern around the official Azure Cosmos .NET SDK. Azure Cosmos is a globally distributed, multi-model database service. For more information, refer to http://azure.microsoft.com/services/cosmos-db/.</Description>
         <Copyright>Copyright © IEvangelist. All rights reserved. Licensed under the MIT License.</Copyright>
         <NeutralLanguage>en-US</NeutralLanguage>
@@ -40,14 +40,20 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <RepositoryType>git</RepositoryType>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup Condition="'$(ImplicitUsings)' == 'enable' or '$(ImplicitUsings)' == 'true'">
+        <Using Include="Microsoft.Azure.Cosmos"/>
+        <Using Include="Microsoft.Azure.CosmosRepository"/>
+    </ItemGroup>
+
     <ItemGroup>
-        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.23.0" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.17" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.17" />
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.17" />
-        <PackageReference Include="MinVer" Version="2.5.0">
+        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.2" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
+        <PackageReference Include="MinVer" Version="4.2.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

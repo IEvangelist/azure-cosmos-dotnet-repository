@@ -1,4 +1,4 @@
-﻿// Copyright (c) IEvangelist. All rights reserved.
+﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -86,7 +86,7 @@ public partial class EventStoreTests
         //Arrange
         IEventStore<Testing.SampleEventItem> sut = CreateSut();
 
-        string correlationId = Guid.NewGuid().ToString();
+        var correlationId = Guid.NewGuid().ToString();
         _contextService.SetupGet(o => o.CorrelationId).Returns(correlationId);
 
         Testing.TestAggregateWithNoPk aggregate = new();

@@ -1,3 +1,6 @@
+// Copyright (c) David Pine. All rights reserved.
+// Licensed under the MIT License.
+
 using CleanArchitecture.Exceptions.AspNetCore;
 using EventSourcingJobsTracker.Application.Infrastructure;
 using EventSourcingJobsTracker.Application.Services;
@@ -11,7 +14,7 @@ using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-string appName = typeof(Program).Assembly.FullName!;
+var appName = typeof(Program).Assembly.FullName!;
 
 builder.Services
     .AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = appName)

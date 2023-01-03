@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using BasicEventSourcingSample.Core;
@@ -13,7 +13,7 @@ public record ShipInformationProjectionKey : IProjectionKey;
 
 public class ShipInformationProjections
 {
-    public class ShipCreated : IDomainEventProjection<ShipEvents.ShipCreated,ShipEventItem, ShipInformationProjectionKey>
+    public class ShipCreated : IDomainEventProjection<ShipEvents.ShipCreated, ShipEventItem, ShipInformationProjectionKey>
     {
         private readonly IRepository<ShipInformation> _repository;
 
@@ -30,7 +30,7 @@ public class ShipInformationProjections
                 domainEvent.Commissioned,
                 domainEvent.OccuredUtc);
 
-            await _repository.UpdateAsync(info, cancellationToken);
+            await _repository.UpdateAsync(info, cancellationToken: cancellationToken);
         }
     }
 
@@ -46,7 +46,7 @@ public class ShipInformationProjections
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
-            (string name, string port) = domainEvent;
+            (var name, var port) = domainEvent;
 
             ShipInformation shipInfo = await _repository.GetAsync(
                 name,
@@ -55,7 +55,7 @@ public class ShipInformationProjections
 
             shipInfo.LatestPort = port;
 
-            await _repository.UpdateAsync(shipInfo, cancellationToken);
+            await _repository.UpdateAsync(shipInfo, cancellationToken: cancellationToken);
         }
     }
 
@@ -71,7 +71,7 @@ public class ShipInformationProjections
             ShipEventItem eventItem,
             CancellationToken cancellationToken = default)
         {
-            (string name, string port, double cargoWeight) = domainEvent;
+            (var name, var port, var cargoWeight) = domainEvent;
 
             ShipInformation shipInfo = await _repository.GetAsync(
                 name,
@@ -81,7 +81,7 @@ public class ShipInformationProjections
             shipInfo.LatestPort = port;
             shipInfo.LatestCargoWeight = cargoWeight;
 
-            await _repository.UpdateAsync(shipInfo, cancellationToken);
+            await _repository.UpdateAsync(shipInfo, cancellationToken: cancellationToken);
         }
     }
 }

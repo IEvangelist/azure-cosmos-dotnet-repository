@@ -1,9 +1,8 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using CleanArchitecture.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
-using Microsoft.Azure.CosmosEventSourcing.Events;
 
 namespace BasicEventSourcingSample.Core;
 

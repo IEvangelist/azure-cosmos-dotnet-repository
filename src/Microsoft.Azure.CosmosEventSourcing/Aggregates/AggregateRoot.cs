@@ -1,4 +1,4 @@
-// Copyright (c) IEvangelist. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.Azure.CosmosEventSourcing.Events;
@@ -67,12 +67,12 @@ public abstract class AggregateRoot : IAggregateRoot
             throw new DomainEventsRequiredException(GetType());
         }
 
-        AtomicEvent? atomicEvent = domainEvents.SingleOrDefault(x => x is AtomicEvent) as AtomicEvent;
+        var atomicEvent = domainEvents.SingleOrDefault(x => x is AtomicEvent) as AtomicEvent;
 
         _atomicEvent = atomicEvent ?? throw new AtomicEventRequiredException(GetType());
         domainEvents.Remove(atomicEvent);
 
-        List<DomainEvent> orderedEvents = domainEvents
+        var orderedEvents = domainEvents
             .OrderBy(x => x.Sequence)
             .ToList();
 
@@ -121,14 +121,11 @@ public abstract class AggregateRoot : IAggregateRoot
     /// </example>
     protected abstract void Apply(DomainEvent domainEvent);
 
-    private void CreateAtomicMarkerEvent()
+    private void CreateAtomicMarkerEvent() => _atomicEvent = new AtomicEvent(nameof(AtomicEvent), Guid.NewGuid().ToString())
     {
-        _atomicEvent = new AtomicEvent(nameof(AtomicEvent), Guid.NewGuid().ToString())
-        {
-            Sequence = int.MaxValue,
-            OccuredUtc = DateTime.UtcNow
-        };
-    }
+        Sequence = int.MaxValue,
+        OccuredUtc = DateTime.UtcNow
+    };
 
     private void UpdateAtomicMarkerEvent()
     {
