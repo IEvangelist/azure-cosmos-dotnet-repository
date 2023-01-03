@@ -2,7 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
@@ -13,6 +15,7 @@ using Microsoft.Azure.CosmosRepository.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Polly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -51,7 +54,7 @@ public partial class AcceptanceTests
             options.ClearProviders();
             options.AddXUnit(outputHelper,
                 loggerOptions => loggerOptions.Filter = (s, _) =>
-                s is null || (!s.StartsWith("System.Net") && !s.StartsWith(ns)));
+                    s is null || (!s.StartsWith("System.Net") && !s.StartsWith(ns)));
 
             options.SetMinimumLevel(LogLevel.Debug);
         });
@@ -114,7 +117,13 @@ public partial class AcceptanceTests
             .UseClientAsync(x =>
                 x.DeleteDatabaseIfExistsAsync(DatabaseName, _logger));
 
-        await _changeFeedService.StartAsync(default);
+        await Policy
+            .Handle<CosmosException>(x =>
+                x.StatusCode is HttpStatusCode.NotFound)
+            .RetryAsync(3, (_, i) =>
+                _logger.LogInformation("Attempting to start change feed service attempt {Attempt}", i))
+            .ExecuteAsync(() =>
+                _changeFeedService.StartAsync(default));
 
         try
         {
