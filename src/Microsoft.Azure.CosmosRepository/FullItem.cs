@@ -53,6 +53,7 @@ public abstract class FullItem : Item, IItemWithEtag, IItemWithTimeToLive, IItem
     public string? Etag { get; private set; }
 
     /// <inheritdoc />
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public TimeSpan? TimeToLive
     {
         get => _timeToLive.HasValue ? TimeSpan.FromSeconds(_timeToLive.Value) : null;

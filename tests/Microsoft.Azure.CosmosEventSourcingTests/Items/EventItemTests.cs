@@ -63,7 +63,7 @@ public class EventItemTests
     }
 
     [Fact]
-    public void EventItem_AtomicEventSerialization_WorksCorrectly()
+    public void EventItem_AtomicEventSerialization_WorksCorrectlyWithNullTimeToLive()
     {
         //Arrange
         DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
@@ -81,6 +81,44 @@ public class EventItemTests
         var json = JsonConvert.SerializeObject(item, _jsonSerializerSettings);
 
         //Assert
+        json.Should().NotContain("timeToLive");
+        json.Should().NotContain("ttl");
+
+        SampleEventItem? deserialized = JsonConvert.DeserializeObject<SampleEventItem>(json, _jsonSerializerSettings);
+        deserialized.Should().NotBeNull();
+        deserialized!.DomainEvent.EventId.Should().Be(evt.EventId);
+        deserialized.Id.Should().Be(evt.EventId);
+        deserialized.DomainEvent.Sequence.Should().Be(int.MaxValue);
+        deserialized.DomainEvent.OccuredUtc.Should().Be(evt.OccuredUtc);
+        deserialized.Etag.Should().Be(etagValue);
+    }
+
+    [Fact]
+    public void EventItem_AtomicEventSerialization_WorksCorrectlyWithPopulatedTimeToLive()
+    {
+        //Arrange
+        DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
+        var etagValue = Guid.NewGuid().ToString();
+        AtomicEvent evt = new(Guid.NewGuid().ToString(), string.Empty)
+        {
+            Sequence = int.MaxValue,
+            OccuredUtc = DateTime.UtcNow,
+            ETag = etagValue
+        };
+
+        var expectedTimeToLive = TimeSpan.FromSeconds(10);
+        SampleEventItem item = new(evt, "A")
+        {
+            TimeToLive = expectedTimeToLive
+        };
+
+        //Act
+        var json = JsonConvert.SerializeObject(item, _jsonSerializerSettings);
+
+        //Assert
+        json.Should().Contain($"\"timeToLive\":\"{expectedTimeToLive}\"");
+        json.Should().Contain($"\"ttl\":{expectedTimeToLive.TotalSeconds}");
+
         SampleEventItem? deserialized = JsonConvert.DeserializeObject<SampleEventItem>(json, _jsonSerializerSettings);
         deserialized.Should().NotBeNull();
         deserialized!.DomainEvent.EventId.Should().Be(evt.EventId);

@@ -83,6 +83,7 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
     }
 
     /// <inheritdoc />
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public TimeSpan? TimeToLive
     {
         get => _timeToLive.HasValue ? TimeSpan.FromSeconds(_timeToLive.Value) : null;
