@@ -72,7 +72,7 @@ public class DefaultChangeFeedContainerProcessorProviderTests
         var processors = sut.GetProcessors().ToList();
 
         //Assert
-        Assert.Equal(2, processors.Count());
+        Assert.Equal(2, processors.Count);
 
         IContainerChangeFeedProcessor? aChangeFeedProcessor = processors
             .FirstOrDefault(x =>

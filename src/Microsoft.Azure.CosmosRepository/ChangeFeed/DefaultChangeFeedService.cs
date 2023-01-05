@@ -18,7 +18,8 @@ class DefaultChangeFeedService : IChangeFeedService
     {
         _processors = _changeFeedContainerProcessorProvider.SelectMany(x => x.GetProcessors());
 
-        cancellationToken.Register(() => StopAsync().Wait(TimeSpan.FromSeconds(5)));
+        using CancellationTokenRegistration registration =
+            cancellationToken.Register(() => StopAsync().Wait(TimeSpan.FromSeconds(5)));
 
         return Task.WhenAll(
             _processors.Select(

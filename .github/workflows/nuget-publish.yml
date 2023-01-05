@@ -7,9 +7,9 @@ jobs:
   unit_tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+      - uses: actions/checkout@main
+      - name: Setup .NET
+        uses: actions/setup-dotnet@main
         with:
           dotnet-version: |
             7.0.x
@@ -27,9 +27,9 @@ jobs:
   acceptance_tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+      - uses: actions/checkout@main
+      - name: Setup .NET
+        uses: actions/setup-dotnet@main
         with:
           dotnet-version: |
             7.0.x
@@ -64,6 +64,12 @@ jobs:
         run: |
           dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=CosmosEventSourcing"
 
+      - name: Prune databases
+        working-directory: ./tools/CosmosTestHelper
+        env:
+          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+        run: dotnet run
+
       - name: Test Container Creation
         env:
           CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
@@ -76,52 +82,50 @@ jobs:
       - unit_tests
     if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project:
+        - Microsoft.Azure.CosmosRepository
+        - Microsoft.Azure.CosmosRepository.AspNetCore
+        - Microsoft.Azure.CosmosEventSourcing
     steps:
-      - name: Print Tag Ref
+      - name: Print tag ref
         run: echo $GITHUB_REF
 
-      - name: Extract Version Number
+      - name: Extract version number
         uses: actions-ecosystem/action-regex-match@v2
         id: regex-match
         with:
           text: ${{ github.ref }}
           regex: "([pre0-9.-]+)$"
 
-      - name: Print Version Number
+      - name: Print version number
         run: echo '${{ steps.regex-match.outputs.match }}'
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@main
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@main
         with:
           dotnet-version: |
             7.0.x
 
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: Restore ${{ matrix.project }} dependencies
+        run: dotnet restore ./src/${{ matrix.project }}/${{ matrix.project }}.csproj
 
       - name: Build
         run: |
-          dotnet build --configuration Release --no-restore
+          dotnet build ./src/${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-restore
 
-      - name: Pack Microsoft.Azure.CosmosRepository
+      - name: Pack ${{ matrix.project }}
         run: |
-          dotnet pack ./src/Microsoft.Azure.CosmosRepository/Microsoft.Azure.CosmosRepository.csproj --output packages
+          dotnet pack ./src/${{ matrix.project }}/${{ matrix.project }}.csproj --output packages
 
-      - name: Pack Microsoft.Azure.CosmosRepository.AspNetCore
-        run: |
-          dotnet pack ./src/Microsoft.Azure.CosmosRepository.AspNetCore/Microsoft.Azure.CosmosRepository.AspNetCore.csproj --output packages
-
-      - name: Pack Microsoft.Azure.CosmosEventSourcing
-        run: |
-          dotnet pack ./src/Microsoft.Azure.CosmosEventSourcing/Microsoft.Azure.CosmosEventSourcing.csproj -p:PackageVersion='${{ steps.regex-match.outputs.match }}-pre1' --output packages
-
-      - name: Publish Package
+      - name: Publish ${{ matrix.project }} package
         run: |
           nuget push **\*.nupkg -NoSymbols -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
 
       - name: Upload Package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@main
         with:
-          name: IEvangelist.Azure.CosmosRepository.V${{ steps.regex-match.outputs.match }}
+          name: ${{ matrix.project }}.v${{ steps.regex-match.outputs.match }}
           path: packages/

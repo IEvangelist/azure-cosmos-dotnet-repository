@@ -45,7 +45,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
 
         ChangeFeedProcessorBuilder builder = itemContainer
             .GetChangeFeedProcessorBuilder<TSourcedEvent>(_options.ProcessorName, (changes, token) =>
-                OnChangesAsync(changes, token, itemContainer.Id))
+                OnChangesAsync(changes, itemContainer.Id, token))
             .WithLeaseContainer(leaseContainer)
             .WithInstanceName(_options.InstanceName)
             .WithErrorNotification((_, exception) => OnErrorAsync(exception, itemContainer.Id));
@@ -72,8 +72,8 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
 
     private async Task OnChangesAsync(
         IReadOnlyCollection<TSourcedEvent> changes,
-        CancellationToken cancellationToken,
-        string containerName)
+        string containerName,
+        CancellationToken cancellationToken)
     {
         _logger.LogDebug("Detected changes for container {ContainerName} total ({ChangesCount})",
             containerName, changes.Count);
