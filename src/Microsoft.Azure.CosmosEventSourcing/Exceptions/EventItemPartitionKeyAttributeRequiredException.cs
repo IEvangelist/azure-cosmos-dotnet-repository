@@ -15,7 +15,7 @@ public class EventItemPartitionKeyAttributeRequiredException : Exception
     /// </summary>
     /// <param name="aggregateType">Type of the aggregate which had the invalid configuration. Used to build up the message</param>
     public EventItemPartitionKeyAttributeRequiredException(Type aggregateType) :
-        base($"A {nameof(EventItemPartitionKeyAttribute)} must be present on a property in {aggregateType.Name}")
+        base($"A {nameof(EventItemPartitionKeyAttribute)} must be present on a property in {aggregateType.Name} or you must specify the partition key explicitly")
     {
 
     }
