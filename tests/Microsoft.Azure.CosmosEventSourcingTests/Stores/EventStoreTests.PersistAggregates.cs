@@ -143,6 +143,6 @@ public partial class EventStoreTests
         exception.Message
             .Should()
             .Be(
-                $"A {nameof(EventItemPartitionKeyAttribute)} must be present on a property in {nameof(Testing.TestAggregateWithNoPk)}");
+                $"A {nameof(EventItemPartitionKeyAttribute)} must be present on a property in {nameof(Testing.TestAggregateWithNoPk)} or you must specify the partition key explicitly");
     }
 }
