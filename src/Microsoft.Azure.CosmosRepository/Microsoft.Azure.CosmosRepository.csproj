@@ -41,6 +41,7 @@
         <RepositoryType>git</RepositoryType>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <PackageIcon>logo.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(ImplicitUsings)' == 'enable' or '$(ImplicitUsings)' == 'true'">
