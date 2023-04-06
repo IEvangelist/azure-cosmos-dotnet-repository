@@ -269,6 +269,15 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "dnitsch",
+      "name": "dnitsch",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6850870?v=4",
+      "profile": "https://github.com/dnitsch",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
