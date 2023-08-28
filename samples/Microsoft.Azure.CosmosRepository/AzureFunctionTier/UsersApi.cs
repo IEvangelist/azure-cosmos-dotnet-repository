@@ -1,10 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using AzureFunctionTier.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -95,12 +91,12 @@ public class UsersApi
         using var cancellationSource =
             CancellationTokenSource.CreateLinkedTokenSource(hostCancellationToken, req.HttpContext.RequestAborted);
 
-        var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        var requestBody = await new StreamReader(req.Body).ReadToEndAsync(hostCancellationToken);
         PostUserRequest userInput = JsonConvert.DeserializeObject<PostUserRequest>(requestBody);
 
         log.LogInformation(
             "Input (request body): {RequestBody}",
-            string.Replace(requestBody ?? "", Environment.NewLine, string.Empty));
+            (requestBody ?? "").Replace(Environment.NewLine, string.Empty));
 
         User user = await _repository.CreateAsync(userInput, cancellationSource.Token);
 
