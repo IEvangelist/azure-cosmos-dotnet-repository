@@ -98,7 +98,9 @@ public class UsersApi
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         PostUserRequest userInput = JsonConvert.DeserializeObject<PostUserRequest>(requestBody);
 
-        log.LogInformation("Input (request body): {RequestBody}", requestBody);
+        log.LogInformation(
+            "Input (request body): {RequestBody}",
+            string.Replace(requestBody ?? "", Environment.NewLine, string.Empty));
 
         User user = await _repository.CreateAsync(userInput, cancellationSource.Token);
 
