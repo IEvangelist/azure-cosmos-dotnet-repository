@@ -55,13 +55,10 @@ public class DeadLetterProjectionBuilderDecoratorTests
         ServiceCollection services = new();
         services.AddCosmosEventSourcing(es =>
         {
-            es.AddCosmosRepository(options =>
-            {
-                options.ContainerBuilder
+            es.AddCosmosRepository(options => options.ContainerBuilder
                     .ConfigureEventItemStore<DecoratorEventItem>("decorator-events")
                     .ConfigureDeadLetteredEventItemStore<DecoratorEventItem, DecoratorDeadLetteredEventItem>(
-                        "dead-letter");
-            });
+                        "dead-letter"));
 
             es.AddEventItemProjection<DecoratorEventItem, DecoratorProjectionKey, DecoratorProjection>(
                     options =>

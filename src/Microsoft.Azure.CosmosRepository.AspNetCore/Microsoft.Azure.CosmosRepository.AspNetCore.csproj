@@ -20,7 +20,7 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <Title>IEvangelist Azure Cosmos DB Repository Client library</Title>
         <PackageId>IEvangelist.Azure.CosmosRepository.AspNetCore</PackageId>
-        <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureofficial;dotnetcore;netcore;netstandard</PackageTags>
+        <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureunofficial;dotnetcore;netcore;netstandard</PackageTags>
         <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
         <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -42,11 +42,11 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
-        <PackageReference Include="MinVer" Version="4.2.0">
+        <PackageReference Include="MinVer" Version="4.3.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Scrutor" Version="4.2.0" />
+        <PackageReference Include="Scrutor" Version="4.2.2" />
     </ItemGroup>
 
     <ItemGroup>

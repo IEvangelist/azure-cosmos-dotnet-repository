@@ -63,10 +63,7 @@ public class DefaultChangeFeedContainerProcessorProviderTests
             builder.WithChangeFeedMonitoring();
         });
 
-        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder =>
-        {
-            builder.WithContainer("c");
-        });
+        _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithContainer("c"));
 
         //Act
         var processors = sut.GetProcessors().ToList();

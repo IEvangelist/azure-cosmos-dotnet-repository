@@ -44,13 +44,13 @@ public partial class PagingTests
             .Returns(_repositoryOptions);
 
     [Fact]
-    public async ValueTask ReadOnlyRepositoriesDefaultImplementationOfPageAsyncYieldsCorrectly()
+    public async Task ReadOnlyRepositoriesDefaultImplementationOfPageAsyncYieldsCorrectly()
     {
         // Arrange
         TestItem[] items = new[]
         {
             new TestItem { Property = "🎶 Record player" },
-            new TestItem { Property = "💿 Vinyl ablums" },
+            new TestItem { Property = "💿 Vinyl albums" },
             new TestItem { Property = "🎸 Electric guitar" },
             new TestItem { Property = "🥁 Drums" },
             new TestItem { Property = "🎙 Microphone" },
@@ -93,14 +93,14 @@ public partial class PagingTests
         // TODO: Test this functionality.
 
         // Act
-        // await foreach (TestItem actualItem in repository.PageAsync(
-        //     predicate,
-        //     limit: 5, // The first five test item.
-        //     CancellationToken.None))
-        // {
-        //     // Assert
-        //     Assert.Contains(actualItem, items);
-        // }
+        await foreach (TestItem actualItem in repository.PageAsync(
+            predicate,
+            limit: 5, // The first five test item.
+            CancellationToken.None))
+        {
+            // Assert
+            Assert.Contains(actualItem, items);
+        }
     }
 }
 #endif

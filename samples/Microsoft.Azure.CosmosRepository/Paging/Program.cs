@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 ConfigurationBuilder configuration = new();
 
-ServiceProvider provider = new ServiceCollection().AddCosmosRepository(options =>
+using ServiceProvider provider = new ServiceCollection().AddCosmosRepository(static options =>
     {
         options.CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
         options.DatabaseId = "paging-db";

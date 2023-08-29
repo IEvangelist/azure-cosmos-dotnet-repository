@@ -33,15 +33,9 @@ public class DefaultChangeFeedOptionsProviderTests
         //Arrange
         IChangeFeedOptionsProvider sut = CreateSut();
 
-        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
-        {
-            builder.WithChangeFeedMonitoring();
-        });
+        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithChangeFeedMonitoring());
 
-        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
-        {
-            builder.WithChangeFeedMonitoring();
-        });
+        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder => builder.WithChangeFeedMonitoring());
 
         //Act
         ChangeFeedOptions options = sut.GetOptionsForItems(new[] { typeof(TestItem), typeof(AnotherTestItem) });
@@ -56,18 +50,9 @@ public class DefaultChangeFeedOptionsProviderTests
         //Arrange
         IChangeFeedOptionsProvider sut = CreateSut();
 
-        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
-        {
-            builder.WithChangeFeedMonitoring();
-        });
+        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithChangeFeedMonitoring());
 
-        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
-        {
-            builder.WithChangeFeedMonitoring(options =>
-            {
-                options.InstanceName = "different";
-            });
-        });
+        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder => builder.WithChangeFeedMonitoring(options => options.InstanceName = "different"));
 
         IReadOnlyList<Type> types = new[] { typeof(TestItem), typeof(AnotherTestItem) };
 

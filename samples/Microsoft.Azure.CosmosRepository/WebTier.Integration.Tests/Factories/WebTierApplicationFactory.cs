@@ -12,12 +12,9 @@ public class WebTierApplicationFactory : WebApplicationFactory<Startup>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureTestServices(services =>
-        {
-            services
+        builder.ConfigureTestServices(services => services
                 .RemoveCosmosRepositories()
-                .AddInMemoryCosmosRepository();
-        });
+                .AddInMemoryCosmosRepository());
         base.ConfigureWebHost(builder);
     }
 }

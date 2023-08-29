@@ -21,7 +21,7 @@
         <AssemblyName>Microsoft.Azure.CosmosRepository</AssemblyName>
         <Title>IEvangelist Azure Cosmos DB Repository Client library</Title>
         <PackageId>IEvangelist.Azure.CosmosRepository</PackageId>
-        <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureofficial;dotnetcore;netcore;netstandard</PackageTags>
+        <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureunofficial;dotnetcore;netcore;netstandard</PackageTags>
         <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
         <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -45,8 +45,8 @@
     </PropertyGroup>
 
     <ItemGroup Condition="'$(ImplicitUsings)' == 'enable' or '$(ImplicitUsings)' == 'true'">
-        <Using Include="Microsoft.Azure.Cosmos"/>
-        <Using Include="Microsoft.Azure.CosmosRepository"/>
+        <Using Include="Microsoft.Azure.Cosmos" />
+        <Using Include="Microsoft.Azure.CosmosRepository" />
     </ItemGroup>
 
     <ItemGroup>
@@ -54,7 +54,7 @@
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
-        <PackageReference Include="MinVer" Version="4.2.0">
+        <PackageReference Include="MinVer" Version="4.3.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

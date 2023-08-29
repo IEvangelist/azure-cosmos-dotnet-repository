@@ -14,7 +14,7 @@
         <Authors>Mumby0168,IEvangelist</Authors>
         <AssemblyName>Microsoft.Azure.CosmosEventSourcing</AssemblyName>
         <Title>IEvangelist Azure Cosmos Event Sourcing</Title>
-        <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureofficial;dotnetcore;netcore;netstandard;event-sourcing;eda;change-feed;projections</PackageTags>
+        <PackageTags>microsoft;azure;cosmos;cosmosdb;documentdb;docdb;nosql;azureunofficial;dotnetcore;netcore;netstandard;event-sourcing;eda;change-feed;projections</PackageTags>
         <PackageProjectUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</PackageProjectUrl>
         <PublishRepositoryUrl Condition=" '$(ProjectRef)' != 'True' ">true</PublishRepositoryUrl>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -40,7 +40,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-      <PackageReference Include="Scrutor" Version="4.2.0" />
+      <PackageReference Include="Scrutor" Version="4.2.2" />
     </ItemGroup>
 
     <ItemGroup>

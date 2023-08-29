@@ -23,8 +23,8 @@ public class SpecificationBuilderTests
         builder.PageNumber(5);
         builder.PageSize(25);
 
-        Assert.Equal(1, spec.WhereExpressions.Count);
-        Assert.Equal(1, spec.OrderExpressions.Count);
+        Assert.Single(spec.WhereExpressions);
+        Assert.Single(spec.OrderExpressions);
         Assert.Equal(25, spec.PageSize);
         Assert.Equal(5, spec.PageNumber);
     }

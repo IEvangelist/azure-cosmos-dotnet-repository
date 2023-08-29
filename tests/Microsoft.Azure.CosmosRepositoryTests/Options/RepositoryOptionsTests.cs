@@ -20,7 +20,7 @@ public class RepositoryOptionsTests
                 .WithPartitionKey("/category")
         );
 
-        Assert.Equal(1, options.ContainerOptions.Count);
+        Assert.Single(options.ContainerOptions);
         Assert.Equal("products", options.ContainerOptions[0].Name);
         Assert.Equal("/category", options.ContainerOptions[0].PartitionKey);
     }

@@ -50,10 +50,7 @@ public class DefaultRepositoryFactoryTests
         IServiceCollection services = new ServiceCollection();
         services.AddSingleton<IConfiguration>(configuration);
 
-        services.AddCosmosRepository(options =>
-        {
-            options.TokenCredential = new TestTokenCredential();
-        });
+        services.AddCosmosRepository(options => options.TokenCredential = new TestTokenCredential());
 
         IServiceProvider provider = services.BuildServiceProvider();
         IRepositoryFactory factory = provider.GetRequiredService<IRepositoryFactory>();

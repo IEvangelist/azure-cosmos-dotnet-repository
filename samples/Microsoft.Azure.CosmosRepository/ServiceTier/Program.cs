@@ -24,10 +24,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
             options.OptimizeBandwidth = true;
             options.ContainerPerItemType = true;
         },
-        clientOptions =>
-        {
-            clientOptions.AllowBulkExecution = true;
-        })
+        clientOptions => clientOptions.AllowBulkExecution = true)
         .AddSingleton<IExampleService, ExampleService>()).Build();
 
 await host.StartAsync();

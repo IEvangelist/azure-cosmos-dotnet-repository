@@ -28,12 +28,9 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
         options.CosmosConnectionString = GetCosmosConnectionString();
         options.DatabaseId = BuildDatabaseName(UniquePolicyDb);
         options.ContainerPerItemType = true;
-        options.ContainerBuilder.Configure<UniqueKeyPolicyItem>(builder =>
-        {
-            builder
+        options.ContainerBuilder.Configure<UniqueKeyPolicyItem>(builder => builder
                 .WithContainer(UniqueKeyPolicyContainerName)
-                .WithPartitionKey("/county");
-        });
+                .WithPartitionKey("/county"));
     }
 
     public ContainerCreationTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, UniqueKeyOptionsBuilder)

@@ -61,11 +61,8 @@ public abstract class CosmosRepositoryAcceptanceTest
         services.AddLogging(options =>
         {
             options.ClearProviders();
-            options.AddXUnit(testOutputHelper, loggerOptions =>
-            {
-                loggerOptions.Filter = (s, _) =>
-                    s is null || !s.StartsWith("System.Net");
-            });
+            options.AddXUnit(testOutputHelper, loggerOptions => loggerOptions.Filter = (s, _) =>
+                    s is null || !s.StartsWith("System.Net"));
 
             options.SetMinimumLevel(LogLevel.Debug);
         });
@@ -105,25 +102,19 @@ public abstract class CosmosRepositoryAcceptanceTest
         ConfigureProducts?.Invoke(options);
     };
 
-    protected static readonly Action<RepositoryOptions> ConfigureProducts = options =>
-    {
-        options.ContainerBuilder.Configure<Product>(builder =>
+    protected static readonly Action<RepositoryOptions> ConfigureProducts = options => options.ContainerBuilder.Configure<Product>(builder =>
         {
             builder.WithContainer(ProductsInfoContainer);
             builder.WithPartitionKey(DefaultPartitionKey);
             builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(10));
         });
-    };
 
-    protected static readonly Action<RepositoryOptions> ConfigureRatings = options =>
-    {
-        options.ContainerBuilder.Configure<Rating>(builder =>
+    protected static readonly Action<RepositoryOptions> ConfigureRatings = options => options.ContainerBuilder.Configure<Rating>(builder =>
         {
             builder.WithContainer(ProductsInfoContainer);
             builder.WithPartitionKey(DefaultPartitionKey);
             builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(10));
         });
-    };
 
 
     protected async Task<ContainerProperties?> PruneDatabases(CosmosClient client)

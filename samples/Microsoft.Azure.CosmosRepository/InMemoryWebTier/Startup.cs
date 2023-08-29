@@ -24,8 +24,8 @@ public class Startup
         services.AddSwaggerGen(options =>
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "Language - Web API",
-                Version = "v1"
+                Title = "Language - Minimal API",
+                Version = "v2"
             }));
     }
 
@@ -35,7 +35,7 @@ public class Startup
         app.UseStaticFiles();
         app.UseSwagger();
         app.UseSwaggerUI(options =>
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Language - Web API"));
+            options.SwaggerEndpoint("/swagger/v2/swagger.json", "Language - Web API"));
 
         app.UseHttpsRedirection();
         app.UseRouting();
