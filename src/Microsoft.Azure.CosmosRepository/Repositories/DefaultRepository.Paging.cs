@@ -79,7 +79,7 @@ internal sealed partial class DefaultRepository<TItem>
 
         _logger.LogQueryConstructed(query);
 
-        (List<TItem> items, var charge, var resultingContinationToken) =
+        (List<TItem> items, var charge, var resultingContinuationToken) =
             await GetAllItemsAsync(query, pageSize, cancellationToken);
 
         _logger.LogQueryExecuted(query, charge);
@@ -90,6 +90,6 @@ internal sealed partial class DefaultRepository<TItem>
             pageSize,
             items.AsReadOnly(),
             charge + countResponse?.RequestCharge ?? 0,
-            resultingContinationToken /* This was missing, is this correct? */);
+            resultingContinuationToken /* This was missing, is this correct? */);
     }
 }

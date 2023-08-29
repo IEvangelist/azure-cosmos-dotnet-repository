@@ -1,7 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-[assembly: InternalsVisibleTo("Microsoft.Azure.CosmosRepositoryTests")]
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 /// <summary>

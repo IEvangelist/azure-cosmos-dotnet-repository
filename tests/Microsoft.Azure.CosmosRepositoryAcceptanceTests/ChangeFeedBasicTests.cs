@@ -69,7 +69,6 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
 
             await _ratingsRepository.CreateAsync(tvRating);
 
-
             await _readCountPolicy.ExecuteAsync(async () =>
             {
                 _logger.LogInformation("Checking projections");

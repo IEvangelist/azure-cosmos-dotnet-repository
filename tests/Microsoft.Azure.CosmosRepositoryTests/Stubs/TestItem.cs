@@ -1,6 +1,8 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Text.Json.Serialization;
+
 namespace Microsoft.Azure.CosmosRepositoryTests.Stubs;
 
 public class TestItem : FullItem
@@ -10,4 +12,7 @@ public class TestItem : FullItem
     public TestItem(string etag) : base(etag) { }
 
     public string Property { get; set; } = default!;
+
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public int Number { get; set; }
 }

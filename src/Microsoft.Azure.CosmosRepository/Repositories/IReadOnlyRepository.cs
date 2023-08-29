@@ -245,7 +245,7 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
             IPageQueryResult<TItem> page = await PageAsync(
                 predicate,
                 pageNumber: ++ currentPage,
-                25,                
+                25,
                 returnTotal: false,
                 cancellationToken);
 
