@@ -1,16 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.ChangeFeed;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.InMemory;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.InMemory;
 
 public class InMemoryChangeFeedTests

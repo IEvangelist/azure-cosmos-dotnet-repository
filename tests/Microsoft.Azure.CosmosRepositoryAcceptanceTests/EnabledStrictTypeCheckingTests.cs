@@ -1,19 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Exceptions;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using Xunit.Abstractions;
-
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
 /// <summary>

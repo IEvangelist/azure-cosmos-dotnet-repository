@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <ImplicitUsings>enable</ImplicitUsings>
         <IsPackable>false</IsPackable>
         <Nullable>enable</Nullable>
     </PropertyGroup>

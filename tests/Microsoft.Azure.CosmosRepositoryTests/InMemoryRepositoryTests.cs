@@ -1,19 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Paging;
-using Microsoft.Azure.CosmosRepository.Specification;
-using Microsoft.Azure.CosmosRepositoryTests.Extensions;
-using Newtonsoft.Json;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests;
 
 class Person : Item, IItemWithEtag

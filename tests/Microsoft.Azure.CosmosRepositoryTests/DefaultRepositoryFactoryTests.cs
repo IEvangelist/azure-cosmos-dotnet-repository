@@ -1,15 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests;
 
 public class DefaultRepositoryFactoryTests

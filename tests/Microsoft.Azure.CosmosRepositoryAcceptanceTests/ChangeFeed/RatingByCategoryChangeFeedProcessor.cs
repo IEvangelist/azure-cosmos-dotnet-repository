@@ -1,13 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.ChangeFeed;
-using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
-using Microsoft.Extensions.Logging;
-
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests.ChangeFeed;
 
 public class RatingByCategoryChangeFeedProcessor : IItemChangeFeedProcessor<Rating>

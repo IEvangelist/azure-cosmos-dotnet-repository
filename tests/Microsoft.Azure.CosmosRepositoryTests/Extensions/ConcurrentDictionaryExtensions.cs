@@ -1,9 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.Concurrent;
-using Newtonsoft.Json;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Extensions;
 
 public static class ConcurrentDictionaryExtensions

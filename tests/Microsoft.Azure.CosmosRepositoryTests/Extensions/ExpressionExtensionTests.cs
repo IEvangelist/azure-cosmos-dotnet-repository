@@ -1,12 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using Microsoft.Azure.CosmosRepository.Extensions;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Extensions;
 
 public class ExpressionExtensionTests

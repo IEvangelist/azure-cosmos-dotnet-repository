@@ -1,19 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepository.Services;
-using Microsoft.Azure.CosmosRepository.Validators;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
-using Moq;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Services;
 
 public class DefaultCosmosContainerServiceTests

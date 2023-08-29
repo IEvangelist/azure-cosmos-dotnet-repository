@@ -1,20 +1,7 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Threading.Tasks;
-using FluentAssertions.Equivalency;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Xunit;
-using Xunit.Abstractions;
+
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
@@ -23,7 +10,7 @@ public abstract class CosmosRepositoryAcceptanceTest
 {
     protected const string ProductsInfoContainer = "products-info";
     protected const string DefaultPartitionKey = "/partitionKey";
-    protected const string TechnologyCategoryId = "Techonology";
+    protected const string TechnologyCategoryId = "Technology";
     protected const string AcceptanceTestsDatabaseSuffix = "cosmos-repo-acceptance-tests-db";
 
     protected readonly ServiceProvider _provider;
@@ -69,9 +56,12 @@ public abstract class CosmosRepositoryAcceptanceTest
 
         _provider = services.BuildServiceProvider();
 
-        _productsRepository = _provider.GetRequiredService<IRepository<Product>>();
-        _ratingsRepository = _provider.GetRequiredService<IRepository<Rating>>();
         _logger = _provider.GetRequiredService<ILogger<CosmosRepositoryAcceptanceTest>>();
+
+        var factory = _provider.GetRequiredService<IRepositoryFactory>();
+
+        _productsRepository = factory.RepositoryOf<Product>();
+        _ratingsRepository = factory.RepositoryOf<Rating>();
     }
 
     internal ICosmosClientProvider GetClient() =>
@@ -115,7 +105,6 @@ public abstract class CosmosRepositoryAcceptanceTest
             builder.WithPartitionKey(DefaultPartitionKey);
             builder.WithContainerDefaultTimeToLive(TimeSpan.FromMinutes(10));
         });
-
 
     protected async Task<ContainerProperties?> PruneDatabases(CosmosClient client)
     {

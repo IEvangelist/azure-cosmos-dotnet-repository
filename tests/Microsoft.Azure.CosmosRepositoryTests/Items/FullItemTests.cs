@@ -1,13 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using FluentAssertions;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Items;
 
 public class FullItemTests

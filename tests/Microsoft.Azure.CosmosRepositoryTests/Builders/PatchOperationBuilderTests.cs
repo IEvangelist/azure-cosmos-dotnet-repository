@@ -1,15 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Builders;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Builders;
 
 public class Item1 : Item

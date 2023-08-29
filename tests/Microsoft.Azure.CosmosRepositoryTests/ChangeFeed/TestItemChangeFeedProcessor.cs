@@ -1,12 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository.ChangeFeed;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed;
 
 public class TestItemChangeFeedProcessor : IItemChangeFeedProcessor<TestItem>

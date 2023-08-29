@@ -1,13 +1,7 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Attributes;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Extensions.Options;
-using Moq;
-using Xunit;
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
 

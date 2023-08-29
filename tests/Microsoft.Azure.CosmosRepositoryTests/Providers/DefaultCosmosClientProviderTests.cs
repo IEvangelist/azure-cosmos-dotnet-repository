@@ -1,14 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Moq;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
 
 public class DefaultCosmosClientProviderTests

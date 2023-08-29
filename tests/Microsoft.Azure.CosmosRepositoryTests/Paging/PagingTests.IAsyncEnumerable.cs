@@ -1,23 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Processors;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepository.Specification.Evaluator;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
-using Moq;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Paging;
 
 #if NET7_0_OR_GREATER

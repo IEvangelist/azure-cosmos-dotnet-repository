@@ -1,19 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using Xunit.Abstractions;
-
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
 [Trait("Category", "Acceptance")]

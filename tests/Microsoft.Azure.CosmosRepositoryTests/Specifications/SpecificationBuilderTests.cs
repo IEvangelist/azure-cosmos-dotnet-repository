@@ -1,13 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Linq;
-using Microsoft.Azure.CosmosRepository;
-using Microsoft.Azure.CosmosRepository.Specification;
-using Microsoft.Azure.CosmosRepository.Specification.Builder;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Specifications;
 
 public class SpecificationBuilderTests

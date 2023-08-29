@@ -39,6 +39,13 @@ public partial class AcceptanceTests
             nameof(ConnectionString),
             "The CosmosConnectionString ENV var must be set for these tests");
 
+    private string ConnectionStringDynamic =>
+        Environment.GetEnvironmentVariable("CosmosConnectionString") is string connectionString
+            ? connectionString
+            : throw new ArgumentNullException(
+                nameof(ConnectionString),
+                "The CosmosConnectionString ENV var must be set for these tests");
+
     public AcceptanceTests(ITestOutputHelper outputHelper)
     {
         IServiceCollection services = new ServiceCollection();
@@ -118,9 +125,9 @@ public partial class AcceptanceTests
                 x.DeleteDatabaseIfExistsAsync(DatabaseName, _logger));
 
         await Policy
-            .Handle<CosmosException>(x =>
+            .Handle<CosmosException>(static x =>
                 x.StatusCode is HttpStatusCode.NotFound)
-            .RetryAsync(3, (_, i) =>
+            .RetryAsync(5, (_, i) =>
                 _logger.LogInformation("Attempting to start change feed service attempt {Attempt}", i))
             .ExecuteAsync(() =>
                 _changeFeedService.StartAsync(default));

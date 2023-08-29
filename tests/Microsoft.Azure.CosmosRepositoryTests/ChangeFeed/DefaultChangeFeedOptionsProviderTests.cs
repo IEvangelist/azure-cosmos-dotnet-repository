@@ -1,17 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using Microsoft.Azure.CosmosRepository.ChangeFeed;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
-using Microsoft.Azure.CosmosRepository.Exceptions;
-using Microsoft.Azure.CosmosRepository.Options;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Microsoft.Extensions.Options;
-using Moq;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed;
 
 public class DefaultChangeFeedOptionsProviderTests

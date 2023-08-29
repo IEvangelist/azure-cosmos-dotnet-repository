@@ -1,11 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Azure.CosmosRepository.Providers;
-using Microsoft.Azure.CosmosRepositoryTests.Abstractions;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
 
 public class DefaultContainerSyncContainerPropertiesProviderTests : WithRepositoryOptions

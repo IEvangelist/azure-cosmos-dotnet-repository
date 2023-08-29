@@ -1,19 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Azure.CosmosRepository.ChangeFeed;
-using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
-using Microsoft.Azure.CosmosRepository.Services;
-using Microsoft.Azure.CosmosRepositoryTests.Stubs;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
-using Newtonsoft.Json.Linq;
-using Xunit;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed.Processors;
 
 public class DefaultChangeFeedContainerProcessorTests
