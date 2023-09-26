@@ -18,8 +18,7 @@ using Microsoft.Azure.CosmosRepository.Extensions;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
 
-
-services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString()!);
+services.AddHealthChecks().AddAzureCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString()!);
 services.AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = "EventSourcingShipSample");
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
