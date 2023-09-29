@@ -53,7 +53,7 @@ internal partial class InMemoryRepository<TItem>
     {
         IEnumerable<TItem> enumerable = values.ToList();
 
-        List<TItem> results = new();
+        List<TItem> results = [];
 
         foreach (TItem value in enumerable)
         {

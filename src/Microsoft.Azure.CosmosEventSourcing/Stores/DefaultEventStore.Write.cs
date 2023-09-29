@@ -27,8 +27,8 @@ internal partial class DefaultEventStore<TEventItem>
             throw new AtomicEventRequiredException();
         }
 
-        await _batchRepository.UpdateAsBatchAsync(
-            SetCorrelationId(_contextService, eventItems),
+        await batchRepository.UpdateAsBatchAsync(
+            SetCorrelationId(contextService, eventItems),
             cancellationToken);
     }
 
@@ -45,8 +45,8 @@ internal partial class DefaultEventStore<TEventItem>
         IAggregateRootMapper<TAggregateRoot, TEventItem> mapper,
         CancellationToken cancellationToken = default)
         where TAggregateRoot : IAggregateRoot =>
-        _batchRepository.UpdateAsBatchAsync(
-            SetCorrelationId(_contextService, mapper.MapFrom(aggregateRoot)),
+        batchRepository.UpdateAsBatchAsync(
+            SetCorrelationId(contextService, mapper.MapFrom(aggregateRoot)),
             cancellationToken);
 
     public async ValueTask PersistAsync(
@@ -54,7 +54,7 @@ internal partial class DefaultEventStore<TEventItem>
         string partitionKeyValue,
         CancellationToken cancellationToken = default) =>
             await PersistAsync(
-                SetCorrelationId(_contextService, BuildEvents(aggregateRoot, partitionKeyValue)),
+                SetCorrelationId(contextService, BuildEvents(aggregateRoot, partitionKeyValue)),
                 cancellationToken);
 
     private static IEnumerable<TEventItem> SetCorrelationId(

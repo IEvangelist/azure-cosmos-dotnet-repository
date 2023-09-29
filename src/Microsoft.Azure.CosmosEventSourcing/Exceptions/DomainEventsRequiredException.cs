@@ -10,13 +10,9 @@ namespace Microsoft.Azure.CosmosEventSourcing.Exceptions;
 /// An exception that is thrown when not events are provided to an <see cref="IAggregateRoot"/>.
 /// </summary>
 /// <remarks>An <see cref="IAggregateRoot"/> must be provided at least one <see cref="DomainEvent"/> when replaying events</remarks>
-public class DomainEventsRequiredException : Exception
+/// <remarks>
+/// Creates a <see cref="DomainEventsRequiredException"/>.
+/// </remarks>
+public class DomainEventsRequiredException(Type aggregateRootType) : Exception($"At least 1 {nameof(AtomicEvent)} must be provided for {aggregateRootType.Namespace} when replaying events")
 {
-    /// <summary>
-    /// Creates a <see cref="DomainEventsRequiredException"/>.
-    /// </summary>
-    public DomainEventsRequiredException(Type aggregateRootType) :
-        base($"At least 1 {nameof(AtomicEvent)} must be provided for {aggregateRootType.Namespace} when replaying events")
-    {
-    }
 }

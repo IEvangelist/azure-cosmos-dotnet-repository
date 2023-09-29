@@ -13,7 +13,7 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
         if (value is IItemWithTimeStamps { CreatedTimeUtc: null } valueWithTimestamps)
         {
@@ -25,7 +25,7 @@ internal sealed partial class DefaultRepository<TItem>
                     cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
-        TryLogDebugDetails(_logger, () => $"Created: {JsonConvert.SerializeObject(value)}");
+        TryLogDebugDetails(logger, () => $"Created: {JsonConvert.SerializeObject(value)}");
 
         return response.Resource;
     }

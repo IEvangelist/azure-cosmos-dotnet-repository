@@ -21,7 +21,7 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
         if (partitionKey == default)
         {
@@ -47,15 +47,16 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
         IQueryable<TItem> query =
-            container.GetItemLinqQueryable<TItem>()
-                .Where(_repositoryExpressionProvider.Build(predicate));
+            container.GetItemLinqQueryable<TItem>(
+                    linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
+                .Where(repositoryExpressionProvider.Build(predicate));
 
-        TryLogDebugDetails(_logger, () => $"Read: {query}");
+        TryLogDebugDetails(logger, () => $"Read: {query}");
 
-        var count = await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
+        var count = await cosmosQueryableProcessor.CountAsync(query, cancellationToken);
         return count > 0;
     }
 }

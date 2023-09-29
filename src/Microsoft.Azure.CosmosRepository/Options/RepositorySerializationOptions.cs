@@ -27,4 +27,30 @@ public class RepositorySerializationOptions
     /// </summary>
     /// <remarks>The default value is <see cref="CosmosPropertyNamingPolicy.CamelCase"/>.</remarks>
     public CosmosPropertyNamingPolicy PropertyNamingPolicy { get; set; } = CosmosPropertyNamingPolicy.CamelCase;
+
+    /// <summary>
+    /// Defines an implicit operator for which allows the <see cref="RepositorySerializationOptions"/> to be converted 
+    /// to a <see cref="CosmosSerializationOptions"/>.
+    /// </summary>
+    /// <param name="options">The source options to map from.</param>
+    public static implicit operator CosmosSerializationOptions(RepositorySerializationOptions? options) =>
+        new()
+        {
+            IgnoreNullValues = options?.IgnoreNullValues ?? false,
+            Indented = options?.Indented ?? false,
+            PropertyNamingPolicy = options?.PropertyNamingPolicy
+                ?? CosmosPropertyNamingPolicy.CamelCase
+        };
+
+    /// <summary>
+    /// Defines an implicit operator for which allows the <see cref="RepositorySerializationOptions"/> to be converted 
+    /// to a <see cref="CosmosLinqSerializerOptions"/>.
+    /// </summary>
+    /// <param name="options">The source options to map from.</param>
+    public static implicit operator CosmosLinqSerializerOptions(RepositorySerializationOptions? options) =>
+        new()
+        {
+            PropertyNamingPolicy = options?.PropertyNamingPolicy
+                ?? CosmosPropertyNamingPolicy.CamelCase
+        };
 }

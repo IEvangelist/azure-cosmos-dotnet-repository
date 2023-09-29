@@ -3,17 +3,12 @@
 
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
-class DefaultRepositoryExpressionProvider : IRepositoryExpressionProvider
+class DefaultRepositoryExpressionProvider(ICosmosItemConfigurationProvider itemConfigurationProvider) : IRepositoryExpressionProvider
 {
-    private readonly ICosmosItemConfigurationProvider _itemConfigurationProvider;
-
-    public DefaultRepositoryExpressionProvider(ICosmosItemConfigurationProvider itemConfigurationProvider) =>
-        _itemConfigurationProvider = itemConfigurationProvider;
-
     public Expression<Func<TItem, bool>> Build<TItem>(Expression<Func<TItem, bool>> predicate)
         where TItem : IItem
     {
-        ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
+        ItemConfiguration options = itemConfigurationProvider.GetItemConfiguration<TItem>();
 
         return options.UseStrictTypeChecking ? predicate.Compose(Default<TItem>(), Expression.AndAlso) : predicate;
     }
@@ -23,7 +18,7 @@ class DefaultRepositoryExpressionProvider : IRepositoryExpressionProvider
 
     public TItem CheckItem<TItem>(TItem item) where TItem : IItem
     {
-        ItemConfiguration options = _itemConfigurationProvider.GetItemConfiguration<TItem>();
+        ItemConfiguration options = itemConfigurationProvider.GetItemConfiguration<TItem>();
 
         if (options.UseStrictTypeChecking)
         {

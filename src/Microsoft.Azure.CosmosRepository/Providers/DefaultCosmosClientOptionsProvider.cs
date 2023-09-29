@@ -32,13 +32,7 @@ class DefaultCosmosClientOptionsProvider : ICosmosClientOptionsProvider
 
         CosmosClientOptions cosmosClientOptions = new()
         {
-            SerializerOptions = new()
-            {
-                IgnoreNullValues = ro.SerializationOptions?.IgnoreNullValues ?? false,
-                Indented = ro.SerializationOptions?.Indented ?? false,
-                PropertyNamingPolicy = ro.SerializationOptions?.PropertyNamingPolicy
-                    ?? CosmosPropertyNamingPolicy.CamelCase
-            },
+            SerializerOptions = ro.SerializationOptions,
             HttpClientFactory = () => ClientFactory(serviceProvider),
             AllowBulkExecution = ro.AllowBulkExecution
         };

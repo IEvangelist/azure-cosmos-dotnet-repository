@@ -14,18 +14,15 @@ namespace Microsoft.Azure.CosmosRepository.Attributes;
 /// <remarks>
 /// By default, "/id" is used.
 /// </remarks>
+/// <remarks>
+/// Constructor accepting the <paramref name="path"/> of the partition key for a given <see cref="IItem"/>.
+/// </remarks>
+/// <param name="path"></param>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-public sealed class PartitionKeyPathAttribute : Attribute
+public sealed class PartitionKeyPathAttribute(string path) : Attribute
 {
     /// <summary>
     /// Gets the path of the parition key.
     /// </summary>
-    public string Path { get; } = "/id";
-
-    /// <summary>
-    /// Constructor accepting the <paramref name="path"/> of the partition key for a given <see cref="IItem"/>.
-    /// </summary>
-    /// <param name="path"></param>
-    public PartitionKeyPathAttribute(string path) =>
-        Path = path ?? throw new ArgumentNullException(nameof(path), "A path is required.");
+    public string Path { get; } = path ?? throw new ArgumentNullException(nameof(path), "A path is required.");
 }

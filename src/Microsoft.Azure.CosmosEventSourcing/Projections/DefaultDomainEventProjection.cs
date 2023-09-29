@@ -9,32 +9,23 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.Azure.CosmosEventSourcing.Projections;
 
 internal class
-    DefaultDomainEventProjection<TEventItem, TProjectionKey> : IEventItemProjection<TEventItem, TProjectionKey>
+    DefaultDomainEventProjection<TEventItem, TProjectionKey>(
+    ILogger<DefaultDomainEventProjection<TEventItem, TProjectionKey>> logger,
+    IServiceProvider serviceProvider) : IEventItemProjection<TEventItem, TProjectionKey>
     where TEventItem : EventItem
     where TProjectionKey : IProjectionKey
 {
-    private readonly ILogger<DefaultDomainEventProjection<TEventItem, TProjectionKey>> _logger;
-    private readonly IServiceProvider _serviceProvider;
-
-    public DefaultDomainEventProjection(
-        ILogger<DefaultDomainEventProjection<TEventItem, TProjectionKey>> logger,
-        IServiceProvider serviceProvider)
-    {
-        _logger = logger;
-        _serviceProvider = serviceProvider;
-    }
-
     public async ValueTask ProjectAsync(TEventItem eventItem, CancellationToken cancellationToken = default)
     {
         var payloadTypeName = eventItem.DomainEvent.GetType().Name;
         Type handlerType = BuildEventProjectionHandlerType(eventItem);
-        IEnumerable<object?> handlers = _serviceProvider.GetServices(handlerType).ToList();
+        IEnumerable<object?> handlers = serviceProvider.GetServices(handlerType).ToList();
 
         if (handlers.Any() is false)
         {
             if (eventItem.DomainEvent is NonDeserializableEvent nonDeserializableEvent)
             {
-                _logger.LogError(
+                logger.LogError(
                     "The event with name {EventName} could not be deserialized as it was not registered with the custom deserializer payload = {EventPayload}",
                     nonDeserializableEvent.Name,
                     nonDeserializableEvent.Payload.ToString());
@@ -43,7 +34,7 @@ internal class
 
             if (payloadTypeName is not nameof(AtomicEvent))
             {
-                _logger.LogDebug("No IDomainEventProjection<{EventType}> found",
+                logger.LogDebug("No IDomainEventProjection<{EventType}> found",
                     payloadTypeName);
             }
 
@@ -64,7 +55,7 @@ internal class
             }
             catch (Exception e)
             {
-                _logger.LogError(e,
+                logger.LogError(e,
                     "Failed when handling event {PersistedEventType} with {EventProjectionHandlerType}",
                     payloadTypeName, handler?.GetType().Name);
             }

@@ -17,7 +17,7 @@ class DefaultRepositoryOptionsValidator : IRepositoryOptionsValidator
             throw new ArgumentNullException(nameof(options), "Repository option are required");
         }
 
-        List<Exception> exceptionsEncountered = new();
+        List<Exception> exceptionsEncountered = [];
 
         (var connectionStringIsNull, var accountEndpointIsNull, var tokenCredentialIsNull, var databaseIdIsNull, var containerIdIsNull, var containerPerType) = (
             current.CosmosConnectionString is null,

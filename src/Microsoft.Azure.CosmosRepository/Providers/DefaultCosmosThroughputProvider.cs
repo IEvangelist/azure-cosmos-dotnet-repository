@@ -4,12 +4,8 @@
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 /// <inheritdoc/>
-class DefaultCosmosThroughputProvider : ICosmosThroughputProvider
+class DefaultCosmosThroughputProvider(IOptions<RepositoryOptions> options) : ICosmosThroughputProvider
 {
-    readonly IOptions<RepositoryOptions> _options;
-
-    public DefaultCosmosThroughputProvider(IOptions<RepositoryOptions> options) =>
-        _options = options;
 
     /// <inheritdoc/>
     public ThroughputProperties? GetThroughputProperties<TItem>() where TItem : IItem =>
@@ -17,14 +13,14 @@ class DefaultCosmosThroughputProvider : ICosmosThroughputProvider
 
     public ThroughputProperties? GetThroughputProperties(Type itemType)
     {
-        ContainerOptionsBuilder? currentItemsOptions = _options.Value.GetContainerOptions(itemType);
+        ContainerOptionsBuilder? currentItemsOptions = options.Value.GetContainerOptions(itemType);
 
         if (currentItemsOptions is null)
         {
             return ThroughputProperties.CreateManualThroughput(400);
         }
 
-        foreach (ContainerOptionsBuilder option in _options.Value.GetContainerSharedContainerOptions(itemType))
+        foreach (ContainerOptionsBuilder option in options.Value.GetContainerSharedContainerOptions(itemType))
         {
             if (option is { ThroughputProperties: null })
             {

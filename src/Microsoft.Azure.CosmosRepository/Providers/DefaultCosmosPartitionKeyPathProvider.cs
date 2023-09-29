@@ -4,15 +4,10 @@
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosPartitionKeyPathProvider" />
-class DefaultCosmosPartitionKeyPathProvider :
+class DefaultCosmosPartitionKeyPathProvider(IOptions<RepositoryOptions> options) :
     ICosmosPartitionKeyPathProvider
 {
-    private readonly IOptions<RepositoryOptions> _options;
-
-    public DefaultCosmosPartitionKeyPathProvider(IOptions<RepositoryOptions> options)
-    {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
-    }
+    private readonly IOptions<RepositoryOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc />
     public string GetPartitionKeyPath<TItem>() where TItem : IItem =>

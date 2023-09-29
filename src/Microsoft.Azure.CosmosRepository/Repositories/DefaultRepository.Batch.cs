@@ -15,7 +15,7 @@ internal partial class DefaultRepository<TItem>
 
         var partitionKey = GetPartitionKeyValue(list);
 
-        Container container = await _containerProvider.GetContainerAsync();
+        Container container = await containerProvider.GetContainerAsync();
 
         TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
 
@@ -48,7 +48,7 @@ internal partial class DefaultRepository<TItem>
 
         var partitionKey = GetPartitionKeyValue(list);
 
-        Container container = await _containerProvider.GetContainerAsync();
+        Container container = await containerProvider.GetContainerAsync();
 
         TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
 
@@ -73,7 +73,7 @@ internal partial class DefaultRepository<TItem>
 
         var partitionKey = GetPartitionKeyValue(list);
 
-        Container container = await _containerProvider.GetContainerAsync();
+        Container container = await containerProvider.GetContainerAsync();
 
         TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
 

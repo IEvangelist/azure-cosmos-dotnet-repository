@@ -14,7 +14,7 @@ internal sealed partial class DefaultRepository<TItem>
     {
         (var optimizeBandwidth, ItemRequestOptions options) = RequestOptions;
         Container container =
-            await _containerProvider.GetContainerAsync()
+            await containerProvider.GetContainerAsync()
                 .ConfigureAwait(false);
 
         if (value is IItemWithEtag valueWithEtag && !ignoreEtag)
@@ -29,7 +29,7 @@ internal sealed partial class DefaultRepository<TItem>
                     cancellationToken)
                 .ConfigureAwait(false);
 
-        TryLogDebugDetails(_logger, () => $"Updated: {JsonConvert.SerializeObject(value)}");
+        TryLogDebugDetails(logger, () => $"Updated: {JsonConvert.SerializeObject(value)}");
 
         return optimizeBandwidth ? value : response.Resource;
     }
@@ -56,12 +56,12 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         CosmosPropertyNamingPolicy? propertyNamingPolicy =
-            _optionsMonitor.CurrentValue.SerializationOptions?.PropertyNamingPolicy;
+            optionsMonitor.CurrentValue.SerializationOptions?.PropertyNamingPolicy;
         IPatchOperationBuilder<TItem> patchOperationBuilder = new PatchOperationBuilder<TItem>(propertyNamingPolicy);
 
         builder(patchOperationBuilder);
 
-        Container container = await _containerProvider.GetContainerAsync();
+        Container container = await containerProvider.GetContainerAsync();
 
         partitionKeyValue ??= id;
 

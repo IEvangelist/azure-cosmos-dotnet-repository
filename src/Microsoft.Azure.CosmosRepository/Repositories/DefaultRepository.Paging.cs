@@ -15,7 +15,7 @@ internal sealed partial class DefaultRepository<TItem>
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
-        Container container = await _containerProvider.GetContainerAsync()
+        Container container = await containerProvider.GetContainerAsync()
             .ConfigureAwait(false);
 
         QueryRequestOptions options = new()
@@ -24,12 +24,15 @@ internal sealed partial class DefaultRepository<TItem>
         };
 
         IQueryable<TItem> query = container
-            .GetItemLinqQueryable<TItem>(requestOptions: options, continuationToken: continuationToken)
-            .Where(_repositoryExpressionProvider.Build(
+            .GetItemLinqQueryable<TItem>(
+                requestOptions: options,
+                continuationToken: continuationToken,
+                linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
+            .Where(repositoryExpressionProvider.Build(
                 predicate ??
-                _repositoryExpressionProvider.Default<TItem>()));
+                repositoryExpressionProvider.Default<TItem>()));
 
-        _logger.LogQueryConstructed(query);
+        logger.LogQueryConstructed(query);
 
         Response<int>? countResponse = null;
 
@@ -38,17 +41,17 @@ internal sealed partial class DefaultRepository<TItem>
             countResponse = await query.CountAsync(cancellationToken);
         }
 
-        (List<TItem> items, var charge, var resultingContinationToken) =
+        (List<TItem> items, var charge, var resultingContinuationToken) =
             await GetAllItemsAsync(query, pageSize, cancellationToken);
 
-        _logger.LogQueryExecuted(query, charge);
+        logger.LogQueryExecuted(query, charge);
 
         return new Page<TItem>(
             countResponse?.Resource ?? null,
             pageSize,
             items.AsReadOnly(),
             charge + countResponse?.RequestCharge ?? 0,
-            resultingContinationToken);
+            resultingContinuationToken);
     }
 
     /// <inheritdoc/>
@@ -59,13 +62,14 @@ internal sealed partial class DefaultRepository<TItem>
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
-        Container container = await _containerProvider.GetContainerAsync()
+        Container container = await containerProvider.GetContainerAsync()
             .ConfigureAwait(false);
 
         IQueryable<TItem> query = container
-            .GetItemLinqQueryable<TItem>()
-            .Where(_repositoryExpressionProvider
-                .Build(predicate ?? _repositoryExpressionProvider.Default<TItem>()));
+            .GetItemLinqQueryable<TItem>(
+                linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
+            .Where(repositoryExpressionProvider
+                .Build(predicate ?? repositoryExpressionProvider.Default<TItem>()));
 
         Response<int>? countResponse = null;
 
@@ -77,12 +81,12 @@ internal sealed partial class DefaultRepository<TItem>
         query = query.Skip(pageSize * (pageNumber - 1))
             .Take(pageSize);
 
-        _logger.LogQueryConstructed(query);
+        logger.LogQueryConstructed(query);
 
         (List<TItem> items, var charge, var resultingContinuationToken) =
             await GetAllItemsAsync(query, pageSize, cancellationToken);
 
-        _logger.LogQueryExecuted(query, charge);
+        logger.LogQueryExecuted(query, charge);
 
         return new PageQueryResult<TItem>(
             countResponse?.Resource ?? null,

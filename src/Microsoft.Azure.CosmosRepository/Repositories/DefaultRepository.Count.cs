@@ -12,14 +12,15 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync()
+            await containerProvider.GetContainerAsync()
                 .ConfigureAwait(false);
 
-        IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
+        IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>(
+            linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions);
 
-        TryLogDebugDetails(_logger, () => $"Read: {query}");
+        TryLogDebugDetails(logger, () => $"Read: {query}");
 
-        return await _cosmosQueryableProcessor.CountAsync(query, cancellationToken);
+        return await cosmosQueryableProcessor.CountAsync(query, cancellationToken);
     }
 
     private async ValueTask<Response<int>> CountAsync<TResult>(
@@ -28,14 +29,15 @@ internal sealed partial class DefaultRepository<TItem>
         where TResult : IQueryResult<TItem>
     {
         Container container =
-            await _containerProvider.GetContainerAsync()
+            await containerProvider.GetContainerAsync()
                 .ConfigureAwait(false);
 
-        IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>();
+        IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>(
+            linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions);
 
-        query = _specificationEvaluator.GetQuery(query, specification, evaluateCriteriaOnly: true);
+        query = specificationEvaluator.GetQuery(query, specification, evaluateCriteriaOnly: true);
 
-        TryLogDebugDetails(_logger, () => $"Read: {query}");
+        TryLogDebugDetails(logger, () => $"Read: {query}");
         return await query.CountAsync(cancellationToken);
     }
 
@@ -45,16 +47,17 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync()
+            await containerProvider.GetContainerAsync()
                 .ConfigureAwait(false);
 
         IQueryable<TItem> query =
-            container.GetItemLinqQueryable<TItem>()
-                .Where(_repositoryExpressionProvider.Build(predicate));
+            container.GetItemLinqQueryable<TItem>(
+                    linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
+                .Where(repositoryExpressionProvider.Build(predicate));
 
-        TryLogDebugDetails(_logger, () => $"Read: {query}");
+        TryLogDebugDetails(logger, () => $"Read: {query}");
 
-        return await _cosmosQueryableProcessor.CountAsync(
+        return await cosmosQueryableProcessor.CountAsync(
             query, cancellationToken);
     }
 }

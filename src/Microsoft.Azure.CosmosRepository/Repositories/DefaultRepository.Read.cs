@@ -6,6 +6,7 @@ namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed partial class DefaultRepository<TItem>
 {
+    /// <inheritdoc/>
     public async ValueTask<TItem?> TryGetAsync(
         string id,
         string? partitionKeyValue = null,
@@ -17,7 +18,7 @@ internal sealed partial class DefaultRepository<TItem>
         }
         catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
         {
-            _logger.LogItemNotFoundHandled<TItem>(id, partitionKeyValue ?? id, e);
+            logger.LogItemNotFoundHandled<TItem>(id, partitionKeyValue ?? id, e);
             return default;
         }
     }
@@ -36,14 +37,14 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
         if (partitionKey == default)
         {
             partitionKey = new PartitionKey(id);
         }
 
-        _logger.LogPointReadStarted<TItem>(id, partitionKey.ToString());
+        logger.LogPointReadStarted<TItem>(id, partitionKey.ToString());
 
         ItemResponse<TItem> response =
             await container.ReadItemAsync<TItem>(id, partitionKey, cancellationToken: cancellationToken)
@@ -51,10 +52,10 @@ internal sealed partial class DefaultRepository<TItem>
 
         TItem item = response.Resource;
 
-        _logger.LogPointReadExecuted<TItem>(response.RequestCharge);
-        _logger.LogItemRead(item);
+        logger.LogPointReadExecuted<TItem>(response.RequestCharge);
+        logger.LogItemRead(item);
 
-        return _repositoryExpressionProvider.CheckItem(item);
+        return repositoryExpressionProvider.CheckItem(item);
     }
 
     /// <inheritdoc/>
@@ -63,18 +64,19 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
         IQueryable<TItem> query =
-            container.GetItemLinqQueryable<TItem>()
-                .Where(_repositoryExpressionProvider.Build(predicate));
+            container.GetItemLinqQueryable<TItem>(
+                    linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
+                .Where(repositoryExpressionProvider.Build(predicate));
 
-        _logger.LogQueryConstructed(query);
+        logger.LogQueryConstructed(query);
 
         (IEnumerable<TItem> items, var charge) =
-            await _cosmosQueryableProcessor.IterateAsync(query, cancellationToken);
+            await cosmosQueryableProcessor.IterateAsync(query, cancellationToken);
 
-        _logger.LogQueryExecuted(query, charge);
+        logger.LogQueryExecuted(query, charge);
 
         return items;
     }
@@ -85,12 +87,12 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-        TryLogDebugDetails(_logger, () => $"Read {query}");
+        TryLogDebugDetails(logger, () => $"Read {query}");
 
         QueryDefinition queryDefinition = new(query);
-        return await _cosmosQueryableProcessor.IterateAsync<TItem>(container, queryDefinition, cancellationToken);
+        return await cosmosQueryableProcessor.IterateAsync<TItem>(container, queryDefinition, cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -99,10 +101,10 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         Container container =
-            await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+            await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
-        TryLogDebugDetails(_logger, () => $"Read {queryDefinition.QueryText}");
+        TryLogDebugDetails(logger, () => $"Read {queryDefinition.QueryText}");
 
-        return await _cosmosQueryableProcessor.IterateAsync<TItem>(container, queryDefinition, cancellationToken);
+        return await cosmosQueryableProcessor.IterateAsync<TItem>(container, queryDefinition, cancellationToken);
     }
 }

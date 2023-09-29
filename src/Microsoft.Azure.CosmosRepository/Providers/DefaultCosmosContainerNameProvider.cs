@@ -4,14 +4,9 @@
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 /// <inheritdoc cref="Microsoft.Azure.CosmosRepository.Providers.ICosmosContainerNameProvider" />
-class DefaultCosmosContainerNameProvider : ICosmosContainerNameProvider
+class DefaultCosmosContainerNameProvider(IOptions<RepositoryOptions> options) : ICosmosContainerNameProvider
 {
-    private readonly IOptions<RepositoryOptions> _options;
-
-    public DefaultCosmosContainerNameProvider(IOptions<RepositoryOptions> options)
-    {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
-    }
+    private readonly IOptions<RepositoryOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc />
     public string GetContainerName<TItem>() where TItem : IItem =>

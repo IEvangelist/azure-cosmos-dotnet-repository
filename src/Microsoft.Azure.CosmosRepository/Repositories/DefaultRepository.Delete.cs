@@ -27,7 +27,7 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         ItemRequestOptions options = RequestOptions.Options;
-        Container container = await _containerProvider.GetContainerAsync().ConfigureAwait(false);
+        Container container = await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
         if (partitionKey == default)
         {
@@ -37,6 +37,6 @@ internal sealed partial class DefaultRepository<TItem>
         _ = await container.DeleteItemAsync<TItem>(id, partitionKey, options, cancellationToken)
             .ConfigureAwait(false);
 
-        TryLogDebugDetails(_logger, () => $"Deleted: {id}");
+        TryLogDebugDetails(logger, () => $"Deleted: {id}");
     }
 }

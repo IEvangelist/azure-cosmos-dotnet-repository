@@ -14,7 +14,7 @@ class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
 
     public UniqueKeyPolicy? GetUniqueKeyPolicy(Type itemType)
     {
-        Dictionary<string, List<string>> keyNameToPathsMap = new();
+        Dictionary<string, List<string>> keyNameToPathsMap = [];
 
         foreach ((UniqueKeyAttribute? uniqueKey, var propertyName) in itemType.GetProperties()
                      .Where(x => Attribute.IsDefined(x, s_attributeType))
@@ -31,7 +31,7 @@ class DefaultCosmosUniqueKeyPolicyProvider : ICosmosUniqueKeyPolicyProvider
                 continue;
             }
 
-            keyNameToPathsMap[uniqueKey.KeyName] = new List<string> { propertyValue };
+            keyNameToPathsMap[uniqueKey.KeyName] = [propertyValue];
         }
 
         if (!keyNameToPathsMap.Any())

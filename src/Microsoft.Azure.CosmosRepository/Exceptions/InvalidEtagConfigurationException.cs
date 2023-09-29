@@ -9,13 +9,10 @@ namespace Microsoft.Azure.CosmosRepository.Exceptions;
 /// Please ensure your Item implementation implements IItemWithEtag.
 /// </remarks>
 /// </summary>
-public class InvalidEtagConfigurationException : Exception
+/// <remarks>
+/// Constructor specifying the message to set in the exception.
+/// </remarks>
+/// <param name="message">The message for the exception.</param>
+public class InvalidEtagConfigurationException(string message) : Exception(message)
 {
-    /// <summary>
-    /// Constructor specifying the message to set in the exception.
-    /// </summary>
-    /// <param name="message">The message for the exception.</param>
-    public InvalidEtagConfigurationException(string message) : base(message)
-    {
-    }
 }

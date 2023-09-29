@@ -7,20 +7,10 @@ using Microsoft.Azure.CosmosRepository;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 
-internal partial class DefaultEventStore<TEventItem> :
+internal partial class DefaultEventStore<TEventItem>(
+    IBatchRepository<TEventItem> batchRepository,
+    IReadOnlyRepository<TEventItem> readOnlyRepository,
+    IContextService contextService) :
     IEventStore<TEventItem> where TEventItem : EventItem
 {
-    private readonly IBatchRepository<TEventItem> _batchRepository;
-    private readonly IReadOnlyRepository<TEventItem> _readOnlyRepository;
-    private readonly IContextService _contextService;
-
-    public DefaultEventStore(
-        IBatchRepository<TEventItem> batchRepository,
-        IReadOnlyRepository<TEventItem> readOnlyRepository,
-        IContextService contextService)
-    {
-        _batchRepository = batchRepository;
-        _readOnlyRepository = readOnlyRepository;
-        _contextService = contextService;
-    }
 }

@@ -3,45 +3,32 @@
 
 namespace Microsoft.Azure.CosmosRepository.Options;
 
-internal class ItemConfiguration
+internal class ItemConfiguration(
+    Type type,
+    string containerName,
+    string partitionKeyPath,
+    UniqueKeyPolicy? uniqueKeyPolicy,
+    ThroughputProperties? throughputProperties,
+    int defaultTimeToLive = -1,
+    bool syncContainerProperties = false,
+    ChangeFeedOptions? changeFeedOptions = null,
+    bool useStrictTypeChecking = true)
 {
-    public Type Type { get; }
+    public Type Type { get; } = type;
 
-    public string ContainerName { get; }
+    public string ContainerName { get; } = containerName;
 
-    public string PartitionKeyPath { get; }
+    public string PartitionKeyPath { get; } = partitionKeyPath;
 
-    public UniqueKeyPolicy? UniqueKeyPolicy { get; }
+    public UniqueKeyPolicy? UniqueKeyPolicy { get; } = uniqueKeyPolicy;
 
-    public ThroughputProperties? ThroughputProperties { get; }
+    public ThroughputProperties? ThroughputProperties { get; } = throughputProperties;
 
-    public int DefaultTimeToLive { get; }
+    public int DefaultTimeToLive { get; } = defaultTimeToLive;
 
-    public bool SyncContainerProperties { get; }
+    public bool SyncContainerProperties { get; } = syncContainerProperties;
 
-    public ChangeFeedOptions? ChangeFeedOptions { get; }
+    public ChangeFeedOptions? ChangeFeedOptions { get; } = changeFeedOptions;
 
-    public bool UseStrictTypeChecking { get; }
-
-    public ItemConfiguration(
-        Type type,
-        string containerName,
-        string partitionKeyPath,
-        UniqueKeyPolicy? uniqueKeyPolicy,
-        ThroughputProperties? throughputProperties,
-        int defaultTimeToLive = -1,
-        bool syncContainerProperties = false,
-        ChangeFeedOptions? changeFeedOptions = null,
-        bool useStrictTypeChecking = true)
-    {
-        Type = type;
-        ContainerName = containerName;
-        PartitionKeyPath = partitionKeyPath;
-        UniqueKeyPolicy = uniqueKeyPolicy;
-        ThroughputProperties = throughputProperties;
-        UseStrictTypeChecking = useStrictTypeChecking;
-        DefaultTimeToLive = defaultTimeToLive;
-        SyncContainerProperties = syncContainerProperties;
-        ChangeFeedOptions = changeFeedOptions;
-    }
+    public bool UseStrictTypeChecking { get; } = useStrictTypeChecking;
 }

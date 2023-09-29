@@ -6,19 +6,16 @@ namespace Microsoft.Azure.CosmosRepository.Builders;
 /// <summary>
 /// Options for a container
 /// </summary>
-public class ContainerOptionsBuilder
+/// <remarks>
+/// Creates an instance of <see cref="ContainerOptionsBuilder"/>.
+/// </remarks>
+/// <param name="type">The type of <see cref="IItem"/> the options are for.</param>
+public class ContainerOptionsBuilder(Type type)
 {
     /// <summary>
     /// The <see cref="IItem"/> type the container options are for
     /// </summary>
-    internal Type Type { get; }
-
-    /// <summary>
-    /// Creates an instance of <see cref="ContainerOptionsBuilder"/>.
-    /// </summary>
-    /// <param name="type">The type of <see cref="IItem"/> the options are for.</param>
-    public ContainerOptionsBuilder(Type type) =>
-        Type = type;
+    internal Type Type { get; } = type;
 
     /// <summary>
     /// Name of the container.

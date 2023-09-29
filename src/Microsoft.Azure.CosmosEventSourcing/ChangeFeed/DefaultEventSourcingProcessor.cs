@@ -13,61 +13,47 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 
-internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IEventSourcingProcessor
+internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>(
+    EventSourcingProcessorOptions<TSourcedEvent, TProjectionKey> options,
+    ICosmosContainerService containerService,
+    ILeaseContainerProvider leaseContainerProvider,
+    ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> logger,
+    IServiceProvider serviceProvider) : IEventSourcingProcessor
     where TSourcedEvent : EventItem
     where TProjectionKey : IProjectionKey
 {
-    private readonly EventSourcingProcessorOptions<TSourcedEvent, TProjectionKey> _options;
-    private readonly ICosmosContainerService _containerService;
-    private readonly ILeaseContainerProvider _leaseContainerProvider;
-    private readonly ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> _logger;
-    private readonly IServiceProvider _serviceProvider;
     private ChangeFeedProcessor? _processor;
-
-    public DefaultEventSourcingProcessor(
-        EventSourcingProcessorOptions<TSourcedEvent, TProjectionKey> options,
-        ICosmosContainerService containerService,
-        ILeaseContainerProvider leaseContainerProvider,
-        ILogger<DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>> logger,
-        IServiceProvider serviceProvider)
-    {
-        _options = options;
-        _containerService = containerService;
-        _leaseContainerProvider = leaseContainerProvider;
-        _logger = logger;
-        _serviceProvider = serviceProvider;
-    }
 
     public async Task StartAsync()
     {
-        Container itemContainer = await _containerService.GetContainerAsync<TSourcedEvent>();
-        Container leaseContainer = await _leaseContainerProvider.GetLeaseContainerAsync();
+        Container itemContainer = await containerService.GetContainerAsync<TSourcedEvent>();
+        Container leaseContainer = await leaseContainerProvider.GetLeaseContainerAsync();
 
         ChangeFeedProcessorBuilder builder = itemContainer
-            .GetChangeFeedProcessorBuilder<TSourcedEvent>(_options.ProcessorName, (changes, token) =>
+            .GetChangeFeedProcessorBuilder<TSourcedEvent>(options.ProcessorName, (changes, token) =>
                 OnChangesAsync(changes, itemContainer.Id, token))
             .WithLeaseContainer(leaseContainer)
-            .WithInstanceName(_options.InstanceName)
+            .WithInstanceName(options.InstanceName)
             .WithErrorNotification((_, exception) => OnErrorAsync(exception, itemContainer.Id));
 
-        if (_options.PollInterval.HasValue)
+        if (options.PollInterval.HasValue)
         {
-            builder.WithPollInterval(_options.PollInterval.Value);
+            builder.WithPollInterval(options.PollInterval.Value);
         }
 
         _processor = builder.Build();
 
-        _logger.LogInformation("Starting change feed processor for container {ContainerName} with key {ProjectionKey} and processor name {ProcessorName}",
+        logger.LogInformation("Starting change feed processor for container {ContainerName} with key {ProjectionKey} and processor name {ProcessorName}",
             itemContainer.Id,
             typeof(TProjectionKey).Name,
-            _options.ProcessorName);
+            options.ProcessorName);
 
         await _processor.StartAsync();
 
-        _logger.LogInformation("Successfully started change feed processor for container {ContainerName} with key {ProjectionKey} and processor name {ProcessorName}",
+        logger.LogInformation("Successfully started change feed processor for container {ContainerName} with key {ProjectionKey} and processor name {ProcessorName}",
             itemContainer.Id,
             typeof(TProjectionKey).Name,
-            _options.ProcessorName);
+            options.ProcessorName);
     }
 
     private async Task OnChangesAsync(
@@ -75,12 +61,12 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
         string containerName,
         CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Detected changes for container {ContainerName} total ({ChangesCount})",
+        logger.LogDebug("Detected changes for container {ContainerName} total ({ChangesCount})",
             containerName, changes.Count);
 
         foreach (TSourcedEvent change in changes)
         {
-            using IServiceScope scope = _serviceProvider.CreateScope();
+            using IServiceScope scope = serviceProvider.CreateScope();
             IEventItemProjection<TSourcedEvent, TProjectionKey> projection = scope.ServiceProvider
                 .GetRequiredService<IEventItemProjection<TSourcedEvent, TProjectionKey>>();
 
@@ -93,7 +79,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
             }
             catch (Exception e)
             {
-                _logger.LogError(e,
+                logger.LogError(e,
                     "Failed handling projection for container {ContainerName} source event ID {SourcedEventId}",
                     containerName, change.Id);
             }
@@ -102,7 +88,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey> : IE
 
     private Task OnErrorAsync(Exception exception, string containerName)
     {
-        _logger.LogError(exception, "Failed handling when handling changes detected from container {ContainerName}",
+        logger.LogError(exception, "Failed handling when handling changes detected from container {ContainerName}",
             containerName);
         return Task.CompletedTask;
     }

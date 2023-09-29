@@ -13,7 +13,7 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default)
         where TResult : IQueryResult<TItem>
     {
-        Container container = await _containerProvider.GetContainerAsync()
+        Container container = await containerProvider.GetContainerAsync()
             .ConfigureAwait(false);
 
         QueryRequestOptions options = new();
@@ -26,18 +26,19 @@ internal sealed partial class DefaultRepository<TItem>
         IQueryable<TItem> query = container
             .GetItemLinqQueryable<TItem>(
                 requestOptions: options,
-                continuationToken: specification.ContinuationToken)
-            .Where(_repositoryExpressionProvider.Default<TItem>());
+                continuationToken: specification.ContinuationToken, 
+                linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
+            .Where(repositoryExpressionProvider.Default<TItem>());
 
-        query = _specificationEvaluator.GetQuery(query, specification);
+        query = specificationEvaluator.GetQuery(query, specification);
 
-        _logger.LogQueryConstructed(query);
+        logger.LogQueryConstructed(query);
 
         (List<TItem> items, var charge, var continuationToken) =
             await GetAllItemsAsync(query, specification.PageSize, cancellationToken)
                 .ConfigureAwait(false);
 
-        _logger.LogQueryExecuted(query, charge);
+        logger.LogQueryExecuted(query, charge);
 
         Response<int> count = await CountAsync(specification, cancellationToken)
             .ConfigureAwait(false);

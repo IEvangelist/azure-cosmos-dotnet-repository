@@ -13,6 +13,7 @@ public class DefaultRepositoryTests
     readonly Mock<Container> _container = new();
     readonly IRepositoryExpressionProvider _expressionProvider = new MockExpressionProvider();
     readonly ISpecificationEvaluator _specificationEvaluator = new SpecificationEvaluator();
+
     public DefaultRepositoryTests()
     {
         _options.Setup(o => o.CurrentValue).Returns(_repositoryOptions);
@@ -53,7 +54,8 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(o => o.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         _container
-            .Setup(o => o.GetItemLinqQueryable<TestItemWithEtag>(false, null, null, null))
+            .Setup(o => o.GetItemLinqQueryable<TestItemWithEtag>(
+                false, null, null, It.IsAny<CosmosLinqSerializerOptions>()))
             .Returns(queryable);
 
         _queryableProcessor.Setup(o => o.IterateAsync(queryable, It.IsAny<CancellationToken>()))
@@ -86,7 +88,8 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(o => o.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         _container
-            .Setup(o => o.GetItemLinqQueryable<TestItemWithEtag>(false, null, null, null))
+            .Setup(o => o.GetItemLinqQueryable<TestItemWithEtag>(
+                false, null, null, It.IsAny<CosmosLinqSerializerOptions>()))
             .Returns(queryable);
 
         _queryableProcessor.Setup(o => o.CountAsync(queryable, It.IsAny<CancellationToken>()))

@@ -9,7 +9,7 @@ class DefaultCosmosQueryableProcessor : ICosmosQueryableProcessor
     {
         using var iterator = queryable.ToFeedIterator();
 
-        List<TItem> results = new();
+        List<TItem> results = [];
         double charge = 0;
 
         while (iterator.HasMoreResults)
@@ -37,7 +37,7 @@ class DefaultCosmosQueryableProcessor : ICosmosQueryableProcessor
     {
         using FeedIterator<TItem> queryIterator = container.GetItemQueryIterator<TItem>(queryDefinition);
 
-        List<TItem> results = new();
+        List<TItem> results = [];
 
         while (queryIterator.HasMoreResults)
         {

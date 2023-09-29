@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Aggregates;
 using Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Items;
@@ -24,9 +25,8 @@ public partial class AcceptanceTests
     private readonly List<string> _atomicEventIds = new();
 
     private readonly AsyncPolicy _defaultPolicy = Policy
-        .Handle<Exception>()
+        .Handle<CosmosException>()
         .WaitAndRetryAsync(20, i => TimeSpan.FromSeconds(i * 2));
-
 
     private async Task Execute()
     {
@@ -34,6 +34,9 @@ public partial class AcceptanceTests
         await AddItemToAllListsAndVerify("Task 1");
         await CompleteTaskForItems(1);
         await _defaultPolicy.ExecuteAsync(CheckTodoListsProjectionBuilder);
+
+        await Task.Delay(TimeSpan.FromSeconds(5));
+
         await _defaultPolicy.ExecuteAsync(() => CheckTodoItemsProjectionBuilders("Task 1"));
     }
 
@@ -130,12 +133,15 @@ public partial class AcceptanceTests
         foreach (var name in _names)
         {
             IEnumerable<TodoCosmosItem> items =
-                await _todoItemsRepository.GetAsync(x => x.PartitionKey == name).ToListAsync();
+                await _todoItemsRepository.GetAsync(x => x.PartitionKey == name);
+
             items.Should().Contain(x => x.Title == taskTitle);
             items.Should().Contain(x => x.IsComplete);
             items.Should().HaveCount(1);
         }
 
-        CompletedProjections.Invocations.Should().Be(3);
+        // It's ok to have more invocations, but we need at least 3.
+        // We can end up with more when Polly retries.
+        CompletedProjections.Invocations.Should().BeGreaterThanOrEqualTo(3);
     }
 }

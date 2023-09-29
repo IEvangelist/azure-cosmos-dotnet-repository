@@ -4,11 +4,8 @@
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 /// <inheritdoc />
-class DefaultContainerSyncContainerPropertiesProvider : ICosmosContainerSyncContainerPropertiesProvider
+class DefaultContainerSyncContainerPropertiesProvider(IOptions<RepositoryOptions> options) : ICosmosContainerSyncContainerPropertiesProvider
 {
-    private readonly IOptions<RepositoryOptions> _options;
-
-    public DefaultContainerSyncContainerPropertiesProvider(IOptions<RepositoryOptions> options) => _options = options;
 
     /// <inheritdoc />
     public bool GetWhetherToSyncContainerProperties<TItem>() where TItem : IItem =>
@@ -16,7 +13,7 @@ class DefaultContainerSyncContainerPropertiesProvider : ICosmosContainerSyncCont
 
     public bool GetWhetherToSyncContainerProperties(Type itemType)
     {
-        RepositoryOptions repositoryOptions = _options.Value;
+        RepositoryOptions repositoryOptions = options.Value;
 
         if (repositoryOptions.SyncAllContainerProperties)
         {

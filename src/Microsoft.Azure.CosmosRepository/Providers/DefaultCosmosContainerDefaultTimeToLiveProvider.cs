@@ -4,15 +4,13 @@
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
 /// <inheritdoc/>
-class DefaultCosmosContainerDefaultTimeToLiveProvider : ICosmosContainerDefaultTimeToLiveProvider
+/// <summary>
+/// Creates an instance of the <see cref="DefaultCosmosContainerDefaultTimeToLiveProvider"/>.
+/// </summary>
+/// <param name="options">The repository options.</param>
+class DefaultCosmosContainerDefaultTimeToLiveProvider(IOptions<RepositoryOptions> options) : ICosmosContainerDefaultTimeToLiveProvider
 {
-    private readonly IOptions<RepositoryOptions> _options;
-
-    /// <summary>
-    /// Creates an instance of the <see cref="DefaultCosmosContainerDefaultTimeToLiveProvider"/>.
-    /// </summary>
-    /// <param name="options">The repository options.</param>
-    public DefaultCosmosContainerDefaultTimeToLiveProvider(IOptions<RepositoryOptions> options) => _options = options;
+    private readonly IOptions<RepositoryOptions> _options = options;
 
     /// <inheritdoc/>
     public int GetDefaultTimeToLive<TItem>() where TItem : IItem =>

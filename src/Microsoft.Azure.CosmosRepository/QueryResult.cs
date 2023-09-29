@@ -7,25 +7,20 @@ namespace Microsoft.Azure.CosmosRepository;
 /// 
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class QueryResult<T> : IQueryResult<T>
+/// <remarks>
+/// 
+/// </remarks>
+/// <param name="items"></param>
+/// <param name="charge"></param>
+public class QueryResult<T>(IReadOnlyList<T> items, double charge) : IQueryResult<T>
     where T : IItem
 {
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="items"></param>
-    /// <param name="charge"></param>
-    public QueryResult(IReadOnlyList<T> items, double charge)
-    {
-        Items = items;
-        Charge = charge;
-    }
+    public IReadOnlyList<T> Items { get; } = items;
     /// <summary>
     /// 
     /// </summary>
-    public IReadOnlyList<T> Items { get; }
-    /// <summary>
-    /// 
-    /// </summary>
-    public double Charge { get; }
+    public double Charge { get; } = charge;
 }
