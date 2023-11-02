@@ -6,8 +6,11 @@ using Microsoft.Azure.CosmosEventSourcing.Builders;
 using Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 using Microsoft.Azure.CosmosEventSourcing.Converters;
 using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Options;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.ChangeFeed.Providers;
+using Microsoft.Azure.CosmosRepository.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Extensions;
@@ -25,11 +28,18 @@ public static class ServiceCollectionExtensions
     /// <returns>The instance of the <see cref="IServiceCollection"/></returns>
     public static IServiceCollection AddCosmosEventSourcing(
         this IServiceCollection services,
-        Action<ICosmosEventSourcingBuilder> eventSourcingBuilder)
+        Action<ICosmosEventSourcingBuilder> eventSourcingBuilder,
+        Action<CosmosEventSourcingOptions>? setupAction = null)
     {
         DefaultCosmosEventSourcingBuilder builder = new(services);
         DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
         eventSourcingBuilder.Invoke(builder);
+
+        services.AddOptions<CosmosEventSourcingOptions>()
+            .Configure<IConfiguration>(
+                (settings, configuration) =>
+                    configuration.GetSection(CosmosEventSourcingOptions.SectionName).Bind(settings));
+
         services.AddScoped<IContextService, DefaultContextService>();
         services.AddScoped(typeof(IEventStore<>), typeof(DefaultEventStore<>));
         services.AddScoped(typeof(IWriteOnlyEventStore<>), typeof(DefaultEventStore<>));

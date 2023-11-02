@@ -22,9 +22,12 @@ internal partial class DefaultEventStore<TEventItem>
             return;
         }
 
-        if (eventItems.Count(x => x.EventName is nameof(AtomicEvent)) is not 1)
+        if(_optionsMonitor.CurrentValue.IsSequenceNumberingDisabled is false)
         {
-            throw new AtomicEventRequiredException();
+            if (eventItems.Count(x => x.EventName is nameof(AtomicEvent)) is not 1)
+            {
+                throw new AtomicEventRequiredException();
+            }
         }
 
         await batchRepository.UpdateAsBatchAsync(
@@ -78,7 +81,7 @@ internal partial class DefaultEventStore<TEventItem>
         return items;
     }
 
-    private static IEnumerable<TEventItem> BuildEvents(
+    private IEnumerable<TEventItem> BuildEvents(
         IAggregateRoot aggregateRoot,
         string partitionKey)
     {
@@ -90,10 +93,13 @@ internal partial class DefaultEventStore<TEventItem>
                     partitionKey) as TEventItem)
             .ToList();
 
-        events.Add(Activator.CreateInstance(
-            typeof(TEventItem),
-            aggregateRoot.AtomicEvent,
-            partitionKey) as TEventItem);
+        if(_optionsMonitor.CurrentValue.IsSequenceNumberingDisabled is false)
+        {
+            events.Add(Activator.CreateInstance(
+                typeof(TEventItem),
+                aggregateRoot.AtomicEvent,
+                partitionKey) as TEventItem);
+        }
 
         return events.Any(x => x is null)
             ? throw new InvalidOperationException(
