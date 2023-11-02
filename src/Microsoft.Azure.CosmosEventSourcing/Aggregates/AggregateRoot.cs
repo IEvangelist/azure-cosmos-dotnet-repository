@@ -60,7 +60,7 @@ public abstract class AggregateRoot : IAggregateRoot
         DomainEvent evt = domainEvent with
         {
             EventId = Guid.NewGuid().ToString(),
-            Sequence = _isSequenceNumberDisabled ? 0 : _events.Count + 1,
+            Sequence = _isSequenceNumberDisabled ? -1 : _events.Count + 1,
             OccuredUtc = DateTime.UtcNow
         };
 
