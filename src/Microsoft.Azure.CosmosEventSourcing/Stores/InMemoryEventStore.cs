@@ -3,6 +3,7 @@
 
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices.Context;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Events;
@@ -25,7 +26,7 @@ public class InMemoryEventStore<TEventItem>(
     // ReSharper disable once StaticMemberInGenericType
     private static readonly ConcurrentDictionary<string, string> Events = new();
 
-    private void Persist(
+    private async ValueTask PersistAsync(
         IEnumerable<TEventItem> events,
         string partitionKeyValue)
     {
@@ -48,8 +49,12 @@ public class InMemoryEventStore<TEventItem>(
         foreach (IContainerChangeFeedProcessor processor in typesForEventItem)
         {
             Type processorType = processor.GetType();
-            processorType.GetMethod("OnChangesAsync")?
-                .Invoke(processor, new object[] { events, "in-memory", CancellationToken.None });
+            MethodInfo? method = processorType.GetMethod("OnChangesAsync");
+            var result = method?.Invoke(processor, new object[] { events, "in-memory", CancellationToken.None });
+            if (result is ValueTask valueTask)
+            {
+                await valueTask.AsTask();
+            }
         }
 
         Events[partitionKeyValue] = JsonConvert.SerializeObject(toSave);
@@ -60,10 +65,9 @@ public class InMemoryEventStore<TEventItem>(
             ? JsonConvert.DeserializeObject<List<TEventItem>>(currentJson)
             : new List<TEventItem>();
 
-    public ValueTask<IEnumerable<TEventItem>> ReadAsync(
-        string partitionKey,
+    public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
         CancellationToken cancellationToken = default) =>
-        ValueTask.FromResult(ReadAllEvents(partitionKey));
+        new(ReadAllEvents(partitionKey));
 
     public async ValueTask<TAggregateRoot> ReadAggregateAsync<TAggregateRoot>(string partitionKey,
         CancellationToken cancellationToken = default) where TAggregateRoot : IAggregateRoot
@@ -93,12 +97,12 @@ public class InMemoryEventStore<TEventItem>(
         throw new NotImplementedException();
     }
 
-    public ValueTask PersistAsync(IEnumerable<TEventItem> items, CancellationToken cancellationToken = default)
+    public async ValueTask PersistAsync(IEnumerable<TEventItem> items, CancellationToken cancellationToken = default)
     {
         var eventItems = items.ToList();
         if (eventItems is { Count: 0 })
         {
-            return ValueTask.CompletedTask;
+            return;
         }
 
         if (optionsMonitor.CurrentValue.IsSequenceNumberingDisabled is false)
@@ -109,10 +113,7 @@ public class InMemoryEventStore<TEventItem>(
             }
         }
 
-        Persist(eventItems.SetCorrelationId(contextService),
-            eventItems.First().PartitionKey);
-
-        return ValueTask.CompletedTask;
+        await PersistAsync(eventItems.SetCorrelationId(contextService), eventItems.First().PartitionKey);
     }
 
     public async ValueTask PersistAsync(IAggregateRoot aggregateRoot, CancellationToken cancellationToken = default) =>
