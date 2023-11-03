@@ -47,4 +47,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IChangeFeedContainerProcessorProvider, DefaultEventSourcingProvider>();
         return services;
     }
+
+    public static IServiceCollection AddInMemoryCosmosEventSourcing(this IServiceCollection services)
+    {
+
+
+        return services;
+    }
 }

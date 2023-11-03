@@ -56,7 +56,7 @@ internal class DefaultEventSourcingProcessor<TSourcedEvent, TProjectionKey>(
             options.ProcessorName);
     }
 
-    private async Task OnChangesAsync(
+    internal async Task OnChangesAsync(
         IReadOnlyCollection<TSourcedEvent> changes,
         string containerName,
         CancellationToken cancellationToken)

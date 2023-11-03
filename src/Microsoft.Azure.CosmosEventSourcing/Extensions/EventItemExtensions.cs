@@ -1,7 +1,10 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Reflection;
+using System.Runtime.CompilerServices.Context;
 using Microsoft.Azure.CosmosEventSourcing.Events;
+using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Items;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Extensions;
@@ -36,4 +39,41 @@ public static class EventItemExtensions
             null => null,
             _ => throw new ArgumentOutOfRangeException()
         };
+
+    public static TAggregateRoot Replay<TAggregateRoot, TEventItem>(this IEnumerable<TEventItem> events)
+    where TEventItem : EventItem
+    {
+        var payloads = events
+            .Select(x => x.DomainEvent)
+            .ToList();
+
+        Type type = typeof(TAggregateRoot);
+        MethodInfo? method = type.GetMethod("Replay");
+
+        return method is null
+            ? throw new ReplayMethodNotDefinedException(type)
+            : (TAggregateRoot)method.Invoke(null, new object[] { payloads })!;
+    }
+
+    public static IEnumerable<TEventItem> SetCorrelationId<TEventItem>(
+        this IEnumerable<TEventItem> eventItems,
+        IContextService contextService)
+    where TEventItem : EventItem
+    {
+        if (string.IsNullOrWhiteSpace(contextService.CorrelationId))
+        {
+            return eventItems;
+        }
+
+        IEnumerable<TEventItem> items = eventItems.ToList();
+        foreach (TEventItem item in items)
+        {
+            if (item is not null && item.DomainEvent is not AtomicEvent)
+            {
+                item.CorrelationId = contextService.CorrelationId;
+            }
+        }
+
+        return items;
+    }
 }
