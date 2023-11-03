@@ -20,9 +20,10 @@ public static class EventItemExtensions
     /// <param name="eventItem">The <see cref="EventItem"/> to read the payload from.</param>
     /// <typeparam name="TEvent">The event type the payload will be cast to.</typeparam>
     /// <returns>The TEvent instance.</returns>
-    public static TEvent GetEventPayload<TEvent>(this EventItem eventItem)
+    public static TEvent GetEventPayload<TEvent>(
+        this EventItem eventItem)
         where TEvent : DomainEvent =>
-        (TEvent)eventItem.DomainEvent;
+        (TEvent) eventItem.DomainEvent;
 
     /// <summary>
     /// Cast's the payload of an <see cref="EventItem"/> to a <see cref="IDomainEvent"/>
@@ -31,7 +32,8 @@ public static class EventItemExtensions
     /// <typeparam name="TEvent">The event type the payload will be cast to.</typeparam>
     /// <returns>The TEvent instance.</returns>
     /// <remarks>If the event payload cannot be converted to the TEvent type null is returned.</remarks>
-    public static TEvent? TryGetEventPayload<TEvent>(this EventItem eventItem)
+    public static TEvent? TryGetEventPayload<TEvent>(
+        this EventItem eventItem)
         where TEvent : DomainEvent =>
         eventItem.DomainEvent switch
         {
@@ -40,8 +42,9 @@ public static class EventItemExtensions
             _ => throw new ArgumentOutOfRangeException()
         };
 
-    public static TAggregateRoot Replay<TAggregateRoot, TEventItem>(this IEnumerable<TEventItem> events)
-    where TEventItem : EventItem
+    internal static TAggregateRoot Replay<TAggregateRoot, TEventItem>(
+        this IEnumerable<TEventItem> events)
+        where TEventItem : EventItem
     {
         var payloads = events
             .Select(x => x.DomainEvent)
@@ -52,13 +55,18 @@ public static class EventItemExtensions
 
         return method is null
             ? throw new ReplayMethodNotDefinedException(type)
-            : (TAggregateRoot)method.Invoke(null, new object[] { payloads })!;
+            : (TAggregateRoot) method.Invoke(
+                null,
+                new object[]
+                {
+                    payloads
+                })!;
     }
 
-    public static IEnumerable<TEventItem> SetCorrelationId<TEventItem>(
+    internal static IEnumerable<TEventItem> SetCorrelationId<TEventItem>(
         this IEnumerable<TEventItem> eventItems,
         IContextService contextService)
-    where TEventItem : EventItem
+        where TEventItem : EventItem
     {
         if (string.IsNullOrWhiteSpace(contextService.CorrelationId))
         {

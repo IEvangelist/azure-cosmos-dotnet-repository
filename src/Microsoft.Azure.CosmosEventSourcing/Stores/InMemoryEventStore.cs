@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 
-public class InMemoryEventStore<TEventItem>(
+internal class InMemoryEventStore<TEventItem>(
     IOptionsMonitor<CosmosEventSourcingOptions> optionsMonitor,
     IContextService contextService,
     IChangeFeedContainerProcessorProvider changeFeedContainerProcessorProvider) : IEventStore<TEventItem> where TEventItem : EventItem

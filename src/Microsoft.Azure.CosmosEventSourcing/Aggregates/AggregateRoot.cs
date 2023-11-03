@@ -14,11 +14,18 @@ public abstract class AggregateRoot : IAggregateRoot
     private AtomicEvent? _atomicEvent;
     private readonly bool _isSequenceNumberDisabled;
 
+    /// <summary>
+    /// Creates an instance of the aggregate root with sequencing enabled.
+    /// </summary>
     protected AggregateRoot()
     {
 
     }
 
+    /// <summary>
+    /// Creates an instance of the aggregate root with the option to disable sequencing.
+    /// </summary>
+    /// <param name="isSequenceNumberDisabled">Controls whether or not the aggregate maintains sequencing of events.</param>
     protected AggregateRoot(bool isSequenceNumberDisabled)
     {
         _isSequenceNumberDisabled = isSequenceNumberDisabled;

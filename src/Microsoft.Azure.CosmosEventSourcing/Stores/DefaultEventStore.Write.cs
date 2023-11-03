@@ -20,7 +20,7 @@ internal partial class DefaultEventStore<TEventItem>
             return;
         }
 
-        if (_optionsMonitor.CurrentValue.IsSequenceNumberingDisabled is false)
+        if (optionsMonitor.CurrentValue.IsSequenceNumberingDisabled is false)
         {
             if (eventItems.Count(x => x.EventName is nameof(AtomicEvent)) is not 1)
             {
@@ -57,7 +57,7 @@ internal partial class DefaultEventStore<TEventItem>
         await PersistAsync(
             aggregateRoot.ToEventItems<TEventItem>(
                     partitionKeyValue,
-                    _optionsMonitor.CurrentValue.IsSequenceNumberingDisabled)
+                    optionsMonitor.CurrentValue.IsSequenceNumberingDisabled)
                 .SetCorrelationId(contextService),
             cancellationToken);
 }

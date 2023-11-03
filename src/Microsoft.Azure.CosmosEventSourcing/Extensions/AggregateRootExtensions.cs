@@ -9,9 +9,9 @@ using Microsoft.Azure.CosmosEventSourcing.Items;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Extensions;
 
-public static class AggregateRootExtensions
+internal static class AggregateRootExtensions
 {
-    public static IEnumerable<TEventItem> ToEventItems<TEventItem>(
+    internal static IEnumerable<TEventItem> ToEventItems<TEventItem>(
         this IAggregateRoot aggregateRoot,
         string partitionKey,
         bool isSequenceNumberingDisabled)
@@ -39,7 +39,7 @@ public static class AggregateRootExtensions
             : (IEnumerable<TEventItem>)events;
     }
 
-    public static string GetEventItemPartitionKeyValue<TAggregate>(this TAggregate aggregate)
+    internal static string GetEventItemPartitionKeyValue<TAggregate>(this TAggregate aggregate)
         where TAggregate : IAggregateRoot
     {
         var partitionKeyProperties = aggregate

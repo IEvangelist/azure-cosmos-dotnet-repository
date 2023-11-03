@@ -14,7 +14,4 @@ internal partial class DefaultEventStore<TEventItem>(
     IReadOnlyRepository<TEventItem> readOnlyRepository,
     IContextService contextService,
     IOptionsMonitor<CosmosEventSourcingOptions> optionsMonitor) :
-    IEventStore<TEventItem> where TEventItem : EventItem
-{
-    private readonly IOptionsMonitor<CosmosEventSourcingOptions> _optionsMonitor = optionsMonitor;
-}
+    IEventStore<TEventItem> where TEventItem : EventItem;
