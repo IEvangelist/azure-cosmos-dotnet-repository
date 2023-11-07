@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Stores;
 
-public static class InMemoryStorage
+internal static class InMemoryStorage
 {
     private static readonly ConcurrentDictionary<string, string> Events = new();
 
