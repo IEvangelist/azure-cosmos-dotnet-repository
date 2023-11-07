@@ -5,6 +5,7 @@ using MartinCostello.Logging.XUnit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -32,5 +33,16 @@ public class ApiFixture : WebApplicationFactory<Program>, ITestOutputHelperAcces
             services => services
                 .AddInMemoryCosmosEventSourcing()
                 .AddInMemoryCosmosRepository());
+
+        builder.ConfigureAppConfiguration(
+            config =>
+            {
+                var dictionary = new Dictionary<string, string?>
+                {
+                    ["RepositoryOptions:CosmosConnectionString"] = "foo"
+                };
+
+                config.AddInMemoryCollection(dictionary);
+            });
     }
 }
