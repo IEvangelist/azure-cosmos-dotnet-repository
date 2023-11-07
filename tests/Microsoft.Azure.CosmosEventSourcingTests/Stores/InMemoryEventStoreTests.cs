@@ -1,6 +1,7 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices.Context;
@@ -62,7 +63,7 @@ public class InMemoryEventStoreTests
             .Setup(o => o.GetProcessors())
             .Returns(new List<IContainerChangeFeedProcessor>());
 
-        const string partitionKey = "a";
+        var partitionKey = Guid.NewGuid().ToString();
 
         List<Testing.SampleEventItem> newEvents = new()
         {
@@ -91,7 +92,7 @@ public class InMemoryEventStoreTests
             .Setup(o => o.GetProcessors())
             .Returns(new List<IContainerChangeFeedProcessor>());
 
-        const string partitionKey = "a";
+        var partitionKey = Guid.NewGuid().ToString();
 
         List<Testing.SampleEventItem> initialEvents = new()
         {
@@ -149,7 +150,7 @@ public class InMemoryEventStoreTests
                     provider)
             });
 
-        const string partitionKey = "a";
+        var partitionKey = Guid.NewGuid().ToString();
 
         List<Testing.SampleEventItem> newEvents = new()
         {
@@ -207,7 +208,7 @@ public class InMemoryEventStoreTests
                     provider)
             });
 
-        const string partitionKey = "a";
+        var partitionKey = Guid.NewGuid().ToString();
 
         List<Testing.SampleEventItem> newEvents = new()
         {

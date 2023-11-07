@@ -45,13 +45,20 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IWriteOnlyEventStore<>), typeof(DefaultEventStore<>));
         services.AddScoped(typeof(IReadOnlyEventStore<>), typeof(DefaultEventStore<>));
         services.AddSingleton<IChangeFeedContainerProcessorProvider, DefaultEventSourcingProvider>();
+
+        if (setupAction is not null)
+        {
+            services.PostConfigure(setupAction);
+        }
+
         return services;
     }
 
     public static IServiceCollection AddInMemoryCosmosEventSourcing(this IServiceCollection services)
     {
-
-
+        services.AddScoped(typeof(IEventStore<>), typeof(InMemoryEventStore<>));
+        services.AddScoped(typeof(IWriteOnlyEventStore<>), typeof(InMemoryEventStore<>));
+        services.AddScoped(typeof(IReadOnlyEventStore<>), typeof(InMemoryEventStore<>));
         return services;
     }
 }

@@ -15,40 +15,45 @@ internal static class AggregateRootExtensions
         this IAggregateRoot aggregateRoot,
         string partitionKey,
         bool isSequenceNumberingDisabled)
-    where TEventItem : EventItem
+        where TEventItem : EventItem
     {
         var events = aggregateRoot.NewEvents
-            .Select(x =>
-                Activator.CreateInstance(
-                    typeof(TEventItem),
-                    x,
-                    partitionKey) as TEventItem)
+            .Select(
+                x =>
+                    Activator.CreateInstance(
+                        typeof(TEventItem),
+                        x,
+                        partitionKey) as TEventItem)
             .ToList();
 
-        if(isSequenceNumberingDisabled is false)
+        if (isSequenceNumberingDisabled is false)
         {
-            events.Add(Activator.CreateInstance(
-                typeof(TEventItem),
-                aggregateRoot.AtomicEvent,
-                partitionKey) as TEventItem);
+            events.Add(
+                Activator.CreateInstance(
+                    typeof(TEventItem),
+                    aggregateRoot.AtomicEvent,
+                    partitionKey) as TEventItem);
         }
 
         return events.Any(x => x is null)
             ? throw new InvalidOperationException(
                 $"At least one of the {typeof(TEventItem).Name} could not be constructed")
-            : (IEnumerable<TEventItem>)events;
+            : (IEnumerable<TEventItem>) events;
     }
 
-    internal static string GetEventItemPartitionKeyValue<TAggregate>(this TAggregate aggregate)
+    internal static string GetEventItemPartitionKeyValue<TAggregate>(
+        this TAggregate aggregate)
         where TAggregate : IAggregateRoot
     {
         var partitionKeyProperties = aggregate
             .GetType()
             .GetProperties()
-            .Where(x
-                => x.GetCustomAttributes()
-                    .Any(y =>
-                        y is EventItemPartitionKeyAttribute))
+            .Where(
+                x
+                    => x.GetCustomAttributes()
+                        .Any(
+                            y =>
+                                y is EventItemPartitionKeyAttribute))
             .ToList();
 
         switch (partitionKeyProperties.Count)
