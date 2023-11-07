@@ -1,45 +1,36 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
-
-using MartinCostello.Logging.XUnit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
+using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Xunit.Abstractions;
 
-namespace EventSourcingCustomerAccount.FunctionalTests.Fixtures;
+namespace EventSourcingCustomerAccount.FunctionalTests;
 
-public class ApiFixture : WebApplicationFactory<Program>, ITestOutputHelperAccessor
+public class CustomerAccountApi : WebApplicationFactory<Program>
 {
-    public ITestOutputHelper? OutputHelper { get; set; }
-
-    public HttpClient HttpClient { get; set; }
-
-    public ApiFixture()
-    {
-        HttpClient = CreateClient();
-    }
-
     protected override void ConfigureWebHost(
         IWebHostBuilder builder)
     {
-        builder.ConfigureLogging(loggingBuilder => loggingBuilder.ClearProviders().AddXUnit(this));
-
         // Override the default configuration to use an in-memory event store.
         builder.ConfigureServices(
-            services => services
-                .AddInMemoryCosmosEventSourcing()
-                .AddInMemoryCosmosRepository());
+            services =>
+            {
+                services
+                    .AddInMemoryCosmosEventSourcing()
+                    .AddInMemoryCosmosRepository();
+
+                services.RemoveCosmosRepositoryChangeFeedHostedService();
+            });
 
         builder.ConfigureAppConfiguration(
             config =>
             {
                 var dictionary = new Dictionary<string, string?>
                 {
-                    ["RepositoryOptions:CosmosConnectionString"] = "foo"
+                    ["RepositoryOptions:CosmosConnectionString"] = "AccountEndpoint=http://foo.net;AccountKey=Zm9v"
                 };
 
                 config.AddInMemoryCollection(dictionary);

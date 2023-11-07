@@ -4,15 +4,13 @@
 using System.Net.Http.Json;
 using Bogus;
 using Chill;
-using EventSourcingCustomerAccount.FunctionalTests.Fixtures;
 using EventSourcingCustomerAccount.Items;
 using EventSourcingCustomerAccount.Requests;
 using EventSourcingCustomerAccount.Services;
 using FluentAssertions;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using Xunit.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace EventSourcingCustomerAccount.FunctionalTests.Specifications;
 
@@ -56,35 +54,32 @@ public static class AccountTests
                         f.Address.ZipCode());
                 });
 
-    public class Given_a_valid_request_When_a_new_customer_account_is_created : GivenWhenThen, IClassFixture<ApiFixture>
+    [TestClass]
+    public class Given_a_valid_request_When_a_new_customer_account_is_created : GivenWhenThen
     {
-        private readonly ApiFixture _api;
+        private readonly CustomerAccountApi _customerAccountApi = new();
         private HttpResponseMessage _httpResponse = null!;
         private CreateCustomerAccountRequest _request = null!;
 
-        public Given_a_valid_request_When_a_new_customer_account_is_created(
-            ITestOutputHelper testOutputHelper,
-            ApiFixture api)
+        public Given_a_valid_request_When_a_new_customer_account_is_created()
         {
-            _api = api;
-            _api.OutputHelper = testOutputHelper;
-
+            HttpClient httpClient = _customerAccountApi.CreateClient();
             Given(() => _request = CreateCustomerAccountRequestFaker.Generate());
             When(
-                async () => _httpResponse = await _api.HttpClient.PostAsJsonAsync(
+                async () => _httpResponse = await httpClient.PostAsJsonAsync(
                     "api/accounts/",
                     _request));
         }
 
-        [Fact]
+        [TestMethod]
         public void Then_the_response_should_be_successful() =>
             _httpResponse.Should().BeSuccessful();
 
-        [Fact]
+        [TestMethod]
         public async Task Then_the_read_projection_should_have_been_created()
         {
             IRepository<CustomerAccountReadItem> repository =
-                _api.Services.GetRequiredService<IRepository<CustomerAccountReadItem>>();
+                _customerAccountApi.Services.GetRequiredService<IRepository<CustomerAccountReadItem>>();
             CustomerAccountReadItem projection = await repository.GetAsync(_request.Username);
 
             projection.Should().BeEquivalentTo(
@@ -98,27 +93,23 @@ public static class AccountTests
         }
     }
 
-    public class Given_a_customer_has_created_an_account_When_they_give_there_address : GivenWhenThen,
-        IClassFixture<ApiFixture>
+    [TestClass]
+    public class Given_a_customer_has_created_an_account_When_they_give_there_address : GivenWhenThen
     {
-        private readonly ApiFixture _api;
         private HttpResponseMessage _httpResponse = null!;
         private CreateCustomerAccountRequest _createRequest = null!;
         private AssignCustomersAccountAddressRequest _assignAddressRequest = null!;
+        private readonly CustomerAccountApi _customerAccountApi = new();
 
-        public Given_a_customer_has_created_an_account_When_they_give_there_address(
-            ITestOutputHelper testOutputHelper,
-            ApiFixture api)
+        public Given_a_customer_has_created_an_account_When_they_give_there_address()
         {
-            _api = api;
-            _api.OutputHelper = testOutputHelper;
-
+            HttpClient httpClient = _customerAccountApi.CreateClient();
             Given(
                 async () =>
                 {
                     _createRequest = CreateCustomerAccountRequestFaker.Generate();
 
-                    HttpResponseMessage response = await _api.HttpClient.PostAsJsonAsync(
+                    HttpResponseMessage response = await httpClient.PostAsJsonAsync(
                         "api/accounts/",
                         _createRequest);
                     response.EnsureSuccessStatusCode();
@@ -130,19 +121,19 @@ public static class AccountTests
                 });
 
             When(
-                async () => _httpResponse = await _api.HttpClient.PutAsJsonAsync(
+                async () => _httpResponse = await httpClient.PutAsJsonAsync(
                     "api/accounts/address",
                     _assignAddressRequest));
         }
 
-        [Fact]
+        [TestMethod]
         public void Then_the_response_should_be_successful() =>
             _httpResponse.Should().BeSuccessful();
 
-        [Fact]
+        [TestMethod]
         public void Then_a_welcome_letter_should_be_sent()
         {
-            IPostalService postalService =  _api.Services.GetRequiredService<IPostalService>();
+            IPostalService postalService =  _customerAccountApi.Services.GetRequiredService<IPostalService>();
             postalService.LastSentWelcomeLetter.Should().BeEquivalentTo(
                 new
                 {
@@ -159,11 +150,11 @@ public static class AccountTests
                 });
         }
 
-        [Fact]
+        [TestMethod]
         public async Task Then_the_read_projection_should_have_been_created()
         {
             IRepository<CustomerAccountReadItem> repository =
-                _api.Services.GetRequiredService<IRepository<CustomerAccountReadItem>>();
+                _customerAccountApi.Services.GetRequiredService<IRepository<CustomerAccountReadItem>>();
             CustomerAccountReadItem projection = await repository.GetAsync(_createRequest.Username);
 
             projection.Should().BeEquivalentTo(

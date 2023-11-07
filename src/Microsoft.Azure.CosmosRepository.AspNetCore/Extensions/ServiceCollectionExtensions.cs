@@ -1,6 +1,7 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Linq;
 using System.Reflection;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,21 @@ public static class ServiceCollectionExtensions
             .AddClasses(classes => classes.AssignableTo(typeof(IItemChangeFeedProcessor<>)))
             .AsImplementedInterfaces().WithSingletonLifetime());
 
+        return services;
+    }
+
+    /// <summary>
+    /// Removes the hosted service to process changes from any number of cosmos containers.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection RemoveCosmosRepositoryChangeFeedHostedService(this IServiceCollection services)
+    {
+        var hostedServices =
+            services.Where(i => i.ServiceType == typeof(CosmosRepositoryChangeFeedHostedService))
+                .ToList();
+
+        hostedServices.ForEach(r => services.Remove(r));
         return services;
     }
 }
