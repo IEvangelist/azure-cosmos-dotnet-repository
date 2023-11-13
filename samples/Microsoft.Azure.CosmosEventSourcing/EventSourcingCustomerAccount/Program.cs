@@ -55,7 +55,10 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
     eventSourcingBuilder.AddDomainEventTypes(typeof(Program).Assembly);
 });
 
-builder.Services.AddCosmosRepositoryChangeFeedHostedService();
+if (builder.Environment.EnvironmentName != "FunctionalTests")
+{
+    builder.Services.AddCosmosRepositoryChangeFeedHostedService();
+}
 
 builder.Services.AddSingleton<IPostalService, DefaultPostalService>();
 

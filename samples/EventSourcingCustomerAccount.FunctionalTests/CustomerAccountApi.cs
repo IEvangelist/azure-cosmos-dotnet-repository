@@ -14,6 +14,9 @@ public class CustomerAccountApi : WebApplicationFactory<Program>
     protected override void ConfigureWebHost(
         IWebHostBuilder builder)
     {
+
+        builder.UseEnvironment("FunctionalTests");
+
         // Override the default configuration to use an in-memory event store.
         builder.ConfigureServices(
             services =>
@@ -21,8 +24,6 @@ public class CustomerAccountApi : WebApplicationFactory<Program>
                 services
                     .AddInMemoryCosmosEventSourcing()
                     .AddInMemoryCosmosRepository();
-
-                services.RemoveCosmosRepositoryChangeFeedHostedService();
             });
 
         builder.ConfigureAppConfiguration(
