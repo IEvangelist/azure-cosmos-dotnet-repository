@@ -11,7 +11,7 @@ internal partial class InMemoryRepository<TItem> : IRepository<TItem>
 {
     private readonly ISpecificationEvaluator _specificationEvaluator;
     internal long CurrentTs => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-    internal ConcurrentDictionary<string, string> Items { get; } = new();
+
     internal Action<ChangeFeedItemArgs<TItem>>? Changes { get; set; }
 
     public InMemoryRepository() =>

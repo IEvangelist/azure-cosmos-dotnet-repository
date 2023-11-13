@@ -25,8 +25,8 @@ internal partial class InMemoryRepository<TItem>
 #else
         await Task.CompletedTask;
 #endif
-        return Items
-            .Values
+        return InMemoryStorage
+            .GetValues<TItem>()
             .Select(DeserializeItem)
             .FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey) is not null;
     }
@@ -41,7 +41,8 @@ internal partial class InMemoryRepository<TItem>
 #else
         await Task.CompletedTask;
 #endif
-        return Items.Values.Select(DeserializeItem).Any(predicate.Compose(
+        return InMemoryStorage
+            .GetValues<TItem>().Select(DeserializeItem).Any(predicate.Compose(
             item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
     }
 }
