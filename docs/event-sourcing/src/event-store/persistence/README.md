@@ -39,6 +39,13 @@ public class ShipRepository : IShipRepository
 
 ## Aggregate Roots
 
+1. cover the basic implementation of an aggregate root for applying new events with sequencing on
+1. mention partial classes use for splitting state changes and business logic from the apply methods
+    1. ensure to mention that the apply methods MUST succeed every-time once applied 
+1. cover the reasons why you'd want to disable sequencing
+    1. mention again the importance of the apply methods, even more so when using this model.
+    1. explain the multi region write scenarios
+
 ```csharp
 //TODO:
 ```
