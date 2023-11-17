@@ -1,8 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Text.Json.Serialization;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Stubs;
 
 public class TestItem : FullItem
