@@ -23,7 +23,8 @@ internal partial class InMemoryRepository<TItem>
             throw new NotImplementedException();
         }
 
-        IQueryable<TItem> query = Items.Values
+        IQueryable<TItem> query = InMemoryStorage
+            .GetValues<TItem>()
             .Select(DeserializeItem).AsQueryable()
             .Where(item => item.Type == typeof(TItem).Name);
 

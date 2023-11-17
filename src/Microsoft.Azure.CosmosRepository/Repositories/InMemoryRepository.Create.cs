@@ -34,8 +34,8 @@ internal partial class InMemoryRepository<TItem>
     {
         await Task.CompletedTask;
 
-        TItem? item = Items
-            .Values
+        TItem? item = InMemoryStorage
+            .GetValues<TItem>()
             .Select(DeserializeItem)
             .FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
 
@@ -50,9 +50,11 @@ internal partial class InMemoryRepository<TItem>
         }
 
         var serialisedValue = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
-        Items.TryAdd(value.Id, serialisedValue);
 
-        value = DeserializeItem(Items[value.Id]);
+        ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
+        items.TryAdd(value.Id, serialisedValue);
+
+        value = DeserializeItem(items[value.Id]);
 
         if (raiseChanges)
         {

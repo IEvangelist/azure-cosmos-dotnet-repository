@@ -5,8 +5,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests;
 
 class Person : Item, IItemWithEtag
 {
-    [JsonProperty("_etag")]
-    public string Etag { get; set; } = null!;
+    [JsonProperty("_etag")] public string Etag { get; set; } = null!;
 
     public string Name { get; set; }
 
@@ -96,18 +95,10 @@ class InvalidSerialisableBase : Item
 
 public class InMemoryRepositoryTests
 {
-    private readonly InMemoryRepository<Person> _personRepository;
-    private readonly InMemoryRepository<Dog> _dogRepository;
-    private readonly InMemoryRepository<RootObject> _rootObjectRepository;
-    private readonly InMemoryRepository<InvalidSerialisable> _invalidSerialisableRepository;
-
-    public InMemoryRepositoryTests()
-    {
-        _personRepository = new InMemoryRepository<Person>();
-        _dogRepository = new InMemoryRepository<Dog>();
-        _rootObjectRepository = new InMemoryRepository<RootObject>();
-        _invalidSerialisableRepository = new InMemoryRepository<InvalidSerialisable>();
-    }
+    private readonly InMemoryRepository<Person> _personRepository = new();
+    private readonly InMemoryRepository<Dog> _dogRepository = new();
+    private readonly InMemoryRepository<RootObject> _rootObjectRepository = new();
+    private readonly InMemoryRepository<InvalidSerialisable> _invalidSerializableRepository = new();
 
     [Fact]
     public async Task GetAsync_InvalidSerializable_ThrowsNullException()
@@ -115,12 +106,13 @@ public class InMemoryRepositoryTests
         //Arrange
         InvalidSerialisableArguments args = new("id", "property1");
         InvalidSerialisable invalidSerializable = new(args);
-        _invalidSerialisableRepository.Items[invalidSerializable.Id] = JsonConvert.SerializeObject(invalidSerializable);
+        InMemoryStorage.GetDictionary<InvalidSerialisable>()[invalidSerializable.Id] =
+            JsonConvert.SerializeObject(invalidSerializable);
 
         //Act
         //Assert
         await Assert.ThrowsAsync<NullReferenceException>(() =>
-            _invalidSerialisableRepository.GetAsync(invalidSerializable.Id).AsTask());
+            _invalidSerializableRepository.GetAsync(invalidSerializable.Id).AsTask());
     }
 
     [Fact]
@@ -164,7 +156,7 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) };
-        _personRepository.Items.TryAddAsJson(item.Id, item);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(item.Id, item);
 
         //Act
         Person person = await _personRepository.GetAsync(item.Id);
@@ -181,7 +173,7 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Dog item = new("cocker-spanel") { Id = Guid.NewGuid().ToString(), Type = nameof(Dog) };
-        _dogRepository.Items.TryAddAsJson(item.Id, item);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(item.Id, item);
 
         //Act
         Dog dog = await _dogRepository.GetAsync(item.Id, item.Breed);
@@ -196,7 +188,7 @@ public class InMemoryRepositoryTests
     public async Task GetAsync_IdAndPartitionKeyObjectExists_GetsItem()
     {
         Dog item = new("cocker-spanel") { Id = Guid.NewGuid().ToString(), Type = nameof(Dog) };
-        _dogRepository.Items.TryAddAsJson(item.Id, item);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(item.Id, item);
 
         //Act
         Dog dog = await _dogRepository.GetAsync(item.Id, new PartitionKey(item.Breed));
@@ -212,7 +204,7 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Person person = new("joe");
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(person.Id, person);
 
         //Act
         IEnumerable<Person> people = await _personRepository.GetAsync(p => p.Name == "fred");
@@ -226,7 +218,7 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Person person = new("joe");
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act
         IEnumerable<Person> people = await _personRepository.GetAsync(p => p.Name == "joe");
@@ -234,7 +226,7 @@ public class InMemoryRepositoryTests
         //Assert
         var enumerable = people.ToList();
         Assert.True(enumerable.Any());
-        Person item = enumerable.First();
+        Person item = enumerable.First(x => x.Id == person.Id);
         Assert.Equal(person.Name, item.Name);
         Assert.Equal(person.Id, item.Id);
         Assert.Equal(person.Type, item.Type);
@@ -250,10 +242,16 @@ public class InMemoryRepositoryTests
         //Act
         //Assert
         await Assert.ThrowsAsync<NullReferenceException>(() =>
-            _invalidSerialisableRepository.CreateAsync(invalidSerialisable).AsTask());
-        Assert.True(_invalidSerialisableRepository.Items.ContainsKey(invalidSerialisable.Id));
-        Assert.Equal(args.Property1, _invalidSerialisableRepository.DeserializeItem<ValidInvalidSerialisable>(_invalidSerialisableRepository.Items[invalidSerialisable.Id]).Property1);
-        Assert.Equal(args.PartitionKey, _invalidSerialisableRepository.DeserializeItem<ValidInvalidSerialisable>(_invalidSerialisableRepository.Items[invalidSerialisable.Id]).PartitionKey);
+            _invalidSerializableRepository.CreateAsync(invalidSerialisable).AsTask());
+        Assert.True(InMemoryStorage.GetDictionary<InvalidSerialisable>().ContainsKey(invalidSerialisable.Id));
+        Assert.Equal(args.Property1,
+            _invalidSerializableRepository
+                .DeserializeItem<ValidInvalidSerialisable>(
+                    InMemoryStorage.GetDictionary<InvalidSerialisable>()[invalidSerialisable.Id]).Property1);
+        Assert.Equal(args.PartitionKey,
+            _invalidSerializableRepository
+                .DeserializeItem<ValidInvalidSerialisable>(
+                    InMemoryStorage.GetDictionary<InvalidSerialisable>()[invalidSerialisable.Id]).PartitionKey);
     }
 
     [Fact]
@@ -261,7 +259,7 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) };
-        _personRepository.Items.TryAddAsJson(item.Id, item);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(item.Id, item);
 
         //Act
         CosmosException ex = await Assert.ThrowsAsync<CosmosException>(() =>
@@ -280,7 +278,7 @@ public class InMemoryRepositoryTests
         Dog returnedDog = await _dogRepository.CreateAsync(dog);
 
         // Assert
-        Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.Values.First());
+        Dog addedDog = await _dogRepository.GetAsync(dog.Id, dog.Breed);
 
         Assert.Equal(returnedDog.Name, addedDog.Name);
         Assert.Equal(returnedDog.Id, addedDog.Id);
@@ -294,12 +292,14 @@ public class InMemoryRepositoryTests
         Assert.NotNull(returnedDog.CreatedTimeUtc);
         Assert.NotNull(addedDog.CreatedTimeUtc);
         Assert.InRange(dog.CreatedTimeUtc!.Value, DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
-        Assert.InRange(returnedDog.CreatedTimeUtc!.Value, DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+        Assert.InRange(returnedDog.CreatedTimeUtc!.Value, DateTime.UtcNow.AddSeconds(-1),
+            DateTime.UtcNow.AddSeconds(1));
         Assert.InRange(addedDog.CreatedTimeUtc!.Value, DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
-    public async Task CreateAsync_SingleItemWithTimeStamps_WhenCreatedTimeStampHasAlreadyBeenSet_ShouldNotSetCreatedTimeStamp()
+    public async Task
+        CreateAsync_SingleItemWithTimeStamps_WhenCreatedTimeStampHasAlreadyBeenSet_ShouldNotSetCreatedTimeStamp()
     {
         // Arrange
         DateTime expectedCreatedTimeUtc = DateTime.UtcNow.AddDays(-7);
@@ -312,7 +312,7 @@ public class InMemoryRepositoryTests
         Dog returnedDog = await _dogRepository.CreateAsync(dog);
 
         // Assert
-        Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.Values.First());
+        Dog addedDog = await _dogRepository.GetAsync(dog.Id, dog.Breed);
 
         Assert.Equal(returnedDog.Name, addedDog.Name);
         Assert.Equal(returnedDog.Id, addedDog.Id);
@@ -344,7 +344,7 @@ public class InMemoryRepositoryTests
         //Act
         Person person = await _personRepository.CreateAsync(item);
 
-        Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
+        Person addedPerson = await _personRepository.GetAsync(item.Id);
 
         Assert.Equal(item.Name, person.Name);
         Assert.Equal(item.Id, person.Id);
@@ -373,7 +373,8 @@ public class InMemoryRepositoryTests
 
         foreach (Person item in items)
         {
-            Person addedPerson = _personRepository.Items.Values.Select(_personRepository.DeserializeItem).First(i => i.Id == item.Id);
+            Person addedPerson = InMemoryStorage.GetDictionary<Person>().Values
+                .Select(_personRepository.DeserializeItem).First(i => i.Id == item.Id);
             Person person = people.First(i => i.Id == item.Id);
 
             Assert.Equal(item.Name, person.Name);
@@ -411,7 +412,8 @@ public class InMemoryRepositoryTests
 
         foreach (Person item in items.Where(i => i.Name != badPerson.Name))
         {
-            Person person = _personRepository.Items.Values.Select(_personRepository.DeserializeItem).First(i => i.Id == item.Id);
+            Person person = InMemoryStorage.GetDictionary<Person>().Values.Select(_personRepository.DeserializeItem)
+                .First(i => i.Id == item.Id);
 
             Assert.Equal(item.Name, person.Name);
             Assert.Equal(item.Id, person.Id);
@@ -452,13 +454,14 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Person person = new("joe");
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act
         await _personRepository.DeleteAsync(person.Id);
 
         //Assert
-        Assert.False(_personRepository.Items.Any());
+        Person? oldPerson = await _personRepository.TryGetAsync(person.Id);
+        Assert.Null(oldPerson);
     }
 
     [Fact]
@@ -466,13 +469,13 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Dog dog = new("cocker spaniel");
-        _dogRepository.Items.TryAddAsJson(dog.Id, dog);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog.Id, dog);
 
         //Act
         await _dogRepository.DeleteAsync(dog.Id, dog.Breed);
 
         //Assert
-        Assert.False(_dogRepository.Items.Any());
+        Assert.False(InMemoryStorage.GetDictionary<Dog>().Any());
     }
 
     [Fact]
@@ -484,7 +487,7 @@ public class InMemoryRepositoryTests
         //Act
         Person person = await _personRepository.UpdateAsync(item);
 
-        Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
+        Person addedPerson = await _personRepository.GetAsync(item.Id);
 
         Assert.Equal(item.Name, person.Name);
         Assert.Equal(item.Id, person.Id);
@@ -503,13 +506,13 @@ public class InMemoryRepositoryTests
         //Arrange
         var originalEtag = Guid.NewGuid().ToString();
         Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag };
-        _personRepository.Items.TryAddAsJson(item.Id, item);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(item.Id, item);
         Person updateItem = new("joe2") { Id = item.Id, Type = nameof(Person), Etag = originalEtag };
 
         //Act
         Person person = await _personRepository.UpdateAsync(updateItem, false, default);
 
-        Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
+        Person addedPerson = await _personRepository.GetAsync(person.Id);
 
         Assert.Equal(updateItem.Name, person.Name);
         Assert.Equal(updateItem.Id, person.Id);
@@ -519,7 +522,8 @@ public class InMemoryRepositoryTests
         Assert.Equal(updateItem.Id, addedPerson.Id);
         Assert.Equal(updateItem.Type, addedPerson.Type);
 
-        Assert.True(!string.IsNullOrWhiteSpace(addedPerson.Etag) && addedPerson.Etag != Guid.Empty.ToString() && addedPerson.Etag != originalEtag);
+        Assert.True(!string.IsNullOrWhiteSpace(addedPerson.Etag) && addedPerson.Etag != Guid.Empty.ToString() &&
+                    addedPerson.Etag != originalEtag);
     }
 
     [Fact]
@@ -530,12 +534,13 @@ public class InMemoryRepositoryTests
         var storedEtag = Guid.NewGuid().ToString();
 
         Person storedItem = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = storedEtag };
-        _personRepository.Items.TryAddAsJson(storedItem.Id, storedItem);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(storedItem.Id, storedItem);
 
         Person updateItem = new("joe") { Id = storedItem.Id, Type = nameof(Person), Etag = updateEtag };
 
         //Act
-        CosmosException cosmosException = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(updateItem).AsTask());
+        CosmosException cosmosException =
+            await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(updateItem).AsTask());
         Assert.Equal(HttpStatusCode.PreconditionFailed, cosmosException.StatusCode);
     }
 
@@ -545,13 +550,13 @@ public class InMemoryRepositoryTests
         //Arrange
         var originalEtag = Guid.NewGuid().ToString();
         Person item = new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag };
-        _personRepository.Items.TryAddAsJson(item.Id, item);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(item.Id, item);
         Person updateItem = new("joe2") { Id = item.Id, Type = nameof(Person), Etag = null! };
 
         //Act
         Person person = await _personRepository.UpdateAsync(updateItem, false, default);
 
-        Person addedPerson = _personRepository.DeserializeItem(_personRepository.Items.Values.First());
+        Person addedPerson = await _personRepository.GetAsync(person.Id);
 
         Assert.Equal(updateItem.Name, person.Name);
         Assert.Equal(updateItem.Id, person.Id);
@@ -561,7 +566,8 @@ public class InMemoryRepositoryTests
         Assert.Equal(updateItem.Id, addedPerson.Id);
         Assert.Equal(updateItem.Type, addedPerson.Type);
 
-        Assert.True(!string.IsNullOrWhiteSpace(addedPerson.Etag) && addedPerson.Etag != Guid.Empty.ToString() && addedPerson.Etag != originalEtag);
+        Assert.True(!string.IsNullOrWhiteSpace(addedPerson.Etag) && addedPerson.Etag != Guid.Empty.ToString() &&
+                    addedPerson.Etag != originalEtag);
     }
 
     [Fact]
@@ -580,7 +586,7 @@ public class InMemoryRepositoryTests
 
         foreach (Person item in items)
         {
-            _personRepository.Items.TryAddAsJson(item.Id, item);
+            InMemoryStorage.GetDictionary<Person>().TryAddAsJson(item.Id, item);
             Person itemUpdate = new($"{item.Name}Updated")
             {
                 Id = item.Id,
@@ -595,7 +601,8 @@ public class InMemoryRepositoryTests
 
         foreach (Person item in items)
         {
-            Person updatedPerson = _personRepository.Items.Values.Select(_personRepository.DeserializeItem).First(i => i.Id == item.Id);
+            Person updatedPerson = InMemoryStorage.GetDictionary<Person>().Values
+                .Select(_personRepository.DeserializeItem).First(i => i.Id == item.Id);
             Person person = people.First(i => i.Id == item.Id);
             Person itemUpdate = itemsUpdate.First(i => i.Id == item.Id);
 
@@ -611,7 +618,8 @@ public class InMemoryRepositoryTests
             Assert.Equal(itemUpdate.Id, updatedPerson.Id);
             Assert.Equal(itemUpdate.Type, updatedPerson.Type);
 
-            Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+            Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() &&
+                        updatedPerson.Etag != originalEtag);
         }
     }
 
@@ -631,7 +639,7 @@ public class InMemoryRepositoryTests
 
         foreach (Person item in items)
         {
-            _personRepository.Items.TryAddAsJson(item.Id, item);
+            InMemoryStorage.GetDictionary<Person>().TryAddAsJson(item.Id, item);
             Person itemUpdate = new($"{item.Name}Updated")
             {
                 Id = item.Id,
@@ -642,7 +650,8 @@ public class InMemoryRepositoryTests
         }
 
         //Act & Assert
-        await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(itemsUpdate, false, default).AsTask());
+        await Assert.ThrowsAsync<CosmosException>(() =>
+            _personRepository.UpdateAsync(itemsUpdate, false, default).AsTask());
     }
 
     [Fact]
@@ -651,13 +660,13 @@ public class InMemoryRepositoryTests
         //Arrange
         var originalEtag = Guid.NewGuid().ToString();
         Dog dog = new("labrador");
-        _dogRepository.Items.TryAddAsJson(dog.Id, dog);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog.Id, dog);
         Dog updatedDog = new("labradoodle") { Id = dog.Id };
 
         //Act
         Dog returnedDog = await _dogRepository.UpdateAsync(updatedDog);
 
-        Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.Values.First());
+        Dog addedDog = await _dogRepository.GetAsync(updatedDog.Id, updatedDog.Breed);
 
         Assert.Equal(updatedDog.Name, returnedDog.Name);
         Assert.Equal(dog.Id, returnedDog.Id);
@@ -667,7 +676,8 @@ public class InMemoryRepositoryTests
         Assert.Equal(dog.Id, addedDog.Id);
         Assert.Equal(updatedDog.Type, addedDog.Type);
 
-        Assert.True(!string.IsNullOrWhiteSpace(addedDog.Etag) && addedDog.Etag != Guid.Empty.ToString() && addedDog.Etag != originalEtag);
+        Assert.True(!string.IsNullOrWhiteSpace(addedDog.Etag) && addedDog.Etag != Guid.Empty.ToString() &&
+                    addedDog.Etag != originalEtag);
 
         var calculatedTs = _dogRepository.CurrentTs;
         DateTime calculatedTsDate = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(calculatedTs);
@@ -681,7 +691,7 @@ public class InMemoryRepositoryTests
         //Arrange
         Person person = new("joe");
 
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act
         var exists = await _personRepository.ExistsAsync(person.Id);
@@ -695,7 +705,7 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Dog dog = new("cocker spaniel");
-        _dogRepository.Items.TryAddAsJson(dog.Id, dog);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog.Id, dog);
 
         //Act
         var exists = await _dogRepository.ExistsAsync(dog.Id, dog.Breed);
@@ -710,7 +720,7 @@ public class InMemoryRepositoryTests
         //Arrange
         Person person = new("joe");
 
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act
         var exists = await _personRepository.ExistsAsync("fred");
@@ -728,9 +738,9 @@ public class InMemoryRepositoryTests
         Dog dog2 = new("cocker spaniel");
         Dog dog3 = new("golden retriever");
 
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
 
         //Act
         var exists = await _dogRepository.ExistsAsync(d => d.Breed == "cocker spaniel" || d.Id == dog3.Id);
@@ -747,9 +757,10 @@ public class InMemoryRepositoryTests
         Dog dog2 = new("cocker spaniel");
         Dog dog3 = new("golden retriever");
 
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().Clear();
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
 
         //Act
         var count = await _dogRepository.CountAsync();
@@ -762,6 +773,7 @@ public class InMemoryRepositoryTests
     public async Task CountAsync_CountAllOnEmptyContainer_ReturnsZero()
     {
         //Act
+        InMemoryStorage.GetDictionary<Dog>().Clear();
         var count = await _dogRepository.CountAsync();
 
         //Assert
@@ -776,9 +788,10 @@ public class InMemoryRepositoryTests
         Dog dog2 = new("cocker spaniel");
         Dog dog3 = new("golden retriever");
 
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().Clear();
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
 
         //Act
         var count = await _dogRepository.CountAsync(d => d.Breed == "cocker spaniel");
@@ -795,9 +808,9 @@ public class InMemoryRepositoryTests
         Dog dog2 = new("cocker spaniel");
         Dog dog3 = new("golden retriever");
 
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
 
         //Act
         var count = await _dogRepository.CountAsync(d => d.Breed == "maltese");
@@ -811,13 +824,13 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         Dog dog = new("labrador", "fred");
-        _dogRepository.Items.TryAddAsJson(dog.Id, dog);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog.Id, dog);
 
         //Act
         await _dogRepository.UpdateAsync(dog.Id, builder => builder.Replace(d => d.Name, "kenny"), dog.Breed);
 
         //Assert
-        Dog addedDog = _dogRepository.DeserializeItem(_dogRepository.Items.First().Value);
+        Dog addedDog = await _dogRepository.GetAsync(dog.Id, dog.Breed);
         Assert.Equal("kenny", addedDog.Name);
 
         var calculatedTs = _dogRepository.CurrentTs;
@@ -835,16 +848,18 @@ public class InMemoryRepositoryTests
         {
             Etag = originalEtag
         };
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act
-        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, originalEtag, default);
+        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default,
+            originalEtag, default);
 
         //Assert
-        Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+        Person updatedPerson = await _personRepository.GetAsync(person.Id);
         Assert.Equal("kenny", updatedPerson.Name);
         Assert.Equal(person.Id, updatedPerson.Id);
-        Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+        Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() &&
+                    updatedPerson.Etag != originalEtag);
     }
 
     [Fact]
@@ -856,16 +871,18 @@ public class InMemoryRepositoryTests
         {
             Etag = originalEtag
         };
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act
-        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, null, default);
+        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, null,
+            default);
 
         //Assert
-        Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+        Person updatedPerson = _personRepository.DeserializeItem(InMemoryStorage.GetDictionary<Person>().First().Value);
         Assert.Equal("kenny", updatedPerson.Name);
         Assert.Equal(person.Id, updatedPerson.Id);
-        Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+        Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() &&
+                    updatedPerson.Etag != originalEtag);
     }
 
 
@@ -878,16 +895,18 @@ public class InMemoryRepositoryTests
         {
             Etag = originalEtag
         };
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act
-        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, string.Empty, default);
+        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default,
+            string.Empty, default);
 
         //Assert
-        Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+        Person updatedPerson = await _personRepository.GetAsync(person.Id);
         Assert.Equal("kenny", updatedPerson.Name);
         Assert.Equal(person.Id, updatedPerson.Id);
-        Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+        Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() &&
+                    updatedPerson.Etag != originalEtag);
     }
 
     [Fact]
@@ -899,16 +918,18 @@ public class InMemoryRepositoryTests
         {
             Etag = originalEtag
         };
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act
-        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, "            ", default);
+        await _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default,
+            "            ", default);
 
         //Assert
-        Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+        Person updatedPerson = await _personRepository.GetAsync(person.Id);
         Assert.Equal("kenny", updatedPerson.Name);
         Assert.Equal(person.Id, updatedPerson.Id);
-        Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() && updatedPerson.Etag != originalEtag);
+        Assert.True(!string.IsNullOrWhiteSpace(updatedPerson.Etag) && updatedPerson.Etag != Guid.Empty.ToString() &&
+                    updatedPerson.Etag != originalEtag);
     }
 
     [Fact]
@@ -920,14 +941,16 @@ public class InMemoryRepositoryTests
         {
             Etag = originalEtag
         };
-        _personRepository.Items.TryAddAsJson(person.Id, person);
+        InMemoryStorage.GetDictionary<Person>().TryAddAsJson(person.Id, person);
 
         //Act & Assert
-        CosmosException cosmosException = await Assert.ThrowsAsync<CosmosException>(() => _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default, Guid.NewGuid().ToString(), default).AsTask());
+        CosmosException cosmosException = await Assert.ThrowsAsync<CosmosException>(() =>
+            _personRepository.UpdateAsync(person.Id, builder => builder.Replace(p => p.Name, "kenny"), default,
+                Guid.NewGuid().ToString(), default).AsTask());
         Assert.Equal(HttpStatusCode.PreconditionFailed, cosmosException.StatusCode);
 
 
-        Person updatedPerson = _personRepository.DeserializeItem(_personRepository.Items.First().Value);
+        Person updatedPerson = await _personRepository.GetAsync(person.Id);
         Assert.Equal(person.Name, updatedPerson.Name);
         Assert.Equal(person.Id, updatedPerson.Id);
     }
@@ -947,7 +970,7 @@ public class InMemoryRepositoryTests
             }
         };
 
-        _rootObjectRepository.Items.TryAddAsJson(root.Id, root);
+        InMemoryStorage.GetDictionary<RootObject>().TryAddAsJson(root.Id, root);
 
         //Act
         await _rootObjectRepository.UpdateAsync(root.Id, builder =>
@@ -959,7 +982,8 @@ public class InMemoryRepositoryTests
                 }));
 
         //Assert
-        RootObject deserialisedItem = _rootObjectRepository.DeserializeItem(_rootObjectRepository.Items.First().Value);
+        RootObject deserialisedItem =
+            _rootObjectRepository.DeserializeItem(InMemoryStorage.GetDictionary<RootObject>().First().Value);
         Assert.Equal("CBA", deserialisedItem.Type1);
         Assert.Equal("prop2", deserialisedItem.NestedObject.Property1);
         Assert.Equal(2, deserialisedItem.NestedObject.Property2);
@@ -972,14 +996,16 @@ public class InMemoryRepositoryTests
         Dog dog1 = new("cocker spaniel");
         Dog dog2 = new("cocker spaniel");
         Dog dog3 = new("cocker spaniel");
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().Clear();
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
         var pageSize = 2;
         var pageNumber = 2;
 
         //Act
-        IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize);
+        IPageQueryResult<Dog> dogs =
+            await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize);
 
         //Assert
         var enumerable = dogs.Items.ToList();
@@ -997,24 +1023,25 @@ public class InMemoryRepositoryTests
         Dog dog5 = new("cocker spaniel");
         Dog dog6 = new("cocker spaniel");
         Dog dog7 = new("golden retriever");
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
-        _dogRepository.Items.TryAddAsJson(dog4.Id, dog4);
-        _dogRepository.Items.TryAddAsJson(dog5.Id, dog5);
-        _dogRepository.Items.TryAddAsJson(dog6.Id, dog6);
-        _dogRepository.Items.TryAddAsJson(dog7.Id, dog7);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog4.Id, dog4);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog5.Id, dog5);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog6.Id, dog6);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog7.Id, dog7);
         var pageSize = 2;
         var pageNumber = 2;
 
-        var expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
+        var expectedList = InMemoryStorage.GetDictionary<Dog>().Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
             .Where(d => d?.Breed == "cocker spaniel")
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
             .ToList();
 
         //Act
-        IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
+        IPageQueryResult<Dog> dogs =
+            await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
 
         //Assert
         var enumerable = dogs.Items.ToList();
@@ -1039,24 +1066,25 @@ public class InMemoryRepositoryTests
         Dog dog5 = new("cocker spaniel");
         Dog dog6 = new("cocker spaniel");
         Dog dog7 = new("golden retriever");
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
-        _dogRepository.Items.TryAddAsJson(dog4.Id, dog4);
-        _dogRepository.Items.TryAddAsJson(dog5.Id, dog5);
-        _dogRepository.Items.TryAddAsJson(dog6.Id, dog6);
-        _dogRepository.Items.TryAddAsJson(dog7.Id, dog7);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog4.Id, dog4);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog5.Id, dog5);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog6.Id, dog6);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog7.Id, dog7);
         var pageSize = 2;
         var pageNumber = 2;
 
-        var expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
+        var expectedList = InMemoryStorage.GetDictionary<Dog>().Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
             .Where(d => d?.Breed == "cocker spaniel")
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
             .ToList();
 
         //Act
-        IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
+        IPageQueryResult<Dog> dogs =
+            await _dogRepository.PageAsync(d => d.Breed == "cocker spaniel", pageNumber, pageSize);
 
         //Assert
         var enumerable = dogs.Items.ToList();
@@ -1077,16 +1105,17 @@ public class InMemoryRepositoryTests
         Dog dog1 = new("cocker spaniel");
         Dog dog2 = new("cocker spaniel");
         Dog dog3 = new("cocker spaniel");
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
         var pageSize = 2;
         var pageNumber = 2;
 
         DogSpecification specification = new("golden retriever", 2, 2);
 
         //Act
-        IPageQueryResult<Dog> dogs = await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize, true);
+        IPageQueryResult<Dog> dogs =
+            await _dogRepository.PageAsync(d => d.Breed == "golden retriever", pageNumber, pageSize, true);
 
         //Assert
         var enumerable = dogs.Items.ToList();
@@ -1104,22 +1133,22 @@ public class InMemoryRepositoryTests
         Dog dog5 = new("cocker spaniel");
         Dog dog6 = new("cocker spaniel");
         Dog dog7 = new("golden retriever");
-        _dogRepository.Items.TryAddAsJson(dog1.Id, dog1);
-        _dogRepository.Items.TryAddAsJson(dog2.Id, dog2);
-        _dogRepository.Items.TryAddAsJson(dog3.Id, dog3);
-        _dogRepository.Items.TryAddAsJson(dog4.Id, dog4);
-        _dogRepository.Items.TryAddAsJson(dog5.Id, dog5);
-        _dogRepository.Items.TryAddAsJson(dog6.Id, dog6);
-        _dogRepository.Items.TryAddAsJson(dog7.Id, dog7);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog1.Id, dog1);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog2.Id, dog2);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog3.Id, dog3);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog4.Id, dog4);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog5.Id, dog5);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog6.Id, dog6);
+        InMemoryStorage.GetDictionary<Dog>().TryAddAsJson(dog7.Id, dog7);
         var pageSize = 2;
         var pageNumber = 2;
         DogSpecification specification = new("cocker spaniel", 2, 2);
 
-        var expectedList = _dogRepository.Items.Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
-                                                     .Where(d => d?.Breed == "cocker spaniel")
-                                                     .Skip(pageSize * (pageNumber - 1))
-                                                     .Take(pageSize)
-                                                     .ToList();
+        var expectedList = InMemoryStorage.GetDictionary<Dog>().Select(d => JsonConvert.DeserializeObject<Dog>(d.Value))
+            .Where(d => d?.Breed == "cocker spaniel")
+            .Skip(pageSize * (pageNumber - 1))
+            .Take(pageSize)
+            .ToList();
 
         //Act
         IPage<Dog> dogs = await _dogRepository.QueryAsync(specification);
@@ -1128,6 +1157,31 @@ public class InMemoryRepositoryTests
         var enumerable = dogs.Items.ToList();
         Assert.True(enumerable.Any());
         Assert.Equal(expectedList, enumerable, new DogComparer());
+    }
+
+    [Fact]
+    public async Task ReadWriteInterfaces_AddedViaDi_PersistsTheSameData()
+    {
+        // Arrange
+        IServiceProvider provider = new ServiceCollection()
+            .AddInMemoryCosmosRepository()
+            .BuildServiceProvider();
+
+        var dog = new Dog("cocker spaniel", "nelson");
+
+        IWriteOnlyRepository<Dog> writeOnlyRepository = provider.GetRequiredService<IWriteOnlyRepository<Dog>>();
+        IReadOnlyRepository<Dog> readOnlyRepository = provider.GetRequiredService<IReadOnlyRepository<Dog>>();
+        IRepository<Dog> normalRepository = provider.GetRequiredService<IRepository<Dog>>();
+
+        //Act
+        await writeOnlyRepository.CreateAsync(dog);
+
+        //Assert
+        Dog? dogViaReadonlyRepository = await readOnlyRepository.TryGetAsync(dog.Id, dog.Breed);
+        Assert.NotNull(dogViaReadonlyRepository);
+
+        Dog? dogViaNormalRepository = await normalRepository.TryGetAsync(dog.Id, dog.Breed);
+        Assert.NotNull(dogViaNormalRepository);
     }
 
     internal class DogSpecification : OffsetByPageNumberSpecification<Dog>

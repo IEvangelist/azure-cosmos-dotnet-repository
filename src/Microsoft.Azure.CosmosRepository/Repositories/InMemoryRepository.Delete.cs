@@ -31,8 +31,8 @@ internal partial class InMemoryRepository<TItem>
             partitionKey = new PartitionKey(id);
         }
 
-        TItem? item = Items
-            .Values
+        TItem? item = InMemoryStorage
+            .GetValues<TItem>()
             .Select(DeserializeItem)
             .FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
 
@@ -41,6 +41,7 @@ internal partial class InMemoryRepository<TItem>
             NotFound();
         }
 
-        Items.TryRemove(item!.Id, out _);
+
+        InMemoryStorage.GetDictionary<TItem>().TryRemove(item!.Id, out _);
     }
 }

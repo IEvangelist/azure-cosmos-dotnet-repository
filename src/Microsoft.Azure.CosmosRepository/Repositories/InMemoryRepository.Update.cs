@@ -18,19 +18,21 @@ internal partial class InMemoryRepository<TItem>
         await Task.CompletedTask;
 #endif
 
+        ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
+
         if (value is IItemWithEtag valueWithEtag &&
             !string.IsNullOrWhiteSpace(valueWithEtag.Etag) &&
-            Items.ContainsKey(value.Id) &&
-            DeserializeItem(Items[value.Id]) is IItemWithEtag existingItemWithEtag &&
+            items.ContainsKey(value.Id) &&
+            DeserializeItem(items[value.Id]) is IItemWithEtag existingItemWithEtag &&
             !ignoreEtag
             && valueWithEtag.Etag != existingItemWithEtag.Etag)
         {
             MismatchedEtags();
         }
 
-        Items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
+        items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
 
-        TItem item = DeserializeItem(Items[value.Id]);
+        TItem item = DeserializeItem(items[value.Id]);
 
         if (raiseChanges)
         {
@@ -80,8 +82,8 @@ internal partial class InMemoryRepository<TItem>
 
         partitionKeyValue ??= id;
 
-        TItem? item = Items
-            .Values
+        TItem? item = InMemoryStorage
+            .GetValues<TItem>()
             .Select(DeserializeItem)
             .FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
 
@@ -109,9 +111,11 @@ internal partial class InMemoryRepository<TItem>
             property.SetValue(item, internalPatchOperation.NewValue);
         }
 
-        Items[id] = SerializeItem(item!, Guid.NewGuid().ToString(), CurrentTs);
+        ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
 
-        Changes?.Invoke(new ChangeFeedItemArgs<TItem>(DeserializeItem(Items[id])));
+        items[id] = SerializeItem(item!, Guid.NewGuid().ToString(), CurrentTs);
+
+        Changes?.Invoke(new ChangeFeedItemArgs<TItem>(DeserializeItem(items[id])));
     }
 
     private void MismatchedEtags() =>
