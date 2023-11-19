@@ -5,6 +5,7 @@ namespace Aspire.Microsoft.Azure.CosmosRepository;
 
 public class AzureCosmosDbRepositorySettings : AzureCosmosDbSettings
 {
+    public string DatabaseName { get; set; } = "database";
     public string DefaultContainerName { get; set; } = "container";
     public string DefaultPartitionKeyPath { get; set; } = "/id";
 }

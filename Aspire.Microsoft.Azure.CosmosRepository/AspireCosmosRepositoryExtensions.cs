@@ -2,7 +2,11 @@
 // Licensed under the MIT License.
 
 using System.Reflection;
+using Aspire.Microsoft.Azure.CosmosRepository.Containers;
 using Aspire.Microsoft.Azure.CosmosRepository.Internals.Builders;
+using Aspire.Microsoft.Azure.CosmosRepository.Internals.Containers;
+using Aspire.Microsoft.Azure.CosmosRepository.Internals.Items.Configuration;
+using Aspire.Microsoft.Azure.CosmosRepository.Internals.Repository;
 using Aspire.Microsoft.Azure.CosmosRepository.Items.Configuration;
 using Azure.Identity;
 using Microsoft.Azure.Cosmos;
@@ -35,25 +39,6 @@ public static class AspireCosmosRepositoryExtensions
         return new CosmosRepositoryBuilder(builder);
     }
 
-    public static ICosmosRepositoryBuilder AddKeyedAzureCosmosRepository(
-        this IHostApplicationBuilder builder,
-        string name,
-        Action<AzureCosmosDbSettings>? configureSettings = null,
-        Action<AzureCosmosDbRepositorySettings>? configureRepositorySettings = null,
-        Action<CosmosClientOptions>? configureClientOptions = null)
-    {
-        AddAzureCosmosRepository(
-            builder,
-            $"{DefaultConfigSectionName}:{name}",
-            configureSettings,
-            configureRepositorySettings,
-            configureClientOptions,
-            connectionName: name,
-            serviceKey: name);
-
-        return new CosmosRepositoryBuilder(builder);
-    }
-
     private static IHostApplicationBuilder AddAzureCosmosRepository(
         this IHostApplicationBuilder builder,
         string configurationSectionName,
@@ -75,6 +60,12 @@ public static class AspireCosmosRepositoryExtensions
             typeof(ICosmosItemConfiguration<>),
             typeof(DefaultCosmosItemConfiguration<>));
 
+        builder.Services.AddSingleton<IContainerCache, DefaultContainerCache>();
+        builder.Services.AddSingleton<IItemConfiguration, DefaultItemConfiguration>();
+        builder.Services.AddSingleton<IRepository, DefaultRepository>();
+        builder.Services.AddSingleton<IReadonlyRepository>(sp => sp.GetRequiredService<IRepository>());
+        builder.Services.AddSingleton<IWriteOnlyRepository>(sp => sp.GetRequiredService<IRepository>());
+
         builder.AddCosmosClient(
             configurationSectionName,
             configureCoreSettings,
@@ -82,7 +73,7 @@ public static class AspireCosmosRepositoryExtensions
             connectionName,
             serviceKey);
 
-        if (configureRepositorySettings is { })
+        if (configureRepositorySettings is not null)
         {
             builder.Services.PostConfigure(configureRepositorySettings);
         }

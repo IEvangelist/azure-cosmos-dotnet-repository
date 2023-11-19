@@ -12,6 +12,6 @@ public interface ICosmosItemConfiguration<TItem> where TItem : IItem
 
     string PartitionKeyPath { get; }
 
-    Expression<Func<TItem, PartitionKey>> GetPartitionKeyValue() =>
-        i => new PartitionKey(i.Id);
+    Expression<Func<TItem, bool>> LogicalPartitionQuery(string partitionKey) =>
+        i => i.Id == partitionKey;
 }
