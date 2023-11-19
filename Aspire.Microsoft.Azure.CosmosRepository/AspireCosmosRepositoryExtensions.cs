@@ -7,7 +7,9 @@ using Aspire.Microsoft.Azure.CosmosRepository.Internals.Builders;
 using Aspire.Microsoft.Azure.CosmosRepository.Internals.Containers;
 using Aspire.Microsoft.Azure.CosmosRepository.Internals.Items.Configuration;
 using Aspire.Microsoft.Azure.CosmosRepository.Internals.Repository;
+using Aspire.Microsoft.Azure.CosmosRepository.Internals.Serialisation;
 using Aspire.Microsoft.Azure.CosmosRepository.Items.Configuration;
+using Azure.Core;
 using Azure.Identity;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
@@ -115,7 +117,8 @@ public static class AspireCosmosRepositoryExtensions
             {
                 // Needs to be enabled for either logging or tracing to work.
                 DisableDistributedTracing = false
-            }
+            },
+            Serializer = new CosmosSystemTextJsonSerializer(cosmosSettings.JsonSerializerOptions)
         };
 
         if (cosmosSettings.Tracing)
@@ -170,7 +173,7 @@ public static class AspireCosmosRepositoryExtensions
 
         if (settings.AccountEndpoint is not null)
         {
-            var credential = settings.Credential ?? new DefaultAzureCredential();
+            TokenCredential credential = settings.Credential ?? new DefaultAzureCredential();
             return new CosmosClient(
                 settings.AccountEndpoint.OriginalString,
                 credential,

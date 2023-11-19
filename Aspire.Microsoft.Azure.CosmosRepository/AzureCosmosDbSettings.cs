@@ -1,6 +1,8 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Azure.Core;
 
 namespace Aspire.Microsoft.Azure.CosmosRepository;
@@ -32,4 +34,10 @@ public class AzureCosmosDbSettings
     /// Gets or sets the credential used to authenticate to the Azure Cosmos DB endpoint.
     /// </summary>
     public TokenCredential? Credential { get; set; }
+
+    public JsonSerializerOptions JsonSerializerOptions { get; set; } = new()
+    {
+        Converters = { new JsonStringEnumConverter() },
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
 }
