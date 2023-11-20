@@ -10,15 +10,20 @@ using CleanArchitecture.Exceptions.AspNetCore;
 using CorrelationId;
 using CorrelationId.Abstractions;
 using CorrelationId.DependencyInjection;
+using Microsoft.Azure.CosmosRepository.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
+using Microsoft.Azure.Cosmos;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
 
-// TODO: Figure this out...
-// services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString()!);
+services.AddHealthChecks().AddAzureCosmosDB(provider =>
+{
+    var connectionString = builder.Configuration.GetCosmosRepositoryConnectionString();
+    return new CosmosClient(connectionString);
+});
 services.AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = "EventSourcingShipSample");
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();
