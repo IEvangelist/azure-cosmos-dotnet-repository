@@ -17,7 +17,6 @@ namespace Microsoft.Azure.CosmosRepository.AspNetCore;
 /// <param name="changeFeedService">The <see cref="IChangeFeedService"/> to start.</param>
 public class CosmosRepositoryChangeFeedHostedService(IChangeFeedService changeFeedService) : BackgroundService
 {
-
     /// <summary>
     /// Start's the <see cref="IChangeFeedService"/>
     /// </summary>

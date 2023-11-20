@@ -1,8 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Azure.CosmosRepositoryTests.Abstractions;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
 
 public class DefaultCosmosThroughputProviderTests : WithRepositoryOptions
