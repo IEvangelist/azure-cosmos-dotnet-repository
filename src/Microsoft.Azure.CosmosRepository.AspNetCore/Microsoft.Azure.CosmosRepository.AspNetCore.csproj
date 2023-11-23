@@ -38,6 +38,7 @@
         <RepositoryUrl>https://github.com/IEvangelist/azure-cosmos-dotnet-repository</RepositoryUrl>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <RepositoryType>git</RepositoryType>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
