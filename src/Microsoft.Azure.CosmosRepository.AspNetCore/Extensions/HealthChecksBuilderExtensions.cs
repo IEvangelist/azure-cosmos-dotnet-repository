@@ -20,7 +20,6 @@ public static class HealthChecksBuilderExtensions
     /// Add a health check for Azure Cosmos DB by registering <see cref="AzureCosmosDbHealthCheck"/> for given <paramref name="builder"/>.
     /// </summary>
     /// <param name="builder">The <see cref="IHealthChecksBuilder"/> to add <see cref="HealthCheckRegistration"/> to.</param>
-    /// <param name="assemblies">The assemblies to scan for <see cref="IItem"/> types. Optional. If <c>null</c> types are discovered autimatically. Providing a assemblies to scan may reduce start up time.</param>
     /// <param name="healthCheckName">The health check name. Optional. If <c>null</c> the name 'azure_cosmosdb' will be used.</param>
     /// <param name="failureStatus">
     /// The <see cref="HealthStatus"/> that should be reported when the health check fails. Optional. If <c>null</c> then
@@ -28,13 +27,14 @@ public static class HealthChecksBuilderExtensions
     /// </param>
     /// <param name="tags">A list of tags that can be used to filter sets of health checks. Optional.</param>
     /// <param name="timeout">An optional <see cref="TimeSpan"/> representing the timeout of the check.</param>
+    /// <param name="assemblies">The assemblies to scan for <see cref="IItem"/> types. Optional. If <c>null</c> types are discovered autimatically. Providing a assemblies to scan may reduce start up time.</param>
     /// <returns>The specified <paramref name="builder"/>.</returns>
     public static IHealthChecksBuilder AddCosmosRepository(this IHealthChecksBuilder builder,
-        Assembly[]? assemblies = null,
         string? healthCheckName = "azure_cosmosdb",
         HealthStatus? failureStatus = default,
         IEnumerable<string>? tags = default,
-        TimeSpan? timeout = default)
+        TimeSpan? timeout = default,
+        params Assembly[]? assemblies)
     {
         builder.AddAzureCosmosDB(
             clientFactory: provider => provider.GetRequiredService<ICosmosClientProvider>().CosmosClient,

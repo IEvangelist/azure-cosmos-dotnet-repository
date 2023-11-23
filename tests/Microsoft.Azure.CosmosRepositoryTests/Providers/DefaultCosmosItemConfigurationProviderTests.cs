@@ -1,6 +1,9 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Reflection;
+using FluentAssertions.Collections;
+
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
 
 public class DefaultCosmosItemConfigurationProviderTests
@@ -45,7 +48,35 @@ public class DefaultCosmosItemConfigurationProviderTests
         Assert.Equal(throughputProperties, configuration.ThroughputProperties);
     }
 
+    [Fact]
+    public void GetAllItemConfigurationsAlwaysGetsAllOptionsForItems()
+    {
+        ICosmosItemConfigurationProvider provider = new DefaultCosmosItemConfigurationProvider(
+            _containerNameProvider.Object,
+            _partitionKeyPathProvider.Object,
+            _uniqueKeyPolicyProvider.Object,
+            _defaultTimeToLiveProvider.Object,
+            _syncContainerPropertiesProvider.Object,
+            _throughputProvider.Object,
+            _strictTypeCheckingProvider.Object);
+
+        _containerNameProvider.Setup(o => o.GetContainerName(It.IsAny<Type>())).Returns<Type>(t => t.FullName!);
+
+        IEnumerable<string> expectedContainerNames = new[] { typeof(Item1).Assembly}
+            .SelectMany(s => s.GetTypes())
+            .Where(p => typeof(IItem).IsAssignableFrom(p) && p is {IsInterface: false, IsAbstract: false}).Select(t => t.FullName!);
+
+        IEnumerable<string> containerNames = provider.GetAllItemConfigurations(typeof(Item1).Assembly).Select(c => c.ContainerName);
+
+        containerNames.Should().BeEquivalentTo(expectedContainerNames);
+    }
+
     class Item1 : Item
+    {
+
+    }
+
+    class Item2 : Item
     {
 
     }

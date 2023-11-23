@@ -12,5 +12,5 @@ internal interface ICosmosItemConfigurationProvider
 
     ItemConfiguration GetItemConfiguration(Type itemType);
 
-    List<ItemConfiguration> GetAllItemConfigurations(Assembly[]? assemblies = null);
+    List<ItemConfiguration> GetAllItemConfigurations(params Assembly[]? assemblies);
 }

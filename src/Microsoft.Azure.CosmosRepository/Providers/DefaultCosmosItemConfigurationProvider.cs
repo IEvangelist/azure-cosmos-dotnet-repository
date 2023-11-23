@@ -20,7 +20,7 @@ class DefaultCosmosItemConfigurationProvider(
     public ItemConfiguration GetItemConfiguration(Type itemType) =>
         _itemOptionsMap.GetOrAdd(itemType, AddOptions(itemType));
 
-    public List<ItemConfiguration> GetAllItemConfigurations(Assembly[]? assemblies = null)
+    public List<ItemConfiguration> GetAllItemConfigurations(params Assembly[]? assemblies)
     {
         IEnumerable<Type> itemTypes = (assemblies ?? AppDomain.CurrentDomain.GetAssemblies())
             .SelectMany(s => s.GetTypes())
