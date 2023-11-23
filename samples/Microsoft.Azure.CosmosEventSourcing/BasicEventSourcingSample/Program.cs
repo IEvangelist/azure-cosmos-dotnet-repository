@@ -13,13 +13,12 @@ using CorrelationId.DependencyInjection;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
-using Microsoft.Azure.CosmosRepository.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
 
 
-services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString()!);
+services.AddHealthChecks().AddAzureCosmosDB();
 services.AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = "EventSourcingShipSample");
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();

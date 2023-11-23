@@ -6,9 +6,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers;
 /// <summary>
 /// Holds all of the configuration information for an item.
 /// </summary>
-interface ICosmosItemConfigurationProvider
+internal interface ICosmosItemConfigurationProvider
 {
     ItemConfiguration GetItemConfiguration<TItem>() where TItem : IItem;
 
     ItemConfiguration GetItemConfiguration(Type itemType);
+
+    List<ItemConfiguration> GetAllItemConfigurations();
 }

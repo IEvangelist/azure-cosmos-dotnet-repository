@@ -3,3 +3,4 @@
 
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+[assembly: InternalsVisibleTo("Microsoft.Azure.CosmosRepository.AspNetCore")]

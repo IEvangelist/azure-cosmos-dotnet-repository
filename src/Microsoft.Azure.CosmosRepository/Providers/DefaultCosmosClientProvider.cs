@@ -9,6 +9,8 @@ class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
     readonly CosmosClientOptions _cosmosClientOptions;
     readonly RepositoryOptions _options;
 
+    public CosmosClient CosmosClient => _lazyCosmosClient.Value;
+
     private DefaultCosmosClientProvider(
         CosmosClientOptions cosmosClientOptions,
         IOptions<RepositoryOptions> options)
