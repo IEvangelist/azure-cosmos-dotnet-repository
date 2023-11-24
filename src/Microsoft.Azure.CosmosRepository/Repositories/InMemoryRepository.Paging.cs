@@ -29,7 +29,8 @@ internal partial class InMemoryRepository<TItem>
         await Task.CompletedTask;
 #endif
 
-        IEnumerable<TItem> filteredItems = Items.Values
+        IEnumerable<TItem> filteredItems = InMemoryStorage
+            .GetValues<TItem>()
             .Select(DeserializeItem)
             .ToList();
 

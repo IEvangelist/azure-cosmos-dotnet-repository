@@ -4,7 +4,6 @@
         <Company>Microsoft Corporation</Company>
         <Product>IEvangelist Azure Cosmos Repository</Product>
         <TargetFrameworks>$(DefaultTargetFrameworks);$(CompatibilityTargetFrameworks)</TargetFrameworks>
-        <LangVersion>preview</LangVersion>
         <Description>This client library enables client applications to connect to Azure Cosmos via a repository pattern around the official Azure Cosmos .NET SDK. Azure Cosmos is a globally distributed, multi-model database service. For more information, refer to http://azure.microsoft.com/services/cosmos-db/. </Description>
         <Copyright>Copyright © IEvangelist. All rights reserved. Licensed under the MIT License.</Copyright>
         <NeutralLanguage>en-US</NeutralLanguage>
@@ -42,14 +41,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="7.1.0" />
-        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="7.0.14" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
-        <PackageReference Include="MinVer" Version="4.3.0">
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+        <PackageReference Include="MinVer">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Scrutor" Version="4.2.2" />
+        <PackageReference Include="Scrutor" />
+        <PackageReference Include="AspNetCore.HealthChecks.CosmosDb"  />
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks"  />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>

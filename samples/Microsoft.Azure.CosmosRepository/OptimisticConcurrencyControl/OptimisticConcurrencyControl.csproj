@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <UserSecretsId>fd4da918-55af-4010-9ba0-e75f0e0dc917</UserSecretsId>
@@ -13,8 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Bogus" Version="34.0.2" />
-      <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+      <PackageReference Include="Bogus" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" />
     </ItemGroup>
 
 </Project>

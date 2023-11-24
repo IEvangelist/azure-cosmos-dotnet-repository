@@ -13,6 +13,7 @@ using CorrelationId.DependencyInjection;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
+using Microsoft.Azure.CosmosRepository.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;

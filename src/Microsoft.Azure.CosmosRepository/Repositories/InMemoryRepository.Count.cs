@@ -11,7 +11,8 @@ internal partial class InMemoryRepository<TItem>
     public async ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
     {
         await Task.CompletedTask;
-        return Items.Values.Select(DeserializeItem).Count(item => item.Type == typeof(TItem).Name);
+        return InMemoryStorage
+            .GetValues<TItem>().Select(DeserializeItem).Count(item => item.Type == typeof(TItem).Name);
     }
 
     /// <inheritdoc/>
@@ -19,7 +20,8 @@ internal partial class InMemoryRepository<TItem>
         CancellationToken cancellationToken = default)
     {
         await Task.CompletedTask;
-        return Items.Values.Select(DeserializeItem).Count(predicate.Compose(
+        return InMemoryStorage
+            .GetValues<TItem>().Select(DeserializeItem).Count(predicate.Compose(
             item => item.Type == typeof(TItem).Name, Expression.AndAlso).Compile());
     }
 }
