@@ -1,9 +1,6 @@
 // Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Reflection;
-using FluentAssertions.Collections;
-
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
 
 public class DefaultCosmosItemConfigurationProviderTests
@@ -15,17 +12,6 @@ public class DefaultCosmosItemConfigurationProviderTests
     readonly Mock<ICosmosContainerSyncContainerPropertiesProvider> _syncContainerPropertiesProvider = new();
     readonly Mock<ICosmosThroughputProvider> _throughputProvider = new();
     readonly Mock<ICosmosStrictTypeCheckingProvider> _strictTypeCheckingProvider = new();
-
-    public DefaultCosmosItemConfigurationProviderTests()
-    {
-        _containerNameProvider = new Mock<ICosmosContainerNameProvider>();
-        _partitionKeyPathProvider = new Mock<ICosmosPartitionKeyPathProvider>();
-        _uniqueKeyPolicyProvider = new Mock<ICosmosUniqueKeyPolicyProvider>();
-        _defaultTimeToLiveProvider = new Mock<ICosmosContainerDefaultTimeToLiveProvider>();
-        _syncContainerPropertiesProvider = new Mock<ICosmosContainerSyncContainerPropertiesProvider>();
-        _throughputProvider = new Mock<ICosmosThroughputProvider>();
-        _strictTypeCheckingProvider = new Mock<ICosmosStrictTypeCheckingProvider>();
-    }
 
     [Fact]
     public void GetOptionsAlwaysGetOptionsForItem()
@@ -42,7 +28,7 @@ public class DefaultCosmosItemConfigurationProviderTests
         UniqueKeyPolicy uniqueKeyPolicy = new();
         var throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(400);
 
-        _containerNameProvider.Setup(o => o.GetContainerName(typeof(Item1))).Returns("a");
+        _containerNameProvider.Setup(o => o.GetContainerName(typeof(Item1))).Returns<Type>(t => t.FullName!);
         _partitionKeyPathProvider.Setup(o => o.GetPartitionKeyPath(typeof(Item1))).Returns("/id");
         _uniqueKeyPolicyProvider.Setup(o => o.GetUniqueKeyPolicy(typeof(Item1))).Returns(uniqueKeyPolicy);
         _defaultTimeToLiveProvider.Setup(o => o.GetDefaultTimeToLive(typeof(Item1))).Returns(10);
@@ -51,7 +37,7 @@ public class DefaultCosmosItemConfigurationProviderTests
 
         ItemConfiguration configuration = provider.GetItemConfiguration<Item1>();
 
-        Assert.Equal("a", configuration.ContainerName);
+        Assert.Equal(typeof(Item1).FullName, configuration.ContainerName);
         Assert.Equal("/id", configuration.PartitionKeyPath);
         Assert.Equal(uniqueKeyPolicy, configuration.UniqueKeyPolicy);
         Assert.Equal(10, configuration.DefaultTimeToLive);
@@ -73,11 +59,12 @@ public class DefaultCosmosItemConfigurationProviderTests
 
         _containerNameProvider.Setup(o => o.GetContainerName(It.IsAny<Type>())).Returns<Type>(t => t.FullName!);
 
-        IEnumerable<string> expectedContainerNames = new[] { typeof(Item1).Assembly}
+        IEnumerable<string> expectedContainerNames = new[] {typeof(Item1).Assembly}
             .SelectMany(s => s.GetTypes())
-            .Where(p => typeof(IItem).IsAssignableFrom(p) && p is {IsInterface: false, IsAbstract: false}).Select(t => t.FullName!);
+            .Where(p => typeof(IItem).IsAssignableFrom(p) && p is {IsInterface: false, IsAbstract: false})
+            .Select(t => t.FullName!).OrderBy(name => name);
 
-        IEnumerable<string> containerNames = provider.GetAllItemConfigurations(typeof(Item1).Assembly).Select(c => c.ContainerName);
+        IEnumerable<string> containerNames = provider.GetAllItemConfigurations(typeof(Item1).Assembly).Select(c => c.ContainerName).OrderBy(name => name);
 
         containerNames.Should().BeEquivalentTo(expectedContainerNames);
     }
