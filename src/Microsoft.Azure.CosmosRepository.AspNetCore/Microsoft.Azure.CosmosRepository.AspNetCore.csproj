@@ -49,7 +49,6 @@
         <PackageReference Include="Scrutor" />
         <PackageReference Include="AspNetCore.HealthChecks.CosmosDb"  />
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks"  />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>
