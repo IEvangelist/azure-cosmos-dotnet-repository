@@ -16,6 +16,17 @@ public class DefaultCosmosItemConfigurationProviderTests
     readonly Mock<ICosmosThroughputProvider> _throughputProvider = new();
     readonly Mock<ICosmosStrictTypeCheckingProvider> _strictTypeCheckingProvider = new();
 
+    public DefaultCosmosItemConfigurationProviderTests()
+    {
+        _containerNameProvider = new Mock<ICosmosContainerNameProvider>();
+        _partitionKeyPathProvider = new Mock<ICosmosPartitionKeyPathProvider>();
+        _uniqueKeyPolicyProvider = new Mock<ICosmosUniqueKeyPolicyProvider>();
+        _defaultTimeToLiveProvider = new Mock<ICosmosContainerDefaultTimeToLiveProvider>();
+        _syncContainerPropertiesProvider = new Mock<ICosmosContainerSyncContainerPropertiesProvider>();
+        _throughputProvider = new Mock<ICosmosThroughputProvider>();
+        _strictTypeCheckingProvider = new Mock<ICosmosStrictTypeCheckingProvider>();
+    }
+
     [Fact]
     public void GetOptionsAlwaysGetOptionsForItem()
     {
