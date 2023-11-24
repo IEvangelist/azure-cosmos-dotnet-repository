@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <Company>Microsoft Corporation</Company>
         <Product>IEvangelist Azure Cosmos Repository</Product>
-        <TargetFrameworks>$(DefaultTargetFrameworks);$(CompatibilityTargetFrameworks)</TargetFrameworks>
+        <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
         <Description>This client library enables client applications to connect to Azure Cosmos via a repository pattern around the official Azure Cosmos .NET SDK. Azure Cosmos is a globally distributed, multi-model database service. For more information, refer to http://azure.microsoft.com/services/cosmos-db/. </Description>
         <Copyright>Copyright © IEvangelist. All rights reserved. Licensed under the MIT License.</Copyright>
         <NeutralLanguage>en-US</NeutralLanguage>
@@ -39,26 +38,23 @@
         <RepositoryType>git</RepositoryType>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
         <PackageReference Include="MinVer">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Scrutor" />
         <PackageReference Include="AspNetCore.HealthChecks.CosmosDb"  />
-        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks"  />
     </ItemGroup>
-
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj" />
     </ItemGroup>
-    
     <ItemGroup>
         <InternalsVisibleTo Include="Microsoft.Azure.CosmosRepository.AspNetCoreTests" />
     </ItemGroup>
-
     <ItemGroup>
         <None Include="..\..\LICENSE">
             <Pack>True</Pack>
@@ -66,5 +62,4 @@
         </None>
         <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
-
 </Project>
