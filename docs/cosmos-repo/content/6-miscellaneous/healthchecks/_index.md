@@ -20,3 +20,9 @@ services.AddHealthChecks().AddCosmosRepository(assemblies: typeof(ExampleItem).A
 ```
 
 The Cosmos Repository Health package supports all of the existing functionality of Health Checks, such as failureStatus and tags, see the [Microsoft Documentation](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks) for configuration details.
+
+Don't forget to map the health endpoint with:
+
+```csharp
+app.MapHealthChecks("/healthz");
+```
