@@ -267,7 +267,8 @@
       "profile": "https://github.com/philip-reed",
       "contributions": [
         "test",
-        "code"
+        "code",
+        "doc"
       ]
     },
     {
@@ -295,5 +296,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }
