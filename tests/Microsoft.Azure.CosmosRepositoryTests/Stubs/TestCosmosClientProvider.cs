@@ -12,4 +12,6 @@ internal class TestCosmosClientProvider : ICosmosClientProvider
 
     public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume)
         => consume(_cosmosClient) ?? throw new ArgumentNullException(nameof(consume));
+
+    public CosmosClient CosmosClient => _cosmosClient;
 }

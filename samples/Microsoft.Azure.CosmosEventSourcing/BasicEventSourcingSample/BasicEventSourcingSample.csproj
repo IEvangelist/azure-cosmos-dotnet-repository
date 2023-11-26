@@ -13,7 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" />
       <PackageReference Include="CorrelationId" />
       <PackageReference Include="Mumby0168.CleanArchitecture.Exceptions" />
       <PackageReference Include="Mumby0168.CleanArchitecture.Exceptions.AspNetCore" />
