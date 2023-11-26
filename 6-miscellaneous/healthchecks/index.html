@@ -22,7 +22,7 @@
 <script src=/azure-cosmos-dotnet-repository/js/jquery-3.3.1.min.js?1701015780></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
 </head>
-<body data-url=/azure-cosmos-dotnet-repository/5-change-feed/>
+<body data-url=/azure-cosmos-dotnet-repository/6-miscellaneous/healthchecks/>
 <nav id=sidebar class=showVisitedLinks>
 <div id=header-wrapper>
 <div id=header>
@@ -117,15 +117,14 @@ Specification Pattern
 </li>
 </ul>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/5-change-feed/ title="Change Feed" class="dd-item
-parent
-active">
+<li data-nav-id=/azure-cosmos-dotnet-repository/5-change-feed/ title="Change Feed" class=dd-item>
 <a href=/azure-cosmos-dotnet-repository/5-change-feed/>
 <b>5. </b>Change Feed
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/6-miscellaneous/ title=Miscellaneous class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/6-miscellaneous/ title=Miscellaneous class="dd-item
+parent">
 <a href=/azure-cosmos-dotnet-repository/6-miscellaneous/>
 <b>5. </b>Miscellaneous
 <i class="fas fa-check read-icon"></i>
@@ -137,7 +136,9 @@ Logging
 <i class="fas fa-check read-icon"></i>
 </a>
 </li>
-<li data-nav-id=/azure-cosmos-dotnet-repository/6-miscellaneous/healthchecks/ title="Health Checks" class=dd-item>
+<li data-nav-id=/azure-cosmos-dotnet-repository/6-miscellaneous/healthchecks/ title="Health Checks" class="dd-item
+parent
+active">
 <a href=/azure-cosmos-dotnet-repository/6-miscellaneous/healthchecks/>
 Health Checks
 <i class="fas fa-check read-icon"></i>
@@ -189,7 +190,7 @@ Unique Keys Policies
 <div>
 <div id=top-bar>
 <div id=top-github-link>
-<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository5-change-feed/_index.md target=blank>
+<a class=github-link title="Edit this page" href=https://github.com/IEvangelist/azure-cosmos-dotnet-repository6-miscellaneous/healthchecks/_index.md target=blank>
 <i class="fas fa-code-branch"></i>
 <span id=top-github-link-text>Edit this page</span>
 </a>
@@ -200,83 +201,45 @@ Unique Keys Policies
 <i class="fas fa-bars"></i>
 </a>
 </span>
+<span id=toc-menu><i class="fas fa-list-alt"></i></span>
 <span class=links>
-<a href=/azure-cosmos-dotnet-repository/></a> > Change Feed
+<a href=/azure-cosmos-dotnet-repository/></a> > <a href=/azure-cosmos-dotnet-repository/6-miscellaneous/>Miscellaneous</a> > Health Checks
 </span>
+</div>
+<div class=progress>
+<div class=wrapper>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#setup>Setup</a></li>
+</ul>
+</nav>
+</div>
 </div>
 </div>
 </div>
 <div id=head-tags>
 </div>
-<div id=chapter>
 <div id=body-inner>
-<h1 id=change-feed-processing>Change Feed Processing</h1>
-<h2 id=overview>Overview</h2>
-<p>Cosmos DB provides a mechanism for listening to changes in a container. This includes when an item is created or updated. This can be used for many scenarios such as:</p>
-<ol>
-<li>Creating events when items update.</li>
-<li>Replicating data into another Cosmos DB container. Perhaps with a different partitioning strategy.</li>
-<li>Replicating data into another storage medium, possibly SQL server.</li>
-</ol>
-<div class="notices info"><p>The change feed does not currently support tracking the deletion of items. However, there are way you can do this with a soft delete. A soft delete can be done by setting a short TTL on the item.</p>
-</div>
-<h2 id=listening-to-changes-for-an-iitem>Listening to changes for an <code>IItem</code></h2>
-<p>It is possible to listen for changes on any <code>IItem</code> you have a container configured for in this library.</p>
-<h4 id=configuring>Configuring</h4>
-<p>To start off you need to instruct the library that you would like to changes in a container for a given <code>IItem</code>. This is done via the <code>IItemContainerBuilder</code> which you can gain access to adding the repository into the IoC container. An example of this is shown below.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddCosmosRepository(options =&gt;
-{
-    options.DatabaseId = <span style=color:#e6db74>&#34;change-feed-demo&#34;</span>;
-    options.ContainerPerItemType = <span style=color:#66d9ef>true</span>;
-
-    options.ContainerBuilder.Configure&lt;Book&gt;(containerOptions =&gt;
-    {
-        containerOptions.WithContainer(BookDemoConstants.Container);
-        containerOptions.WithPartitionKey(BookDemoConstants.PartitionKey);
-
-        <span style=color:#75715e>//Listen to to the change feed
-</span><span style=color:#75715e></span>        containerOptions.WithChangeFeedMonitoring();
-    });
-}
-</code></pre></div><h4 id=change-feed-processors>Change Feed Processors</h4>
-<p>In order to process changes you need define a class that will process changes for a given <code>IItem</code>. This class is known as a processor and it <em>must</em> implement the <code>IItemChangeFeedProcessor&lt;TItem></code> interface. An example of a class implementing this interface is shown below.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BookChangeFeedProcessor</span> : IItemChangeFeedProcessor&lt;Book&gt;
-{
-    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>readonly</span> ILogger&lt;BookChangeFeedProcessor&gt; <span style=color:#ae81ff>_l</span>ogger;
-    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>readonly</span> IRepository&lt;BookByIdReference&gt; <span style=color:#ae81ff>_</span>bookByIdReferenceRepository;
-
-    <span style=color:#66d9ef>public</span> BookChangeFeedProcessor(ILogger&lt;BookChangeFeedProcessor&gt; logger,
-        IRepository&lt;BookByIdReference&gt; bookByIdReferenceRepository)
-    {
-        <span style=color:#ae81ff>_l</span>ogger = logger;
-        <span style=color:#ae81ff>_</span>bookByIdReferenceRepository = bookByIdReferenceRepository;
-    }
-
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>async</span> ValueTask HandleAsync(Book rating, CancellationToken cancellationToken)
-    {
-        <span style=color:#ae81ff>_l</span>ogger.LogInformation(<span style=color:#e6db74>&#34;Change detected for book with ID: {BookId}&#34;</span>, rating.Id);
-
-        <span style=color:#66d9ef>if</span> (!rating.HasBeenUpdated)
-        {
-            <span style=color:#66d9ef>await</span> <span style=color:#ae81ff>_</span>bookByIdReferenceRepository
-                .CreateAsync(<span style=color:#66d9ef>new</span> BookByIdReference(rating.Id, rating.Category),
-                cancellationToken);
-        }
-
-        <span style=color:#ae81ff>_l</span>ogger.LogInformation(<span style=color:#e6db74>&#34;Processed change for book with ID: {BookId}&#34;</span>, rating.Id);
-    }
-}
+<h1>
+Health Checks
+</h1>
+<p>The <code>IEvangelist.Azure.CosmosRepository.AspNetCore</code> package adds support for <a href=https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks>AspNet Core Health Checks</a> using the <a href=https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/blob/master/src/HealthChecks.CosmosDb/README.md>HealthChecks.CosmosDb</a> package.</p>
+<h2 id=setup>Setup</h2>
+<p>To configure Cosmos DB health checks:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>services.AddHealthChecks().AddCosmosRepository();
+</code></pre></div><p>By default, this will scan all of the assemblies in your solution to locate the container names for each of your <code>IItem</code> types. To refine this, and potentially reduce startup times, pass in the Assemblies containing your <code>IItem</code> types:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>services.AddHealthChecks().AddCosmosRepository(assemblies: <span style=color:#66d9ef>typeof</span>(ExampleItem).Assembly);
+</code></pre></div><p>The Cosmos Repository Health package supports all of the existing functionality of Health Checks, such as failureStatus and tags, see the <a href=https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks>Microsoft Documentation</a> for configuration details.</p>
+<p>Don&rsquo;t forget to map the health endpoint with:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>app.MapHealthChecks(<span style=color:#e6db74>&#34;/healthz&#34;</span>);
 </code></pre></div>
 <footer class=footline>
 </footer>
 </div>
 </div>
-</div>
 <div id=navigation>
-<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/4-queries/specification-pattern/ title="Specification Pattern"> <i class="fa fa-chevron-left"></i></a>
-<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/6-miscellaneous/ title=Miscellaneous style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/azure-cosmos-dotnet-repository/6-miscellaneous/logging/ title=Logging> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/azure-cosmos-dotnet-repository/6-miscellaneous/unique-keys/ title="Unique Keys Policies" style=margin-right:0><i class="fa fa-chevron-right"></i></a>
 </div>
 </section>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
