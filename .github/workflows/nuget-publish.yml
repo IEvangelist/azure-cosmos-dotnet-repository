@@ -117,8 +117,14 @@ jobs:
           dotnet build ./src/${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-restore
 
       - name: Pack ${{ matrix.project }}
+        if: ${{ matrix.project != 'Microsoft.Azure.CosmosEventSourcing' }}
         run: |
           dotnet pack ./src/${{ matrix.project }}/${{ matrix.project }}.csproj --output packages
+
+      - name: Pack ${{ matrix.project }}
+        if: ${{ matrix.project == 'Microsoft.Azure.CosmosEventSourcing' }}
+        run: |
+          dotnet pack ./src/${{ matrix.project }}/${{ matrix.project }}.csproj -p:PackageVersion='${{ steps.regex-match.outputs.match }}-pre1 --output packages
 
       - name: Publish ${{ matrix.project }} package
         run: |
