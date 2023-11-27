@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\Aspire.Microsoft.Azure.CosmosRepository\Aspire.Microsoft.Azure.CosmosRepository.csproj" />
     <ProjectReference Include="..\AspireSample.ServiceDefaults\AspireSample.ServiceDefaults.csproj" />
   </ItemGroup>
 

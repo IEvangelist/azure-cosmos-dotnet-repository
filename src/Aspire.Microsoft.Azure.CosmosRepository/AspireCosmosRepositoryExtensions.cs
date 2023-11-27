@@ -162,6 +162,7 @@ public static class AspireCosmosRepositoryExtensions
         string configurationSectionName)
     {
         //TODO: figure out how to do this better, it will override the settings declared above
+        // Configure default http clients for available in .net 8
         clientOptions.HttpClientFactory = () => ClientFactory(serviceProvider);
 
         if (!string.IsNullOrEmpty(settings.ConnectionString))
