@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Extensions.DependencyInjection;

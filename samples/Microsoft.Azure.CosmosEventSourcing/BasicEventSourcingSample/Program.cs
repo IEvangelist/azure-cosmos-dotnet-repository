@@ -19,7 +19,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IServiceCollection services = builder.Services;
 
 
-services.AddHealthChecks().AddCosmosDb(builder.Configuration.GetCosmosRepositoryConnectionString()!);
+services.AddHealthChecks().AddCosmosRepository();
 services.AddCleanArchitectureExceptionsHandler(options => options.ApplicationName = "EventSourcingShipSample");
 services.AddSwaggerGen();
 services.AddEndpointsApiExplorer();

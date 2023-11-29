@@ -20,6 +20,19 @@ class DefaultCosmosItemConfigurationProvider(
     public ItemConfiguration GetItemConfiguration(Type itemType) =>
         _itemOptionsMap.GetOrAdd(itemType, AddOptions(itemType));
 
+    public List<ItemConfiguration> GetAllItemConfigurations(params Assembly[]? assemblies)
+    {
+        IEnumerable<Type> itemTypes = (assemblies ?? AppDomain.CurrentDomain.GetAssemblies())
+            .SelectMany(s => s.GetTypes())
+            .Where(p => typeof(IItem).IsAssignableFrom(p) && p is {IsInterface: false, IsAbstract: false});
+
+        foreach (Type itemType in itemTypes)
+        {
+            _itemOptionsMap.GetOrAdd(itemType, AddOptions(itemType));
+        }
+
+        return _itemOptionsMap.Select(i => i.Value).ToList();
+    }
 
     private ItemConfiguration AddOptions(Type itemType)
     {

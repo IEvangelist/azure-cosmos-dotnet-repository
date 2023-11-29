@@ -14,12 +14,12 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The service collection to add services to.</param>
     /// <param name="setupAction">An action to configure the repository options</param>
-    /// <param name="additionSetupAction">An action to configure the <see cref="CosmosClientOptions"/></param>
+    /// <param name="additionalSetupAction">An action to configure the <see cref="CosmosClientOptions"/></param>
     /// <returns>The same service collection that was provided, with the required cosmos services.</returns>
     public static IServiceCollection AddCosmosRepository(
         this IServiceCollection services,
         Action<RepositoryOptions>? setupAction = default,
-        Action<CosmosClientOptions>? additionSetupAction = default)
+        Action<CosmosClientOptions>? additionalSetupAction = default)
     {
         if (services is null)
         {
@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
 
         services.AddLogging()
             .AddHttpClient()
-            .AddSingleton(new CosmosClientOptionsManipulator(additionSetupAction))
+            .AddSingleton(new CosmosClientOptionsManipulator(additionalSetupAction))
             .AddSingleton<ICosmosClientOptionsProvider, DefaultCosmosClientOptionsProvider>()
             .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
             .AddSingleton(typeof(ICosmosContainerProvider<>), typeof(DefaultCosmosContainerProvider<>))
