@@ -49,6 +49,10 @@ internal class DefaultContainerChangeFeedProcessor : IContainerChangeFeedProcess
             builder.WithPollInterval(_changeFeedOptions.PollInterval.Value);
         }
 
+        if (_changeFeedOptions.StartTime.HasValue)
+        {
+            builder.WithStartTime(_changeFeedOptions.StartTime.Value);
+        }
         _processor = builder.Build();
 
         _logger.LogInformation("Starting change feed processor for container {ContainerName}", itemContainer.Id);

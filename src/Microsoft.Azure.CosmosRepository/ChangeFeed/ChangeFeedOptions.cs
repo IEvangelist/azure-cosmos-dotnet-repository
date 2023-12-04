@@ -35,8 +35,31 @@ public class ChangeFeedOptions
     /// </summary>
     public string ProcessorName { get; set; } = "cosmos-repository-pattern-processor";
 
+    private DateTime? _startTime;
+
+    /// <summary>
+    /// Sets the time (exclusive) to start looking for changes after.
+    /// </summary>
+    /// <remarks>
+    /// This is only used when:
+    /// (1) Lease store is not initialized and is ignored if a lease exists and has continuation token.
+    /// (2) StartContinuation is not specified.
+    /// If this is specified, StartFromBeginning is ignored.
+    /// </remarks>
+    public DateTime? StartTime
+    {
+        get => _startTime;
+        set
+        {
+            if (value.HasValue && value.Value.Kind != DateTimeKind.Utc)
+                throw new ArgumentOutOfRangeException(nameof(value),"StartTime must be Utc");
+            _startTime = value;
+        }
+    }
+
     internal bool IsTheSameAs(ChangeFeedOptions? options) =>
         options?.InstanceName == InstanceName &&
         options?.PollInterval == PollInterval &&
-        options?.ProcessorName == ProcessorName;
+        options?.ProcessorName == ProcessorName &&
+        options?.StartTime == StartTime;
 }
