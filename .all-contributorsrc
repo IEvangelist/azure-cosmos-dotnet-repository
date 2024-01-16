@@ -288,6 +288,16 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "stormbringer766",
+      "name": "stormbringer766",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14202723?v=4",
+      "profile": "https://github.com/stormbringer766",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
