@@ -6,7 +6,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
 public class DefaultCosmosClientProviderTests
 {
     [Fact]
-    public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithConnectionString()
+    public async Task DefaultCosmosClientProviderCorrectlyDisposesOverloadWithConnectionString()
     {
         var mock = new Mock<ICosmosClientOptionsProvider>();
         mock.SetupGet(provider => provider.ClientOptions).Returns(new CosmosClientOptions());
@@ -21,12 +21,12 @@ public class DefaultCosmosClientProviderTests
 
         provider.Dispose();
 
-        Assert.ThrowsAsync<ObjectDisposedException>(
+        await Assert.ThrowsAsync<ObjectDisposedException>(
             async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
     }
 
     [Fact]
-    public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithTokenCredential()
+    public async Task DefaultCosmosClientProviderCorrectlyDisposesOverloadWithTokenCredential()
     {
         var mock = new Mock<ICosmosClientOptionsProvider>();
         mock.SetupGet(provider => provider.ClientOptions).Returns(new CosmosClientOptions());
@@ -41,7 +41,7 @@ public class DefaultCosmosClientProviderTests
 
         provider.Dispose();
 
-        Assert.ThrowsAsync<ObjectDisposedException>(
+        await Assert.ThrowsAsync<ObjectDisposedException>(
             async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
     }
 }
