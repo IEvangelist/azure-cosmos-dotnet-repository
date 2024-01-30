@@ -28,4 +28,8 @@
       <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosEventSourcing\Microsoft.Azure.CosmosEventSourcing.csproj" />
     </ItemGroup>
 
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+
 </Project>
