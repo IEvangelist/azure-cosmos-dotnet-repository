@@ -10,6 +10,11 @@ namespace Microsoft.Azure.CosmosRepository.Specification;
 public class DefaultSpecification<TItem> : BaseSpecification<TItem, IQueryResult<TItem>>
     where TItem : IItem
 {
+    public DefaultSpecification()
+    {
+        PageSize = -1;
+    }
+
     /// <inheritdoc/>
     public override IQueryResult<TItem> PostProcessingAction(
         IReadOnlyList<TItem> queryResult,
