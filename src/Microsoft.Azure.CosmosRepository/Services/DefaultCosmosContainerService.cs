@@ -46,6 +46,7 @@ class DefaultCosmosContainerService : ICosmosContainerService
                     ? itemConfiguration.ContainerName
                     : _options.ContainerId,
                 PartitionKeyPath = itemConfiguration.PartitionKeyPath,
+                PartitionKeyPaths = itemConfiguration.PartitionKeyPaths,
                 UniqueKeyPolicy = itemConfiguration.UniqueKeyPolicy ?? new(),
                 DefaultTimeToLive = itemConfiguration.DefaultTimeToLive
             };

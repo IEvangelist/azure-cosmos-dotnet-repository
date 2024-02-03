@@ -3,32 +3,72 @@
 
 namespace Microsoft.Azure.CosmosRepository.Options;
 
-internal class ItemConfiguration(
-    Type type,
-    string containerName,
-    string partitionKeyPath,
-    UniqueKeyPolicy? uniqueKeyPolicy,
-    ThroughputProperties? throughputProperties,
-    int defaultTimeToLive = -1,
-    bool syncContainerProperties = false,
-    ChangeFeedOptions? changeFeedOptions = null,
-    bool useStrictTypeChecking = true)
+internal class ItemConfiguration
 {
-    public Type Type { get; } = type;
+    // Existing constructor
+    public ItemConfiguration(
+        Type type,
+        string containerName,
+        string partitionKeyPath,
+        UniqueKeyPolicy? uniqueKeyPolicy = null,
+        ThroughputProperties? throughputProperties = null,
+        int defaultTimeToLive = -1,
+        bool syncContainerProperties = false,
+        ChangeFeedOptions? changeFeedOptions = null,
+        bool useStrictTypeChecking = true)
+    {
+        Type = type;
+        ContainerName = containerName;
+        PartitionKeyPath = partitionKeyPath;
+        UniqueKeyPolicy = uniqueKeyPolicy;
+        ThroughputProperties = throughputProperties;
+        DefaultTimeToLive = defaultTimeToLive;
+        SyncContainerProperties = syncContainerProperties;
+        ChangeFeedOptions = changeFeedOptions;
+        UseStrictTypeChecking = useStrictTypeChecking;
+    }
 
-    public string ContainerName { get; } = containerName;
+    // New additional constructor
+    public ItemConfiguration(
+        Type type,
+        string containerName,
+        List<string> partitionKeyPaths,
+        UniqueKeyPolicy? uniqueKeyPolicy = null,
+        ThroughputProperties? throughputProperties = null,
+        int defaultTimeToLive = -1,
+        bool syncContainerProperties = false,
+        ChangeFeedOptions? changeFeedOptions = null,
+        bool useStrictTypeChecking = true)
+    {
+        Type = type;
+        ContainerName = containerName;
+        PartitionKeyPaths = partitionKeyPaths;
+        UniqueKeyPolicy = uniqueKeyPolicy;
+        ThroughputProperties = throughputProperties;
+        DefaultTimeToLive = defaultTimeToLive;
+        SyncContainerProperties = syncContainerProperties;
+        ChangeFeedOptions = changeFeedOptions;
+        UseStrictTypeChecking = useStrictTypeChecking;
+        
+    }
 
-    public string PartitionKeyPath { get; } = partitionKeyPath;
+    public Type Type { get; }
 
-    public UniqueKeyPolicy? UniqueKeyPolicy { get; } = uniqueKeyPolicy;
+    public string ContainerName { get; }
 
-    public ThroughputProperties? ThroughputProperties { get; } = throughputProperties;
+    public string? PartitionKeyPath { get; }
 
-    public int DefaultTimeToLive { get; } = defaultTimeToLive;
+    public List<string>? PartitionKeyPaths { get; }
 
-    public bool SyncContainerProperties { get; } = syncContainerProperties;
+    public UniqueKeyPolicy? UniqueKeyPolicy { get; }
 
-    public ChangeFeedOptions? ChangeFeedOptions { get; } = changeFeedOptions;
+    public ThroughputProperties? ThroughputProperties { get; }
 
-    public bool UseStrictTypeChecking { get; } = useStrictTypeChecking;
+    public int DefaultTimeToLive { get; }
+
+    public bool SyncContainerProperties { get; }
+
+    public ChangeFeedOptions? ChangeFeedOptions { get; }
+
+    public bool UseStrictTypeChecking { get; }
 }
