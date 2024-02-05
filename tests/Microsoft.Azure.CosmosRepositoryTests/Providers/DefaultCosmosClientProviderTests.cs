@@ -27,6 +27,7 @@ public class DefaultCosmosClientProviderTests
         try
         {
             await provider.UseClientAsync(client => client.ReadAccountAsync());
+            Assert.Fail("Exception was not thrown");
         }
         catch (Exception ex)
         {
@@ -59,6 +60,7 @@ public class DefaultCosmosClientProviderTests
         try
         {
             await provider.UseClientAsync(client => client.ReadAccountAsync());
+            Assert.Fail("Exception was not thrown");
         }
         catch (Exception ex)
         {
