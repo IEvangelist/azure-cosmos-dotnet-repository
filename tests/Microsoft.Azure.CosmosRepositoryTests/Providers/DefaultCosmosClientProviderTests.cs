@@ -6,7 +6,7 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
 public class DefaultCosmosClientProviderTests
 {
     [Fact]
-    public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithConnectionString()
+    public async Task DefaultCosmosClientProviderCorrectlyDisposesOverloadWithConnectionString()
     {
         var mock = new Mock<ICosmosClientOptionsProvider>();
         mock.SetupGet(provider => provider.ClientOptions).Returns(new CosmosClientOptions());
@@ -19,14 +19,25 @@ public class DefaultCosmosClientProviderTests
                         "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
                 }));
 
+        //Force lazy creation
+        _ = provider.CosmosClient;
+
         provider.Dispose();
 
-        Assert.ThrowsAsync<ObjectDisposedException>(
-            async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+        try
+        {
+            await provider.UseClientAsync(client => client.ReadAccountAsync());
+            Assert.Fail("Exception was not thrown");
+        }
+        catch (Exception ex)
+        {
+            //Actual exception is CosmosObjectDisposedException which is internal
+            Assert.IsType<ObjectDisposedException>(ex.GetBaseException());
+        }
     }
 
     [Fact]
-    public void DefaultCosmosClientProviderCorrectlyDisposesOverloadWithTokenCredential()
+    public async Task DefaultCosmosClientProviderCorrectlyDisposesOverloadWithTokenCredential()
     {
         var mock = new Mock<ICosmosClientOptionsProvider>();
         mock.SetupGet(provider => provider.ClientOptions).Returns(new CosmosClientOptions());
@@ -41,7 +52,20 @@ public class DefaultCosmosClientProviderTests
 
         provider.Dispose();
 
-        Assert.ThrowsAsync<ObjectDisposedException>(
-            async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+        //Force lazy creation
+        _ = provider.CosmosClient;
+
+        provider.Dispose();
+
+        try
+        {
+            await provider.UseClientAsync(client => client.ReadAccountAsync());
+            Assert.Fail("Exception was not thrown");
+        }
+        catch (Exception ex)
+        {
+            //Actual exception is CosmosObjectDisposedException which is internal
+            Assert.IsType<ObjectDisposedException>(ex.GetBaseException());
+        }
     }
 }
