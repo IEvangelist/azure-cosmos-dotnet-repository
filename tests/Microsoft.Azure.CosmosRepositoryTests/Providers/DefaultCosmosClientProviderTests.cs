@@ -19,6 +19,9 @@ public class DefaultCosmosClientProviderTests
                         "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
                 }));
 
+        //Force lazy creation
+        _ = provider.CosmosClient;
+
         provider.Dispose();
 
         await Assert.ThrowsAsync<ObjectDisposedException>(
@@ -38,6 +41,9 @@ public class DefaultCosmosClientProviderTests
                     TokenCredential = new TestTokenCredential(),
                     AccountEndpoint = "https://localtestcosmos.documents.azure.com:443/"
                 }));
+
+        //Force lazy creation
+        _ = provider.CosmosClient;
 
         provider.Dispose();
 
