@@ -39,34 +39,22 @@ class DefaultCosmosItemConfigurationProvider(
         itemType.IsItem();
 
         var containerName = containerNameProvider.GetContainerName(itemType);
-        var partitionKeyPath = cosmosPartitionKeyPathProvider.GetPartitionKeyPath(itemType);
-        var partitionKeyPaths = cosmosPartitionKeyPathProvider.GetPartitionKeyPaths(itemType).ToList();
+        var partitionKeyPaths = cosmosPartitionKeyPathProvider.GetPartitionKeyPaths(itemType);
         UniqueKeyPolicy? uniqueKeyPolicy = cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy(itemType);
         var timeToLive = containerDefaultTimeToLiveProvider.GetDefaultTimeToLive(itemType);
         var sync = syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties(itemType);
         ThroughputProperties? throughputProperties = cosmosThroughputProvider.GetThroughputProperties(itemType);
         var useStrictTypeChecking = cosmosStrictTypeCheckingProvider.UseStrictTypeChecking(itemType);
 
-        if(partitionKeyPaths != null && partitionKeyPaths.Any())
-            return new(
-                itemType,
-                containerName,
-                partitionKeyPaths,
-                uniqueKeyPolicy,
-                throughputProperties,
-                timeToLive,
-                sync,
-                useStrictTypeChecking: useStrictTypeChecking);
-        else
-            return new(
-               itemType,
-               containerName,
-               partitionKeyPath,
-               uniqueKeyPolicy,
-               throughputProperties,
-               timeToLive,
-               sync,
-               useStrictTypeChecking: useStrictTypeChecking);
+        return new(
+            itemType,
+            containerName,
+            partitionKeyPaths,
+            uniqueKeyPolicy,
+            throughputProperties,
+            timeToLive,
+            sync,
+            useStrictTypeChecking: useStrictTypeChecking);
 
     }
 }

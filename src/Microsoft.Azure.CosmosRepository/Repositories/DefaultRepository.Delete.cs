@@ -11,7 +11,7 @@ internal sealed partial class DefaultRepository<TItem>
     public ValueTask DeleteAsync(
         TItem value,
         CancellationToken cancellationToken = default) =>
-        DeleteAsync(value.Id, value.PartitionKey, cancellationToken);
+        DeleteAsync(value.Id, new PartitionKeyBuilder().Build(value.PartitionKeys), cancellationToken);
 
     /// <inheritdoc/>
     public ValueTask DeleteAsync(

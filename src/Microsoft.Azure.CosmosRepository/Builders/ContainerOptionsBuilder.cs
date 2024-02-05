@@ -23,14 +23,9 @@ public class ContainerOptionsBuilder(Type type)
     internal string? Name { get; private set; }
 
     /// <summary>
-    /// The partition key for the container.
-    /// </summary>
-    internal string? PartitionKey { get; private set; }
-
-    /// <summary>
     /// The partition keys for the container.
     /// </summary>
-    internal IEnumerable<string>? PartitionKeys { get; private set; }
+    internal IList<string>? PartitionKeys { get; private set; }
 
     /// <summary>
     /// The default time to live for a container.
@@ -84,42 +79,11 @@ public class ContainerOptionsBuilder(Type type)
     /// <exception cref="ArgumentNullException"></exception>
     public ContainerOptionsBuilder WithPartitionKey(string partitionKey)
     {
-        PartitionKey = partitionKey ?? throw new ArgumentNullException(nameof(partitionKey));
+        if(string.IsNullOrWhiteSpace(partitionKey)) throw new ArgumentNullException(nameof(partitionKey));
+        PartitionKeys ??= [];
+        PartitionKeys.Add(partitionKey);
         return this;
     }
-
-    /// <summary>
-    /// Configures a hierarchical partition key structure for the container, consisting of a root key and optional sub-keys.
-    /// </summary>
-    /// <param name="partitionKey">The primary partition key.</param>
-    /// <param name="partitionSubKey1">The first level sub-partition key.</param>
-    /// <param name="partitionSubKey2">An optional second level sub-partition key.</param>
-    /// <returns>The current instance of <see cref="ContainerOptionsBuilder"/>, enabling method chaining.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="partitionKey"/> or <paramref name="partitionSubKey1"/> is null or whitespace.</exception>
-    public ContainerOptionsBuilder WithHierarchicalPartitionKey(string partitionKey, string partitionSubKey1, string? partitionSubKey2 = null)
-    {
-        if (string.IsNullOrWhiteSpace(partitionKey))
-        {
-            throw new ArgumentNullException(nameof(partitionKey), "Partition key cannot be null or whitespace.");
-        }
-
-        if (string.IsNullOrWhiteSpace(partitionSubKey1))
-        {
-            throw new ArgumentNullException(nameof(partitionSubKey1), "First sub-partition key cannot be null or whitespace.");
-        }
-
-        var partitionKeys = new List<string> { partitionKey, partitionSubKey1 };
-
-        if (partitionSubKey2 != null && string.IsNullOrWhiteSpace(partitionSubKey2))
-        {
-            partitionKeys.Add(partitionSubKey2);
-        }
-
-        PartitionKeys = partitionKeys;
-
-        return this;
-    }
-
 
     /// <summary>
     /// Sets <see cref="SyncContainerProperties"/> to true

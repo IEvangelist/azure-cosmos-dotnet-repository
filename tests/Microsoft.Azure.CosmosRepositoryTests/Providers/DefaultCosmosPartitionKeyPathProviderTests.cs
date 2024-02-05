@@ -24,7 +24,7 @@ public class DefaultCosmosPartitionKeyPathProviderTests
 
         ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
 
-        var path = provider.GetPartitionKeyPath<Person>();
+        var path = provider.GetPartitionKeyPaths<Person>();
         Assert.Equal("/firstName", path);
     }
 
@@ -35,7 +35,7 @@ public class DefaultCosmosPartitionKeyPathProviderTests
 
         ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
 
-        var path = provider.GetPartitionKeyPath<AnotherPerson>();
+        var path = provider.GetPartitionKeyPaths<AnotherPerson>();
         Assert.Equal("/email", path);
     }
 
@@ -44,7 +44,7 @@ public class DefaultCosmosPartitionKeyPathProviderTests
     {
         ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
 
-        var path = provider.GetPartitionKeyPath<PickleChipsItem>();
+        var path = provider.GetPartitionKeyPaths<PickleChipsItem>();
         Assert.Equal("/pickles", path);
         Assert.Equal("[\"Hey, where's the chips?!\"]", new Cosmos.PartitionKey(((IItem)new PickleChipsItem()).PartitionKey).ToString());
     }

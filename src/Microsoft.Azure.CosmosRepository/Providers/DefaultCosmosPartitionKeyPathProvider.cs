@@ -11,52 +11,25 @@ class DefaultCosmosPartitionKeyPathProvider(IOptions<RepositoryOptions> options)
     private readonly IOptions<RepositoryOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc />
-    public string GetPartitionKeyPath<TItem>() where TItem : IItem =>
-        GetPartitionKeyPath(typeof(TItem));
+    public IEnumerable<string> GetPartitionKeyPaths<TItem>() where TItem : IItem =>
+        GetPartitionKeyPaths(typeof(TItem));
 
-    public string GetPartitionKeyPath(Type itemType)
+    public IEnumerable<string> GetPartitionKeyPaths(Type itemType)
     {
         Type attributeType = typeof(PartitionKeyPathAttribute);
 
         ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);
 
-        if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
+        if (optionsBuilder is { } && optionsBuilder.PartitionKeys != null && optionsBuilder.PartitionKeys.Any() && optionsBuilder.PartitionKeys.All(x => !string.IsNullOrEmpty(x)))
         {
-            return optionsBuilder.PartitionKey!;
+           return optionsBuilder.PartitionKeys;
         }
 
         return Attribute.GetCustomAttribute(
             itemType, attributeType) is PartitionKeyPathAttribute partitionKeyPathAttribute
-            ? partitionKeyPathAttribute.Path
-            : "/id";
+            ? partitionKeyPathAttribute.Paths
+            : ["/id"];
     }
 
-    public IEnumerable<string> GetPartitionKeyPaths<TItem>() where TItem : IItem => GetPartitionKeyPaths(typeof(TItem));
-
-    public IEnumerable<string> GetPartitionKeyPaths(Type itemType)
-    {
-        Type attributeType = typeof(HierarchicalPartitionKeysPathAttribute);
-
-        ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);
-
-        if (optionsBuilder?.PartitionKeys?.Any() == true)
-        {
-            return optionsBuilder.PartitionKeys;
-        }
-
-        if (Attribute.GetCustomAttribute(itemType, attributeType) is HierarchicalPartitionKeysPathAttribute attribute)
-        {
-            var paths = new List<string> { attribute.Path, attribute.SubPathOne };
-
-            if (attribute.SubPathTwo is not null)
-            {
-                paths.Add(attribute.SubPathTwo);
-            }
-
-            return paths;
-        }
-
-        return new[] { "/id" };
-    }
-
+  
 }

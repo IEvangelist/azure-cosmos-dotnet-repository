@@ -23,12 +23,34 @@ internal sealed partial class DefaultRepository<TItem>
         }
     }
 
+    public async ValueTask<TItem?> TryGetAsync(
+        string id,
+        string[] partitionKeyValues,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync(id, partitionKeyValues, cancellationToken);
+        }
+        catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
+        {
+            logger.LogItemNotFoundHandled<TItem>(id, partitionKeyValues ?? [id], e);
+            return default;
+        }
+    }
+
     /// <inheritdoc/>
     public ValueTask<TItem> GetAsync(
         string id,
         string? partitionKeyValue = null,
         CancellationToken cancellationToken = default) =>
         GetAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
+
+    public ValueTask<TItem> GetAsync(
+        string id,
+        string[] partitionKeyValues,
+        CancellationToken cancellationToken = default) =>
+        GetAsync(id, new PartitionKeyBuilder().Build(partitionKeyValues), cancellationToken);
 
     /// <inheritdoc/>
     public async ValueTask<TItem> GetAsync(
@@ -58,16 +80,45 @@ internal sealed partial class DefaultRepository<TItem>
         return repositoryExpressionProvider.CheckItem(item);
     }
 
-    /// <inheritdoc/>
     public async ValueTask<IEnumerable<TItem>> GetAsync(
-        Expression<Func<TItem, bool>> predicate,
+        PartitionKey partitionKey,
         CancellationToken cancellationToken = default)
     {
         Container container =
             await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
+        IQueryable<TItem> query = container.GetItemLinqQueryable<TItem>(
+            requestOptions: new QueryRequestOptions() { PartitionKey = partitionKey },
+            linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions);
+
+        logger.LogQueryConstructed(query);
+
+        (IEnumerable<TItem> items, var charge) =
+            await cosmosQueryableProcessor.IterateAsync(query, cancellationToken);
+
+        logger.LogQueryExecuted(query, charge);
+
+        return items;
+    }
+
+    public async ValueTask<IEnumerable<TItem>> GetAsync(
+        Expression<Func<TItem, bool>> predicate,
+        PartitionKey partitionKey = default,
+        CancellationToken cancellationToken = default)
+    {
+        Container container =
+            await containerProvider.GetContainerAsync().ConfigureAwait(false);
+
+        var requestOptions = new QueryRequestOptions();
+
+        if (partitionKey != default)
+        {
+            requestOptions.PartitionKey = partitionKey;
+        }
+
         IQueryable<TItem> query =
             container.GetItemLinqQueryable<TItem>(
+                    requestOptions: requestOptions,
                     linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
                 .Where(repositoryExpressionProvider.Build(predicate));
 

@@ -62,4 +62,49 @@ internal sealed partial class DefaultRepository<TItem>(
 
         return (results, charge, continuationToken);
     }
+
+    internal static PartitionKey GetPartitionKey(List<TItem> items)
+    {
+        if (!items.Any())
+        {
+            throw new ArgumentException(
+                "Unable to perform batch operation with no items",
+                nameof(items));
+        }
+        return GetPartitionKey(items[0]);
+    }
+
+    internal static PartitionKey GetPartitionKey(string[] values, string? defaultValue = null)
+    {
+        var builder = new PartitionKeyBuilder();
+        if (values == null || values.Length == 0)
+        {
+            return !string.IsNullOrEmpty(defaultValue) ? new PartitionKey(defaultValue) : default;
+        }
+
+        foreach (var value in values)
+        {
+            builder.Add(value);
+        }
+
+        return builder.Build();
+    }
+
+    internal static PartitionKey GetPartitionKey(string value)
+    {
+        return new PartitionKey(value);
+    }
+
+
+    internal static PartitionKey GetPartitionKey(TItem item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentException(
+                "Unable to perform operation with null item",
+                nameof(item));
+        }
+
+        return GetPartitionKey(item.PartitionKeys);
+    }
 }

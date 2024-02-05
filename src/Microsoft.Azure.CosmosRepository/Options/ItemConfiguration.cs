@@ -9,30 +9,7 @@ internal class ItemConfiguration
     public ItemConfiguration(
         Type type,
         string containerName,
-        string partitionKeyPath,
-        UniqueKeyPolicy? uniqueKeyPolicy = null,
-        ThroughputProperties? throughputProperties = null,
-        int defaultTimeToLive = -1,
-        bool syncContainerProperties = false,
-        ChangeFeedOptions? changeFeedOptions = null,
-        bool useStrictTypeChecking = true)
-    {
-        Type = type;
-        ContainerName = containerName;
-        PartitionKeyPath = partitionKeyPath;
-        UniqueKeyPolicy = uniqueKeyPolicy;
-        ThroughputProperties = throughputProperties;
-        DefaultTimeToLive = defaultTimeToLive;
-        SyncContainerProperties = syncContainerProperties;
-        ChangeFeedOptions = changeFeedOptions;
-        UseStrictTypeChecking = useStrictTypeChecking;
-    }
-
-    // New additional constructor
-    public ItemConfiguration(
-        Type type,
-        string containerName,
-        List<string> partitionKeyPaths,
+        string[] partitionKeyPaths,
         UniqueKeyPolicy? uniqueKeyPolicy = null,
         ThroughputProperties? throughputProperties = null,
         int defaultTimeToLive = -1,
@@ -56,9 +33,7 @@ internal class ItemConfiguration
 
     public string ContainerName { get; }
 
-    public string? PartitionKeyPath { get; }
-
-    public List<string>? PartitionKeyPaths { get; }
+    public string[] PartitionKeyPaths { get; }
 
     public UniqueKeyPolicy? UniqueKeyPolicy { get; }
 

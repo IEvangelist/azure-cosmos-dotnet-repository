@@ -56,9 +56,9 @@ public abstract class EventItem : IItemWithEtag, IItemWithTimeToLive
     public string Type { get; set; }
 
     /// <summary>
-    /// The value used to partition the event.
+    /// The values used to partition the event.
     /// </summary>
-    public string PartitionKey { get; set; } = null!;
+    public string[] PartitionKeys { get; set; } = null!;
 
     /// <summary>
     /// The name of the event stored.
