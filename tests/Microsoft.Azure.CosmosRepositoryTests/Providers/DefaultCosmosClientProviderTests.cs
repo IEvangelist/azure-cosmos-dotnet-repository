@@ -15,7 +15,8 @@ public class DefaultCosmosClientProviderTests
                 mock.Object,
                 Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                 {
-                    CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString")
+                    CosmosConnectionString =
+                        "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
                 }));
 
         //Force lazy creation
@@ -47,6 +48,8 @@ public class DefaultCosmosClientProviderTests
                     TokenCredential = new TestTokenCredential(),
                     AccountEndpoint = "https://localtestcosmos.documents.azure.com:443/"
                 }));
+
+        provider.Dispose();
 
         //Force lazy creation
         _ = provider.CosmosClient;
