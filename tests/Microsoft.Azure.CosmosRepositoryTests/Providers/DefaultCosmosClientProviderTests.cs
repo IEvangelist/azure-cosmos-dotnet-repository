@@ -15,8 +15,7 @@ public class DefaultCosmosClientProviderTests
                 mock.Object,
                 Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                 {
-                    CosmosConnectionString =
-                        "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
+                    CosmosConnectionString = Environment.GetEnvironmentVariable("CosmosConnectionString")
                 }));
 
         //Force lazy creation
@@ -24,8 +23,15 @@ public class DefaultCosmosClientProviderTests
 
         provider.Dispose();
 
-        await Assert.ThrowsAsync<ObjectDisposedException>(
-            async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+        try
+        {
+            await provider.UseClientAsync(client => client.ReadAccountAsync());
+        }
+        catch (Exception ex)
+        {
+            //Actual exception is CosmosObjectDisposedException which is internal
+            Assert.IsType<ObjectDisposedException>(ex.GetBaseException());
+        }
     }
 
     [Fact]
@@ -47,7 +53,14 @@ public class DefaultCosmosClientProviderTests
 
         provider.Dispose();
 
-        await Assert.ThrowsAsync<ObjectDisposedException>(
-            async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+        try
+        {
+            await provider.UseClientAsync(client => client.ReadAccountAsync());
+        }
+        catch (Exception ex)
+        {
+            //Actual exception is CosmosObjectDisposedException which is internal
+            Assert.IsType<ObjectDisposedException>(ex.GetBaseException());
+        }
     }
 }

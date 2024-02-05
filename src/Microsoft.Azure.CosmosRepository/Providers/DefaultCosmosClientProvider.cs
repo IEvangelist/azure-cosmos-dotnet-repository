@@ -8,7 +8,6 @@ class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
     readonly Lazy<CosmosClient> _lazyCosmosClient;
     readonly CosmosClientOptions _cosmosClientOptions;
     readonly RepositoryOptions _options;
-    private bool _disposed = false;
 
     public CosmosClient CosmosClient => _lazyCosmosClient.Value;
 
@@ -38,14 +37,13 @@ class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
 
     /// <inheritdoc/>
     public Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume) =>
-        _disposed ? throw new ObjectDisposedException(nameof(CosmosClient)) : consume.Invoke(_lazyCosmosClient.Value);
+        consume.Invoke(_lazyCosmosClient.Value);
 
     /// <inheritdoc/>
     public void Dispose()
     {
         if (_lazyCosmosClient.IsValueCreated)
         {
-            _disposed = true;
             _lazyCosmosClient.Value?.Dispose();
         }
     }
