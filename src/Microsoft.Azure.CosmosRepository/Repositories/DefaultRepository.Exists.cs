@@ -12,7 +12,7 @@ internal sealed partial class DefaultRepository<TItem>
         string id,
         string? partitionKeyValue = null,
         CancellationToken cancellationToken = default) =>
-        ExistsAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
+        ExistsAsync(id, BuildPartitionKey(partitionKeyValue ?? id), cancellationToken);
 
     /// <inheritdoc/>
     public async ValueTask<bool> ExistsAsync(
@@ -46,11 +46,27 @@ internal sealed partial class DefaultRepository<TItem>
         Expression<Func<TItem, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
+        return await ExistsAsync(predicate, default, cancellationToken);
+    }
+
+    public async ValueTask<bool> ExistsAsync(
+        Expression<Func<TItem, bool>> predicate,
+        PartitionKey partitionKey = default,
+        CancellationToken cancellationToken = default)
+    {
         Container container =
             await containerProvider.GetContainerAsync().ConfigureAwait(false);
 
+        var requestOptions = new QueryRequestOptions();
+
+        if (partitionKey != default)
+        {
+            requestOptions.PartitionKey = partitionKey;
+        }
+
         IQueryable<TItem> query =
             container.GetItemLinqQueryable<TItem>(
+                    requestOptions: requestOptions,
                     linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
                 .Where(repositoryExpressionProvider.Build(predicate));
 

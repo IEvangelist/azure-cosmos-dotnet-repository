@@ -203,8 +203,13 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
 
     //TODO: Write doc
     ValueTask<int> CountAsync(
-        PartitionKey partitionKey,
         Expression<Func<TItem, bool>> predicate,
+        PartitionKey partitionKey,
+        CancellationToken cancellationToken = default);
+
+    //TODO: Write doc
+    ValueTask<int> CountAsync(
+        PartitionKey partitionKey,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -219,7 +224,16 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     /// <returns>An <see cref="IPage{T}"/> of <see cref="IItem"/>s</returns>
     /// <remarks>This method makes use of cosmos dbs continuation tokens for efficient, cost effective paging utilising low RUs</remarks>
     ValueTask<IPage<TItem>> PageAsync(
+        Expression<Func<TItem, bool>>? predicate,
+        int pageSize = 25,
+        string? continuationToken = null,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default);
+
+    //TODO: Write doc
+    ValueTask<IPage<TItem>> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
+        PartitionKey partitionKey = default,
         int pageSize = 25,
         string? continuationToken = null,
         bool returnTotal = false,
@@ -228,7 +242,6 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     //TODO: Write doc
     ValueTask<IPage<TItem>> PageAsync(
         PartitionKey partitionKey,
-        Expression<Func<TItem, bool>>? predicate = null,
         int pageSize = 25,
         string? continuationToken = null,
         bool returnTotal = false,
@@ -264,8 +277,22 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     /// <returns>An <see cref="IPageQueryResult{T}"/> of <see cref="IItem"/>s</returns>
     /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
     ValueTask<IPageQueryResult<TItem>> PageAsync(
-        PartitionKey? partitionKey = null,
+        Expression<Func<TItem, bool>>? predicate,
+        int pageNumber = 1,
+        int pageSize = 25,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default);
+
+    ValueTask<IPageQueryResult<TItem>> PageAsync(
+        PartitionKey partitionKey,
+        int pageNumber = 1,
+        int pageSize = 25,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default);
+
+    ValueTask<IPageQueryResult<TItem>> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
+        PartitionKey? partitionKey = default,
         int pageNumber = 1,
         int pageSize = 25,
         bool returnTotal = false,

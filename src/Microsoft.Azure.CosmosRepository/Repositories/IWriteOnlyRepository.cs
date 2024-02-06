@@ -81,7 +81,7 @@ public interface IWriteOnlyRepository<TItem> where TItem : IItem
     ValueTask UpdateAsync(
         string id,
         Action<IPatchOperationBuilder<TItem>> builder,
-        string? partitionKeyValue = null,
+        string partitionKeyValue,
         string? etag = default,
         CancellationToken cancellationToken = default);
 
@@ -105,6 +105,12 @@ public interface IWriteOnlyRepository<TItem> where TItem : IItem
     ValueTask DeleteAsync(
         string id,
         string? partitionKeyValue = null,
+        CancellationToken cancellationToken = default);
+
+    //TODO: Write docs
+    ValueTask DeleteAsync(
+        string id,
+        IEnumerable<string> partitionKeyValues,
         CancellationToken cancellationToken = default);
 
     /// <summary>

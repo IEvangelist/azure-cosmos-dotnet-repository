@@ -15,7 +15,7 @@ internal partial class DefaultRepository<TItem>
     {
         var list = items.ToList();
 
-        PartitionKey partitionKey = GetPartitionKey(list);
+        PartitionKey partitionKey = BuildPartitionKey(list);
 
         await UpdateAsBatchAsync(items, partitionKey, cancellationToken);
     }
@@ -59,7 +59,7 @@ internal partial class DefaultRepository<TItem>
     {
         var list = items.ToList();
 
-        PartitionKey partitionKey = GetPartitionKey(list);
+        PartitionKey partitionKey = BuildPartitionKey(list);
 
         await CreateAsBatchAsync(items, partitionKey, cancellationToken);
     }
@@ -96,7 +96,7 @@ internal partial class DefaultRepository<TItem>
     {
         var list = items.ToList();
 
-        PartitionKey partitionKey = GetPartitionKey(list);
+        PartitionKey partitionKey = BuildPartitionKey(list);
 
         await DeleteAsBatchAsync(items, partitionKey, cancellationToken);
       

@@ -23,7 +23,7 @@ namespace Microsoft.Azure.CosmosRepository.Attributes;
 public sealed class PartitionKeyPathAttribute(params string[] paths) : Attribute
 {
     /// <summary>
-    /// Gets the path of the parition key.
+    /// Gets the path values of the parition key.
     /// </summary>
     public string[] Paths { get; } = paths != null && paths.Length > 1 ? paths : throw new ArgumentNullException(nameof(paths), "At least one path is required.");
 }

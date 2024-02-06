@@ -3,6 +3,8 @@
 
 
 // ReSharper disable once CheckNamespace
+using Microsoft.Extensions.Options;
+
 namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed partial class DefaultRepository<TItem>
@@ -15,6 +17,27 @@ internal sealed partial class DefaultRepository<TItem>
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
+        return await PageAsync(predicate, default, pageSize, continuationToken, returnTotal, cancellationToken);
+    }
+
+    public async ValueTask<IPage<TItem>> PageAsync(
+        PartitionKey partitionKey,
+        int pageSize = 25,
+        string? continuationToken = null,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default)
+    {
+        return await PageAsync(null, partitionKey, pageSize, continuationToken, returnTotal, cancellationToken);
+    }
+
+    public async ValueTask<IPage<TItem>> PageAsync(
+        Expression<Func<TItem, bool>>? predicate = null,
+        PartitionKey partitionKey = default,
+        int pageSize = 25,
+        string? continuationToken = null,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default)
+    {
         Container container = await containerProvider.GetContainerAsync()
             .ConfigureAwait(false);
 
@@ -22,6 +45,11 @@ internal sealed partial class DefaultRepository<TItem>
         {
             MaxItemCount = pageSize
         };
+
+        if (partitionKey != default)
+        {
+            options.PartitionKey = partitionKey;
+        }
 
         IQueryable<TItem> query = container
             .GetItemLinqQueryable<TItem>(
@@ -54,6 +82,16 @@ internal sealed partial class DefaultRepository<TItem>
             resultingContinuationToken);
     }
 
+    public async ValueTask<IPageQueryResult<TItem>> PageAsync(
+        PartitionKey partitionKey,
+        int pageNumber = 1,
+        int pageSize = 25,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default)
+    {
+        return await PageAsync(null, partitionKey, pageNumber, pageSize, returnTotal, cancellationToken);
+    }
+
     /// <inheritdoc/>
     public async ValueTask<IPageQueryResult<TItem>> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
@@ -62,11 +100,30 @@ internal sealed partial class DefaultRepository<TItem>
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
+        return await PageAsync(predicate, default, pageNumber, pageSize, returnTotal, cancellationToken);
+    }
+
+    public async ValueTask<IPageQueryResult<TItem>> PageAsync(
+        Expression<Func<TItem, bool>>? predicate = null,
+        PartitionKey partitionKey = default,
+        int pageNumber = 1,
+        int pageSize = 25,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default)
+    {
         Container container = await containerProvider.GetContainerAsync()
             .ConfigureAwait(false);
 
+        var options = new QueryRequestOptions();
+
+        if(partitionKey != default)
+        {
+            options.PartitionKey = partitionKey;
+        }
+
         IQueryable<TItem> query = container
             .GetItemLinqQueryable<TItem>(
+            requestOptions: options,
                 linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
             .Where(repositoryExpressionProvider
                 .Build(predicate ?? repositoryExpressionProvider.Default<TItem>()));

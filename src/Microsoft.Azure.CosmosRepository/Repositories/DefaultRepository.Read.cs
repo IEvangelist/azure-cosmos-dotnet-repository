@@ -25,7 +25,7 @@ internal sealed partial class DefaultRepository<TItem>
 
     public async ValueTask<TItem?> TryGetAsync(
         string id,
-        string[] partitionKeyValues,
+        IEnumerable<string> partitionKeyValues,
         CancellationToken cancellationToken = default)
     {
         try
@@ -39,6 +39,7 @@ internal sealed partial class DefaultRepository<TItem>
         }
     }
 
+
     /// <inheritdoc/>
     public ValueTask<TItem> GetAsync(
         string id,
@@ -48,9 +49,9 @@ internal sealed partial class DefaultRepository<TItem>
 
     public ValueTask<TItem> GetAsync(
         string id,
-        string[] partitionKeyValues,
+        IEnumerable<string> partitionKeyValues,
         CancellationToken cancellationToken = default) =>
-        GetAsync(id, new PartitionKeyBuilder().Build(partitionKeyValues), cancellationToken);
+        GetAsync(id, BuildPartitionKey(partitionKeyValues), cancellationToken);
 
     /// <inheritdoc/>
     public async ValueTask<TItem> GetAsync(
@@ -101,7 +102,23 @@ internal sealed partial class DefaultRepository<TItem>
         return items;
     }
 
+
     public async ValueTask<IEnumerable<TItem>> GetAsync(
+    Expression<Func<TItem, bool>> predicate,
+    CancellationToken cancellationToken = default)
+    {
+        return await GetAsync(predicate, default, cancellationToken);
+    }
+
+    public async ValueTask<IEnumerable<TItem>> GetAsync(
+        PartitionKey partitionKey,
+        Expression<Func<TItem, bool>> predicate,
+        CancellationToken cancellationToken = default)
+    {
+       return await GetAsync(predicate, partitionKey, cancellationToken);
+    }
+
+    private async ValueTask<IEnumerable<TItem>> GetAsync(
         Expression<Func<TItem, bool>> predicate,
         PartitionKey partitionKey = default,
         CancellationToken cancellationToken = default)

@@ -23,7 +23,7 @@ internal static class LoggerExtensions
     public static void LogPointReadStarted<TItem>(
         this ILogger logger,
         string id,
-        string[] partitionKeys) where TItem : IItem =>
+        IEnumerable<string> partitionKeys) where TItem : IItem =>
         LoggerMessageDefinitions.HierarchicalPointReadStarted(logger, typeof(TItem).Name, id, partitionKeys, null!);
 
     public static void LogPointReadExecuted<TItem>(
@@ -52,7 +52,7 @@ internal static class LoggerExtensions
     public static void LogItemNotFoundHandled<TItem>(
         this ILogger logger,
         string id,
-        string[] partitionKeys,
+        IEnumerable<string> partitionKeys,
         CosmosException e) where TItem : IItem =>
         LoggerMessageDefinitions.HierarchicalItemNotFoundHandled(logger, typeof(TItem).Name, id, partitionKeys, e);
 }

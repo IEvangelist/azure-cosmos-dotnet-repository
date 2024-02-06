@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 // ReSharper disable once CheckNamespace
+
 namespace Microsoft.Azure.CosmosRepository;
 
 /// <inheritdoc/>
@@ -63,24 +64,42 @@ internal sealed partial class DefaultRepository<TItem>(
         return (results, charge, continuationToken);
     }
 
-    internal static PartitionKey GetPartitionKey(List<TItem> items)
+    /// <summary>
+    /// Builds a partition key from the first item in a list. This method assumes all items in the list belong to the same partition.
+    /// Throws an exception if the list is empty.
+    /// </summary>
+    /// <param name="items">A list of items from which the partition key is to be derived.</param>
+    /// <returns>A PartitionKey object constructed from the first item in the list.</returns>
+    /// <exception cref="ArgumentException">Thrown when the items list is empty.</exception>
+    internal static PartitionKey BuildPartitionKey(List<TItem> items)
     {
-        if (!items.Any())
+        if (items.Count == 0)
         {
             throw new ArgumentException(
                 "Unable to perform batch operation with no items",
                 nameof(items));
         }
-        return GetPartitionKey(items[0]);
+        return BuildPartitionKey(items[0]);
     }
 
-    internal static PartitionKey GetPartitionKey(string[] values, string? defaultValue = null)
+    /// <summary>
+    /// Constructs a partition key from a collection of string values. If the collection is empty or null, 
+    /// the method uses the defaultValue, if provided, to construct the PartitionKey.
+    /// </summary>
+    /// <param name="values">An IEnumerable collection of string values for constructing the partition key.</param>
+    /// <param name="defaultValue">An optional default value used to construct the PartitionKey if values are null or empty.</param>
+    /// <exception cref="ArgumentException">Thrown when the number of provided partition key values exceeds 3.</exception>
+    /// <returns>A PartitionKey object constructed from the values or the defaultValue if values are empty or null.</returns>
+    internal static PartitionKey BuildPartitionKey(IEnumerable<string> values, string? defaultValue = null)
     {
         var builder = new PartitionKeyBuilder();
-        if (values == null || values.Length == 0)
+        if (values == null || !values.Any())
         {
             return !string.IsNullOrEmpty(defaultValue) ? new PartitionKey(defaultValue) : default;
         }
+
+        if (values.Count() > 3) throw new ArgumentException("Unable to build partition key. The max allowed partition key values is 3", nameof(values));
+
 
         foreach (var value in values)
         {
@@ -90,13 +109,25 @@ internal sealed partial class DefaultRepository<TItem>(
         return builder.Build();
     }
 
-    internal static PartitionKey GetPartitionKey(string value)
+    /// <summary>
+    /// Creates a partition key from a single string value.
+    /// </summary>
+    /// <param name="value">The string value to use for constructing the partition key.</param>
+    /// <returns>A PartitionKey object constructed from the provided string value.</returns>
+    internal static PartitionKey BuildPartitionKey(string value, string? defaultValue = null)
     {
+        if (string.IsNullOrWhiteSpace(value) && !string.IsNullOrWhiteSpace(value)) return new PartitionKey(defaultValue);
         return new PartitionKey(value);
     }
 
-
-    internal static PartitionKey GetPartitionKey(TItem item)
+    /// <summary>
+    /// Retrieves a partition key from an item by extracting its partition keys and using them to construct a new PartitionKey.
+    /// Throws an exception if the item is null.
+    /// </summary>
+    /// <param name="item">The item from which to extract the partition keys.</param>
+    /// <returns>A PartitionKey object constructed from the item's partition keys.</returns>
+    /// <exception cref="ArgumentException">Thrown when the provided item is null.</exception>
+    internal static PartitionKey BuildPartitionKey(TItem item)
     {
         if (item == null)
         {
@@ -105,6 +136,6 @@ internal sealed partial class DefaultRepository<TItem>(
                 nameof(item));
         }
 
-        return GetPartitionKey(item.PartitionKeys);
+        return BuildPartitionKey(item.PartitionKeys);
     }
 }

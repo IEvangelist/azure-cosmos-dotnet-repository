@@ -20,7 +20,7 @@ internal sealed partial class DefaultRepository<TItem>
             valueWithTimestamps.CreatedTimeUtc = DateTime.UtcNow;
         }
 
-        PartitionKey partitionKey = GetPartitionKey(value);
+        PartitionKey partitionKey = BuildPartitionKey(value);
 
         ItemResponse<TItem> response =
             await container.CreateItemAsync(value, partitionKey,

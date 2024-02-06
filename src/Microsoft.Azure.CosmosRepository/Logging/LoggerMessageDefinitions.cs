@@ -21,8 +21,8 @@ internal static class LoggerMessageDefinitions
         );
 
     // Info Definitions
-    internal static readonly Action<ILogger, string, string, string[], Exception?> HierarchicalPointReadStarted =
-        LoggerMessage.Define<string, string, string[]>(
+    internal static readonly Action<ILogger, string, string, IEnumerable<string>, Exception?> HierarchicalPointReadStarted =
+        LoggerMessage.Define<string, string, IEnumerable<string>>(
             LogLevel.Information,
             EventIds.CosmosPointReadStarted,
             "Point read started for item type {CosmosItemType} with id {CosmosItemId} and partitionKeys {CosmosItemPartitionKeys}"
@@ -55,8 +55,8 @@ internal static class LoggerMessageDefinitions
             "CosmosException Status Code 404 handled for item of type {CosmosItemType} with {CosmosItemId} and partition key {CosmosItemPartitionKey}"
         );
 
-    internal static readonly Action<ILogger, string, string, string[], Exception?> HierarchicalItemNotFoundHandled =
-        LoggerMessage.Define<string, string, string[]>(
+    internal static readonly Action<ILogger, string, string, IEnumerable<string>, Exception?> HierarchicalItemNotFoundHandled =
+        LoggerMessage.Define<string, string, IEnumerable<string>>(
             LogLevel.Information,
             EventIds.ItemNotFoundHandled,
             "CosmosException Status Code 404 handled for item of type {CosmosItemType} with {CosmosItemId} and partition keys {CosmosItemPartitionKeys}"

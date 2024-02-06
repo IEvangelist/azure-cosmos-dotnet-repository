@@ -44,6 +44,12 @@ public abstract class Item : IItem
     public string Type { get; set; }
 
     /// <summary>
+    /// Gets the PartitionKey based on <see cref="GetPartitionKeyValues"/> last record.
+    /// Implemented explicitly to keep out of Item API
+    /// </summary>
+    string IItem.PartitionKey => GetPartitionKeyValues().Last();
+
+    /// <summary>
     /// Gets the PartitionKeys based on <see cref="GetPartitionKeyValues"/>.
     /// Implemented explicitly to keep out of Item API
     /// </summary>
