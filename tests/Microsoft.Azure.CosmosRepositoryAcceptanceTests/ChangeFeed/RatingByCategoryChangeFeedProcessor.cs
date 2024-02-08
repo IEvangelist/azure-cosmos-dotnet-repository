@@ -3,18 +3,12 @@
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests.ChangeFeed;
 
-public class RatingByCategoryChangeFeedProcessor : IItemChangeFeedProcessor<Rating>
+public class RatingByCategoryChangeFeedProcessor(
+    ILogger<RatingByCategoryChangeFeedProcessor> logger,
+    IRepository<RatingByCategory> ratingByCategoryRepository) : IItemChangeFeedProcessor<Rating>
 {
-    private readonly ILogger<RatingByCategoryChangeFeedProcessor> _logger;
-    private readonly IRepository<RatingByCategory> _ratingByCategoryRepository;
-
-    public RatingByCategoryChangeFeedProcessor(
-        ILogger<RatingByCategoryChangeFeedProcessor> logger,
-        IRepository<RatingByCategory> ratingByCategoryRepository)
-    {
-        _logger = logger;
-        _ratingByCategoryRepository = ratingByCategoryRepository;
-    }
+    private readonly ILogger<RatingByCategoryChangeFeedProcessor> _logger = logger;
+    private readonly IRepository<RatingByCategory> _ratingByCategoryRepository = ratingByCategoryRepository;
 
     public async ValueTask HandleAsync(Rating rating, CancellationToken cancellationToken)
     {

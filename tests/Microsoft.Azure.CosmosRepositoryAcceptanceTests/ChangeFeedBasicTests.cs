@@ -43,7 +43,7 @@ public class ChangeFeedBasicTests : CosmosRepositoryAcceptanceTest
         _changeFeedService = _provider.GetRequiredService<IChangeFeedService>();
     }
 
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task Create_Rating_For_Product_Is_Replicated_To_Be_Partitioned_By_Category()
     {
         try

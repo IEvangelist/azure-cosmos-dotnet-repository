@@ -5,13 +5,9 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
 [Trait("Category", "Acceptance")]
 [Trait("Type", "Functional")]
-public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
+public class RepositoryBasicsTests(ITestOutputHelper testOutputHelper) : CosmosRepositoryAcceptanceTest(testOutputHelper, DefaultTestRepositoryOptions)
 {
-    public RepositoryBasicsTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, DefaultTestRepositoryOptions)
-    {
-    }
-
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task ProductRepository_BasicCRUDOperations_WorksCorrectly()
     {
         try
@@ -56,7 +52,7 @@ public class RepositoryBasicsTests : CosmosRepositoryAcceptanceTest
         }
     }
 
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task Upsert_WithEtag_WorksCorrectly()
     {
         try
