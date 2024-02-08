@@ -3,35 +3,22 @@
 
 namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests.Models;
 
-public class Offer : FullItem
+public class Offer(string offerType, string createdBy) : FullItem
 {
-    public string OfferType { get; }
+    public string OfferType { get; } = offerType;
 
-    public string CreatedBy { get; }
+    public string CreatedBy { get; } = createdBy;
 
-    public string PartitionKey { get; }
+    public string PartitionKey { get; } = offerType;
 
     protected override string GetPartitionKeyValue() =>
         PartitionKey;
-
-    public Offer(string offerType, string createdBy)
-    {
-        OfferType = offerType;
-        CreatedBy = createdBy;
-        PartitionKey = offerType;
-    }
 }
 
-public class BuyOneGetOneFreeOffer : Offer
+public class BuyOneGetOneFreeOffer(string createdBy) : Offer(nameof(BuyOneGetOneFreeOffer), createdBy)
 {
-    public BuyOneGetOneFreeOffer(string createdBy) : base(nameof(BuyOneGetOneFreeOffer), createdBy)
-    {
-    }
 }
 
-public class DiscountOf20Percent : Offer
+public class DiscountOf20Percent(string createdBy) : Offer(nameof(DiscountOf20Percent), createdBy)
 {
-    public DiscountOf20Percent(string createdBy) : base(nameof(DiscountOf20Percent), createdBy)
-    {
-    }
 }
