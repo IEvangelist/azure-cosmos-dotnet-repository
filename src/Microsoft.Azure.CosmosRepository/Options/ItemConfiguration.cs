@@ -5,11 +5,24 @@ namespace Microsoft.Azure.CosmosRepository.Options;
 
 internal class ItemConfiguration
 {
-    // Existing constructor
     public ItemConfiguration(
         Type type,
         string containerName,
-        string[] partitionKeyPaths,
+        string partitionKeyPath,
+        UniqueKeyPolicy? uniqueKeyPolicy = null,
+        ThroughputProperties? throughputProperties = null,
+        int defaultTimeToLive = -1,
+        bool syncContainerProperties = false,
+        ChangeFeedOptions? changeFeedOptions = null,
+        bool useStrictTypeChecking = true)
+        : this(type, containerName, new[] { partitionKeyPath }, uniqueKeyPolicy, throughputProperties, defaultTimeToLive, syncContainerProperties, changeFeedOptions, useStrictTypeChecking)
+    {
+    }
+
+    public ItemConfiguration(
+        Type type,
+        string containerName,
+        IEnumerable<string> partitionKeyPaths,
         UniqueKeyPolicy? uniqueKeyPolicy = null,
         ThroughputProperties? throughputProperties = null,
         int defaultTimeToLive = -1,
@@ -26,14 +39,13 @@ internal class ItemConfiguration
         SyncContainerProperties = syncContainerProperties;
         ChangeFeedOptions = changeFeedOptions;
         UseStrictTypeChecking = useStrictTypeChecking;
-        
     }
 
     public Type Type { get; }
 
     public string ContainerName { get; }
 
-    public string[] PartitionKeyPaths { get; }
+    public IEnumerable<string> PartitionKeyPaths { get; }
 
     public UniqueKeyPolicy? UniqueKeyPolicy { get; }
 

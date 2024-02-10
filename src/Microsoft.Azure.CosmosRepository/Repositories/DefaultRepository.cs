@@ -116,9 +116,9 @@ internal sealed partial class DefaultRepository<TItem>(
     /// </summary>
     /// <param name="value">The string value to use for constructing the partition key.</param>
     /// <returns>A PartitionKey object constructed from the provided string value.</returns>
-    internal static PartitionKey BuildPartitionKey(string value, string? defaultValue = null)
+    internal static PartitionKey BuildPartitionKey(string? value, string? defaultValue = null)
     {
-        if (string.IsNullOrWhiteSpace(value) && !string.IsNullOrWhiteSpace(value)) return new PartitionKey(defaultValue);
+        if ((value == null || string.IsNullOrWhiteSpace(value)) && !string.IsNullOrWhiteSpace(value)) return new PartitionKey(defaultValue);
         return new PartitionKey(value);
     }
 

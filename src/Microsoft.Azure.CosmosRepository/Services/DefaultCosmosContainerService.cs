@@ -49,8 +49,8 @@ class DefaultCosmosContainerService : ICosmosContainerService
                 DefaultTimeToLive = itemConfiguration.DefaultTimeToLive
             };
 
-            if (itemConfiguration.PartitionKeyPaths.Length > 1)
-                containerProperties.PartitionKeyPaths = itemConfiguration.PartitionKeyPaths;
+            if (itemConfiguration.PartitionKeyPaths.Count() > 1)
+                containerProperties.PartitionKeyPaths = itemConfiguration.PartitionKeyPaths.ToList();
             else
                 containerProperties.PartitionKeyPath = containerProperties.PartitionKeyPaths[0];
 

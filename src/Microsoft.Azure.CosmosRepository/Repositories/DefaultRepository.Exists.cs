@@ -52,7 +52,7 @@ internal sealed partial class DefaultRepository<TItem>
     //TODO: Write docs
     public async ValueTask<bool> ExistsAsync(
     Expression<Func<TItem, bool>> predicate,
-    PartitionKey partitionKey = default,
+    PartitionKey partitionKey,
     CancellationToken cancellationToken = default)
     {
         Container container =

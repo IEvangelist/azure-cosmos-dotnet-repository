@@ -1,6 +1,7 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+
 namespace Microsoft.Azure.CosmosRepositoryTests;
 
 public class DefaultRepositoryFactoryTests
@@ -77,6 +78,8 @@ public abstract class CustomEntityBase : IItem
     public string FavoriteColor { get; set; } = null!;
 
     string IItem.PartitionKey => GetPartitionKeyValue();
+
+    IEnumerable<string> IItem.PartitionKeys => [GetPartitionKeyValue()];
 
     public CustomEntityBase() => Type = GetType().Name;
 

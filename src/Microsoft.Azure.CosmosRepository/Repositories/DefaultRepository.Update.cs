@@ -63,7 +63,7 @@ internal sealed partial class DefaultRepository<TItem>
     /// <inheritdoc/>
     public async ValueTask UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
-        string partitionKeyValue,
+        string? partitionKeyValue = null,
         string? etag = default,
         CancellationToken cancellationToken = default)
     {
