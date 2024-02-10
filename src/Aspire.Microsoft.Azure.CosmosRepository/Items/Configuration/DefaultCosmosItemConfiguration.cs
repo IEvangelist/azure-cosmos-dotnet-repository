@@ -10,7 +10,7 @@ public class DefaultCosmosItemConfiguration<TItem>(
 {
     private readonly AzureCosmosDbRepositorySettings _settings = optionsMonitor.CurrentValue;
 
-    public string Container => _settings.DefaultContainerName;
+    public string ContainerId => _settings.DefaultContainerName;
 
     public string PartitionKeyPath => _settings.DefaultPartitionKeyPath;
 }

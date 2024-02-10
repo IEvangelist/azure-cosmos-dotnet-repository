@@ -31,4 +31,9 @@ public interface IReadonlyRepository
         string partitionKey,
         string? queryName = null,
         CancellationToken cancellationToken = default) where TItem : class, IItem;
+
+    ValueTask<IEnumerable<TItem>> QueryLogicalPartitionAsync<TItem>(
+        string partitionKey,
+        string? queryName = null,
+        CancellationToken cancellationToken = default) where TItem : class, IItem;
 }

@@ -14,7 +14,7 @@ public interface IItem
     string Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the item's type name.
+    /// Etag for the item which was set by Cosmos the last time the item was updated. This string is used for the relevant operations when specified.
     /// </summary>
-    string Type { get; set; }
+    string Etag { get; set; }
 }

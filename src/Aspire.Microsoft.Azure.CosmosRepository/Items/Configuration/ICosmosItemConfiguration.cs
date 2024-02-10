@@ -8,7 +8,7 @@ namespace Aspire.Microsoft.Azure.CosmosRepository.Items.Configuration;
 
 public interface ICosmosItemConfiguration<TItem> where TItem : IItem
 {
-    string Container { get; }
+    string ContainerId { get; }
 
     string PartitionKeyPath { get; }
 

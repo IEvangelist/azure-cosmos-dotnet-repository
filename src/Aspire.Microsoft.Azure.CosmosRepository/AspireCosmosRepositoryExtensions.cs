@@ -3,6 +3,7 @@
 
 using System.Reflection;
 using Aspire.Microsoft.Azure.CosmosRepository.Containers;
+using Aspire.Microsoft.Azure.CosmosRepository.Internals;
 using Aspire.Microsoft.Azure.CosmosRepository.Internals.Builders;
 using Aspire.Microsoft.Azure.CosmosRepository.Internals.Containers;
 using Aspire.Microsoft.Azure.CosmosRepository.Internals.Items.Configuration;
@@ -62,8 +63,9 @@ public static class AspireCosmosRepositoryExtensions
             typeof(ICosmosItemConfiguration<>),
             typeof(DefaultCosmosItemConfiguration<>));
 
-        builder.Services.AddSingleton<IContainerCache, DefaultContainerCache>();
+        builder.Services.AddSingleton<ICosmosRepositoryClient, CosmosRepositoryClient>();
         builder.Services.AddSingleton<IItemConfiguration, DefaultItemConfiguration>();
+        builder.Services.AddSingleton<IItemContainerProvider, DefaultItemContainerProvider>();
         builder.Services.AddSingleton<IRepository, DefaultRepository>();
         builder.Services.AddSingleton<IReadonlyRepository>(sp => sp.GetRequiredService<IRepository>());
         builder.Services.AddSingleton<IWriteOnlyRepository>(sp => sp.GetRequiredService<IRepository>());

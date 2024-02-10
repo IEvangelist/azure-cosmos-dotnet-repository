@@ -67,6 +67,25 @@ public class DefaultRepository(
         return items;
     }
 
+    public async ValueTask<IEnumerable<TItem>> QueryLogicalPartitionAsync<TItem>(
+        string partitionKey,
+        string? queryName = null,
+        CancellationToken cancellationToken = default) where TItem : class, IItem
+    {
+        Container container = await containerProvider.GetContainerAsync<TItem>(cancellationToken);
+        ICosmosItemConfiguration<TItem> configuration = itemConfiguration.For<TItem>();
+
+        IQueryable<TItem> query = container
+            .GetItemLinqQueryable<TItem>()
+            .Where(configuration.LogicalPartitionQuery(partitionKey));
+
+        (IEnumerable<TItem> items, _) = await IterateAsync(
+            query,
+            cancellationToken);
+
+        return items;
+    }
+
     private async ValueTask<TItem?> InternalTryPointReadAsync<TItem>(
         string id,
         string? partitionKey = null,
@@ -118,5 +137,46 @@ public class DefaultRepository(
         }
 
         return (results, charge);
+    }
+
+    public async ValueTask CreateAsync<TItem>(
+        TItem item,
+        CancellationToken cancellationToken = default)  where TItem : class, IItem
+    {
+        Container container = await containerProvider.GetContainerAsync<TItem>(cancellationToken);
+
+        await container.CreateItemAsync(
+            item,
+            cancellationToken: cancellationToken);
+    }
+
+    public async ValueTask CreateOrUpdateAsync<TItem>(
+        TItem item,
+        CancellationToken cancellationToken = default)  where TItem : class, IItem
+    {
+        Container container = await containerProvider.GetContainerAsync<TItem>(cancellationToken);
+
+        ItemRequestOptions requestOptions = new()
+        {
+            IfMatchEtag = string.IsNullOrWhiteSpace(item.Etag) ? default : item.Etag
+        };
+
+        await container.UpsertItemAsync(
+            item,
+            requestOptions: requestOptions,
+            cancellationToken: cancellationToken);
+    }
+
+    public async ValueTask DeleteAsync<TItem>(
+        string id,
+        string partitionKey,
+        CancellationToken cancellationToken = default)  where TItem : class, IItem
+    {
+        Container container = await containerProvider.GetContainerAsync<TItem>(cancellationToken);
+
+        await container.DeleteItemAsync<TItem>(
+            id,
+            new PartitionKey(partitionKey),
+            cancellationToken: cancellationToken);
     }
 }

@@ -1,9 +1,12 @@
 using Aspire.Microsoft.Azure.CosmosRepository;
+using AspireSample.ApiService.Endpoints;
+using AspireSample.ApiService.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add cosmos repository
-builder.AddAzureCosmosRepository("cosmos");
+builder.AddAzureCosmosRepository("cosmos")
+    .AddItemConfiguration<EmployeeItem, EmployeeItemConfiguration>();
 
 // Add service defaults & Aspire components.
 builder.AddServiceDefaults();
@@ -11,29 +14,25 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
+builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapGet(
+    "/",
+    context =>
+    {
+        context.Response.Redirect("/swagger");
+        return Task.CompletedTask;
+    });
 
-app.MapGet("/weatherforecast", () =>
-{
-    WeatherForecastDto[] forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecastDto
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-});
-
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapEmployeeEndpoints();
 app.MapDefaultEndpoints();
 
 app.Run();

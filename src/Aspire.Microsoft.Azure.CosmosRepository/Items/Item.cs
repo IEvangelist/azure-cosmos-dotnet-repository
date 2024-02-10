@@ -38,8 +38,8 @@ public abstract class Item : IItem
     /// </remarks>
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
-    /// <summary>
-    /// Gets or sets the item's type name. This is used as a discriminator.
-    /// </summary>
-    public string Type { get; set; } = null!;
+
+    /// <inheritdoc cref="IItem"/>
+    [JsonPropertyName("_etag")]
+    public string? Etag { get; set; }
 }

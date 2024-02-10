@@ -13,6 +13,10 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="MinVer" Version="5.0.0-beta.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+    <PackageVersion Include="Testcontainers.CosmosDb" Version="3.6.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.3" />
     <PackageVersion Include="xunit" Version="2.6.1" />
     <PackageVersion Include="Scrutor" Version="4.2.2" />
