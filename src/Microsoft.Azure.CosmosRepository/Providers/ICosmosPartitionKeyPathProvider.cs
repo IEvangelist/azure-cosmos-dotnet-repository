@@ -14,6 +14,6 @@ interface ICosmosPartitionKeyPathProvider
     /// </summary>
     /// <typeparam name="TItem">The item for which the partition keys paths corresponds.</typeparam>
     /// <returns>A string array representing the partition key paths, i.e.; "/partion"</returns>
-    string[] GetPartitionKeyPaths<TItem>() where TItem : IItem;
-    string[] GetPartitionKeyPaths(Type itemType);
+    IEnumerable<string> GetPartitionKeyPaths<TItem>() where TItem : IItem;
+    IEnumerable<string> GetPartitionKeyPaths(Type itemType);
 }

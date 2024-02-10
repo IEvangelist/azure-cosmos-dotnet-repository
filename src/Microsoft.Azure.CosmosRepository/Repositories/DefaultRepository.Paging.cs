@@ -17,20 +17,22 @@ internal sealed partial class DefaultRepository<TItem>
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
-        return await PageAsync(predicate, default, pageSize, continuationToken, returnTotal, cancellationToken);
+        return await InternalPageAsync(predicate, default, pageSize, continuationToken, returnTotal, cancellationToken);
     }
 
+    //TODO: Write doc
     public async ValueTask<IPage<TItem>> PageAsync(
         PartitionKey partitionKey,
+        Expression<Func<TItem, bool>>? predicate = null,
         int pageSize = 25,
         string? continuationToken = null,
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
-        return await PageAsync(null, partitionKey, pageSize, continuationToken, returnTotal, cancellationToken);
+        return await InternalPageAsync(predicate, partitionKey, pageSize, continuationToken, returnTotal, cancellationToken);
     }
 
-    public async ValueTask<IPage<TItem>> PageAsync(
+    private async ValueTask<IPage<TItem>> InternalPageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
         PartitionKey partitionKey = default,
         int pageSize = 25,
@@ -84,12 +86,13 @@ internal sealed partial class DefaultRepository<TItem>
 
     public async ValueTask<IPageQueryResult<TItem>> PageAsync(
         PartitionKey partitionKey,
+        Expression<Func<TItem, bool>>? predicate = null,
         int pageNumber = 1,
         int pageSize = 25,
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
-        return await PageAsync(null, partitionKey, pageNumber, pageSize, returnTotal, cancellationToken);
+        return await InternalPageAsync(predicate, partitionKey, pageNumber, pageSize, returnTotal, cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -100,10 +103,11 @@ internal sealed partial class DefaultRepository<TItem>
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
     {
-        return await PageAsync(predicate, default, pageNumber, pageSize, returnTotal, cancellationToken);
+        return await InternalPageAsync(predicate, default, pageNumber, pageSize, returnTotal, cancellationToken);
     }
 
-    public async ValueTask<IPageQueryResult<TItem>> PageAsync(
+
+    private async ValueTask<IPageQueryResult<TItem>> InternalPageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
         PartitionKey partitionKey = default,
         int pageNumber = 1,

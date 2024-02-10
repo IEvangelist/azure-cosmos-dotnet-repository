@@ -26,5 +26,5 @@ public interface IItem
     /// <summary>
     /// Gets the item PartitionKeys. This string array is used to instantiate the <c>Cosmos.PartitionKeys</c> struct.
     /// </summary>
-    string[] PartitionKeys { get; }
+    IEnumerable<string> PartitionKeys { get; }
 }

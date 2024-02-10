@@ -53,7 +53,7 @@ public abstract class Item : IItem
     /// Gets the PartitionKeys based on <see cref="GetPartitionKeyValues"/>.
     /// Implemented explicitly to keep out of Item API
     /// </summary>
-    string[] IItem.PartitionKeys => GetPartitionKeyValues();
+    IEnumerable<string> IItem.PartitionKeys => GetPartitionKeyValues();
 
     /// <summary>
     /// Default constructor, assigns type name to <see cref="Type"/> property.
@@ -73,9 +73,9 @@ public abstract class Item : IItem
     /// Gets the partition key values for the given <see cref="Item"/> type.
     /// When overridden, be sure that the <see cref="PartitionKeyPathAttribute.Paths"/> values correspond
     /// to the <see cref="JsonPropertyAttribute.PropertyName"/> values, i.e.; "/partition" and "partition"
-    /// respectively.
     /// respectively. If all provided key values do not have a matching property with the equivalent name, an error will occur.
+    /// Make sure to add the latest inner 
     /// </summary>
     /// <returns>The list with <see cref="Item.Id"/> unless overridden by the subclass.</returns>
-    protected virtual string[] GetPartitionKeyValues() => new string[] { GetPartitionKeyValue() };
+    protected virtual IEnumerable<string> GetPartitionKeyValues() => new string[] { GetPartitionKeyValue() };
 }

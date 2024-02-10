@@ -51,14 +51,16 @@ internal sealed partial class DefaultRepository<TItem>
         return updateTasks.Select(x => x.Result);
     }
 
+    //TODO: Write docs
     public async ValueTask UpdateAsync(string id,
-    Action<IPatchOperationBuilder<TItem>> builder,
-    string? etag = default,
-    CancellationToken cancellationToken = default)
+        Action<IPatchOperationBuilder<TItem>> builder,
+        string? etag = default,
+        CancellationToken cancellationToken = default)
     {
         await InternalUpdateAsync(id, builder, null, etag, cancellationToken);
     }
 
+    /// <inheritdoc/>
     public async ValueTask UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
         string partitionKeyValue,
@@ -68,6 +70,7 @@ internal sealed partial class DefaultRepository<TItem>
         await InternalUpdateAsync(id, builder, BuildPartitionKey(partitionKeyValue, id), etag, cancellationToken);
     }
 
+    //TODO: Write docs
     public async ValueTask UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
         IEnumerable<string> partitionKeyValues,
@@ -77,7 +80,7 @@ internal sealed partial class DefaultRepository<TItem>
         await InternalUpdateAsync(id, builder, BuildPartitionKey(partitionKeyValues, id), etag, cancellationToken);
     }
 
-    public async ValueTask InternalUpdateAsync(string id,
+    private async ValueTask InternalUpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
         PartitionKey? partitionKey = null,
         string? etag = default,

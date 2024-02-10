@@ -43,16 +43,17 @@ internal sealed partial class DefaultRepository<TItem>
 
     /// <inheritdoc/>
     public async ValueTask<bool> ExistsAsync(
-        Expression<Func<TItem, bool>> predicate,
-        CancellationToken cancellationToken = default)
+    Expression<Func<TItem, bool>> predicate,
+    CancellationToken cancellationToken = default)
     {
         return await ExistsAsync(predicate, default, cancellationToken);
     }
 
+    //TODO: Write docs
     public async ValueTask<bool> ExistsAsync(
-        Expression<Func<TItem, bool>> predicate,
-        PartitionKey partitionKey = default,
-        CancellationToken cancellationToken = default)
+    Expression<Func<TItem, bool>> predicate,
+    PartitionKey partitionKey = default,
+    CancellationToken cancellationToken = default)
     {
         Container container =
             await containerProvider.GetContainerAsync().ConfigureAwait(false);
@@ -75,4 +76,12 @@ internal sealed partial class DefaultRepository<TItem>
         var count = await cosmosQueryableProcessor.CountAsync(query, cancellationToken);
         return count > 0;
     }
+
+
+    //TODO: Write doc
+    public async ValueTask<bool> ExistsAsync(string id, IEnumerable<string> partitionKeyValues, CancellationToken cancellationToken = default)
+    {
+       return await ExistsAsync(id, BuildPartitionKey(partitionKeyValues, id), cancellationToken);
+    }
+
 }

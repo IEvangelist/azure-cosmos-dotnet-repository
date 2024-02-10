@@ -45,11 +45,11 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
         IEnumerable<string> partitionKeyValues,
         CancellationToken cancellationToken = default);
 
-    //TODO: Should I implement this?
-    //ValueTask<TItem?> TryGetAsync(
-    //    string id,
-    //    PartitionKey partitionKey,
-    //    CancellationToken cancellationToken = default);
+    //TODO: Write doc
+    ValueTask<TItem?> TryGetAsync(
+        string id,
+        PartitionKey partitionKey,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the <see cref="IItem"/> implementation class instance as a <typeparamref name="TItem"/> that corresponds to the given <paramref name="id"/>.
@@ -147,6 +147,12 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
         string? partitionKeyValue = null,
         CancellationToken cancellationToken = default);
 
+    //TODO: Write doc
+    ValueTask<bool> ExistsAsync(
+        string id,
+        IEnumerable<string> partitionKeyValues,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Queries cosmos DB to see if an item exists.
     /// </summary>
@@ -173,8 +179,8 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
 
     //TODO: Write doc
     ValueTask<bool> ExistsAsync(
-        PartitionKey partitionKey,
         Expression<Func<TItem, bool>> predicate,
+        PartitionKey partitionKey,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -199,6 +205,12 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     /// <returns>A <see cref="ValueTask"/> representing the asynchronous count operation.</returns>
     ValueTask<int> CountAsync(
         Expression<Func<TItem, bool>> predicate,
+        CancellationToken cancellationToken = default);
+
+    //TODO: Write doc
+    ValueTask<int> CountAsync(
+        Expression<Func<TItem, bool>> predicate,
+        IEnumerable<string> partitionKeyValues,
         CancellationToken cancellationToken = default);
 
     //TODO: Write doc
@@ -232,16 +244,8 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
 
     //TODO: Write doc
     ValueTask<IPage<TItem>> PageAsync(
-        Expression<Func<TItem, bool>>? predicate = null,
-        PartitionKey partitionKey = default,
-        int pageSize = 25,
-        string? continuationToken = null,
-        bool returnTotal = false,
-        CancellationToken cancellationToken = default);
-
-    //TODO: Write doc
-    ValueTask<IPage<TItem>> PageAsync(
         PartitionKey partitionKey,
+        Expression<Func<TItem, bool>>? predicate = null,
         int pageSize = 25,
         string? continuationToken = null,
         bool returnTotal = false,
@@ -285,19 +289,11 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
 
     ValueTask<IPageQueryResult<TItem>> PageAsync(
         PartitionKey partitionKey,
-        int pageNumber = 1,
-        int pageSize = 25,
-        bool returnTotal = false,
-        CancellationToken cancellationToken = default);
-
-    ValueTask<IPageQueryResult<TItem>> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
-        PartitionKey? partitionKey = default,
         int pageNumber = 1,
         int pageSize = 25,
         bool returnTotal = false,
         CancellationToken cancellationToken = default);
-
 
 #if NET7_0_OR_GREATER
     /// <summary>
@@ -310,8 +306,8 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     /// <returns>An <see cref="IAsyncEnumerable{T}"/> where <c>T</c> is <typeparamref name="TItem"/>.</returns>
     /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
     async IAsyncEnumerable<TItem> PageAsync(
-        PartitionKey? partitionKey = null,
         Expression<Func<TItem, bool>>? predicate = null,
+        PartitionKey partitionKey = default,
         int limit = 1_000,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -323,8 +319,8 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
             && cancellationToken.IsCancellationRequested is false)
         {
             IPageQueryResult<TItem> page = await PageAsync(
-                partitionKey,
                 predicate,
+                partitionKey,
                 pageNumber: ++ currentPage,
                 25,
                 returnTotal: false,

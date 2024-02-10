@@ -23,6 +23,24 @@ internal sealed partial class DefaultRepository<TItem>
         }
     }
 
+    //TODO: Write doc
+    public async ValueTask<TItem?> TryGetAsync(
+        string id,
+        PartitionKey partitionKey,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetAsync(id, partitionKey, cancellationToken);
+        }
+        catch (CosmosException e) when (e.StatusCode is HttpStatusCode.NotFound)
+        {
+            logger.LogItemNotFoundHandled<TItem>(id, partitionKey.ToString() ?? id, e);
+            return default;
+        }
+    }
+
+    //TODO: Write doc
     public async ValueTask<TItem?> TryGetAsync(
         string id,
         IEnumerable<string> partitionKeyValues,
@@ -39,7 +57,6 @@ internal sealed partial class DefaultRepository<TItem>
         }
     }
 
-
     /// <inheritdoc/>
     public ValueTask<TItem> GetAsync(
         string id,
@@ -47,6 +64,7 @@ internal sealed partial class DefaultRepository<TItem>
         CancellationToken cancellationToken = default) =>
         GetAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
 
+    //TODO: Write doc
     public ValueTask<TItem> GetAsync(
         string id,
         IEnumerable<string> partitionKeyValues,
@@ -81,6 +99,7 @@ internal sealed partial class DefaultRepository<TItem>
         return repositoryExpressionProvider.CheckItem(item);
     }
 
+    //TODO: Write doc
     public async ValueTask<IEnumerable<TItem>> GetAsync(
         PartitionKey partitionKey,
         CancellationToken cancellationToken = default)
@@ -102,7 +121,7 @@ internal sealed partial class DefaultRepository<TItem>
         return items;
     }
 
-
+    /// <inheritdoc/>
     public async ValueTask<IEnumerable<TItem>> GetAsync(
     Expression<Func<TItem, bool>> predicate,
     CancellationToken cancellationToken = default)
@@ -110,12 +129,13 @@ internal sealed partial class DefaultRepository<TItem>
         return await GetAsync(predicate, default, cancellationToken);
     }
 
+    //TODO: Write doc
     public async ValueTask<IEnumerable<TItem>> GetAsync(
         PartitionKey partitionKey,
         Expression<Func<TItem, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-       return await GetAsync(predicate, partitionKey, cancellationToken);
+        return await GetAsync(predicate, partitionKey, cancellationToken);
     }
 
     private async ValueTask<IEnumerable<TItem>> GetAsync(

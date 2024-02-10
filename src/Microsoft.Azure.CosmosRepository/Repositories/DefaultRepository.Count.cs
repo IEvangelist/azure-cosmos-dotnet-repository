@@ -94,4 +94,10 @@ internal sealed partial class DefaultRepository<TItem>
         return await cosmosQueryableProcessor.CountAsync(
             query, cancellationToken);
     }
+
+    //TODO: Write docs
+    public async ValueTask<int> CountAsync(Expression<Func<TItem, bool>> predicate, IEnumerable<string> partitionKeyValues, CancellationToken cancellationToken = default)
+    {
+        return await CountAsync(predicate, BuildPartitionKey(partitionKeyValues), cancellationToken);
+    }
 }
