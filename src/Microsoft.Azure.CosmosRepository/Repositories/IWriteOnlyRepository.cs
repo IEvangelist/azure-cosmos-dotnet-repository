@@ -73,6 +73,22 @@ public interface IWriteOnlyRepository<TItem> where TItem : IItem
     /// Updates the given cosmos item using the provided and supported patch operations.
     /// </summary>
     /// <param name="id">The string identifier.</param>
+    /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
+    /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
+    /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+    /// <param name="etag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires TItem to implement the IItemWithEtag interface.</param>
+    /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
+    ValueTask UpdateAsync(
+        string id,
+        Action<IPatchOperationBuilder<TItem>> builder,
+        string partitionKeyValue,
+        string? etag = default,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates the given cosmos item using the provided and supported patch operations.
+    /// </summary>
+    /// <param name="id">The string identifier.</param>
     /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
     /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
     /// <param name="etag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires TItem to implement the IItemWithEtag interface.</param>
@@ -87,7 +103,7 @@ public interface IWriteOnlyRepository<TItem> where TItem : IItem
     /// Updates the given cosmos item using the provided and supported patch operations.
     /// </summary>
     /// <param name="id">The string identifier.</param>
-    /// <param name="partitionKeyValue">The partition key value if different than the <see cref="IItem.Id"/>.</param>
+    /// <param name="partitionKeyValues">The partition key values if different than the <see cref="IItem.Id"/>.</param>
     /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
     /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
     /// <param name="etag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires TItem to implement the IItemWithEtag interface.</param>
@@ -95,7 +111,23 @@ public interface IWriteOnlyRepository<TItem> where TItem : IItem
     ValueTask UpdateAsync(
         string id,
         Action<IPatchOperationBuilder<TItem>> builder,
-        string partitionKeyValue,
+        IEnumerable<string> partitionKeyValues,
+        string? etag = default,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates the given cosmos item using the provided and supported patch operations.
+    /// </summary>
+    /// <param name="id">The string identifier.</param>
+    /// <param name="partitionKey">The partition key if different than the <see cref="IItem.Id"/>.</param>
+    /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
+    /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
+    /// <param name="etag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires TItem to implement the IItemWithEtag interface.</param>
+    /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
+    ValueTask UpdateAsync(
+        string id,
+        Action<IPatchOperationBuilder<TItem>> builder,
+        PartitionKey partitionKey,
         string? etag = default,
         CancellationToken cancellationToken = default);
 

@@ -52,7 +52,7 @@ class DefaultCosmosContainerService : ICosmosContainerService
             if (itemConfiguration.PartitionKeyPaths.Count() > 1)
                 containerProperties.PartitionKeyPaths = itemConfiguration.PartitionKeyPaths.ToList();
             else
-                containerProperties.PartitionKeyPath = containerProperties.PartitionKeyPaths[0];
+                containerProperties.PartitionKeyPath = itemConfiguration.PartitionKeyPaths.Last();
 
             Container container =
                 _options.IsAutoResourceCreationIfNotExistsEnabled

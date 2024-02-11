@@ -4,8 +4,6 @@
 
 // ReSharper disable once CheckNamespace
 
-
-
 namespace Microsoft.Azure.CosmosRepository;
 
 /// <inheritdoc/>
@@ -87,6 +85,16 @@ internal partial class InMemoryRepository<TItem> : IRepository<TItem>
     }
 
     public ValueTask UpdateAsync(string id, Action<IPatchOperationBuilder<TItem>> builder, string? etag = null, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ValueTask UpdateAsync(string id, Action<IPatchOperationBuilder<TItem>> builder, IEnumerable<string> partitionKeyValues, string? etag = null, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ValueTask UpdateAsync(string id, Action<IPatchOperationBuilder<TItem>> builder, PartitionKey partitionKey, string? etag = null, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

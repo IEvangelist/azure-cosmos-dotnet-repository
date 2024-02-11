@@ -55,7 +55,7 @@ public class DefaultRepositoryTests
 
         _container
             .Setup(o => o.GetItemLinqQueryable<TestItemWithEtag>(
-                false, null, null, It.IsAny<CosmosLinqSerializerOptions>()))
+                false, null, It.IsAny<QueryRequestOptions>(), It.IsAny<CosmosLinqSerializerOptions>()))
             .Returns(queryable);
 
         _queryableProcessor.Setup(o => o.IterateAsync(queryable, It.IsAny<CancellationToken>()))
@@ -80,6 +80,8 @@ public class DefaultRepositoryTests
             new(){Id = "ab"}
         };
 
+        QueryRequestOptions options = new ();
+
         Expression<Func<TestItemWithEtag, bool>> predicate = item => item.Id == "a" || item.Id == "ab";
 
         Expression<Func<TestItemWithEtag, bool>> expectedPredicate = _expressionProvider.Build(predicate)!;
@@ -89,7 +91,7 @@ public class DefaultRepositoryTests
 
         _container
             .Setup(o => o.GetItemLinqQueryable<TestItemWithEtag>(
-                false, null, null, It.IsAny<CosmosLinqSerializerOptions>()))
+                false, null, It.IsAny<QueryRequestOptions>(), It.IsAny<CosmosLinqSerializerOptions>()))
             .Returns(queryable);
 
         _queryableProcessor.Setup(o => o.CountAsync(queryable, It.IsAny<CancellationToken>()))
@@ -414,7 +416,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, etag, default);
+        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, etag, default);
 
         // Assert
         _container.Verify(
@@ -433,7 +435,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, etag, default);
+        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, etag, default);
 
         // Assert
         _container.Verify(
@@ -452,7 +454,7 @@ public class DefaultRepositoryTests
         _containerProviderForTestItemWithETag.Setup(cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);
 
         // Act
-        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, null, etag, default);
+        await RepositoryForItemWithETag.UpdateAsync(id, _ => { }, etag, default);
 
         // Assert
         _container.Verify(

@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 // ReSharper disable once CheckNamespace
+using Microsoft.Azure.Cosmos;
+
 namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed partial class DefaultRepository<TItem>
@@ -63,7 +65,7 @@ internal sealed partial class DefaultRepository<TItem>
     /// <inheritdoc/>
     public async ValueTask UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
-        string? partitionKeyValue = null,
+        string? partitionKeyValue,
         string? etag = default,
         CancellationToken cancellationToken = default)
     {
@@ -72,12 +74,22 @@ internal sealed partial class DefaultRepository<TItem>
 
     //TODO: Write docs
     public async ValueTask UpdateAsync(string id,
-        Action<IPatchOperationBuilder<TItem>> builder,
         IEnumerable<string> partitionKeyValues,
+        Action<IPatchOperationBuilder<TItem>> builder,
         string? etag = default,
         CancellationToken cancellationToken = default)
     {
         await InternalUpdateAsync(id, builder, BuildPartitionKey(partitionKeyValues, id), etag, cancellationToken);
+    }
+
+    //TODO: Write docs
+    public async ValueTask UpdateAsync(string id,
+        PartitionKey partitionKey,
+        Action<IPatchOperationBuilder<TItem>> builder,
+        string? etag = null,
+        CancellationToken cancellationToken = default)
+    {
+        await InternalUpdateAsync(id, builder, partitionKey, etag, cancellationToken);
     }
 
     private async ValueTask InternalUpdateAsync(string id,

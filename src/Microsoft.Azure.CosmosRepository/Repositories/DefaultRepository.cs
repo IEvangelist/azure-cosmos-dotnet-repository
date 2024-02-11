@@ -5,6 +5,8 @@
 
 
 
+
+
 namespace Microsoft.Azure.CosmosRepository;
 
 /// <inheritdoc/>
@@ -141,4 +143,13 @@ internal sealed partial class DefaultRepository<TItem>(
         return BuildPartitionKey(item.PartitionKeys);
     }
 
+    public ValueTask UpdateAsync(string id, Action<IPatchOperationBuilder<TItem>> builder, IEnumerable<string> partitionKeyValues, string? etag = null, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ValueTask UpdateAsync(string id, Action<IPatchOperationBuilder<TItem>> builder, PartitionKey partitionKey, string? etag = null, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }

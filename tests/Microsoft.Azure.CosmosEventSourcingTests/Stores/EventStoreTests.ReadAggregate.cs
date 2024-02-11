@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
@@ -95,7 +96,7 @@ public partial class EventStoreTests
 
         repository
             .Setup(o =>
-                o.GetAsync(x => x.PartitionKey == "A", default))
+                o.GetAsync(new PartitionKey("A"), default))
             .ReturnsAsync(events);
 
         //Act
@@ -124,7 +125,7 @@ public partial class EventStoreTests
 
         repository
             .Setup(o =>
-                o.GetAsync(x => x.PartitionKey == "A", default))
+                o.GetAsync(new PartitionKey("A"), default))
             .ReturnsAsync(events);
 
         //Act
