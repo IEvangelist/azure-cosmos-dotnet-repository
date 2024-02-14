@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices.Context;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
@@ -141,7 +142,7 @@ public partial class EventStoreTests
 
         _readonlyRepository
             .Setup(o =>
-                o.GetAsync(x => x.PartitionKey == Pk, default))
+                o.GetAsync(new PartitionKey(Pk), default))
             .ReturnsAsync(_eventItemsWithAtomicEvents);
 
         //Act
@@ -179,7 +180,8 @@ public partial class EventStoreTests
 
         _readonlyRepository
             .SetupSequence(o => o.PageAsync(
-                x => x.PartitionKey == Pk,
+                new PartitionKey(Pk),
+                default,
                 5,
                 It.IsAny<string>(),
                 false,

@@ -18,8 +18,13 @@ public interface IItem
     /// </summary>
     string Type { get; set; }
 
-    /// <summary>
-    /// Gets the item's PartitionKey. This string is used to instantiate the <c>Cosmos.PartitionKey</c> struct.
-    /// </summary>
+    ///// <summary>
+    ///// Gets the item's PartitionKey. This string is used to instantiate the <c>Cosmos.PartitionKey</c> struct.
+    ///// </summary>
     string PartitionKey { get; }
+
+    /// <summary>
+    /// Gets the item PartitionKeys. This string array is used to instantiate the <c>Cosmos.PartitionKeys</c> struct.
+    /// </summary>
+    IEnumerable<string> PartitionKeys { get; }
 }
