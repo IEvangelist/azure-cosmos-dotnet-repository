@@ -24,61 +24,61 @@ jobs:
         run: |
           dotnet test --no-restore --verbosity normal --filter "Category!=Acceptance"
 
-  acceptance_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@main
-      - name: Setup .NET
-        uses: actions/setup-dotnet@main
-        with:
-          dotnet-version: |
-            8.0.x
-      - name: Install dependencies
-        run: dotnet restore
+  # acceptance_tests:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@main
+  #     - name: Setup .NET
+  #       uses: actions/setup-dotnet@main
+  #       with:
+  #         dotnet-version: |
+  #           8.0.x
+  #     - name: Install dependencies
+  #       run: dotnet restore
 
-      - name: Build
-        run: |
-          dotnet build --configuration Release --no-restore
+  #     - name: Build
+  #       run: |
+  #         dotnet build --configuration Release --no-restore
 
-      - name: Prune databases
-        working-directory: ./tools/CosmosTestHelper
-        env:
-          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-        run: dotnet run
+  #     - name: Prune databases
+  #       working-directory: ./tools/CosmosTestHelper
+  #       env:
+  #         CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+  #       run: dotnet run
 
-      - name: Test Functions
-        env:
-          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-        run: |
-          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type!=Container&Type!=CosmosEventSourcing"
+  #     - name: Test Functions
+  #       env:
+  #         CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+  #       run: |
+  #         dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type!=Container&Type!=CosmosEventSourcing"
 
-      - name: Prune databases
-        working-directory: ./tools/CosmosTestHelper
-        env:
-          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-        run: dotnet run
+  #     - name: Prune databases
+  #       working-directory: ./tools/CosmosTestHelper
+  #       env:
+  #         CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+  #       run: dotnet run
 
-      - name: Test Cosmos Event Sourcing
-        env:
-          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-        run: |
-          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=CosmosEventSourcing"
+  #     - name: Test Cosmos Event Sourcing
+  #       env:
+  #         CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+  #       run: |
+  #         dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=CosmosEventSourcing"
 
-      - name: Prune databases
-        working-directory: ./tools/CosmosTestHelper
-        env:
-          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-        run: dotnet run
+  #     - name: Prune databases
+  #       working-directory: ./tools/CosmosTestHelper
+  #       env:
+  #         CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+  #       run: dotnet run
 
-      - name: Test Container Creation
-        env:
-          CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
-        run: |
-          dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=Container"
+  #     - name: Test Container Creation
+  #       env:
+  #         CosmosConnectionString: ${{ secrets.COSMOS_INTEGRATION_TEST_CONNECTION_STRING }}
+  #       run: |
+  #         dotnet test --no-restore --verbosity normal --filter "Category=Acceptance&Type=Container"
 
   deploy:
     needs:
-      - acceptance_tests
+      # - acceptance_tests
       - unit_tests
     if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest

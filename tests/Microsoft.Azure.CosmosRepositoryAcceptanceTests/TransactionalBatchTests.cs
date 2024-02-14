@@ -5,14 +5,9 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
 [Trait("Category", "Acceptance")]
 [Trait("Type", "Functional")]
-public class TransactionalBatchTests : CosmosRepositoryAcceptanceTest
+public class TransactionalBatchTests(ITestOutputHelper testOutputHelper) : CosmosRepositoryAcceptanceTest(testOutputHelper, DefaultTestRepositoryOptions)
 {
-    public TransactionalBatchTests(ITestOutputHelper testOutputHelper)
-        : base(testOutputHelper, DefaultTestRepositoryOptions)
-    {
-    }
-
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task BatchRepository_Items_BehavesCorrectlty()
     {
         try

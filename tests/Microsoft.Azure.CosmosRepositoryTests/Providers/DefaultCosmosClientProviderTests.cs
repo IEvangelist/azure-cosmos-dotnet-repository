@@ -1,4 +1,4 @@
-﻿// Copyright (c) David Pine. All rights reserved.
+// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
 namespace Microsoft.Azure.CosmosRepositoryTests.Providers;
@@ -19,10 +19,21 @@ public class DefaultCosmosClientProviderTests
                         "AccountEndpoint=https://localtestcosmos.documents.azure.com:443/;AccountKey=RmFrZUtleQ==;"
                 }));
 
+        //Force lazy creation
+        _ = provider.CosmosClient;
+
         provider.Dispose();
 
-        await Assert.ThrowsAsync<ObjectDisposedException>(
-            async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+        try
+        {
+            await provider.UseClientAsync(client => client.ReadAccountAsync());
+            Assert.Fail("Exception was not thrown");
+        }
+        catch (Exception ex)
+        {
+            //Actual exception is CosmosObjectDisposedException which is internal
+            Assert.IsType<ObjectDisposedException>(ex.GetBaseException());
+        }
     }
 
     [Fact]
@@ -41,7 +52,20 @@ public class DefaultCosmosClientProviderTests
 
         provider.Dispose();
 
-        await Assert.ThrowsAsync<ObjectDisposedException>(
-            async () => await provider.UseClientAsync(client => client.ReadAccountAsync()));
+        //Force lazy creation
+        _ = provider.CosmosClient;
+
+        provider.Dispose();
+
+        try
+        {
+            await provider.UseClientAsync(client => client.ReadAccountAsync());
+            Assert.Fail("Exception was not thrown");
+        }
+        catch (Exception ex)
+        {
+            //Actual exception is CosmosObjectDisposedException which is internal
+            Assert.IsType<ObjectDisposedException>(ex.GetBaseException());
+        }
     }
 }

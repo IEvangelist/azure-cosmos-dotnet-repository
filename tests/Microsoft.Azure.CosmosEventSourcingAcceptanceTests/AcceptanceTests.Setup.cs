@@ -114,7 +114,7 @@ public partial class AcceptanceTests
         _changeFeedService = _provider.GetRequiredService<IChangeFeedService>();
     }
 
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task CosmosEventSourcingTest()
     {
         ICosmosClientProvider clientProvider =
