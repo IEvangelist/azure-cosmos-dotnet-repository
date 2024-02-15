@@ -21,7 +21,7 @@ internal sealed partial class DefaultRepository<TItem>
         if (specification.UseContinuationToken)
             options.MaxItemCount = specification.PageSize;
         
-        if(specification.PartitionKey != null)
+        if (specification.PartitionKey is not null)
             options.PartitionKey = specification.PartitionKey;
         
 

@@ -123,8 +123,8 @@ internal sealed partial class DefaultRepository<TItem>
 
     /// <inheritdoc/>
     public async ValueTask<IEnumerable<TItem>> GetAsync(
-    Expression<Func<TItem, bool>> predicate,
-    CancellationToken cancellationToken = default)
+        Expression<Func<TItem, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         return await GetAsync(predicate, default, cancellationToken);
     }

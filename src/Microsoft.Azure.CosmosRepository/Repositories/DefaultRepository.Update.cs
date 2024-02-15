@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 // ReSharper disable once CheckNamespace
-using Microsoft.Azure.Cosmos;
 
 namespace Microsoft.Azure.CosmosRepository;
 
