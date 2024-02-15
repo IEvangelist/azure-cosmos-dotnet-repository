@@ -3,7 +3,6 @@
 
 
 // ReSharper disable once CheckNamespace
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.CosmosRepository;
 

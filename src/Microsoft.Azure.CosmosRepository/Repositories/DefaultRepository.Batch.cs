@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 // ReSharper disable once CheckNamespace
-using Microsoft.Azure.CosmosRepository.Extensions;
-
 namespace Microsoft.Azure.CosmosRepository;
 
 internal partial class DefaultRepository<TItem>

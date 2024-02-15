@@ -3,8 +3,6 @@
 
 
 // ReSharper disable once CheckNamespace
-using Microsoft.Extensions.Options;
-
 namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed partial class DefaultRepository<TItem>
