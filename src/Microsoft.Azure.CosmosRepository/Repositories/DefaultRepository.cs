@@ -136,7 +136,7 @@ internal sealed partial class DefaultRepository<TItem>(
     /// <exception cref="ArgumentException">Thrown when the provided item is null.</exception>
     internal static PartitionKey BuildPartitionKey(TItem item)
     {
-        if (item == null)
+        if (item is null)
         {
             throw new ArgumentException(
                 "Unable to perform operation with null item",
