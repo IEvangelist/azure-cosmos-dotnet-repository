@@ -120,7 +120,7 @@ internal sealed partial class DefaultRepository<TItem>
 
         var options = new QueryRequestOptions();
 
-        if(partitionKey != default)
+        if (partitionKey != default)
         {
             options.PartitionKey = partitionKey;
         }
