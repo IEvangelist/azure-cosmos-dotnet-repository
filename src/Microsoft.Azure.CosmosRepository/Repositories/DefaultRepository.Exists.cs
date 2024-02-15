@@ -43,8 +43,8 @@ internal sealed partial class DefaultRepository<TItem>
 
     /// <inheritdoc/>
     public async ValueTask<bool> ExistsAsync(
-    Expression<Func<TItem, bool>> predicate,
-    CancellationToken cancellationToken = default)
+        Expression<Func<TItem, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         return await ExistsAsync(predicate, default, cancellationToken);
     }
