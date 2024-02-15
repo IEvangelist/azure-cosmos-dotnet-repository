@@ -79,9 +79,11 @@ public class ContainerOptionsBuilder(Type type)
     /// <exception cref="ArgumentNullException"></exception>
     public ContainerOptionsBuilder WithPartitionKey(string partitionKey)
     {
-        if(partitionKey == null) throw new ArgumentNullException(nameof(partitionKey));
+        if (partitionKey is null) throw new ArgumentNullException(nameof(partitionKey));
+        
         PartitionKeys ??= [];
         PartitionKeys.Add(partitionKey);
+        
         return this;
     }
 
