@@ -32,7 +32,7 @@ internal sealed partial class DefaultRepository<TItem>
 
     public async ValueTask<int> CountAsync(
         PartitionKey partitionKey,
-     CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
         return await InternalCountAsync(null, partitionKey, cancellationToken);
     }
