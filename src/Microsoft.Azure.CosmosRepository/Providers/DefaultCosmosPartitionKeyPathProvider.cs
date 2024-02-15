@@ -20,7 +20,9 @@ class DefaultCosmosPartitionKeyPathProvider(IOptions<RepositoryOptions> options)
 
         ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);
 
-        if (optionsBuilder is { } && optionsBuilder.PartitionKeys != null && optionsBuilder.PartitionKeys.Any() && optionsBuilder.PartitionKeys.All(x => !string.IsNullOrEmpty(x)))
+        if (optionsBuilder is { PartitionKeys: { } } && 
+            optionsBuilder.PartitionKeys.Any() && 
+            optionsBuilder.PartitionKeys.All(x => !string.IsNullOrWhiteSpace(x)))
         {
            return optionsBuilder.PartitionKeys;
         }
