@@ -92,12 +92,20 @@ internal sealed partial class DefaultRepository<TItem>(
     internal static PartitionKey BuildPartitionKey(IEnumerable<string> values, string? defaultValue = null)
     {
         var builder = new PartitionKeyBuilder();
-        if (values == null || !values.Any())
+        var keys = values?.ToList();
+        if (keys is null or keys is { Count: 0 })
         {
-            return !string.IsNullOrEmpty(defaultValue) ? new PartitionKey(defaultValue) : default;
+            return !string.IsNullOrWhiteSpace(defaultValue)
+                ? new PartitionKey(defaultValue)
+                : default;
         }
 
-        if (values.Count() > 3) throw new ArgumentException("Unable to build partition key. The max allowed partition key values is 3", nameof(values));
+        if (keys.Count > 3)
+        {
+            throw new ArgumentException(
+                "Unable to build partition key. The max allowed number of partition key values is 3.", 
+                nameof(values));
+        }
 
 
         foreach (var value in values)
