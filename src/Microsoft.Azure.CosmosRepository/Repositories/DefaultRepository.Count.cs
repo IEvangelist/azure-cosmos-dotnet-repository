@@ -48,7 +48,7 @@ internal sealed partial class DefaultRepository<TItem>
 
         QueryRequestOptions options = new();
 
-        if(specification.PartitionKey != null)
+        if (specification.PartitionKey is not null)
         {
             options.PartitionKey = specification.PartitionKey;
         }
