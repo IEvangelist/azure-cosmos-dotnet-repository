@@ -72,7 +72,7 @@ internal sealed partial class DefaultRepository<TItem>(
     /// <exception cref="ArgumentException">Thrown when the items list is empty.</exception>
     internal static PartitionKey BuildPartitionKey(List<TItem> items)
     {
-        if (items.Count == 0)
+        if (items.Count is 0)
         {
             throw new ArgumentException(
                 "Unable to perform batch operation with no items",
