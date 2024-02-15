@@ -123,7 +123,10 @@ internal sealed partial class DefaultRepository<TItem>(
     /// <returns>A PartitionKey object constructed from the provided string value.</returns>
     internal static PartitionKey BuildPartitionKey(string? value, string? defaultValue = null)
     {
-        if ((value == null || string.IsNullOrWhiteSpace(value)) && !string.IsNullOrWhiteSpace(value)) return new PartitionKey(defaultValue);
+        if (string.IsNullOrWhiteSpace(value) && !string.IsNullOrWhiteSpace(defaultValue))
+        {
+            return new PartitionKey(defaultValue);
+        }
         return new PartitionKey(value);
     }
 
