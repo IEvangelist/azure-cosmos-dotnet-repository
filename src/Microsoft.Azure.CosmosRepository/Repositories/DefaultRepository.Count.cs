@@ -84,7 +84,7 @@ internal sealed partial class DefaultRepository<TItem>
                     requestOptions: requestOptions,
                     linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions);
 
-        if(predicate != null)
+        if (predicate is not null)
         {
             query = query.Where(repositoryExpressionProvider.Build(predicate));
         }
