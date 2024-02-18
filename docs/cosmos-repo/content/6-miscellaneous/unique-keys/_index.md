@@ -34,7 +34,7 @@ public class Person : Item
     protected override string GetPartitionKeyValue() => 
         County;
 
-    public UniqueKeyPolicyItem(
+    public Person(
         string firstName, 
         int age, 
         string county, 
@@ -105,7 +105,7 @@ public class Person : Item
     protected override string GetPartitionKeyValue() => 
         County;
 
-    public UniqueKeyPolicyItem(
+    public Person(
         string firstName, 
         int age, 
         string county, 
