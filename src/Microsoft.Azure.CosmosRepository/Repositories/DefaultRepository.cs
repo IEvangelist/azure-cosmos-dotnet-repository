@@ -93,14 +93,14 @@ internal sealed partial class DefaultRepository<TItem>(
     {
         var builder = new PartitionKeyBuilder();
         var keys = values?.ToList();
-        if (keys is null or keys is { Count: 0 })
+        if (keys is null or { Count: 0 })
         {
             return !string.IsNullOrWhiteSpace(defaultValue)
                 ? new PartitionKey(defaultValue)
                 : default;
         }
 
-        if (keys.Count > 3)
+        if (keys?.Count > 3)
         {
             throw new ArgumentException(
                 "Unable to build partition key. The max allowed number of partition key values is 3.", 
@@ -108,7 +108,7 @@ internal sealed partial class DefaultRepository<TItem>(
         }
 
 
-        foreach (var value in values)
+        foreach (var value in values!)
         {
             builder.Add(value);
         }
