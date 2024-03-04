@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AspNetCore.HealthChecks.CosmosDb" Version="8.0.0" />
-    <PackageVersion Include="Bogus" Version="35.4.0" />
+    <PackageVersion Include="Bogus" Version="35.4.1" />
     <PackageVersion Include="CorrelationId" Version="3.0.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.1" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
