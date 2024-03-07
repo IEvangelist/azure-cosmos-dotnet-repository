@@ -57,7 +57,7 @@ public static class HealthChecksBuilderExtensions
     }
 
     /// <summary>
-    /// Add a health check for Azure Cosmos DB by registering <see cref="AzureCosmosDbHealthCheck"/> for given <paramref name="builder"/>. Use this overload to configure <paramref name="AzureCosmosDbHealthCheckOptions"/> to customise which containers to check.
+    /// Add a health check for Azure Cosmos DB by registering <see cref="AzureCosmosDbHealthCheck"/> for given <paramref name="builder"/>. Use this overload to configure <see cref="AzureCosmosDbHealthCheckOptions"/> to customise which containers to check.
     /// </summary>
     /// <param name="builder">The <see cref="IHealthChecksBuilder"/> to add <see cref="HealthCheckRegistration"/> to.</param>
     /// <param name="healthCheckName">The health check name. Optional. If <c>null</c> the name 'azure_cosmosdb' will be used.</param>
