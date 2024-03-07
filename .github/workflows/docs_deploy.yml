@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "docs/**"
+      - "docs/cosmos-repo/**"
 
   workflow_dispatch:
     inputs:

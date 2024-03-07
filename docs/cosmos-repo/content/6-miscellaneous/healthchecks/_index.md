@@ -7,7 +7,7 @@ The `IEvangelist.Azure.CosmosRepository.AspNetCore` package adds support for [As
 
 ## Setup
 
-To configure Cosmos DB health checks:  
+To configure Cosmos DB health checks:
 
 ```csharp
 services.AddHealthChecks().AddCosmosRepository();
@@ -35,7 +35,7 @@ Use `optionsFactory: null` to retain the default behaviour of the [HealthChecks.
 services.AddHealthChecks().AddCosmosRepository(optionsFactory: null);
 ```
 
-The Cosmos Repository Health package supports all of the existing functionality of Health Checks, such as failureStatus and tags, see the [Microsoft Documentation](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks) for configuration details.
+The Cosmos Repository Health package supports all of the existing functionality of Health Checks, such as failureStatus and tags, see the [Microsoft documentation](https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks) for configuration details.
 
 Don't forget to map the health endpoint with:
 
