@@ -121,3 +121,13 @@ There are two keys point to take not of here. The fist is the processor name, th
 It is vitally important that exceptions thrown when processing an event from the change feed is handled properly by the consumer. Depending on the criticality of the role your projection is playing determines how you need to handle the failure of processing an event. The change feed processor library will retry changes infinitely that result in un-handled exceptions. This makes it even more important that non-transient errors handled and logged for manual intervention in the future.
 
 The library also is extremely careful when handling errors in it's part of the changes pipeline. The main place the library has to be careful is when deserializing it's events. The library will return a special event type in the case of a deserialization failure. The `NonDeserializableEvent` can be handled by a consumer projections and can provide relevant information, such as the payload as a JObject, the exception that caused the failure, or whether or not the types where just not registered.
+
+## Scaling out
+
+Azure Cosmos DB uses [physical partitions](https://learn.microsoft.com/en-us/azure/cosmos-db/partitioning-overview#physical-partitions) to distribute data. When it comes to processing the change feed, it's important to understand how these physical partitions interact with your processing model, especially when scaling out.
+
+In the ideal scenario, you would have one instance of your change feed processor for each physical partition in your Cosmos DB container. This is because each physical partition maintains its own change feed. Therefore, having one processor per partition allows for maximum parallelism and distribution of processing load.
+
+However, it's important to note that having more instances of your change feed processor than physical partitions can lead to inefficiencies. This is because the extra processors will not have their own dedicated change feed to process, and will therefore be idle. This can lead to unnecessary resource usage.
+
+For more detailed information, you can refer to the [Microsoft documentation on Azure Cosmos DB's change feed processor](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/change-feed-processor?tabs=dotnet).

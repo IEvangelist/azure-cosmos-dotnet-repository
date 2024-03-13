@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Azure.CosmosEventSourcing.Events;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
+using Microsoft.Azure.CosmosEventSourcing.Options;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Azure.CosmosRepository.Paging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Moq.AutoMock;
 using Xunit;
@@ -24,6 +26,7 @@ public partial class EventStoreTests
     private readonly Mock<IBatchRepository<Testing.SampleEventItem>> _batchRepository;
     private readonly Mock<IReadOnlyRepository<Testing.SampleEventItem>> _readonlyRepository;
     private readonly Mock<IContextService> _contextService;
+    private readonly CosmosEventSourcingOptions _options = new();
     private const string Pk = "pk";
 
     private readonly List<Testing.SampleEvent> _events = new()
@@ -59,6 +62,9 @@ public partial class EventStoreTests
         _batchRepository = _autoMocker.GetMock<IBatchRepository<Testing.SampleEventItem>>();
         _readonlyRepository = _autoMocker.GetMock<IReadOnlyRepository<Testing.SampleEventItem>>();
         _contextService = _autoMocker.GetMock<IContextService>();
+        _autoMocker.GetMock<IOptionsMonitor<CosmosEventSourcingOptions>>()
+            .SetupGet(o => o.CurrentValue)
+            .Returns(_options);
     }
 
     private IEventStore<Testing.SampleEventItem> CreateSut() =>

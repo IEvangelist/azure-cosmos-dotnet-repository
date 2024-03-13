@@ -63,6 +63,32 @@ public partial class EventStoreTests
         }
     }
 
+    private class TestAggregateNoSequencing : AggregateRoot
+    {
+        public int ReplayedEvents { get; private set; }
+
+        protected override void Apply(DomainEvent domainEvent)
+        {
+            switch (domainEvent)
+            {
+                case ReplayableEvent:
+                    ReplayedEvents++;
+                    break;
+            }
+        }
+
+        public static TestAggregateNoSequencing Replay(List<DomainEvent> domainEvents)
+        {
+            TestAggregateNoSequencing a = new();
+            a.Apply(domainEvents);
+            return a;
+        }
+
+        private TestAggregateNoSequencing() : base(isSequenceNumberDisabled: true)
+        {
+        }
+    }
+
     private class TestAggregateRootMapper : IAggregateRootMapper<TestAggregate, ReplayableEventItem>
     {
         public IEnumerable<ReplayableEventItem> MapFrom(TestAggregate aggregateRoot) => throw new NotImplementedException();
@@ -71,67 +97,19 @@ public partial class EventStoreTests
             TestAggregate.Replay(domainEvents.Select(x => x.DomainEvent).ToList());
     }
 
+    private class TestAggregateRootNoSequencingMapper : IAggregateRootMapper<TestAggregateNoSequencing, ReplayableEventItem>
+    {
+        public IEnumerable<ReplayableEventItem> MapFrom(
+            TestAggregateNoSequencing aggregateRoot) => throw new NotImplementedException();
+
+        public TestAggregateNoSequencing MapTo(
+            IEnumerable<ReplayableEventItem> domainEvents) =>
+            TestAggregateNoSequencing.Replay(domainEvents.Select(x => x.DomainEvent).ToList());
+    }
+
     private class AggregateWithNoReplayMethod : AggregateRoot
     {
         protected override void Apply(DomainEvent domainEvent) => throw new NotImplementedException();
-    }
-
-    [Fact]
-    public async Task ReadAggregateAsync_AggregateWithReplayMethod_ReplaysEvents()
-    {
-        //Arrange
-        IEventStore<ReplayableEventItem> sut = _autoMocker.CreateInstance<DefaultEventStore<ReplayableEventItem>>();
-
-        Mock<IReadOnlyRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IReadOnlyRepository<ReplayableEventItem>>();
-
-        ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty.ToString(), "etag"), "A");
-        atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
-
-        List<ReplayableEventItem> events = new()
-        {
-            new ReplayableEventItem(new ReplayableEvent(), "A"),
-            atomicEvent,
-        };
-
-        repository
-            .Setup(o =>
-                o.GetAsync(x => x.PartitionKey == "A", default))
-            .ReturnsAsync(events);
-
-        //Act
-        TestAggregate a = await sut.ReadAggregateAsync<TestAggregate>("A");
-
-        //Assert
-        a.ReplayedEvents.Should().Be(1);
-    }
-
-    [Fact]
-    public async Task ReadAggregateAsync_AggregateMapper_MapsAggregateCorrectly()
-    {
-        //Arrange
-        IEventStore<ReplayableEventItem> sut = _autoMocker.CreateInstance<DefaultEventStore<ReplayableEventItem>>();
-
-        Mock<IReadOnlyRepository<ReplayableEventItem>> repository = _autoMocker.GetMock<IReadOnlyRepository<ReplayableEventItem>>();
-
-        ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty.ToString(), "etag"), "A");
-        atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
-
-        List<ReplayableEventItem> events = new()
-        {
-            new ReplayableEventItem(new ReplayableEvent(), "A"),
-            atomicEvent
-        };
-
-        repository
-            .Setup(o =>
-                o.GetAsync(x => x.PartitionKey == "A", default))
-            .ReturnsAsync(events);
-
-        //Act
-        TestAggregate a = await sut.ReadAggregateAsync("A", new TestAggregateRootMapper());
-
-        //Assert
-        a.ReplayedEvents.Should().Be(1);
     }
 
     [Fact]

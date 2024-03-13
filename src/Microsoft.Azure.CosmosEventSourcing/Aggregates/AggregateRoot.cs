@@ -12,6 +12,24 @@ public abstract class AggregateRoot : IAggregateRoot
     private List<DomainEvent> _events = new();
     private readonly List<DomainEvent> _newEvents = new();
     private AtomicEvent? _atomicEvent;
+    private readonly bool _isSequenceNumberDisabled;
+
+    /// <summary>
+    /// Creates an instance of the aggregate root with sequencing enabled.
+    /// </summary>
+    protected AggregateRoot()
+    {
+
+    }
+
+    /// <summary>
+    /// Creates an instance of the aggregate root with the option to disable sequencing.
+    /// </summary>
+    /// <param name="isSequenceNumberDisabled">Controls whether or not the aggregate maintains sequencing of events.</param>
+    protected AggregateRoot(bool isSequenceNumberDisabled)
+    {
+        _isSequenceNumberDisabled = isSequenceNumberDisabled;
+    }
 
     /// <inheritdoc />
     public IReadOnlyList<DomainEvent> NewEvents =>
@@ -33,20 +51,23 @@ public abstract class AggregateRoot : IAggregateRoot
     /// <remarks>This should only be used when adding NEW events.</remarks>
     protected void AddEvent(DomainEvent domainEvent)
     {
-        if (_atomicEvent is null)
+        if (_isSequenceNumberDisabled is false)
         {
-            CreateAtomicMarkerEvent();
-        }
+            if (_atomicEvent is null)
+            {
+                CreateAtomicMarkerEvent();
+            }
 
-        if (!_newEvents.Any())
-        {
-            UpdateAtomicMarkerEvent();
+            if (!_newEvents.Any())
+            {
+                UpdateAtomicMarkerEvent();
+            }
         }
 
         DomainEvent evt = domainEvent with
         {
             EventId = Guid.NewGuid().ToString(),
-            Sequence = _events.Count + 1,
+            Sequence = _isSequenceNumberDisabled ? -1 : _events.Count + 1,
             OccuredUtc = DateTime.UtcNow
         };
 
@@ -67,17 +88,29 @@ public abstract class AggregateRoot : IAggregateRoot
             throw new DomainEventsRequiredException(GetType());
         }
 
-        var atomicEvent = domainEvents.SingleOrDefault(x => x is AtomicEvent) as AtomicEvent;
+        if (_isSequenceNumberDisabled)
+        {
+            var orderedEvents = domainEvents
+                .OrderBy(x => x.OccuredUtc)
+                .ToList();
 
-        _atomicEvent = atomicEvent ?? throw new AtomicEventRequiredException(GetType());
-        domainEvents.Remove(atomicEvent);
+            orderedEvents.ForEach(Apply);
+            _events = orderedEvents;
+        }
+        else
+        {
+            var atomicEvent = domainEvents.SingleOrDefault(x => x is AtomicEvent) as AtomicEvent;
 
-        var orderedEvents = domainEvents
-            .OrderBy(x => x.Sequence)
-            .ToList();
+            _atomicEvent = atomicEvent ?? throw new AtomicEventRequiredException(GetType());
+            domainEvents.Remove(atomicEvent);
 
-        orderedEvents.ForEach(Apply);
-        _events = orderedEvents;
+            var orderedEvents = domainEvents
+                .OrderBy(x => x.Sequence)
+                .ToList();
+
+            orderedEvents.ForEach(Apply);
+            _events = orderedEvents;
+        }
     }
 
     /// <summary>

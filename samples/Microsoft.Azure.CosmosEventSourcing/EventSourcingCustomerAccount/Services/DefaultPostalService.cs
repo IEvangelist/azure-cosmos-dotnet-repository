@@ -21,6 +21,10 @@ public class DefaultPostalService : IPostalService
             $"{firstName} {surname}",
             customerAddress);
 
+        LastSentWelcomeLetter = new SentWelcomeLetter(firstName, surname, customerAddress);
+
         return ValueTask.CompletedTask;
     }
+
+    public SentWelcomeLetter? LastSentWelcomeLetter { get; private set; }
 }

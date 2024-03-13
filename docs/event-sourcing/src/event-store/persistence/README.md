@@ -39,9 +39,192 @@ public class ShipRepository : IShipRepository
 
 ## Aggregate Roots
 
+In the context of event sourcing, the Aggregate plays a crucial role in managing state changes. Here are its main responsibilities:
+
+ 1. *Track State Changes*: The Aggregate tracks changes to its state by recording a sequence of events. Each event represents a state change. Instead of storing the current state, the Aggregate stores these events. The current state is derived by replaying these events.
+
+1. *Ensure Consistency*: The Aggregate ensures that any changes to its state are consistent. This means that the state of the Aggregate after an event is always valid according to the business rules of the domain.
+
+1. *Handle Commands*: The Aggregate handles commands, which are requests to perform some action. A command may result in state changes, which are captured as events.
+
+1. *Apply Events*: The Aggregate applies events to change its state. This is done in a deterministic way, meaning given the same sequence of events, the final state of the Aggregate will always be the same.
+
+Remember, the key idea behind an Aggregate in event sourcing is that the state is not directly modified. Instead, changes are captured as events, and the state is derived from these events. This allows for powerful capabilities like temporal querying, event replay, and more.
+
+### Organization
+
+In C#, partial classes allow a single class to be split across multiple files. This can be particularly useful when working with Aggregate Roots in event sourcing for several reasons:
+
+1. *Separation of Concerns*: By using partial classes, you can separate the different responsibilities of the Aggregate Root into different files. For example, you can have one file for handling commands, another for applying events, and another for defining the state. This makes it easier to understand what each part of the Aggregate Root is responsible for.
+
+1. *Readability*: Large classes can be difficult to navigate and understand. By splitting the Aggregate Root into multiple files, you can make the code more readable. Each file can focus on a specific aspect of the Aggregate Root, making it easier to find and understand the relevant code.
+
+1. *Maintainability*: As the complexity of the Aggregate Root grows, having it split into multiple files can make it easier to maintain. Changes to one aspect of the Aggregate Root are less likely to impact other aspects, reducing the risk of introducing bugs.
+
+Remember, the Apply methods in the Aggregate Root are crucial as they are responsible for changing the state of the Aggregate. These methods must always succeed once applied. By separating these methods into their own file, you can highlight their importance and make it easier to ensure they are implemented correctly.
+
+:::tip NOTICE
+It is very important that there is no reason for an `Apply` method to fail. Once an event has been saved into the store it should be considered a fact. If this was to fail in the process of reading back the aggregate and re-applying the events, it would corrupt the state of the aggregate, making it un-readable.
+:::
+
+See below for an example of of splitting the `Ship` aggregate root.
+
+#### Apply
+
 ```csharp
-//TODO:
+public partial class Ship
+{
+    private Ship() { }
+
+    public static Ship Build(List<DomainEvent> persistedEvents)
+    {
+        Ship ship = new();
+        ship.Apply(persistedEvents);
+        return ship;
+    }
+
+    private void Apply(ShipEvents.ShipCreated shipCreated)
+    {
+        (var name, DateTime commissioned) = shipCreated;
+        Name = name;
+        Commissioned = commissioned;
+    }
+
+    private void Apply(ShipEvents.DockedInPort dockedInPort)
+    {
+        Port = dockedInPort.Port;
+        Status = ShipStatus.Docked;
+    }
+
+    private void Apply(ShipEvents.Loading _) =>
+        Status = ShipStatus.Loading;
+
+    private void Apply(ShipEvents.Loaded loaded)
+    {
+        CargoWeight = loaded.CargoWeight;
+        Status = ShipStatus.AwaitingDeparture;
+    }
+
+    private void Apply(ShipEvents.Departed _) =>
+        Status = ShipStatus.AtSea;
+
+    protected override void Apply(DomainEvent domainEvent)
+    {
+        switch (domainEvent)
+        {
+            case ShipEvents.ShipCreated created:
+                Apply(created);
+                break;
+            case ShipEvents.DockedInPort dockedInPort:
+                Apply(dockedInPort);
+                break;
+            case ShipEvents.Loading loading:
+                Apply(loading);
+                break;
+            case ShipEvents.Loaded loaded:
+                Apply(loaded);
+                break;
+            case ShipEvents.Departed departed:
+                Apply(departed);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(domainEvent),
+                    $"No apply method found for {domainEvent.GetType().Name}");
+        }
+    }
+}
 ```
+
+#### Definition + behavior methods
+
+```csharp
+public partial class Ship : AggregateRoot
+{
+    public string Name { get; private set; } = null!;
+    public DateTime Commissioned { get; private set; }
+
+    public DateTime CreatedAt { get; private set; }
+    public ShipStatus Status { get; private set; }
+    public string? Port { get; private set; }
+    public double? CargoWeight { get; private set; }
+
+    public Ship(string name, DateTime commissioned, DateTime? createdAt = null)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new DomainException<Ship>("A ship name must be provided");
+        }
+
+        AddEvent(new ShipEvents.ShipCreated(name, commissioned));
+    }
+
+    public void Dock(string port)
+    {
+        if (Status is not (ShipStatus.AtSea or ShipStatus.UnUsed))
+        {
+            throw new DomainException<Ship>($"A ship cannot dock when at status {Status}");
+        }
+
+        AddEvent(new ShipEvents.DockedInPort(Name, port));
+    }
+
+    public void StartLoading(string port)
+    {
+        if (Status is not (ShipStatus.Docked or ShipStatus.UnUsed))
+        {
+            throw new DomainException<Ship>($"A ship cannot start loading when at status {Status}");
+        }
+
+        if (Port != port)
+        {
+            throw new DomainException<Ship>(
+                $"The ship cannot load at port {port} as it is docked at port {Port}");
+        }
+
+        AddEvent(new ShipEvents.Loading(Name, port));
+    }
+
+    public void FinishLoading(string port, double cargoWeight)
+    {
+        if (Status is not (ShipStatus.Loading or ShipStatus.UnUsed))
+        {
+            throw new DomainException<Ship>($"A ship cannot have finished loading when at status {Status}");
+        }
+
+        if (Port != port)
+        {
+            throw new DomainException<Ship>(
+                $"The ship cannot finish loading at port {port} as it is docked at port {Port}");
+        }
+
+        AddEvent(new ShipEvents.Loaded(Name, port, cargoWeight));
+    }
+
+    public void Depart(string port)
+    {
+        if (Status is not (ShipStatus.AwaitingDeparture or ShipStatus.UnUsed))
+        {
+            throw new DomainException<Ship>($"A ship cannot depart when at status {Status}");
+        }
+
+        if (Port != port)
+        {
+            throw new DomainException<Ship>(
+                $"The ship cannot depart {port} as it is awaiting departure at {Port}");
+        }
+
+        AddEvent(new ShipEvents.Departed(Name, port));
+    }
+}
+```
+
+### Disabling Sequencing
+
+1. cover the reasons why you'd want to disable sequencing
+    1. mention again the importance of the apply methods, even more so when using this model.
+    1. explain the multi region write scenarios
+
 
 ## ACID Transactions
 

@@ -15,11 +15,11 @@ public record WelcomeLetterProjectionKey : IProjectionKey;
 public class WelcomeLetterProjection :
     IEventItemProjection<CustomerAccountEventItem, WelcomeLetterProjectionKey>
 {
-    private readonly IReadOnlyRepository<CustomerAccountReadItem> _repository;
+    private readonly IRepository<CustomerAccountReadItem> _repository;
     private readonly IPostalService _postalService;
 
     public WelcomeLetterProjection(
-        IReadOnlyRepository<CustomerAccountReadItem> repository,
+        IRepository<CustomerAccountReadItem> repository,
         IPostalService postalService)
     {
         _repository = repository;

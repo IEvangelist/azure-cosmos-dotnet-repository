@@ -27,10 +27,6 @@ public class DefaultJobListRepository : IJobListRepository
                     jobList.Id))
             .ToList();
 
-        eventItems.Add(new JobsListEventItem(
-            jobList.AtomicEvent,
-            jobList.Id));
-
         await _eventStore.PersistAsync(eventItems);
     }
 

@@ -22,7 +22,7 @@ public class JobsList : AggregateRoot
 
     public string Username { get; private set; } = null!;
 
-    public JobsList(string name, string category, string username)
+    public JobsList(string name, string category, string username) : base(true)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -120,7 +120,7 @@ public class JobsList : AggregateRoot
         return jobList;
     }
 
-    private JobsList()
+    private JobsList() : base(true)
     {
 
     }
