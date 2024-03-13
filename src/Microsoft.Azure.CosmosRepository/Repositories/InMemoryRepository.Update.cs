@@ -70,7 +70,7 @@ internal partial class InMemoryRepository<TItem>
     /// <inheritdoc/>
     public async ValueTask UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
-        string? partitionKeyValue = null,
+        string partitionKeyValue,
         string? etag = default,
         CancellationToken cancellationToken = default)
     {
@@ -79,8 +79,6 @@ internal partial class InMemoryRepository<TItem>
 #else
         await Task.CompletedTask;
 #endif
-
-        partitionKeyValue ??= id;
 
         TItem? item = InMemoryStorage
             .GetValues<TItem>()

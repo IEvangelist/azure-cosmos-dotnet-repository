@@ -29,7 +29,7 @@ public class DefaultCosmosItemConfigurationProviderTests
         var throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(400);
 
         _containerNameProvider.Setup(o => o.GetContainerName(typeof(Item1))).Returns<Type>(t => t.FullName!);
-        _partitionKeyPathProvider.Setup(o => o.GetPartitionKeyPath(typeof(Item1))).Returns("/id");
+        _partitionKeyPathProvider.Setup(o => o.GetPartitionKeyPaths(typeof(Item1))).Returns(["/id"]);
         _uniqueKeyPolicyProvider.Setup(o => o.GetUniqueKeyPolicy(typeof(Item1))).Returns(uniqueKeyPolicy);
         _defaultTimeToLiveProvider.Setup(o => o.GetDefaultTimeToLive(typeof(Item1))).Returns(10);
         _syncContainerPropertiesProvider.Setup(o => o.GetWhetherToSyncContainerProperties(typeof(Item1))).Returns(true);
@@ -38,7 +38,7 @@ public class DefaultCosmosItemConfigurationProviderTests
         ItemConfiguration configuration = provider.GetItemConfiguration<Item1>();
 
         Assert.Equal(typeof(Item1).FullName, configuration.ContainerName);
-        Assert.Equal("/id", configuration.PartitionKeyPath);
+        Assert.Equal("/id", configuration.PartitionKeyPaths.Last());
         Assert.Equal(uniqueKeyPolicy, configuration.UniqueKeyPolicy);
         Assert.Equal(10, configuration.DefaultTimeToLive);
         Assert.True(configuration.SyncContainerProperties);

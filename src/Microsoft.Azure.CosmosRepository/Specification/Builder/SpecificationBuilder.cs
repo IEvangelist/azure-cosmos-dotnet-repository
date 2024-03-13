@@ -64,4 +64,10 @@ internal class SpecificationBuilder<TItem, TResult>(BaseSpecification<TItem, TRe
         Specification.ContinuationToken = continuationToken;
         return this;
     }
+
+    public ISpecificationBuilder<TItem, TResult> PartitionKey(PartitionKey partitionKey)
+    {
+        Specification.PartitionKey = partitionKey;
+        return this;
+    }
 }

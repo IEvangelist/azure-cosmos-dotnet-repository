@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <NoWarn>NU5125;NU1507</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

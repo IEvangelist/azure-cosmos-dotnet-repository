@@ -28,4 +28,7 @@
         <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosRepository\Microsoft.Azure.CosmosRepository.csproj" />
     </ItemGroup>
 
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
 </Project>

@@ -4,9 +4,9 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.CosmosEventSourcing.Aggregates;
 using Microsoft.Azure.CosmosEventSourcing.Exceptions;
-using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosRepository.Paging;
 
 namespace Microsoft.Azure.CosmosEventSourcing.Stores;
@@ -15,8 +15,7 @@ internal partial class DefaultEventStore<TEventItem>
 {
     public ValueTask<IEnumerable<TEventItem>> ReadAsync(string partitionKey,
         CancellationToken cancellationToken = default) =>
-        readOnlyRepository.GetAsync(
-            x => x.PartitionKey == partitionKey,
+        readOnlyRepository.GetAsync(new PartitionKey(partitionKey),
             cancellationToken);
 
     public async ValueTask<TAggregateRoot> ReadAggregateAsync<TAggregateRoot>(
@@ -25,7 +24,7 @@ internal partial class DefaultEventStore<TEventItem>
         where TAggregateRoot : IAggregateRoot
     {
         IEnumerable<TEventItem> events = await readOnlyRepository.GetAsync(
-            x => x.PartitionKey == partitionKey,
+            new PartitionKey(partitionKey),
             cancellationToken);
 
         var payloads = events
@@ -46,7 +45,7 @@ internal partial class DefaultEventStore<TEventItem>
         CancellationToken cancellationToken = default) where TAggregateRoot : IAggregateRoot
     {
         IEnumerable<TEventItem> events = await readOnlyRepository.GetAsync(
-            x => x.PartitionKey == partitionKey,
+            new PartitionKey(partitionKey),
             cancellationToken);
 
         return rootMapper.MapTo(events);
@@ -57,9 +56,8 @@ internal partial class DefaultEventStore<TEventItem>
         Expression<Func<TEventItem, bool>> predicate,
         CancellationToken cancellationToken = default) =>
         readOnlyRepository.GetAsync(
-            predicate.Compose(
-                x => x.PartitionKey == partitionKey,
-                Expression.AndAlso),
+            new PartitionKey(partitionKey),
+            predicate,
             cancellationToken);
 
     public async IAsyncEnumerable<TEventItem> StreamAsync(
@@ -69,13 +67,11 @@ internal partial class DefaultEventStore<TEventItem>
     {
         string? token = null;
 
-        Expression<Func<TEventItem, bool>> expression = eventSource =>
-            eventSource.PartitionKey == partitionKey;
-
         do
         {
             IPage<TEventItem> page = await readOnlyRepository.PageAsync(
-                expression,
+                new PartitionKey(partitionKey),
+                predicate: null,
                 chunkSize,
                 token,
                 cancellationToken: cancellationToken);

@@ -43,6 +43,9 @@ public abstract class BaseSpecification<TItem, TResult> : ISpecification<TItem, 
     /// <inheritdoc/>
     public int? PageNumber { get; internal set; }
 
+    //TODO: Write doc
+    public PartitionKey? PartitionKey { get; internal set; }
+
     /// <inheritdoc/>
     public int PageSize { get; internal set; } = 25;
 

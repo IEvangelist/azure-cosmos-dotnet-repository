@@ -19,6 +19,13 @@ internal static class LoggerExtensions
         string partitionKey) where TItem : IItem =>
         LoggerMessageDefinitions.PointReadStarted(logger, typeof(TItem).Name, id, partitionKey, null!);
 
+    //Info Logger Extensions
+    public static void LogPointReadStarted<TItem>(
+        this ILogger logger,
+        string id,
+        IEnumerable<string> partitionKeys) where TItem : IItem =>
+        LoggerMessageDefinitions.HierarchicalPointReadStarted(logger, typeof(TItem).Name, id, partitionKeys, null!);
+
     public static void LogPointReadExecuted<TItem>(
         this ILogger logger,
         double ruCharge) where TItem : IItem =>
@@ -41,4 +48,11 @@ internal static class LoggerExtensions
         string partitionKey,
         CosmosException e) where TItem : IItem =>
         LoggerMessageDefinitions.ItemNotFoundHandled(logger, typeof(TItem).Name, id, partitionKey, e);
+
+    public static void LogItemNotFoundHandled<TItem>(
+        this ILogger logger,
+        string id,
+        IEnumerable<string> partitionKeys,
+        CosmosException e) where TItem : IItem =>
+        LoggerMessageDefinitions.HierarchicalItemNotFoundHandled(logger, typeof(TItem).Name, id, partitionKeys, e);
 }

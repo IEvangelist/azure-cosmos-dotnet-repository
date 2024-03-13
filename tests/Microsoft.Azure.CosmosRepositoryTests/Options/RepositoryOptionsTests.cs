@@ -17,7 +17,7 @@ public class RepositoryOptionsTests
 
         Assert.Single(options.ContainerOptions);
         Assert.Equal("products", options.ContainerOptions[0].Name);
-        Assert.Equal("/category", options.ContainerOptions[0].PartitionKey);
+        Assert.Equal("/category", options.ContainerOptions[0].PartitionKeys?[0]);
     }
 
     [Fact]

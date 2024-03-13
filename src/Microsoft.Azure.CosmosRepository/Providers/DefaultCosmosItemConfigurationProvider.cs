@@ -39,7 +39,7 @@ class DefaultCosmosItemConfigurationProvider(
         itemType.IsItem();
 
         var containerName = containerNameProvider.GetContainerName(itemType);
-        var partitionKeyPath = cosmosPartitionKeyPathProvider.GetPartitionKeyPath(itemType);
+        var partitionKeyPaths = cosmosPartitionKeyPathProvider.GetPartitionKeyPaths(itemType);
         UniqueKeyPolicy? uniqueKeyPolicy = cosmosUniqueKeyPolicyProvider.GetUniqueKeyPolicy(itemType);
         var timeToLive = containerDefaultTimeToLiveProvider.GetDefaultTimeToLive(itemType);
         var sync = syncContainerPropertiesProvider.GetWhetherToSyncContainerProperties(itemType);
@@ -49,11 +49,12 @@ class DefaultCosmosItemConfigurationProvider(
         return new(
             itemType,
             containerName,
-            partitionKeyPath,
+            partitionKeyPaths,
             uniqueKeyPolicy,
             throughputProperties,
             timeToLive,
             sync,
             useStrictTypeChecking: useStrictTypeChecking);
+
     }
 }

@@ -19,9 +19,11 @@ internal sealed partial class DefaultRepository<TItem>
         QueryRequestOptions options = new();
 
         if (specification.UseContinuationToken)
-        {
             options.MaxItemCount = specification.PageSize;
-        }
+        
+        if (specification.PartitionKey is not null)
+            options.PartitionKey = specification.PartitionKey;
+        
 
         IQueryable<TItem> query = container
             .GetItemLinqQueryable<TItem>(
@@ -31,6 +33,7 @@ internal sealed partial class DefaultRepository<TItem>
             .Where(repositoryExpressionProvider.Default<TItem>());
 
         query = specificationEvaluator.GetQuery(query, specification);
+
 
         logger.LogQueryConstructed(query);
 
