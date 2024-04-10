@@ -22,7 +22,7 @@ public class RepositoryOptions
     /// <summary>
     /// Gets or sets the cosmos connection string. Primary or secondary connection strings are valid.
     /// </summary>
-    public string? CosmosConnectionString { get; set; }
+    public virtual string? CosmosConnectionString { get; set; }
 
     /// <summary>
     /// Gets or sets the cosmos account endpoint URI. This can be retrieved from the Overview section of the Azure Portal.
@@ -39,7 +39,7 @@ public class RepositoryOptions
     /// <remarks>
     /// Defaults to "database", unless otherwise specified.
     /// </remarks>
-    public string DatabaseId { get; set; } = "database";
+    public virtual string DatabaseId { get; set; } = "database";
 
     /// <summary>
     /// Gets or sets the name identifier for the cosmos container that corresponds to the <see cref="DatabaseId"/>.
@@ -47,7 +47,7 @@ public class RepositoryOptions
     /// <remarks>
     /// Defaults to "container", unless otherwise specified.
     /// </remarks>
-    public string ContainerId { get; set; } = "container";
+    public virtual string ContainerId { get; set; } = "container";
 
     /// <summary>
     /// Gets or sets whether to optimize bandwidth.
