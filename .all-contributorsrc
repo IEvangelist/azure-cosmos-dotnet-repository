@@ -325,6 +325,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "victormarante",
+      "name": "Victor Marante",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41802977?v=4",
+      "profile": "https://github.com/victormarante",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
