@@ -75,9 +75,9 @@ internal partial class DefaultEventStore<TEventItem>
         do
         {
             IPage<TEventItem> page = await readOnlyRepository.PageAsync(
-                expression,
-                chunkSize,
-                token,
+                predicate: expression,
+                pageSize: chunkSize,
+                continuationToken: token,
                 cancellationToken: cancellationToken);
 
             token = page.Continuation;
