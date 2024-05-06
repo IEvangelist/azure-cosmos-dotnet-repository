@@ -3,6 +3,10 @@
 
 
 // ReSharper disable once CheckNamespace
+using System.Threading;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Options;
+
 namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed partial class DefaultRepository<TItem>
@@ -14,18 +18,35 @@ internal sealed partial class DefaultRepository<TItem>
         string? continuationToken = null,
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
+        => await PageAsync(
+            new QueryRequestOptions() { MaxItemCount = pageSize },
+            predicate,
+            pageSize,
+            continuationToken,
+            returnTotal,
+            cancellationToken);
+
+    /// <inheritdoc/>
+    public async ValueTask<IPage<TItem>> PageAsync(
+        QueryRequestOptions requestOptions,
+        Expression<Func<TItem, bool>>? predicate = null,
+        int pageSize = 25,
+        string? continuationToken = null,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default)
     {
         Container container = await containerProvider.GetContainerAsync()
             .ConfigureAwait(false);
 
-        QueryRequestOptions options = new()
+        // make sure that if the user hasn't said the value already we take it from the pageSize parameter
+        if (requestOptions.MaxItemCount is null)
         {
-            MaxItemCount = pageSize
-        };
+            requestOptions.MaxItemCount = pageSize;
+        }
 
         IQueryable<TItem> query = container
             .GetItemLinqQueryable<TItem>(
-                requestOptions: options,
+                requestOptions: requestOptions,
                 continuationToken: continuationToken,
                 linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
             .Where(repositoryExpressionProvider.Build(
@@ -61,13 +82,30 @@ internal sealed partial class DefaultRepository<TItem>
         int pageSize = 25,
         bool returnTotal = false,
         CancellationToken cancellationToken = default)
+    => await PageAsync(
+            requestOptions: new QueryRequestOptions() { MaxItemCount = pageSize },
+            predicate: predicate,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            returnTotal: returnTotal,
+            cancellationToken: cancellationToken);
+
+    /// <inheritdoc/>
+    public async ValueTask<IPageQueryResult<TItem>> PageAsync(
+        QueryRequestOptions requestOptions,
+        Expression<Func<TItem, bool>>? predicate = null,
+        int pageNumber = 1,
+        int pageSize = 25,
+        bool returnTotal = false,
+        CancellationToken cancellationToken = default)
     {
         Container container = await containerProvider.GetContainerAsync()
             .ConfigureAwait(false);
 
         IQueryable<TItem> query = container
             .GetItemLinqQueryable<TItem>(
-                linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
+                linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions,
+                requestOptions: requestOptions)
             .Where(repositoryExpressionProvider
                 .Build(predicate ?? repositoryExpressionProvider.Default<TItem>()));
 

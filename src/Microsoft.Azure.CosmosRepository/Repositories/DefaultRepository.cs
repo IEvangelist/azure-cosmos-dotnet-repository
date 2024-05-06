@@ -64,19 +64,4 @@ internal sealed partial class DefaultRepository<TItem>(
 
         return (results, charge, continuationToken);
     }
-
-    public ValueTask<IPage<TItem>> PageAsync(QueryRequestOptions requestOptions, Expression<Func<TItem, bool>>? predicate = null, int pageSize = 25, string? continuationToken = null, bool returnTotal = false, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ValueTask<TResult> QueryAsync<TResult>(ISpecification<TItem, TResult> specification, QueryRequestOptions requestOptions, CancellationToken cancellationToken = default) where TResult : IQueryResult<TItem>
-    {
-        throw new NotImplementedException();
-    }
-
-    public ValueTask<IPageQueryResult<TItem>> PageAsync(QueryRequestOptions requestOptions, Expression<Func<TItem, bool>>? predicate = null, int pageNumber = 1, int pageSize = 25, bool returnTotal = false, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
 }
