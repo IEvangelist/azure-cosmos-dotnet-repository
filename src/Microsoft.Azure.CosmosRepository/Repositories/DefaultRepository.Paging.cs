@@ -3,28 +3,25 @@
 
 
 // ReSharper disable once CheckNamespace
-using System.Threading;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed partial class DefaultRepository<TItem>
 {
     /// <inheritdoc/>
-    public async ValueTask<IPage<TItem>> PageAsync(
+    public ValueTask<IPage<TItem>> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
         int pageSize = 25,
         string? continuationToken = null,
         bool returnTotal = false,
-        CancellationToken cancellationToken = default)
-        => await PageAsync(
-            new QueryRequestOptions() { MaxItemCount = pageSize },
-            predicate,
-            pageSize,
-            continuationToken,
-            returnTotal,
-            cancellationToken);
+        CancellationToken cancellationToken = default) =>
+            PageAsync(
+                new QueryRequestOptions { MaxItemCount = pageSize },
+                predicate,
+                pageSize,
+                continuationToken,
+                returnTotal,
+                cancellationToken);
 
     /// <inheritdoc/>
     public async ValueTask<IPage<TItem>> PageAsync(
@@ -76,19 +73,19 @@ internal sealed partial class DefaultRepository<TItem>
     }
 
     /// <inheritdoc/>
-    public async ValueTask<IPageQueryResult<TItem>> PageAsync(
+    public ValueTask<IPageQueryResult<TItem>> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
         int pageNumber = 1,
         int pageSize = 25,
         bool returnTotal = false,
-        CancellationToken cancellationToken = default)
-    => await PageAsync(
-            requestOptions: new QueryRequestOptions() { MaxItemCount = pageSize },
-            predicate: predicate,
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            returnTotal: returnTotal,
-            cancellationToken: cancellationToken);
+        CancellationToken cancellationToken = default) =>
+            PageAsync(
+                requestOptions: new QueryRequestOptions { MaxItemCount = pageSize },
+                predicate: predicate,
+                pageNumber: pageNumber,
+                pageSize: pageSize,
+                returnTotal: returnTotal,
+                cancellationToken: cancellationToken);
 
     /// <inheritdoc/>
     public async ValueTask<IPageQueryResult<TItem>> PageAsync(

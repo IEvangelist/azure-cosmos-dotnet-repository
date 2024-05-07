@@ -8,11 +8,11 @@ namespace Microsoft.Azure.CosmosRepository;
 internal sealed partial class DefaultRepository<TItem>
 {
     /// <inheritdoc/>
-    public async ValueTask<TResult> QueryAsync<TResult>(
+    public ValueTask<TResult> QueryAsync<TResult>(
         ISpecification<TItem, TResult> specification,
         CancellationToken cancellationToken = default)
-        where TResult : IQueryResult<TItem>
-        => await QueryAsync(specification, new QueryRequestOptions(), cancellationToken);
+        where TResult : IQueryResult<TItem> =>
+            QueryAsync(specification, new QueryRequestOptions(), cancellationToken);
 
     /// <inheritdoc/>
     public async ValueTask<TResult> QueryAsync<TResult>(
