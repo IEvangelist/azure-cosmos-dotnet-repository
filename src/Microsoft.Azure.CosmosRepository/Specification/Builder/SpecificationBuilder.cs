@@ -45,7 +45,7 @@ internal class SpecificationBuilder<TItem, TResult>(BaseSpecification<TItem, TRe
         return this;
     }
 
-
+    /// <inheritdoc/>
     public ISpecificationBuilder<TItem, TResult> PageNumber(int pageNumber)
     {
         Specification.PageNumber = pageNumber;
@@ -65,6 +65,7 @@ internal class SpecificationBuilder<TItem, TResult>(BaseSpecification<TItem, TRe
         return this;
     }
 
+    /// <inheritdoc/>
     public ISpecificationBuilder<TItem, TResult> PartitionKey(PartitionKey partitionKey)
     {
         Specification.PartitionKey = partitionKey;
