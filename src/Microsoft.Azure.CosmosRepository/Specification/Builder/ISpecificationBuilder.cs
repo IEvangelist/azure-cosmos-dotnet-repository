@@ -58,4 +58,11 @@ public interface ISpecificationBuilder<TItem, TResult>
     /// <param name="continuationToken">The token used by Cosmos DB to provide efficient, cost effective paging.</param>
     /// <returns>An instance of a <see cref="ISpecificationBuilder{TItem,TResult}"/></returns>
     ISpecificationBuilder<TItem, TResult> ContinuationToken(string continuationToken);
+
+    /// <summary>
+    /// Sets the partition key for the query.
+    /// </summary>
+    /// <param name="partitionKey">The partition key</param>
+    /// <returns>An instance of a <see cref="ISpecificationBuilder{TItem,TResult}"/></returns>
+    ISpecificationBuilder<TItem, TResult> PartitionKey(PartitionKey partitionKey);
 }
