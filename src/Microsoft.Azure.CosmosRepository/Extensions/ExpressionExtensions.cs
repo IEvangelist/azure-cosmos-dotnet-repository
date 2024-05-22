@@ -37,23 +37,44 @@ internal static class ExpressionExtensions
         this Expression<Func<T, bool>> first,
         Expression<Func<T, bool>> second) => first.Compose(second, Expression.Or);
 
-    internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
+    internal static IEnumerable<PropertyInfo> GetPropertiesInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
     {
         Type type = typeof(TSource);
 
-        if (propertyLambda.Body is not MemberExpression member)
-            throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
+        List<PropertyInfo> propertiesInfo = [];
 
-        if (member.Member is not PropertyInfo propInfo)
-            throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+        MemberExpression? member = propertyLambda.Body as MemberExpression;
+
+        if (member == null)
+        {
+            throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
+        }
+
+        while (member != null)
+        {
+            if (member.Member is not PropertyInfo propertyInfo)
+            {
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+            }
+
+            propertiesInfo.Add(propertyInfo);
+
+            member = member.Expression as MemberExpression;
+        }
+
+        propertiesInfo.Reverse(); // The properties are added from the leaf to the root, so we reverse to get them in the correct order.
+
+        PropertyInfo propInfo = propertiesInfo[0];
 
 #pragma warning disable IDE0046 // Convert to conditional expression
         if (propInfo.ReflectedType != null &&
             type != propInfo.ReflectedType &&
             !type.IsSubclassOf(propInfo.ReflectedType))
+        {
             throw new ArgumentException($"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
+        }
 #pragma warning restore IDE0046 // Convert to conditional expression
 
-        return propInfo;
+        return propertiesInfo;
     }
 }

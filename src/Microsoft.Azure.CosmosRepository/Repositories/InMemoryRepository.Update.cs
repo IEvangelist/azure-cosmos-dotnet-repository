@@ -107,8 +107,24 @@ internal partial class InMemoryRepository<TItem>
         foreach (InternalPatchOperation internalPatchOperation in
                  patchOperationBuilder._rawPatchOperations.Where(ipo => ipo.Type is PatchOperationType.Replace))
         {
-            PropertyInfo property = item!.GetType().GetProperty(internalPatchOperation.PropertyInfo.Name)!;
-            property.SetValue(item, internalPatchOperation.NewValue);
+            IReadOnlyList<PropertyInfo> propertiesInfo = internalPatchOperation.PropertiesInfo;
+            object? currentObject = item;
+
+            if (propertiesInfo.Count == 0)
+            {
+                continue;
+            }
+
+            for (var i = 0; i < propertiesInfo.Count; i++)
+            {
+                if (i == propertiesInfo.Count - 1)
+                {
+                    propertiesInfo[i].SetValue(currentObject, internalPatchOperation.NewValue);
+                    break;
+                }
+
+                currentObject = propertiesInfo[i].GetValue(currentObject);
+            }
         }
 
         ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();

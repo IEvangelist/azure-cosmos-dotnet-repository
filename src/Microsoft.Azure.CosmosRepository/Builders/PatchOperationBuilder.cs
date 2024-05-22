@@ -22,20 +22,31 @@ internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> wher
 
     public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
     {
-        PropertyInfo property = expression.GetPropertyInfo();
-        var propertyToReplace = GetPropertyToReplace(property);
-        _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Replace));
+        IEnumerable<PropertyInfo> properties = expression.GetPropertiesInfo();
+        var propertyToReplace = GetPropertyToReplace(properties);
+
+        _rawPatchOperations.Add(new InternalPatchOperation(properties.ToArray(), value, PatchOperationType.Replace));
         _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
+
         return this;
     }
 
-    private string GetPropertyToReplace(MemberInfo propertyInfo)
+    private string GetPropertyToReplace(IEnumerable<PropertyInfo> propertiesInfo)
     {
-        JsonPropertyAttribute[] attributes =
-            propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
+        List<string> propertiesNames = [];
 
-        return attributes.Length is 0
-            ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
-            : attributes[0].PropertyName;
+        foreach (PropertyInfo propertyInfo in propertiesInfo)
+        {
+            JsonPropertyAttribute[] attributes =
+                propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
+
+            var propertyName = attributes.Length is 0
+                ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
+                : attributes[0].PropertyName;
+
+            propertiesNames.Add(propertyName);
+        }
+
+        return string.Join("/", propertiesNames);
     }
 }
