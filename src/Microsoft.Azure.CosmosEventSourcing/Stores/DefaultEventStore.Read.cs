@@ -28,16 +28,7 @@ internal partial class DefaultEventStore<TEventItem>
             x => x.PartitionKey == partitionKey,
             cancellationToken);
 
-        var payloads = events
-            .Select(x => x.DomainEvent)
-            .ToList();
-
-        Type type = typeof(TAggregateRoot);
-        MethodInfo? method = type.GetMethod("Replay");
-
-        return method is null
-            ? throw new ReplayMethodNotDefinedException(type)
-            : (TAggregateRoot)method.Invoke(null, new object[] { payloads })!;
+        return events.Replay<TAggregateRoot, TEventItem>();
     }
 
     public async ValueTask<TAggregateRoot> ReadAggregateAsync<TAggregateRoot>(

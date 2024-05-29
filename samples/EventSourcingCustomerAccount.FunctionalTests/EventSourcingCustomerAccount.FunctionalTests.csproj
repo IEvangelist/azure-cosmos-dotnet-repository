@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Bogus" Version="34.0.2" />
+        <PackageReference Include="Chill" Version="4.1.0" />
+        <PackageReference Include="FluentAssertions" Version="6.12.0" />
+        <PackageReference Include="FluentAssertions.Http" Version="1.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.13" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
+        <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+        <PackageReference Include="coverlet.collector" Version="3.2.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Microsoft.Azure.CosmosEventSourcing\EventSourcingCustomerAccount\EventSourcingCustomerAccount.csproj" />
+    </ItemGroup>
+
+</Project>

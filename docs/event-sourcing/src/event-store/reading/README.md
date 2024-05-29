@@ -12,6 +12,11 @@ The library offers a set of methods on the `IEventStore<TEventItem>` that can be
 
 ## Aggregate Roots
 
+1. explain the concept of rehydrating an aggregate
+1. explain how the events are ordered and applied, using both sequencing and not
+1. explain the different option available via the IEventStore interface for rehydration
+    1. make sure to cover the performance costs of one vs another, manual is a little extra work however, will be faster.
+
 ```csharp
 //TODO:
 ```

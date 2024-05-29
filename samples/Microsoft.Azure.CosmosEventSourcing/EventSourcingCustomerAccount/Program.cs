@@ -5,6 +5,7 @@ using EventSourcingCustomerAccount.Aggregates;
 using EventSourcingCustomerAccount.Items;
 using EventSourcingCustomerAccount.Projections;
 using EventSourcingCustomerAccount.Requests;
+using EventSourcingCustomerAccount.Services;
 using Microsoft.Azure.CosmosEventSourcing.Extensions;
 using Microsoft.Azure.CosmosEventSourcing.Stores;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
@@ -54,7 +55,12 @@ builder.Services.AddCosmosEventSourcing(eventSourcingBuilder =>
     eventSourcingBuilder.AddDomainEventTypes(typeof(Program).Assembly);
 });
 
-builder.Services.AddCosmosRepositoryChangeFeedHostedService();
+if (builder.Environment.EnvironmentName != "FunctionalTests")
+{
+    builder.Services.AddCosmosRepositoryChangeFeedHostedService();
+}
+
+builder.Services.AddSingleton<IPostalService, DefaultPostalService>();
 
 WebApplication app = builder.Build();
 
@@ -104,3 +110,5 @@ app.MapPut(
     });
 
 app.Run();
+
+public partial class Program {}

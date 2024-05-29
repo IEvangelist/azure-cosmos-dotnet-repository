@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

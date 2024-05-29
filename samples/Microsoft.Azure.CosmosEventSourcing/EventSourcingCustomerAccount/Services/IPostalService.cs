@@ -11,4 +11,6 @@ public interface IPostalService
         string firstName,
         string surname,
         CustomerAddress customerAddress);
+
+    SentWelcomeLetter? LastSentWelcomeLetter { get; }
 }

@@ -10,5 +10,4 @@ namespace Microsoft.Azure.CosmosEventSourcing.ChangeFeed;
 /// </summary>
 public interface IEventSourcingProcessor : IContainerChangeFeedProcessor
 {
-
 }
