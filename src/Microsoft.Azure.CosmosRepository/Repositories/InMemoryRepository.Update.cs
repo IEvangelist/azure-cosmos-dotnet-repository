@@ -107,23 +107,23 @@ internal partial class InMemoryRepository<TItem>
         foreach (InternalPatchOperation internalPatchOperation in
                  patchOperationBuilder._rawPatchOperations.Where(ipo => ipo.Type is PatchOperationType.Replace))
         {
-            IReadOnlyList<PropertyInfo> propertiesInfo = internalPatchOperation.PropertiesInfo;
+            IReadOnlyList<PropertyInfo> propertyInfos = internalPatchOperation.PropertyInfos;
             object? currentObject = item;
 
-            if (propertiesInfo.Count == 0)
+            if (propertyInfos.Count is 0)
             {
                 continue;
             }
 
-            for (var i = 0; i < propertiesInfo.Count; i++)
+            for (var i = 0; i < propertyInfos.Count; i++)
             {
-                if (i == propertiesInfo.Count - 1)
+                if (i == propertyInfos.Count - 1)
                 {
-                    propertiesInfo[i].SetValue(currentObject, internalPatchOperation.NewValue);
+                    propertyInfos[i].SetValue(currentObject, internalPatchOperation.NewValue);
                     break;
                 }
 
-                currentObject = propertiesInfo[i].GetValue(currentObject);
+                currentObject = propertyInfos[i].GetValue(currentObject);
             }
         }
 

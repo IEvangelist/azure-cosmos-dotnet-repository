@@ -22,20 +22,20 @@ internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> wher
 
     public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
     {
-        IEnumerable<PropertyInfo> properties = expression.GetPropertiesInfo();
-        var propertyToReplace = GetPropertyToReplace(properties);
+        IEnumerable<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+        var propertyToReplace = GetPropertyToReplace(propertyInfos);
 
-        _rawPatchOperations.Add(new InternalPatchOperation(properties.ToArray(), value, PatchOperationType.Replace));
+        _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos.ToArray(), value, PatchOperationType.Replace));
         _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
 
         return this;
     }
 
-    private string GetPropertyToReplace(IEnumerable<PropertyInfo> propertiesInfo)
+    private string GetPropertyToReplace(IEnumerable<PropertyInfo> propertyInfos)
     {
         List<string> propertiesNames = [];
 
-        foreach (PropertyInfo propertyInfo in propertiesInfo)
+        foreach (PropertyInfo propertyInfo in propertyInfos)
         {
             JsonPropertyAttribute[] attributes =
                 propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();

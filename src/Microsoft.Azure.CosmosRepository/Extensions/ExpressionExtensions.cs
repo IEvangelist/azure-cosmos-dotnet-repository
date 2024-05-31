@@ -37,11 +37,11 @@ internal static class ExpressionExtensions
         this Expression<Func<T, bool>> first,
         Expression<Func<T, bool>> second) => first.Compose(second, Expression.Or);
 
-    internal static IEnumerable<PropertyInfo> GetPropertiesInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
+    internal static IEnumerable<PropertyInfo> GetPropertyInfos<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
     {
         Type type = typeof(TSource);
 
-        List<PropertyInfo> propertiesInfo = [];
+        List<PropertyInfo> propertyInfos = [];
 
         MemberExpression? member = propertyLambda.Body as MemberExpression;
 
@@ -57,14 +57,14 @@ internal static class ExpressionExtensions
                 throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
             }
 
-            propertiesInfo.Add(propertyInfo);
+            propertyInfos.Add(propertyInfo);
 
             member = member.Expression as MemberExpression;
         }
 
-        propertiesInfo.Reverse(); // The properties are added from the leaf to the root, so we reverse to get them in the correct order.
+        propertyInfos.Reverse(); // The properties are added from the leaf to the root, so we reverse to get them in the correct order.
 
-        PropertyInfo propInfo = propertiesInfo[0];
+        PropertyInfo propInfo = propertyInfos[0];
 
 #pragma warning disable IDE0046 // Convert to conditional expression
         if (propInfo.ReflectedType != null &&
@@ -75,6 +75,6 @@ internal static class ExpressionExtensions
         }
 #pragma warning restore IDE0046 // Convert to conditional expression
 
-        return propertiesInfo;
+        return propertyInfos;
     }
 }
