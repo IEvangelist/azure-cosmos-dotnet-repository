@@ -37,10 +37,30 @@ internal static class ExpressionExtensions
         this Expression<Func<T, bool>> first,
         Expression<Func<T, bool>> second) => first.Compose(second, Expression.Or);
 
-    internal static IEnumerable<PropertyInfo> GetPropertyInfos<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
+    internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
     {
-        Type type = typeof(TSource);
+        var propertyInfos = GetPropertyInfosInternal(propertyLambda);
 
+        PropertyInfo propInfo = propertyInfos[propertyInfos.Count - 1];
+
+        ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
+
+        return propInfo;
+    }
+
+    internal static IReadOnlyList<PropertyInfo> GetPropertyInfos<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
+    {
+        List<PropertyInfo> propertyInfos = GetPropertyInfosInternal(propertyLambda);
+
+        PropertyInfo propInfo = propertyInfos[0];
+
+        ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
+
+        return propertyInfos;
+    }
+
+    private static List<PropertyInfo> GetPropertyInfosInternal<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda)
+    {
         List<PropertyInfo> propertyInfos = [];
 
         MemberExpression? member = propertyLambda.Body as MemberExpression;
@@ -64,17 +84,22 @@ internal static class ExpressionExtensions
 
         propertyInfos.Reverse(); // The properties are added from the leaf to the root, so we reverse to get them in the correct order.
 
-        PropertyInfo propInfo = propertyInfos[0];
+        return propertyInfos;
+    }
+
+    private static void ThrowArgumentExceptionIfPropertyIsNotFromSourceType<TSource, TProperty>(
+        Expression<Func<TSource, TProperty>> propertyLambda,
+        PropertyInfo propertyInfo)
+    {
+        var type = typeof(TSource);
 
 #pragma warning disable IDE0046 // Convert to conditional expression
-        if (propInfo.ReflectedType != null &&
-            type != propInfo.ReflectedType &&
-            !type.IsSubclassOf(propInfo.ReflectedType))
+        if (propertyInfo.ReflectedType != null &&
+            type != propertyInfo.ReflectedType &&
+            !type.IsSubclassOf(propertyInfo.ReflectedType))
         {
             throw new ArgumentException($"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
         }
 #pragma warning restore IDE0046 // Convert to conditional expression
-
-        return propertyInfos;
     }
 }

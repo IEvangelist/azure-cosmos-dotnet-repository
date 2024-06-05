@@ -22,16 +22,19 @@ internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> wher
 
     public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
     {
-        IEnumerable<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+        IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
         var propertyToReplace = GetPropertyToReplace(propertyInfos);
 
-        _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos.ToArray(), value, PatchOperationType.Replace));
+        _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Replace));
         _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
 
         return this;
     }
 
-    private string GetPropertyToReplace(IEnumerable<PropertyInfo> propertyInfos)
+    private string GetPropertyToReplace(MemberInfo propertyInfo) =>
+        GetPropertyToReplace([propertyInfo]);
+
+    private string GetPropertyToReplace(IEnumerable<MemberInfo> propertyInfos)
     {
         List<string> propertiesNames = [];
 
