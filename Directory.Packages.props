@@ -9,7 +9,7 @@
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="IEvangelist.Azure.CosmosRepository" Version="8.1.5" />
-    <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.3.0" />
+    <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.4.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.38.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
