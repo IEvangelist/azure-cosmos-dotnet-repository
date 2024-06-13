@@ -3,6 +3,7 @@
 
 
 // ReSharper disable once CheckNamespace
+
 namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed partial class DefaultRepository<TItem>
@@ -11,14 +12,20 @@ internal sealed partial class DefaultRepository<TItem>
     public ValueTask DeleteAsync(
         TItem value,
         CancellationToken cancellationToken = default) =>
-        DeleteAsync(value.Id, value.PartitionKey, cancellationToken);
+        DeleteAsync(value.Id, BuildPartitionKey(value.PartitionKeys), cancellationToken);
 
     /// <inheritdoc/>
     public ValueTask DeleteAsync(
         string id,
         string? partitionKeyValue = null,
         CancellationToken cancellationToken = default) =>
-        DeleteAsync(id, new PartitionKey(partitionKeyValue ?? id), cancellationToken);
+        DeleteAsync(id, BuildPartitionKey(partitionKeyValue ?? id), cancellationToken);
+
+    public ValueTask DeleteAsync(
+        string id,
+        IEnumerable<string> partitionKeyValues,
+        CancellationToken cancellationToken = default) =>
+        DeleteAsync(id, BuildPartitionKey(partitionKeyValues, id), cancellationToken);
 
     /// <inheritdoc/>
     public async ValueTask DeleteAsync(

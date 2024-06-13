@@ -38,6 +38,8 @@ public interface ISpecification<TItem, out TResult>
     /// </summary>
     int? PageNumber { get; }
 
+    //TODO: Write doc
+    public PartitionKey? PartitionKey { get; }
 
     /// <summary>
     /// Paginate results, selects how many results should be returned

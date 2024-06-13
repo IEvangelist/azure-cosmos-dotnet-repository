@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 // ReSharper disable once CheckNamespace
+
 namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed partial class DefaultRepository<TItem>
@@ -24,8 +25,10 @@ internal sealed partial class DefaultRepository<TItem>
                 : valueWithEtag.Etag;
         }
 
+        PartitionKey partitionKey = BuildPartitionKey(value);
+
         ItemResponse<TItem> response =
-            await container.UpsertItemAsync(value, new PartitionKey(value.PartitionKey), options,
+            await container.UpsertItemAsync(value, partitionKey, options,
                     cancellationToken)
                 .ConfigureAwait(false);
 
@@ -49,9 +52,48 @@ internal sealed partial class DefaultRepository<TItem>
         return updateTasks.Select(x => x.Result);
     }
 
+    //TODO: Write docs
     public async ValueTask UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
-        string? partitionKeyValue = null,
+        string? etag = default,
+        CancellationToken cancellationToken = default)
+    {
+        await InternalUpdateAsync(id, builder, null, etag, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public async ValueTask UpdateAsync(string id,
+        Action<IPatchOperationBuilder<TItem>> builder,
+        string? partitionKeyValue,
+        string? etag = default,
+        CancellationToken cancellationToken = default)
+    {
+        await InternalUpdateAsync(id, builder, BuildPartitionKey(partitionKeyValue, id), etag, cancellationToken);
+    }
+
+    //TODO: Write docs
+    public async ValueTask UpdateAsync(string id,
+        IEnumerable<string> partitionKeyValues,
+        Action<IPatchOperationBuilder<TItem>> builder,
+        string? etag = default,
+        CancellationToken cancellationToken = default)
+    {
+        await InternalUpdateAsync(id, builder, BuildPartitionKey(partitionKeyValues, id), etag, cancellationToken);
+    }
+
+    //TODO: Write docs
+    public async ValueTask UpdateAsync(string id,
+        PartitionKey partitionKey,
+        Action<IPatchOperationBuilder<TItem>> builder,
+        string? etag = null,
+        CancellationToken cancellationToken = default)
+    {
+        await InternalUpdateAsync(id, builder, partitionKey, etag, cancellationToken);
+    }
+
+    private async ValueTask InternalUpdateAsync(string id,
+        Action<IPatchOperationBuilder<TItem>> builder,
+        PartitionKey? partitionKey = null,
         string? etag = default,
         CancellationToken cancellationToken = default)
     {
@@ -63,15 +105,13 @@ internal sealed partial class DefaultRepository<TItem>
 
         Container container = await containerProvider.GetContainerAsync();
 
-        partitionKeyValue ??= id;
-
         PatchItemRequestOptions patchItemRequestOptions = new();
         if (etag != default && !string.IsNullOrWhiteSpace(etag))
         {
             patchItemRequestOptions.IfMatchEtag = etag;
         }
 
-        await container.PatchItemAsync<TItem>(id, new PartitionKey(partitionKeyValue),
+        await container.PatchItemAsync<TItem>(id, partitionKey ?? new PartitionKey(id),
             patchOperationBuilder.PatchOperations, patchItemRequestOptions, cancellationToken);
     }
 }

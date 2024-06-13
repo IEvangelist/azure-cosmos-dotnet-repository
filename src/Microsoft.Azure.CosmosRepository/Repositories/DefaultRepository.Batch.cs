@@ -13,11 +13,22 @@ internal partial class DefaultRepository<TItem>
     {
         var list = items.ToList();
 
-        var partitionKey = GetPartitionKeyValue(list);
+        PartitionKey partitionKey = BuildPartitionKey(list);
+
+        await UpdateAsBatchAsync(items, partitionKey, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask UpdateAsBatchAsync(
+        IEnumerable<TItem> items,
+        PartitionKey partitionKey,
+        CancellationToken cancellationToken = default)
+    {
+        var list = items.ToList();
 
         Container container = await containerProvider.GetContainerAsync();
 
-        TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
+        TransactionalBatch batch = container.CreateTransactionalBatch(partitionKey);
 
         foreach (TItem item in list)
         {
@@ -46,11 +57,22 @@ internal partial class DefaultRepository<TItem>
     {
         var list = items.ToList();
 
-        var partitionKey = GetPartitionKeyValue(list);
+        PartitionKey partitionKey = BuildPartitionKey(list);
+
+        await CreateAsBatchAsync(items, partitionKey, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask CreateAsBatchAsync(
+        IEnumerable<TItem> items,
+        PartitionKey partitionKey,
+        CancellationToken cancellationToken = default)
+    {
+        var list = items.ToList();
 
         Container container = await containerProvider.GetContainerAsync();
 
-        TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
+        TransactionalBatch batch = container.CreateTransactionalBatch(partitionKey);
 
         foreach (TItem item in list)
         {
@@ -65,17 +87,30 @@ internal partial class DefaultRepository<TItem>
         }
     }
 
+    /// <inheritdoc />
     public async ValueTask DeleteAsBatchAsync(
         IEnumerable<TItem> items,
         CancellationToken cancellationToken = default)
     {
         var list = items.ToList();
 
-        var partitionKey = GetPartitionKeyValue(list);
+        PartitionKey partitionKey = BuildPartitionKey(list);
+
+        await DeleteAsBatchAsync(items, partitionKey, cancellationToken);
+      
+    }
+
+    /// <inheritdoc />
+    public async ValueTask DeleteAsBatchAsync(
+        IEnumerable<TItem> items,
+        PartitionKey partitionKey,
+        CancellationToken cancellationToken = default)
+    {
+        var list = items.ToList();
 
         Container container = await containerProvider.GetContainerAsync();
 
-        TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
+        TransactionalBatch batch = container.CreateTransactionalBatch(partitionKey);
 
         foreach (TItem item in list)
         {
@@ -88,17 +123,5 @@ internal partial class DefaultRepository<TItem>
         {
             throw new BatchOperationException<TItem>(response);
         }
-    }
-
-    private static string GetPartitionKeyValue(List<TItem> items)
-    {
-        if (!items.Any())
-        {
-            throw new ArgumentException(
-                "Unable to perform batch operation with no items",
-                nameof(items));
-        }
-
-        return items[0].PartitionKey;
     }
 }

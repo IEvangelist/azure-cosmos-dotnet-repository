@@ -10,11 +10,11 @@ namespace Microsoft.Azure.CosmosRepository.Providers;
 interface ICosmosPartitionKeyPathProvider
 {
     /// <summary>
-    /// Gets the partition key path for a given <typeparamref name="TItem"/> type.
+    /// Gets the partition key paths for a given <typeparamref name="TItem"/> type.
     /// </summary>
-    /// <typeparam name="TItem">The item for which the partition key path corresponds.</typeparam>
-    /// <returns>A string value representing the partition key path, i.e.; "/partion"</returns>
-    string GetPartitionKeyPath<TItem>() where TItem : IItem;
-
-    string GetPartitionKeyPath(Type itemType);
+    /// <typeparam name="TItem">The item for which the partition keys paths corresponds.</typeparam>
+    /// <returns>A string array representing the partition key paths, i.e.; "/partion"</returns>
+    IEnumerable<string> GetPartitionKeyPaths<TItem>() where TItem : IItem;
+    
+    IEnumerable<string> GetPartitionKeyPaths(Type itemType);
 }

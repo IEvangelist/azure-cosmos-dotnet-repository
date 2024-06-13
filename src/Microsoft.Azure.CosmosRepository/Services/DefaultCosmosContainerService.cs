@@ -45,10 +45,14 @@ class DefaultCosmosContainerService : ICosmosContainerService
                 Id = _options.ContainerPerItemType
                     ? itemConfiguration.ContainerName
                     : _options.ContainerId,
-                PartitionKeyPath = itemConfiguration.PartitionKeyPath,
                 UniqueKeyPolicy = itemConfiguration.UniqueKeyPolicy ?? new(),
                 DefaultTimeToLive = itemConfiguration.DefaultTimeToLive
             };
+
+            if (itemConfiguration.PartitionKeyPaths.Count() > 1)
+                containerProperties.PartitionKeyPaths = itemConfiguration.PartitionKeyPaths.ToList();
+            else
+                containerProperties.PartitionKeyPath = itemConfiguration.PartitionKeyPaths.Last();
 
             Container container =
                 _options.IsAutoResourceCreationIfNotExistsEnabled

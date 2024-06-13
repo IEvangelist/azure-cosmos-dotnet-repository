@@ -44,10 +44,16 @@ public abstract class Item : IItem
     public string Type { get; set; }
 
     /// <summary>
-    /// Gets the PartitionKey based on <see cref="GetPartitionKeyValue"/>.
+    /// Gets the PartitionKey based on <see cref="GetPartitionKeyValues"/> last record.
     /// Implemented explicitly to keep out of Item API
     /// </summary>
-    string IItem.PartitionKey => GetPartitionKeyValue();
+    string IItem.PartitionKey => GetPartitionKeyValues().Last();
+
+    /// <summary>
+    /// Gets the PartitionKeys based on <see cref="GetPartitionKeyValues"/>.
+    /// Implemented explicitly to keep out of Item API
+    /// </summary>
+    IEnumerable<string> IItem.PartitionKeys => GetPartitionKeyValues();
 
     /// <summary>
     /// Default constructor, assigns type name to <see cref="Type"/> property.
@@ -56,10 +62,20 @@ public abstract class Item : IItem
 
     /// <summary>
     /// Gets the partition key value for the given <see cref="Item"/> type.
-    /// When overridden, be sure that the <see cref="PartitionKeyPathAttribute.Path"/> value corresponds
-    /// to the <see cref="JsonPropertyAttribute.PropertyName"/> value, i.e.; "/partition" and "partition"
+    /// When overridden, be sure that the <see cref="PartitionKeyPathAttribute.Paths"/> values correspond
+    /// to the <see cref="JsonPropertyAttribute.PropertyName"/> values, i.e.; "/partition" and "partition"
     /// respectively. If these two values do not correspond an error will occur.
     /// </summary>
     /// <returns>The <see cref="Item.Id"/> unless overridden by the subclass.</returns>
     protected virtual string GetPartitionKeyValue() => Id;
+
+    /// <summary>
+    /// Gets the partition key values for the given <see cref="Item"/> type.
+    /// When overridden, be sure that the <see cref="PartitionKeyPathAttribute.Paths"/> values correspond
+    /// to the <see cref="JsonPropertyAttribute.PropertyName"/> values, i.e.; "/partition" and "partition"
+    /// respectively. If all provided key values do not have a matching property with the equivalent name, an error will occur.
+    /// Make sure to add the latest inner 
+    /// </summary>
+    /// <returns>The list with <see cref="Item.Id"/> unless overridden by the subclass.</returns>
+    protected virtual IEnumerable<string> GetPartitionKeyValues() => new string[] { GetPartitionKeyValue() };
 }

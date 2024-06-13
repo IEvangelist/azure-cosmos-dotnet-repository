@@ -23,9 +23,9 @@ public class ContainerOptionsBuilder(Type type)
     internal string? Name { get; private set; }
 
     /// <summary>
-    /// The partition key for the container.
+    /// The partition keys for the container.
     /// </summary>
-    internal string? PartitionKey { get; private set; }
+    internal IList<string>? PartitionKeys { get; private set; }
 
     /// <summary>
     /// The default time to live for a container.
@@ -79,7 +79,11 @@ public class ContainerOptionsBuilder(Type type)
     /// <exception cref="ArgumentNullException"></exception>
     public ContainerOptionsBuilder WithPartitionKey(string partitionKey)
     {
-        PartitionKey = partitionKey ?? throw new ArgumentNullException(nameof(partitionKey));
+        if (partitionKey is null) throw new ArgumentNullException(nameof(partitionKey));
+        
+        PartitionKeys ??= [];
+        PartitionKeys.Add(partitionKey);
+        
         return this;
     }
 

@@ -9,20 +9,22 @@ namespace Microsoft.Azure.CosmosRepository.Attributes;
 /// conjunction with a <see cref="Newtonsoft.Json.JsonPropertyAttribute"/> on the <see cref="IItem"/> property
 /// whose value will act as the partition key. Partition key paths should start with "/",
 /// for example "/partition". For more information,
-/// see https://docs.microsoft.com/azure/cosmos-db/partitioning-overview.
+/// see https://docs.microsoft.com/azure/cosmos-db/partitioning-overview and
+/// https://learn.microsoft.com/en-us/azure/cosmos-db/hierarchical-partition-keys
 /// </summary>
 /// <remarks>
 /// By default, "/id" is used.
 /// </remarks>
 /// <remarks>
-/// Constructor accepting the <paramref name="path"/> of the partition key for a given <see cref="IItem"/>.
+/// Constructor accepting the <paramref name="paths"/> of the partition keys for a given <see cref="IItem"/>.
 /// </remarks>
-/// <param name="path"></param>
+/// <param name="paths"></param>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-public sealed class PartitionKeyPathAttribute(string path) : Attribute
+public sealed class PartitionKeyPathAttribute(params string[] paths) : Attribute
 {
     /// <summary>
-    /// Gets the path of the parition key.
+    /// Gets the path values of the parition key.
     /// </summary>
-    public string Path { get; } = path ?? throw new ArgumentNullException(nameof(path), "A path is required.");
+    public string[] Paths { get; } = paths != null && paths.Length >= 1 ? paths : throw new ArgumentNullException(nameof(paths), "At least one path is required.");
 }
+

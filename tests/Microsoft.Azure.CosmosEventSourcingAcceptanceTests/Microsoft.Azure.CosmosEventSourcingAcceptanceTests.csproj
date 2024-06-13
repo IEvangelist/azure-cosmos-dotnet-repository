@@ -28,4 +28,14 @@
       <ProjectReference Include="..\..\src\Microsoft.Azure.CosmosEventSourcing\Microsoft.Azure.CosmosEventSourcing.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Properties\launchSettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+
 </Project>
