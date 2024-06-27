@@ -25,7 +25,7 @@ public class DefaultCosmosThroughputProviderTests : WithRepositoryOptions
         _repositoryOptions.ContainerBuilder.Configure<TestItemWithEtag>(builder => builder.WithAutoscaleThroughput());
         ThroughputProperties? throughputProperties = _provider.GetThroughputProperties<TestItemWithEtag>();
 
-        Assert.Equal(4000, throughputProperties!.AutoscaleMaxThroughput);
+        Assert.Equal(1000, throughputProperties!.AutoscaleMaxThroughput);
         Assert.Null(throughputProperties.Throughput);
     }
 
@@ -49,7 +49,7 @@ public class DefaultCosmosThroughputProviderTests : WithRepositoryOptions
         InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => _provider.GetThroughputProperties<TestItemWithEtag>());
 
         Assert.Contains("autoscale", exception.Message);
-        Assert.Contains("4000", exception.Message);
+        Assert.Contains("1000", exception.Message);
         Assert.Contains("5000", exception.Message);
     }
 
