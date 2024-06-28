@@ -13,7 +13,6 @@ namespace Microsoft.Azure.CosmosRepository.Specification;
 /// <param name="filter"></param>
 public class WhereExpressionInfo<TItem>(Expression<Func<TItem, bool>> filter)
 {
-
     /// <summary>
     /// A predicate that is used for filtering. Given an item of <typeparamref name="TItem"/> a function evalut
     /// </summary>

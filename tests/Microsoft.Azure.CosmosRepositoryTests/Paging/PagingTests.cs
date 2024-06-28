@@ -29,7 +29,7 @@ public partial class PagingTests
         double charge = 1;
         Dog dog1 = new("cocker spaniel");
         Dog dog2 = new("golden retriever");
-        List<Dog> dogs = new() { dog1, dog2 };
+        List<Dog> dogs = [dog1, dog2];
 
         //Act
         Page<Dog> pageOfDogs = new(total, size, dogs.AsReadOnly(), charge);
@@ -51,7 +51,7 @@ public partial class PagingTests
         double charge = 1;
         Dog dog1 = new("cocker spaniel");
         Dog dog2 = new("golden retriever");
-        List<Dog> dogs = new() { dog1, dog2 };
+        List<Dog> dogs = [dog1, dog2];
         var continuationToken = "ContinuationToken";
 
         //Act
@@ -74,7 +74,7 @@ public partial class PagingTests
         double charge = 1;
         Dog dog1 = new("cocker spaniel");
         Dog dog2 = new("golden retriever");
-        List<Dog> dogs = new() { dog1, dog2 };
+        List<Dog> dogs = [dog1, dog2];
 
         //Act
         PageQueryResult<Dog> pageOfDogs = new(total, size, dogs.AsReadOnly(), charge);
@@ -98,7 +98,7 @@ public partial class PagingTests
         double charge = 1;
         Dog dog1 = new("cocker spaniel");
         Dog dog2 = new("golden retriever");
-        List<Dog> dogs = new() { dog1, dog2 };
+        List<Dog> dogs = [dog1, dog2];
         var continuationToken = "ContinuationToken";
 
         //Act
@@ -131,7 +131,7 @@ public partial class PagingTests
         Dog dog8 = new("golden retriever");
         Dog dog9 = new("cocker spaniel");
         Dog dog10 = new("golden retriever");
-        List<Dog> dogs = new() { dog1, dog2, dog3, dog4, dog5, dog6, dog7, dog8, dog9, dog10 };
+        List<Dog> dogs = [dog1, dog2, dog3, dog4, dog5, dog6, dog7, dog8, dog9, dog10];
         var continuationToken = "ContinuationToken";
         var expectedTotalPages = 2;
         var expectedNextPage = 2;
@@ -170,7 +170,7 @@ public partial class PagingTests
         Dog dog8 = new("golden retriever");
         Dog dog9 = new("cocker spaniel");
         Dog dog10 = new("golden retriever");
-        List<Dog> dogs = new() { dog1, dog2, dog3, dog4, dog5, dog6, dog7, dog8, dog9, dog10 };
+        List<Dog> dogs = [dog1, dog2, dog3, dog4, dog5, dog6, dog7, dog8, dog9, dog10];
         var continuationToken = "ContinuationToken";
         var expectedTotalPages = 2;
         var expectedPreviousPage = 1;
@@ -210,7 +210,7 @@ public partial class PagingTests
         Dog dog8 = new("golden retriever");
         Dog dog9 = new("cocker spaniel");
         Dog dog10 = new("golden retriever");
-        List<Dog> dogs = new() { dog1, dog2, dog3, dog4, dog5, dog6, dog7, dog8, dog9, dog10 };
+        List<Dog> dogs = [dog1, dog2, dog3, dog4, dog5, dog6, dog7, dog8, dog9, dog10];
         var continuationToken = "ContinuationToken";
         var expectedTotalPages = 5;
         var expectedPreviousPage = 1;
@@ -250,7 +250,7 @@ public partial class PagingTests
         Dog dog8 = new("golden retriever");
         Dog dog9 = new("cocker spaniel");
         Dog dog10 = new("golden retriever");
-        List<Dog> dogs = new() { dog1, dog2, dog3, dog4, dog5, dog6, dog7, dog8, dog9, dog10 };
+        List<Dog> dogs = [dog1, dog2, dog3, dog4, dog5, dog6, dog7, dog8, dog9, dog10];
         var continuationToken = "ContinuationToken";
         var expectedTotalPages = 5;
         var expectedPreviousPage = 1;

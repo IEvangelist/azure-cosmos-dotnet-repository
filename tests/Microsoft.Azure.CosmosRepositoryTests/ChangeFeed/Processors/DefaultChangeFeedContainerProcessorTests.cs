@@ -8,7 +8,7 @@ public class DefaultChangeFeedContainerProcessorTests
     private readonly Mock<ICosmosContainerService> _containerService = new();
     private readonly Mock<ILeaseContainerProvider> _leaseContainerProvider = new();
     private readonly IServiceProvider _serviceProvider;
-    private readonly List<Type> _itemTypes = new() { typeof(TestItem), typeof(AnotherTestItem) };
+    private readonly List<Type> _itemTypes = [typeof(TestItem), typeof(AnotherTestItem)];
     private readonly TestItemChangeFeedProcessor _testItemChangeFeedChangeFeedProcessor;
     private readonly ChangeFeedOptions _changeFeedOptions = new(typeof(TestItem));
 
@@ -37,7 +37,7 @@ public class DefaultChangeFeedContainerProcessorTests
 
         TestItem item = new() { Property = "a" };
 
-        List<JObject> changes = new() { JObject.FromObject(item) };
+        List<JObject> changes = [JObject.FromObject(item)];
 
         //Act
         await sut.OnChangesAsync(changes, "test", default);
@@ -52,7 +52,7 @@ public class DefaultChangeFeedContainerProcessorTests
         //Arrange
         DefaultContainerChangeFeedProcessor sut = CreateSut();
 
-        List<JObject> changes = new() { JObject.FromObject(new { type = "IAmNotSetup" }) };
+        List<JObject> changes = [JObject.FromObject(new { type = "IAmNotSetup" })];
 
         //Act
         await sut.OnChangesAsync(changes, "test", default);
@@ -67,7 +67,7 @@ public class DefaultChangeFeedContainerProcessorTests
         //Arrange
         DefaultContainerChangeFeedProcessor sut = CreateSut();
 
-        List<JObject> changes = new() { JObject.FromObject(new { id = "a" }) };
+        List<JObject> changes = [JObject.FromObject(new { id = "a" })];
 
         //Act
         await sut.OnChangesAsync(changes, "test", default);

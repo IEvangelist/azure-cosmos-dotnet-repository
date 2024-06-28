@@ -7,14 +7,14 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 [Trait("Type", "Functional")]
 public class SpecificationQueryTests(ITestOutputHelper testOutputHelper) : CosmosRepositoryAcceptanceTest(testOutputHelper, DefaultTestRepositoryOptions)
 {
-    private readonly List<Product> _products = new()
-    {
+    private readonly List<Product> _products =
+    [
         new Product("iPad", TechnologyCategoryId, 450, Stock(5)),
         new Product("iPhone", TechnologyCategoryId, 650, Stock(5)),
         new Product("Scarf", "Clothing", 10, Stock(5)),
         new Product("Jumper", "Clothing", 25, Stock(5)),
         new Product("Socks", "Clothing", 5, Stock(5)),
-    };
+    ];
 
     private static StockInformation Stock(int count = 2) => new(count, DateTime.UtcNow);
 

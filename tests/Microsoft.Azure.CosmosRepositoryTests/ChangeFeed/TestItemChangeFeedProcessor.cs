@@ -7,7 +7,7 @@ public class TestItemChangeFeedProcessor : IItemChangeFeedProcessor<TestItem>
 {
     public int InvocationCount { get; set; }
 
-    public List<TestItem> ChangedItems { get; } = new();
+    public List<TestItem> ChangedItems { get; } = [];
 
     public async ValueTask HandleAsync(TestItem rating, CancellationToken cancellationToken)
     {

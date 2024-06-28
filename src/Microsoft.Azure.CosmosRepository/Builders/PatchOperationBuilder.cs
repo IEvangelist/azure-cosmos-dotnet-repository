@@ -5,10 +5,10 @@ namespace Microsoft.Azure.CosmosRepository.Builders;
 
 internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> where TItem : IItem
 {
-    private readonly List<PatchOperation> _patchOperations = new();
+    private readonly List<PatchOperation> _patchOperations = [];
     private readonly NamingStrategy _namingStrategy;
 
-    internal readonly List<InternalPatchOperation> _rawPatchOperations = new();
+    internal readonly List<InternalPatchOperation> _rawPatchOperations = [];
 
     public IReadOnlyList<PatchOperation> PatchOperations => _patchOperations;
 

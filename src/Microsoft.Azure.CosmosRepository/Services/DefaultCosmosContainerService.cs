@@ -9,7 +9,7 @@ class DefaultCosmosContainerService : ICosmosContainerService
     readonly ICosmosClientProvider _cosmosClientProvider;
     readonly ILogger<DefaultCosmosContainerService> _logger;
     readonly RepositoryOptions _options;
-    readonly Dictionary<string, DateTime> _containerSyncLog = new();
+    readonly Dictionary<string, DateTime> _containerSyncLog = [];
 
     public DefaultCosmosContainerService(ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
         ICosmosClientProvider cosmosClientProvider,
