@@ -118,13 +118,13 @@ public class ContainerOptionsBuilder(Type type)
     /// <param name="maxAutoScaleThroughput">The maximum RU/s that this containers throughput can autoscale to.</param>
     /// <remarks>If a container has already been created without specifying a throughput then it cannot be updated.</remarks>
     /// <returns>Instance of <see cref="ContainerOptionsBuilder"/></returns>
-    public ContainerOptionsBuilder WithAutoscaleThroughput(int maxAutoScaleThroughput = 4_000)
+    public ContainerOptionsBuilder WithAutoscaleThroughput(int maxAutoScaleThroughput = 1_000)
     {
-        if (maxAutoScaleThroughput is < 4_000 or > 1_000_000)
+        if (maxAutoScaleThroughput is < 1_000 or > 1_000_000)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(maxAutoScaleThroughput),
-                "Autoscale throughput must be between 4,000 and 1,000,000 RUs.");
+                "Autoscale throughput must be between 1,000 and 1,000,000 RUs.");
         }
 
         if (maxAutoScaleThroughput % 1000 != 0)
