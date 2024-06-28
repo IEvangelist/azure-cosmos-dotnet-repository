@@ -82,6 +82,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventSourcingCustomerAccoun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosEventSourcingAcceptanceTests", "tests\Microsoft.Azure.CosmosEventSourcingAcceptanceTests\Microsoft.Azure.CosmosEventSourcingAcceptanceTests.csproj", "{99ADC0F0-9433-49AD-86FA-34009CD293BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugSandbox", "samples\Microsoft.Azure.CosmosRepository\BugSandbox\BugSandbox.csproj", "{7354577A-699D-4952-B8DF-27CF0FC7F683}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -180,6 +182,10 @@ Global
 		{99ADC0F0-9433-49AD-86FA-34009CD293BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99ADC0F0-9433-49AD-86FA-34009CD293BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99ADC0F0-9433-49AD-86FA-34009CD293BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7354577A-699D-4952-B8DF-27CF0FC7F683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7354577A-699D-4952-B8DF-27CF0FC7F683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7354577A-699D-4952-B8DF-27CF0FC7F683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7354577A-699D-4952-B8DF-27CF0FC7F683}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -210,6 +216,7 @@ Global
 		{D276C752-4DB7-4380-AF76-91492E8F8554} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}
 		{7A2873BC-70A1-489B-9609-E9D7D382C826} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}
 		{99ADC0F0-9433-49AD-86FA-34009CD293BA} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
+		{7354577A-699D-4952-B8DF-27CF0FC7F683} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6AAE7641-B62C-48BA-8FE6-0F819E5B45EF}
