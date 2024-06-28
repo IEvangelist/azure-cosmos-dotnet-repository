@@ -65,7 +65,7 @@ public class InMemoryChangeFeedTests
         TestItem item2 = new();
         TestItem item3 = new();
 
-        List<TestItem> items = new() { item1, item2, item3 };
+        List<TestItem> items = [item1, item2, item3];
 
         //Act
         await _testItemRepository.CreateAsync(items);
@@ -113,7 +113,7 @@ public class InMemoryChangeFeedTests
         item1 = await _testItemRepository.CreateAsync(item1);
         item3 = await _testItemRepository.CreateAsync(item3);
 
-        List<TestItem> items = new() { item1, item2, item3 };
+        List<TestItem> items = [item1, item2, item3];
 
         //Act
         await _testItemRepository.UpdateAsync(items);

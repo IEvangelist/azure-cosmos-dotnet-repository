@@ -22,7 +22,7 @@ public partial class AcceptanceTests
 {
     private readonly string[] _names = { "List 1", "List 2", "List 3" };
     private readonly TodoListMapper _mapper = new();
-    private readonly List<string> _atomicEventIds = new();
+    private readonly List<string> _atomicEventIds = [];
 
     private readonly AsyncPolicy _defaultPolicy = Policy
         .Handle<CosmosException>()

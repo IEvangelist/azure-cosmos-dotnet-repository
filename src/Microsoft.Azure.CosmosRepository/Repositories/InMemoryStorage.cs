@@ -11,11 +11,11 @@ internal static class InMemoryStorage
     {
         if (TypeToConcurrentDictionary.TryGetValue(typeof(TItem), out ConcurrentDictionary<string, string>? value))
         {
-            return value?.Values ?? new List<string>();
+            return value?.Values ?? [];
         }
 
         TypeToConcurrentDictionary[typeof(TItem)] = new ConcurrentDictionary<string, string>();
-        return TypeToConcurrentDictionary[typeof(TItem)]?.Values ?? new List<string>();
+        return TypeToConcurrentDictionary[typeof(TItem)]?.Values ?? [];
     }
 
     internal static ConcurrentDictionary<string, string> GetDictionary<TItem>() where TItem : IItem

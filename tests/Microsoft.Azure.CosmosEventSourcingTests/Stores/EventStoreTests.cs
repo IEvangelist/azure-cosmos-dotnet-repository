@@ -26,33 +26,33 @@ public partial class EventStoreTests
     private readonly Mock<IContextService> _contextService;
     private const string Pk = "pk";
 
-    private readonly List<Testing.SampleEvent> _events = new()
-    {
+    private readonly List<Testing.SampleEvent> _events =
+    [
         new Testing.SampleEvent(Pk, "Second Property"),
         new Testing.SampleEvent(Pk, "Second Property"),
         new Testing.SampleEvent(Pk, "Second Property"),
         new Testing.SampleEvent(Pk, "Second Property"),
         new Testing.SampleEvent(Pk, "Second Property"),
-    };
+    ];
 
-    private readonly List<Testing.SampleEventItem> _eventItems = new()
-    {
+    private readonly List<Testing.SampleEventItem> _eventItems =
+    [
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
-    };
+    ];
 
-    private readonly List<Testing.SampleEventItem> _eventItemsWithAtomicEvents = new()
-    {
+    private readonly List<Testing.SampleEventItem> _eventItemsWithAtomicEvents =
+    [
         new Testing.SampleEventItem(new AtomicEvent(Guid.NewGuid().ToString(), string.Empty), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
         new Testing.SampleEventItem(new Testing.SampleEvent(Pk, "Second Property"), Pk),
-    };
+    ];
 
     public EventStoreTests()
     {
@@ -188,7 +188,7 @@ public partial class EventStoreTests
             .ReturnsAsync(page2)
             .ReturnsAsync(page3);
 
-        List<Testing.SampleEventItem> events = new();
+        List<Testing.SampleEventItem> events = [];
 
         //Act
         await foreach (Testing.SampleEventItem result in sut.StreamAsync(Pk, 5))

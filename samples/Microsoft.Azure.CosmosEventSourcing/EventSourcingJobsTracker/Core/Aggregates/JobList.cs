@@ -12,7 +12,7 @@ namespace EventSourcingJobsTracker.Core.Aggregates;
 
 public class JobsList : AggregateRoot
 {
-    private readonly List<Job> _jobs = new();
+    private readonly List<Job> _jobs = [];
 
     public Guid Id { get; private set; }
 
