@@ -7,14 +7,9 @@ using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Specification;
 
-public class FullSpecificationSamples
+public class FullSpecificationSamples(IRepository<Person> repository)
 {
-    private readonly IRepository<Person> _repository;
-
-    public FullSpecificationSamples(IRepository<Person> repository)
-    {
-        _repository = repository;
-    }
+    private readonly IRepository<Person> _repository = repository;
 
     public async Task FullContinuationTokenSpecificationAsync(int age)
     {

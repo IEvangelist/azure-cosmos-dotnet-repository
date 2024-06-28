@@ -6,18 +6,12 @@ using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Specification;
 
-public class SpecificationOrderSamples
+public class SpecificationOrderSamples(IRepository<Person> repository)
 {
-    private readonly IRepository<Person> _repository;
-
-    public SpecificationOrderSamples(IRepository<Person> repository)
-    {
-        _repository = repository;
-    }
     public async Task BasicOrderAsync()
     {
         OrderByNameSpecification specification = new();
-        IQueryResult<Person> result = await _repository.QueryAsync(specification);
+        IQueryResult<Person> result = await repository.QueryAsync(specification);
 
         Console.WriteLine($"Simple order first result {result.Items[0].Name}");
         Console.WriteLine($"Total Charge {result.Charge} RU's");
@@ -43,7 +37,7 @@ public class SpecificationOrderSamples
     public async Task MultipleOrderByAsync()
     {
         OrderByMultipleFieldsSpecification specification = new();
-        IQueryResult<Person> result = await _repository.QueryAsync(specification);
+        IQueryResult<Person> result = await repository.QueryAsync(specification);
 
         Console.WriteLine($"Multiple order first result {result.Items[0].Name}");
         Console.WriteLine($"Total Charge {result.Charge} RU's");
