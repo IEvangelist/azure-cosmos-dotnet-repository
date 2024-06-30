@@ -361,12 +361,12 @@ public class InMemoryRepositoryTests
     public async Task CreateAsync_ManyItems_CreatesAllItems()
     {
         //Arrange
-        List<Person> items = new()
-        {
+        List<Person> items =
+        [
             new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
             new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
             new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
-        };
+        ];
 
         //Act
         IEnumerable<Person> people = (await _personRepository.CreateAsync(items)).ToList();
@@ -394,12 +394,12 @@ public class InMemoryRepositoryTests
         CreateAsync_ManyItemsWhereOneHasIdThatAlreadyExists_CreatesInitalItemsThenThrowsCosmosException()
     {
         //Arrange
-        List<Person> items = new()
-        {
+        List<Person> items =
+        [
             new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
             new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
             new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person) },
-        };
+        ];
 
         Person badPerson = new("copy") { Id = items.First().Id, Type = nameof(Person) };
         items.Add(badPerson);
@@ -575,14 +575,14 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         var originalEtag = Guid.NewGuid().ToString();
-        List<Person> items = new()
-        {
+        List<Person> items =
+        [
             new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
             new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
             new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
-        };
+        ];
 
-        List<Person> itemsUpdate = new();
+        List<Person> itemsUpdate = [];
 
         foreach (Person item in items)
         {
@@ -628,14 +628,14 @@ public class InMemoryRepositoryTests
     {
         //Arrange
         var originalEtag = Guid.NewGuid().ToString();
-        List<Person> items = new()
-        {
+        List<Person> items =
+        [
             new("joe") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
             new("bill") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
             new("fred") { Id = Guid.NewGuid().ToString(), Type = nameof(Person), Etag = originalEtag },
-        };
+        ];
 
-        List<Person> itemsUpdate = new();
+        List<Person> itemsUpdate = [];
 
         foreach (Person item in items)
         {

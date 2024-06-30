@@ -42,10 +42,10 @@ public class LanguagesControllerTests : IClassFixture<WebTierApplicationFactory>
             InitialReleaseDate = new DateTime(2001, 10, 25)
         };
 
-        List<LanguageDto> languages = new()
-        {
+        List<LanguageDto> languages =
+        [
             language
-        };
+        ];
 
         IRepository<Language> repository = _repositoryFactory.RepositoryOf<Language>();
 

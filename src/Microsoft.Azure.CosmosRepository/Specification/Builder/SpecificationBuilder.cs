@@ -45,7 +45,6 @@ internal class SpecificationBuilder<TItem, TResult>(BaseSpecification<TItem, TRe
         return this;
     }
 
-
     public ISpecificationBuilder<TItem, TResult> PageNumber(int pageNumber)
     {
         Specification.PageNumber = pageNumber;

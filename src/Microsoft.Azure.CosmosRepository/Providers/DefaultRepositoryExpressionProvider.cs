@@ -13,8 +13,14 @@ class DefaultRepositoryExpressionProvider(ICosmosItemConfigurationProvider itemC
         return options.UseStrictTypeChecking ? predicate.Compose(Default<TItem>(), Expression.AndAlso) : predicate;
     }
 
-    public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem =>
-        item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name;
+    public Expression<Func<TItem, bool>> Default<TItem>() where TItem : IItem
+    {
+        ItemConfiguration options = itemConfigurationProvider.GetItemConfiguration<TItem>();
+
+        return options.UseStrictTypeChecking
+            ? item => !item.Type.IsDefined() || item.Type == typeof(TItem).Name
+            : item => item != null /* If strict typing isn't desired, the default is a simple not null check */;
+    }
 
     public TItem CheckItem<TItem>(TItem item) where TItem : IItem
     {

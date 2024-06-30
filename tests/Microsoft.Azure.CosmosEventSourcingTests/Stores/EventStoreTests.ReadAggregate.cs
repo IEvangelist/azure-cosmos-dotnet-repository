@@ -87,11 +87,11 @@ public partial class EventStoreTests
         ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty.ToString(), "etag"), "A");
         atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
 
-        List<ReplayableEventItem> events = new()
-        {
+        List<ReplayableEventItem> events =
+        [
             new ReplayableEventItem(new ReplayableEvent(), "A"),
             atomicEvent,
-        };
+        ];
 
         repository
             .Setup(o =>
@@ -116,11 +116,11 @@ public partial class EventStoreTests
         ReplayableEventItem atomicEvent = new(new AtomicEvent(Guid.Empty.ToString(), "etag"), "A");
         atomicEvent.SetPrivatePropertyValue(nameof(FullItem.Etag), Guid.NewGuid().ToString());
 
-        List<ReplayableEventItem> events = new()
-        {
+        List<ReplayableEventItem> events =
+        [
             new ReplayableEventItem(new ReplayableEvent(), "A"),
             atomicEvent
-        };
+        ];
 
         repository
             .Setup(o =>

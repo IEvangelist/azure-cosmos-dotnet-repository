@@ -8,7 +8,7 @@ internal class ParameterRebinder : ExpressionVisitor
     readonly Dictionary<ParameterExpression, ParameterExpression> _map;
 
     internal ParameterRebinder(Dictionary<ParameterExpression, ParameterExpression> map) =>
-        _map = map ?? new();
+        _map = map ?? [];
 
     internal static Expression ReplaceParameters(
         Dictionary<ParameterExpression, ParameterExpression> map, Expression exp) =>

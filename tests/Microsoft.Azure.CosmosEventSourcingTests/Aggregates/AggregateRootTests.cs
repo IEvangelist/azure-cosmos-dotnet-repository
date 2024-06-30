@@ -19,7 +19,7 @@ public class AggregateTests
 
     private class SampleAggregateRoot : AggregateRoot
     {
-        private readonly List<string> _messages = new();
+        private readonly List<string> _messages = [];
 
         public IReadOnlyList<string> Messages => _messages;
 
@@ -103,12 +103,12 @@ public class AggregateTests
     {
         //Arrange
         AtomicEvent atomicEvent = new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
-        List<DomainEvent> events = new()
-        {
+        List<DomainEvent> events =
+        [
             new AggregateRootEvent("A"),
             new AggregateRootEvent("B"),
             atomicEvent
-        };
+        ];
 
         //Act
         var root = SampleAggregateRoot.Replay(events);
@@ -126,14 +126,14 @@ public class AggregateTests
     {
         //Arrange
         AtomicEvent atomicEvent = new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
-        List<DomainEvent> events = new()
-        {
+        List<DomainEvent> events =
+        [
             new OrderedRootEvent("A") {Sequence = 1},
             new OrderedRootEvent("B") {Sequence = 2},
             new OrderedRootEvent("C") {Sequence = 3},
             new OrderedRootEvent("D") {Sequence = 4},
             atomicEvent
-        };
+        ];
 
         //Act
         var root = SampleAggregateRoot.Replay(events);
@@ -146,13 +146,13 @@ public class AggregateTests
     public void Replay_ExistingEventsWithNoAtomicEvent_ThrowsAtomicEventRequiredException()
     {
         //Arrange
-        List<DomainEvent> events = new()
-        {
+        List<DomainEvent> events =
+        [
             new OrderedRootEvent("A") {Sequence = 1},
             new OrderedRootEvent("B") {Sequence = 2},
             new OrderedRootEvent("C") {Sequence = 3},
             new OrderedRootEvent("D") {Sequence = 4},
-        };
+        ];
 
         //Act
         //Assert
@@ -164,7 +164,7 @@ public class AggregateTests
     public void Replay_NoEvents_ThrowsDomainEventsRequiredException()
     {
         //Arrange
-        List<DomainEvent> events = new();
+        List<DomainEvent> events = [];
 
         //Act
         //Assert
@@ -177,14 +177,14 @@ public class AggregateTests
     {
         //Arrange
         AtomicEvent atomicEvent = new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
-        List<DomainEvent> events = new()
-        {
+        List<DomainEvent> events =
+        [
             new OrderedRootEvent("A") {Sequence = 1},
             new OrderedRootEvent("B") {Sequence = 2},
             new OrderedRootEvent("C") {Sequence = 3},
             new OrderedRootEvent("D") {Sequence = 4},
             atomicEvent
-        };
+        ];
 
         var root = SampleAggregateRoot.Replay(events);
 

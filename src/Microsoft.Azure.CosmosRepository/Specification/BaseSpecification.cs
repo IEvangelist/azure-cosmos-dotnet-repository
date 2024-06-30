@@ -8,9 +8,8 @@ public abstract class BaseSpecification<TItem, TResult> : ISpecification<TItem, 
     where TItem : IItem
     where TResult : IQueryResult<TItem>
 {
-    private readonly List<WhereExpressionInfo<TItem>> _whereExpressions = new();
-    private readonly List<OrderExpressionInfo<TItem>> _orderExpressions = new();
-
+    private readonly List<WhereExpressionInfo<TItem>> _whereExpressions = [];
+    private readonly List<OrderExpressionInfo<TItem>> _orderExpressions = [];
 
     /// <summary>
     /// The specification query builder. Always use this object when interacting with the specifications. All other properties are readonly or internal set;
