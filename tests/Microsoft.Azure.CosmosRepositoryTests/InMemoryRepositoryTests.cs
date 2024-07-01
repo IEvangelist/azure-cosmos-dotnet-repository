@@ -990,6 +990,36 @@ public class InMemoryRepositoryTests
     }
 
     [Fact]
+    public async Task UpdateAsync_PropertiesInNestedObjectToPatch_UpdatesValues()
+    {
+        //Arrange
+        RootObject root = new()
+        {
+            Id = Guid.NewGuid().ToString(),
+            NestedObject = new NestedObject
+            {
+                Property1 = "prop1",
+                Property2 = 55
+            }
+        };
+
+        InMemoryStorage.GetDictionary<RootObject>().TryAddAsJson(root.Id, root);
+
+        //Act
+        await _rootObjectRepository.UpdateAsync(
+            root.Id,
+            builder =>
+                builder.Replace(x => x.NestedObject.Property1, "prop2")
+                    .Replace(x => x.NestedObject.Property2, 2));
+
+        //Assert
+        RootObject deserialisedItem =
+            _rootObjectRepository.DeserializeItem(InMemoryStorage.GetDictionary<RootObject>().First().Value);
+        Assert.Equal("prop2", deserialisedItem.NestedObject.Property1);
+        Assert.Equal(2, deserialisedItem.NestedObject.Property2);
+    }
+
+    [Fact]
     public async Task PageAsync_PredicateThatDoesNotMatch_ReturnsEmptyList()
     {
         //Arrange
