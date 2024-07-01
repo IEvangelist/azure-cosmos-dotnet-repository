@@ -334,6 +334,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mateuszkumpf",
+      "name": "Mateusz Kumpf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24723556?v=4",
+      "profile": "https://github.com/mateuszkumpf",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
