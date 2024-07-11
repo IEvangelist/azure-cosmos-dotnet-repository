@@ -227,12 +227,14 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
     /// </summary>
     /// <param name="predicate">A filter criteria for the paging operation, if null it will get all <see cref="IItem"/>s</param>
     /// <param name="limit">The limit of how many items to yield. Defaults to <c>1,000</c>.</param>
+    /// <param name="pageSize">The size of the page to return from cosmos db.</param>
     /// <param name="cancellationToken">The optional <see cref="CancellationToken"/> used to </param>
     /// <returns>An <see cref="IAsyncEnumerable{T}"/> where <c>T</c> is <typeparamref name="TItem"/>.</returns>
     /// <remarks>This method makes use of Cosmos DB's continuation tokens for efficient, cost effective paging utilizing low RUs</remarks>
     async IAsyncEnumerable<TItem> PageAsync(
         Expression<Func<TItem, bool>>? predicate = null,
         int limit = 1_000,
+        int pageSize = 25,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var collected = 0;
@@ -245,7 +247,7 @@ public interface IReadOnlyRepository<TItem> where TItem : IItem
             IPageQueryResult<TItem> page = await PageAsync(
                 predicate,
                 pageNumber: ++ currentPage,
-                25,
+                pageSize,
                 returnTotal: false,
                 cancellationToken);
 
