@@ -86,6 +86,172 @@ public class PatchOperationBuilderTests
         Assert.Equal("/testProperty", operation.Path);
     }
 
+    [Fact]
+    public void SetGivenPropertySetsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Set(x => x.TestIntProperty, 100);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Set, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void AddGivenPropertyAddsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Add(x => x.TestIntProperty, 200);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Add, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void RemoveGivenPropertyRemovesCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Remove(x => x.TestIntProperty);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Remove, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void IncrementGivenPropertyWithDoubleIncrementsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Increment(x => x.TestIntProperty, 1.5);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void IncrementGivenPropertyWithLongIncrementsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Increment(x => x.TestIntProperty, 10);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void ReplaceGivenPathSetsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Replace("/testIntProperty", 50);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void SetGivenPathSetsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Set("/testIntProperty", 100);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Set, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void AddGivenPathSetsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Add("/testIntProperty", 200);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Add, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void RemoveGivenPathSetsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Remove("/testIntProperty");
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Remove, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void IncrementGivenPathWithDoubleIncrementsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Increment("/testIntProperty", 1.5);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void IncrementGivenPathWithLongIncrementsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+        //Act
+        builder.Increment("/testIntProperty", 10);
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+        Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+
     [Theory]
     [MemberData(nameof(GetTestCases))]
     public void AcknowledgeRepositorySerializationSettingForRetrievingPatchOperation(CosmosPropertyNamingPolicy? propertyNamingPolicy,

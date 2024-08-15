@@ -30,7 +30,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalReplace($"/{propertyToReplace}", propertyInfo, value);
+            return InternalReplace(propertyToReplace, propertyInfo, value);
         }
         public IPatchOperationBuilder<TItem> Replace<TValue>(string path, TValue value)
         {
@@ -42,7 +42,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalSet($"/{propertyToReplace}", propertyInfo, value);
+            return InternalSet(propertyToReplace, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(string path, TValue? value)
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalAdd($"/{propertyToReplace}", propertyInfo, value);
+            return InternalAdd(propertyToReplace, propertyInfo, value);
         }
         public IPatchOperationBuilder<TItem> Add<TValue>(string path, TValue? value)
         {
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalRemove($"/{propertyToReplace}", propertyInfo);
+            return InternalRemove(propertyToReplace, propertyInfo);
         }
 
         public IPatchOperationBuilder<TItem> Remove(string path)
@@ -82,14 +82,14 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalIncrement($"/{propertyToReplace}", propertyInfo, value);
+            return InternalIncrement(propertyToReplace, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, long value)
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalIncrement($"/{propertyToReplace}", propertyInfo, value);
+            return InternalIncrement(propertyToReplace, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment(string path, long value)
@@ -108,45 +108,53 @@ namespace Microsoft.Azure.CosmosRepository.Builders
 
         public IPatchOperationBuilder<TItem> InternalReplace<TValue>(string path, PropertyInfo property, TValue? value)
         {
+            path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Replace));
-            _patchOperations.Add(PatchOperation.Replace($"{path}", value));
+            _patchOperations.Add(PatchOperation.Replace($"/{path}", value));
             return this;
         }
 
         private IPatchOperationBuilder<TItem> InternalSet<TValue>(string path, PropertyInfo property, TValue? value)
         {
+            path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Set));
-            _patchOperations.Add(PatchOperation.Set(path, value));
+            _patchOperations.Add(PatchOperation.Set($"/{path}", value));
             return this;
         }
 
         public IPatchOperationBuilder<TItem> InternalIncrement(string path, PropertyInfo property, long value)
         {
+            path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment));
-            _patchOperations.Add(PatchOperation.Increment(path, value));
+            _patchOperations.Add(PatchOperation.Increment($"/{path}", value));
             return this;
         }
 
         public IPatchOperationBuilder<TItem> InternalIncrement(string path, PropertyInfo property, double value)
         {
+            path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment));
-            _patchOperations.Add(PatchOperation.Increment(path, value));
+            _patchOperations.Add(PatchOperation.Increment($"/{path}", value));
             return this;
         }
 
         public IPatchOperationBuilder<TItem> InternalAdd<TValue>(string path, PropertyInfo property, TValue? value)
         {
+            path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Add));
-            _patchOperations.Add(PatchOperation.Add(path, value));
+            _patchOperations.Add(PatchOperation.Add($"/{path}", value));
             return this;
         }
 
         public IPatchOperationBuilder<TItem> InternalRemove(string path, PropertyInfo property)
         {
+            path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, null, PatchOperationType.Remove));
-            _patchOperations.Add(PatchOperation.Remove(path));
+            _patchOperations.Add(PatchOperation.Remove($"/{path}"));
             return this;
         }
+
+        private string NormalizePath(string path) => path.StartsWith("/", StringComparison.CurrentCultureIgnoreCase) ? path.Substring(1) : path;
 
         /// <summary>
         /// Get the property name to replace. This only works for a single level of nesting.
@@ -199,10 +207,10 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             return null;
         }
 
-        public static PropertyInfo? GetNestedPropertyInfo(Type type, string path)
+        public PropertyInfo? GetNestedPropertyInfo(Type type, string path)
         {
             // Split the path by '/' to get the individual property names
-            string[] properties = path.Split('/');
+            string[] properties = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             Type currentType = type;
             PropertyInfo? propertyInfo = null;
@@ -210,8 +218,11 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             // Iterate through each property in the path
             foreach (string propertyNameOrJsonProperty in properties)
             {
+                // If the property is not found by name, search by JsonPropertyAttribute
+                IEnumerable<PropertyInfo> currentProperties = currentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
                 // First, attempt to get the property by its direct name
-                propertyInfo = currentType.GetProperty(propertyNameOrJsonProperty, BindingFlags.Public | BindingFlags.Instance);
+                propertyInfo = currentProperties.FirstOrDefault(p => string.Equals(p.Name, propertyNameOrJsonProperty, StringComparison.OrdinalIgnoreCase));
 
                 // If the property is found by name, continue to the next level
                 if (propertyInfo != null)
@@ -219,9 +230,6 @@ namespace Microsoft.Azure.CosmosRepository.Builders
                     currentType = propertyInfo.PropertyType;
                     continue;
                 }
-
-                // If the property is not found by name, search by JsonPropertyAttribute
-                PropertyInfo[] currentProperties = currentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
                 foreach (var property in currentProperties)
                 {
