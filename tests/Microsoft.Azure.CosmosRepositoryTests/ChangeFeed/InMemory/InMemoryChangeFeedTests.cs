@@ -123,7 +123,7 @@ public class InMemoryChangeFeedTests
     }
 
     [Fact]
-    public async Task UpdateAsync_PatchUpdate_InvokesChangeFeedProcessor()
+    public async Task UpdateAsync_PatchUpdate_Replace_InvokesChangeFeedProcessor()
     {
         //Arrange
         TestItem item = new();
@@ -132,6 +132,22 @@ public class InMemoryChangeFeedTests
 
         //Act
         await _testItemRepository.UpdateAsync(item.Id, builder => builder.Replace(x => x.Property, "propertyValue"));
+
+        //Assert
+        Assert.Equal(2, _testItemChangeFeedProcessor.InvocationCount);
+        Assert.Contains(_testItemChangeFeedProcessor.ChangedItems, x => x.Property == "propertyValue");
+    }
+
+    [Fact]
+    public async Task UpdateAsync_PatchUpdate_Add_InvokesChangeFeedProcessor()
+    {
+        //Arrange
+        TestItem item = new();
+
+        item = await _testItemRepository.CreateAsync(item);
+
+        //Act
+        await _testItemRepository.UpdateAsync(item.Id, builder => builder.Add(x => x.Items, ["Test123"]));
 
         //Assert
         Assert.Equal(2, _testItemChangeFeedProcessor.InvocationCount);

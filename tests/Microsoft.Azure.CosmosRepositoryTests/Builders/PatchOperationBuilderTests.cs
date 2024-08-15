@@ -1,124 +1,301 @@
-// Copyright (c) David Pine. All rights reserved.
+// Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
-namespace Microsoft.Azure.CosmosRepositoryTests.Builders;
-
-public class Item1 : Item
+namespace Microsoft.Azure.CosmosRepositoryTests.Builders
 {
-    [JsonProperty("thisIsTheName")]
-    public string TestProperty { get; set; } = null!;
-
-    public int TestIntProperty { get; set; }
-}
-
-public class RequiredItem : Item
-{
-    [Required]
-    public string TestProperty { get; set; } = null!;
-}
-
-public class RequiredAndJsonItem : Item
-{
-    [Required]
-    [JsonProperty("testProperty")]
-    public string TestProperty { get; set; } = null!;
-}
-
-public class PatchOperationBuilderTests
-{
-    [Fact]
-    public void ReplaceGivenPropertyValueWithJsonAttributeSetsCorrectReplaceValue()
+    public class Item1 : Item
     {
-        //Arrange
-        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+        [JsonProperty("thisIsTheName")]
+        public string TestProperty { get; set; } = null!;
 
-        //Act
-        builder.Replace(x => x.TestProperty, "100");
-
-        //Assert
-        PatchOperation operation = builder.PatchOperations[0];
-        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
-        Assert.Equal("/thisIsTheName", operation.Path);
+        public int TestIntProperty { get; set; }
     }
 
-    [Fact]
-    public void ReplaceGivenPropertyWithNoAttributesSetsCorrectPatchOperation()
+    public class RequiredItem : Item
     {
-        //Arrange
-        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
-
-        //Act
-        builder.Replace(x => x.TestIntProperty, 50);
-
-        //Assert
-        PatchOperation operation = builder.PatchOperations[0];
-        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
-        Assert.Equal("/testIntProperty", operation.Path);
+        [Required]
+        public string TestProperty { get; set; } = null!;
     }
 
-    [Fact]
-    public void ReplaceGivenPropertyWithRequiredAttributeSetsCorrectPatchOperation()
+    public class RequiredAndJsonItem : Item
     {
-        //Arrange
-        IPatchOperationBuilder<RequiredItem> builder = new PatchOperationBuilder<RequiredItem>();
-
-        //Act
-        builder.Replace(x => x.TestProperty, "Test Value");
-
-        //Assert
-        PatchOperation operation = builder.PatchOperations[0];
-        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
-        Assert.Equal("/testProperty", operation.Path);
+        [Required]
+        [JsonProperty("testProperty")]
+        public string TestProperty { get; set; } = null!;
     }
 
-    [Fact]
-    public void ReplaceGivenPropertyWithRequiredAndJsonAttributesSetsCorrectPatchOperation()
+    public class PatchOperationBuilderTests
     {
-        //Arrange
-        IPatchOperationBuilder<RequiredAndJsonItem> builder = new PatchOperationBuilder<RequiredAndJsonItem>();
-
-        //Act
-        builder.Replace(x => x.TestProperty, "Test Value");
-
-        //Assert
-        PatchOperation operation = builder.PatchOperations[0];
-        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
-        Assert.Equal("/testProperty", operation.Path);
-    }
-
-    [Theory]
-    [MemberData(nameof(GetTestCases))]
-    public void AcknowledgeRepositorySerializationSettingForRetrievingPatchOperation(CosmosPropertyNamingPolicy? propertyNamingPolicy,
-        string expectedPropertyName)
-    {
-        //Arrange
-        IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>(propertyNamingPolicy);
-
-        //Act
-        builder.Replace(x => x.TestIntProperty, 1234);
-
-        //Assert
-        PatchOperation operation = builder.PatchOperations[0];
-        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
-        Assert.Equal($"/{expectedPropertyName}", operation.Path);
-    }
-
-    public static IEnumerable<object?[]> GetTestCases()
-    {
-        yield return new object?[]
+        [Fact]
+        public void GetPropertyToReplaceGetsCorrectValueWithJsonAttribute()
         {
-            CosmosPropertyNamingPolicy.CamelCase,
-            new CamelCaseNamingStrategy().GetPropertyName(nameof(Item1.TestIntProperty), false)
-        };
-        yield return new object?[]
+            //Arrange
+            PatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+            Expression<Func<Item1, string>> expression = item => item.TestProperty;
+
+            //Act
+            string path = builder.GetPropertyToReplace(expression);
+
+            //Assert
+            Assert.Equal("thisIsTheName", path);
+        }
+
+        [Fact]
+        public void GetPropertyToReplaceGetsCorrectValueWithNoAttributes()
         {
-            CosmosPropertyNamingPolicy.Default,
-            new DefaultNamingStrategy().GetPropertyName(nameof(Item1.TestIntProperty), false)
-        };
-        yield return new object?[]
+            //Arrange
+            PatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+            Expression<Func<Item1, int>> expression = item => item.TestIntProperty;
+
+            //Act
+            string path = builder.GetPropertyToReplace(expression);
+
+            //Assert
+            Assert.Equal("testIntProperty", path);
+        }
+
+        [Fact]
+        public void GetPropertyToReplaceGetsCorrectValueWithRequiredAttribute()
         {
-            null,
-            new CamelCaseNamingStrategy().GetPropertyName(nameof(Item1.TestIntProperty), false)
-        };
+            //Arrange
+            PatchOperationBuilder<RequiredItem> builder = new PatchOperationBuilder<RequiredItem>();
+            Expression<Func<RequiredItem, string>> expression = item => item.TestProperty;
+
+            //Act
+            string path = builder.GetPropertyToReplace(expression);
+
+            //Assert
+            Assert.Equal("testProperty", path);
+        }
+
+        [Fact]
+        public void GetPropertyToReplaceGetsCorrectValueWithRequiredAndJsonAttribute()
+        {
+            //Arrange
+            PatchOperationBuilder<RequiredAndJsonItem> builder = new PatchOperationBuilder<RequiredAndJsonItem>();
+            Expression<Func<RequiredAndJsonItem, string>> expression = item => item.TestProperty;
+
+            //Act
+            string path = builder.GetPropertyToReplace(expression);
+
+            //Assert
+            Assert.Equal("testProperty", path);
+        }
+
+        [Fact]
+        public void ReplaceGivenExpressionSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Replace(x => x.TestProperty, "100");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void ReplaceGivenPathSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Replace("thisIsTheName", "100");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void SetGivenExpressionSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Set(x => x.TestProperty, "100");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Set, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void SetGivenPathSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Set("thisIsTheName", "100");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Set, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void AddGivenExpressionSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Add(x => x.TestProperty, "100");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Add, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void AddGivenPathSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Add("thisIsTheName", "100");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Add, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void RemoveGivenExpressionSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Remove(x => x.TestProperty);
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Remove, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void RemoveGivenPathSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Remove("thisIsTheName");
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Remove, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void IncrementDoubleGivenExpressionSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Increment(x => x.TestProperty, 100.123);
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void IncrementDoubleGivenPathSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Increment("thisIsTheName", 100.123);
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void IncrementLongGivenExpressionSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Increment(x => x.TestProperty, 123456789);
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Fact]
+        public void IncrementLongGivenPathSetsCorrectPatchOperation()
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>();
+
+            //Act
+            builder.Increment("thisIsTheName", 123456789);
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+            Assert.Equal("/thisIsTheName", operation.Path);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetTestCases))]
+        public void AcknowledgeRepositorySerializationSettingForRetrievingPatchOperation(CosmosPropertyNamingPolicy? propertyNamingPolicy,
+            string expectedPropertyName)
+        {
+            //Arrange
+            IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>(propertyNamingPolicy);
+
+            //Act
+            builder.Replace(x => x.TestIntProperty, 1234);
+
+            //Assert
+            PatchOperation operation = builder.PatchOperations[0];
+            Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+            Assert.Equal($"/{expectedPropertyName}", operation.Path);
+        }
+
+        public static IEnumerable<object?[]> GetTestCases()
+        {
+            yield return new object?[]
+            {
+                CosmosPropertyNamingPolicy.CamelCase,
+                new CamelCaseNamingStrategy().GetPropertyName(nameof(Item1.TestIntProperty), false)
+            };
+            yield return new object?[]
+            {
+                CosmosPropertyNamingPolicy.Default,
+                new DefaultNamingStrategy().GetPropertyName(nameof(Item1.TestIntProperty), false)
+            };
+            yield return new object?[]
+            {
+                null,
+                new CamelCaseNamingStrategy().GetPropertyName(nameof(Item1.TestIntProperty), false)
+            };
+        }
     }
 }
