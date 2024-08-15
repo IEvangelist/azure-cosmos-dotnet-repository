@@ -68,7 +68,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalRemove(propertyToReplace, propertyInfo);
+            return InternalRemove($"/{propertyToReplace}", propertyInfo);
         }
 
         public IPatchOperationBuilder<TItem> Remove(string path)
@@ -82,14 +82,14 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalIncrement(propertyToReplace, propertyInfo, value);
+            return InternalIncrement($"/{propertyToReplace}", propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, long value)
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalIncrement(propertyToReplace, propertyInfo, value);
+            return InternalIncrement($"/{propertyToReplace}", propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment(string path, long value)

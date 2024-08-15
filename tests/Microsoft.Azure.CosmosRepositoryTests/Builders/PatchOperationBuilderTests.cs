@@ -95,12 +95,17 @@ public class PatchOperationBuilderTests
         IPatchOperationBuilder<Item1> builder = new PatchOperationBuilder<Item1>(propertyNamingPolicy);
 
         //Act
-        builder.Replace(x => x.TestIntProperty, 1234);
+        builder.Add(x => x.TestIntProperty, 1);
+        builder.Set(x => x.TestIntProperty, 2);
+        builder.Replace(x => x.TestIntProperty, 3);
+        builder.Increment(x => x.TestIntProperty, 1);
+        builder.Remove(x => x.TestIntProperty);
 
         //Assert
-        PatchOperation operation = builder.PatchOperations[0];
-        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
-        Assert.Equal($"/{expectedPropertyName}", operation.Path);
+        var paths = builder.PatchOperations.Select(x => x.Path);
+
+        // Check that all paths are equal to the expected value
+        Assert.All(paths, path => Assert.Equal($"/{expectedPropertyName}", path));
     }
 
     public static IEnumerable<object?[]> GetTestCases()
