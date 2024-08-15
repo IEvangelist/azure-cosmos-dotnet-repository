@@ -1,6 +1,7 @@
 // Copyright (c) IEvangelist. All rights reserved.
 // Licensed under the MIT License.
 
+using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -29,56 +30,38 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-
-            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfo, value, PatchOperationType.Replace));
-            return Replace(propertyToReplace, value);
+            return InternalReplace($"/{propertyToReplace}", propertyInfo, value);
         }
         public IPatchOperationBuilder<TItem> Replace<TValue>(string path, TValue value)
         {
-            _patchOperations.Add(PatchOperation.Replace($"/{path}", value));
-            return this;
+            var propertyInfo = GetPropertyInfoToReplace(path);
+            return InternalReplace(path, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalSet(propertyToReplace, propertyInfo, value);
+            return InternalSet($"/{propertyToReplace}", propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(string path, TValue? value)
         {
             var propertyInfo = GetPropertyInfoToReplace(path);
-            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfo, value, PatchOperationType.Set));
-            _patchOperations.Add(PatchOperation.Set($"/{path}", value));
-            return this;
-        }
-
-        private IPatchOperationBuilder<TItem> InternalSet<TValue>(string path, PropertyInfo property, TValue? value)
-        {
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Set));
-            _patchOperations.Add(PatchOperation.Set($"/{path}", value));
-            return this;
+            return InternalSet(path, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Add<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
             var propertyInfo = expression.GetPropertyInfo();
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalAdd(propertyToReplace, propertyInfo, value);
+            return InternalAdd($"/{propertyToReplace}", propertyInfo, value);
         }
         public IPatchOperationBuilder<TItem> Add<TValue>(string path, TValue? value)
         {
             var propertyInfo = GetPropertyInfoToReplace(path);
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
             return InternalAdd(propertyToReplace, propertyInfo, value);
-        }
-
-        public IPatchOperationBuilder<TItem> InternalAdd<TValue>(string path, PropertyInfo property, TValue? value)
-        {
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Add));
-            _patchOperations.Add(PatchOperation.Add($"/{path}", value));
-            return this;
         }
 
         public IPatchOperationBuilder<TItem> Remove<TValue>(Expression<Func<TItem, TValue>> expression)
@@ -93,27 +76,6 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             var propertyInfo = GetPropertyInfoToReplace(path);
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
             return InternalRemove(propertyToReplace, propertyInfo);
-        }
-
-        public IPatchOperationBuilder<TItem> InternalRemove(string path, PropertyInfo property)
-        {
-            _rawPatchOperations.Add(new InternalPatchOperation(property, null, PatchOperationType.Remove));
-            _patchOperations.Add(PatchOperation.Remove($"/{path}"));
-            return this;
-        }
-
-        public IPatchOperationBuilder<TItem> InternalIncrement(string path, PropertyInfo property, long value)
-        {
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment));
-            _patchOperations.Add(PatchOperation.Increment($"/{path}", value));
-            return this;
-        }
-
-        public IPatchOperationBuilder<TItem> InternalIncrement(string path, PropertyInfo property, double value)
-        {
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment));
-            _patchOperations.Add(PatchOperation.Increment($"/{path}", value));
-            return this;
         }
 
         public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, double value)
@@ -142,6 +104,48 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             var propertyInfo = GetPropertyInfoToReplace(path);
             var propertyToReplace = GetPropertyToReplace(propertyInfo);
             return InternalIncrement(propertyToReplace, propertyInfo, value);
+        }
+
+        public IPatchOperationBuilder<TItem> InternalReplace<TValue>(string path, PropertyInfo property, TValue? value)
+        {
+            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Replace));
+            _patchOperations.Add(PatchOperation.Replace($"{path}", value));
+            return this;
+        }
+
+        private IPatchOperationBuilder<TItem> InternalSet<TValue>(string path, PropertyInfo property, TValue? value)
+        {
+            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Set));
+            _patchOperations.Add(PatchOperation.Set(path, value));
+            return this;
+        }
+
+        public IPatchOperationBuilder<TItem> InternalIncrement(string path, PropertyInfo property, long value)
+        {
+            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment));
+            _patchOperations.Add(PatchOperation.Increment(path, value));
+            return this;
+        }
+
+        public IPatchOperationBuilder<TItem> InternalIncrement(string path, PropertyInfo property, double value)
+        {
+            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment));
+            _patchOperations.Add(PatchOperation.Increment(path, value));
+            return this;
+        }
+
+        public IPatchOperationBuilder<TItem> InternalAdd<TValue>(string path, PropertyInfo property, TValue? value)
+        {
+            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Add));
+            _patchOperations.Add(PatchOperation.Add(path, value));
+            return this;
+        }
+
+        public IPatchOperationBuilder<TItem> InternalRemove(string path, PropertyInfo property)
+        {
+            _rawPatchOperations.Add(new InternalPatchOperation(property, null, PatchOperationType.Remove));
+            _patchOperations.Add(PatchOperation.Remove(path));
+            return this;
         }
 
         /// <summary>
