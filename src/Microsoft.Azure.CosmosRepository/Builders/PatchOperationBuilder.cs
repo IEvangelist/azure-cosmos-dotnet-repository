@@ -4,6 +4,7 @@
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 [assembly: InternalsVisibleTo("Microsoft.Azure.CosmosRepositoryTests")]
 namespace Microsoft.Azure.CosmosRepository.Builders
@@ -27,148 +28,171 @@ namespace Microsoft.Azure.CosmosRepository.Builders
                 ? new DefaultNamingStrategy()
                 : new CamelCaseNamingStrategy();
 
-        //public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
-        //{
-        //    var propertyInfo = expression.GetPropertyInfo();
-        //    var propertyInfos = expression.GetPropertyInfos();
-        //    var path = GetPath(expression);
-        //    return InternalReplace(path, propertyInfo, value);
-        //}
-
         public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
-            IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
-            var propertyToReplace = GetPropertyToReplace(propertyInfos);
-
-            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Replace));
-            _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
-
-            return this;
+            return InternalReplace(expression, value);
         }
 
         public IPatchOperationBuilder<TItem> Replace<TValue>(string path, TValue value)
         {
-            var propertyInfo = GetPropertyInfoToReplace(path);
-
-            return InternalReplace(path, propertyInfo, value);
+            var propertyInfos = GetPropertyInfos(path);
+            return InternalReplace(propertyInfos, value, path);
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
-            var propertyInfo = expression.GetPropertyInfo();
-            var path = GetPath(expression);
-            return InternalSet(path, propertyInfo, value);
+            return InternalSet(expression, value);
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(string path, TValue? value)
         {
-            var propertyInfo = GetPropertyInfoToReplace(path);
-            return InternalSet(path, propertyInfo, value);
+            var propertyInfos = GetPropertyInfos(path);
+            return InternalSet(propertyInfos, value, path);
         }
 
         public IPatchOperationBuilder<TItem> Add<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
-            var propertyInfo = expression.GetPropertyInfo();
-            var path = GetPath(expression);
-            return InternalAdd(path, propertyInfo, value);
+            return InternalAdd(expression, value);
         }
         public IPatchOperationBuilder<TItem> Add<TValue>(string path, TValue? value)
         {
-            var propertyInfo = GetPropertyInfoToReplace(path);
-            return InternalAdd(path, propertyInfo, value);
+            var propertyInfos = GetPropertyInfos(path);
+            return InternalAdd(propertyInfos, value, path);
         }
 
         public IPatchOperationBuilder<TItem> Remove<TValue>(Expression<Func<TItem, TValue>> expression)
         {
-            var propertyInfo = expression.GetPropertyInfo();
-            var path = GetPath(expression);
-            return InternalRemove(path, propertyInfo);
+            return InternalRemove(expression);
         }
 
         public IPatchOperationBuilder<TItem> Remove(string path)
         {
-            var propertyInfo = GetPropertyInfoToReplace(path);
-            return InternalRemove(path, propertyInfo);
+            var propertyInfos = GetPropertyInfos(path);
+            return InternalRemove(propertyInfos, path);
         }
 
         public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, double value)
         {
-            var propertyInfo = expression.GetPropertyInfo();
-            var path = GetPath(expression);
-            return InternalIncrement(path, propertyInfo, value);
+            return InternalIncrement(expression, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, long value)
         {
-            var propertyInfo = expression.GetPropertyInfo();
-            var path = GetPath(expression);
-            return InternalIncrement(path, propertyInfo, value);
+            return InternalIncrement(expression, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment(string path, long value)
         {
-            var propertyInfo = GetPropertyInfoToReplace(path);
-            return InternalIncrement(path, propertyInfo, value);
+            var propertyInfos = GetPropertyInfos(path);
+            return InternalIncrement(propertyInfos, value, path);
         }
 
         public IPatchOperationBuilder<TItem> Increment(string path, double value)
         {
-            var propertyInfo = GetPropertyInfoToReplace(path);
-            var propertyToReplace = GetPropertyName(propertyInfo);
-            return InternalIncrement(propertyToReplace, propertyInfo, value);
+            var propertyInfos = GetPropertyInfos(path);
+            return InternalIncrement(propertyInfos, value, path);
         }
 
-        internal IPatchOperationBuilder<TItem> InternalReplace<TValue>(string path, PropertyInfo property, TValue? value)
+        internal IPatchOperationBuilder<TItem> InternalReplace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
-            path = NormalizePathPrefix(path);
+            IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+            return InternalReplace(propertyInfos, value);
+        }
+
+        internal IPatchOperationBuilder<TItem> InternalReplace<TValue>(IReadOnlyList<PropertyInfo> propertyInfos, TValue? value, string? path = null)
+        {
+            path = path ?? GetPropertyPath(propertyInfos);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Replace, index));
+
+            path = NormalizePathPrefix(path);
+            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Replace, index));
             _patchOperations.Add(PatchOperation.Replace(path, value));
             return this;
         }
 
-        internal IPatchOperationBuilder<TItem> InternalSet<TValue>(string path, PropertyInfo property, TValue? value)
+        internal IPatchOperationBuilder<TItem> InternalSet<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value, string? path = null)
         {
-            path = NormalizePathPrefix(path);
+            IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+            return InternalSet(propertyInfos, value, path);
+        }
+
+        internal IPatchOperationBuilder<TItem> InternalSet<TValue>(IReadOnlyList<PropertyInfo> propertyInfos, TValue? value, string? path = null)
+        {
+            path = path ?? GetPropertyPath(propertyInfos);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Set, index));
+
+            path = NormalizePathPrefix(path);
+            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Set, index));
             _patchOperations.Add(PatchOperation.Set(path, value));
             return this;
         }
 
-        internal IPatchOperationBuilder<TItem> InternalIncrement(string path, PropertyInfo property, long value)
+        internal IPatchOperationBuilder<TItem> InternalIncrement<TValue>(Expression<Func<TItem, TValue>> expression, long value, string? path = null)
         {
-            path = NormalizePathPrefix(path);
+            IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+            return InternalIncrement(propertyInfos, value, path);
+        }
+
+        internal IPatchOperationBuilder<TItem> InternalIncrement(IReadOnlyList<PropertyInfo> propertyInfos, long value, string? path = null)
+        {
+            path = path ?? GetPropertyPath(propertyInfos);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Increment, index));
+
+            path = NormalizePathPrefix(path);
+            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Increment, index));
             _patchOperations.Add(PatchOperation.Increment(path, value));
             return this;
         }
 
-        internal IPatchOperationBuilder<TItem> InternalIncrement(string path, PropertyInfo property, double value)
+        internal IPatchOperationBuilder<TItem> InternalIncrement<TValue>(Expression<Func<TItem, TValue>> expression, double value, string? path = null)
         {
-            path = NormalizePathPrefix(path);
+            IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+            return InternalIncrement(propertyInfos, value, path);
+        }
+
+        internal IPatchOperationBuilder<TItem> InternalIncrement(IReadOnlyList<PropertyInfo> propertyInfos, double value, string? path = null)
+        {
+            path = path ?? GetPropertyPath(propertyInfos);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Increment, index));
+
+            path = NormalizePathPrefix(path);
+            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Increment, index));
             _patchOperations.Add(PatchOperation.Increment(path, value));
             return this;
         }
 
-        internal IPatchOperationBuilder<TItem> InternalAdd<TValue>(string path, PropertyInfo property, TValue? value)
+        internal IPatchOperationBuilder<TItem> InternalAdd<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value, string? path = null)
         {
+            IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+            return InternalAdd(propertyInfos, value, path);
+        }
+
+        internal IPatchOperationBuilder<TItem> InternalAdd<TValue>(IReadOnlyList<PropertyInfo> propertyInfos, TValue? value, string? path = null)
+        {
+            path = path ?? GetPropertyPath(propertyInfos);
+            var index = ExtractIndexFromPath(path);
+
             path = NormalizePathPrefix(path);
             path = NormalizePathSuffix(path, "/-");
-            var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Add, index));
+
+            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Add, index));
             _patchOperations.Add(PatchOperation.Add(path, value));
             return this;
         }
 
-        internal IPatchOperationBuilder<TItem> InternalRemove(string path, PropertyInfo property)
+        internal IPatchOperationBuilder<TItem> InternalRemove<TValue>(Expression<Func<TItem, TValue>> expression, string? path = null)
         {
+            IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+            return InternalRemove(propertyInfos, path);
+        }
+
+        internal IPatchOperationBuilder<TItem> InternalRemove(IReadOnlyList<PropertyInfo> propertyInfos, string? path = null)
+        {
+            path = path ?? GetPropertyPath(propertyInfos);
+
             path = NormalizePathPrefix(path);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation([property], null, PatchOperationType.Remove, index));
+            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, null, PatchOperationType.Remove, index));
             _patchOperations.Add(PatchOperation.Remove(path));
             return this;
         }
@@ -220,7 +244,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
                 : attributes[0].PropertyName;
         }
 
-        private string GetPropertyToReplace(IEnumerable<MemberInfo> propertyInfos)
+        private string GetPropertyPath(IEnumerable<MemberInfo> propertyInfos)
         {
             List<string> propertiesNames = [];
 
@@ -239,9 +263,8 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             return string.Join("/", propertiesNames);
         }
 
-        private string GetPropertyToReplace(MemberInfo propertyInfo) =>
-            GetPropertyToReplace([propertyInfo]);
-
+        private string GetPropertyPath(MemberInfo propertyInfo) =>
+            GetPropertyPath([propertyInfo]);
 
         public string GetPath<TValue>(Expression<Func<TItem, TValue>> expr)
         {
@@ -253,19 +276,6 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             {
                 if (expression is MemberExpression memberExpression)
                 {
-                    var memberInfo = memberExpression.Member as PropertyInfo;
-
-                    if (memberInfo != null)
-                    {
-                        var jsonPropertyAttribute = memberInfo.GetCustomAttribute<JsonPropertyAttribute>(true);
-
-                        var propertyName = jsonPropertyAttribute != null
-                            ? jsonPropertyAttribute.PropertyName
-                            : _namingStrategy.GetPropertyName(memberInfo.Name, false);
-
-                        stack.Push(propertyName);
-                    }
-
                     expression = memberExpression.Expression;
                 }
                 else if (expression.NodeType == ExpressionType.ArrayIndex)
@@ -311,27 +321,26 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         }
 
         /// <summary>
-        /// Get the property name to replace. This only works for a single level of nesting.
+        /// Get the property name to replace.
         /// </summary>
         /// <remarks>If you're looking for nesting call the respective method with a given path instead.</remarks>
         /// <param name="path">The path to get the property.</param>
         /// <returns>Returns the path of the property name.</returns>
-        internal PropertyInfo GetPropertyInfoToReplace(string path)
+        internal IReadOnlyList<PropertyInfo> GetPropertyInfos(string path)
         {
             Type itemType = typeof(TItem);
 
-            PropertyInfo property = GetNestedPropertyInfo(itemType, path) ?? throw new InvalidOperationException($"The property {path} does not exist on {itemType.Name}");
-
-            return property;
+            return GetNestedPropertyInfos(itemType, path);
         }
 
-        private PropertyInfo? GetNestedPropertyInfo(Type type, string path)
+        private IReadOnlyList<PropertyInfo> GetNestedPropertyInfos(Type type, string path)
         {
             // Split the path by '/' to get the individual property names
             string[] properties = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             Type currentType = type;
-            PropertyInfo? propertyInfo = null;
+            List<PropertyInfo> propertyInfos = [];
+            PropertyInfo? currentPropertyInfo;
 
             // Iterate through each property in the path
             foreach (string propertyNameOrJsonProperty in properties)
@@ -344,20 +353,22 @@ namespace Microsoft.Azure.CosmosRepository.Builders
                 }
 
                 // Search for the property prioritizing JsonPropertyAttribute
-                propertyInfo = FindProperty(currentType, propertyNameOrJsonProperty);
+                currentPropertyInfo = FindProperty(currentType, propertyNameOrJsonProperty);
 
                 // If no matching property is found, return null
-                if (propertyInfo == null)
+                if (currentPropertyInfo == null)
                 {
-                    return null;
+                    throw new InvalidOperationException($"The property {path} does not exist on {type.Name}");
                 }
 
                 // Move to the next level of nesting
-                currentType = propertyInfo.PropertyType;
+                currentType = currentPropertyInfo.PropertyType;
+                propertyInfos.Add(currentPropertyInfo);
+
             }
 
             // Return the final PropertyInfo
-            return propertyInfo;
+            return propertyInfos;
         }
 
         private PropertyInfo? FindProperty(Type type, string propertyNameOrJsonProperty)

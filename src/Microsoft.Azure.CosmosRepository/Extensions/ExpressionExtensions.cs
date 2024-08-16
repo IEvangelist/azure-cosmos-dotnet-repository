@@ -40,46 +40,46 @@ internal static class ExpressionExtensions
         Expression<Func<T, bool>> second) => first.Compose(second, Expression.Or);
 
 
-    internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
-    {
-        //var propertyInfos = GetPropertyInfosInternal(propertyLambda);
+    //internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
+    //{
+    //    //var propertyInfos = GetPropertyInfosInternal(propertyLambda);
 
-        //PropertyInfo propInfo = propertyInfos[propertyInfos.Count - 1];
+    //    //PropertyInfo propInfo = propertyInfos[propertyInfos.Count - 1];
 
-        //ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
+    //    //ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
       
-        //Intermediate Step Our Code
-          // Check if the body is a MemberExpression
-          if (propertyLambda.Body is MemberExpression memberExpression)
-          {
-              // Check if the MemberExpression refers to a Property
-              if (memberExpression.Member is PropertyInfo propInfo)
-              {
-                  return propInfo;
-              }
-              else
-              {
-                  throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
-              }
-          }
+    //    //Intermediate Step Our Code
+    //      // Check if the body is a MemberExpression
+    //      if (propertyLambda.Body is MemberExpression memberExpression)
+    //      {
+    //          // Check if the MemberExpression refers to a Property
+    //          if (memberExpression.Member is PropertyInfo propInfo)
+    //          {
+    //              return propInfo;
+    //          }
+    //          else
+    //          {
+    //              throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+    //          }
+    //      }
 
-          if (propertyLambda.Body.NodeType == ExpressionType.ArrayIndex && propertyLambda.Body is BinaryExpression binaryExpression && binaryExpression.Left is MemberExpression binaryMemberExpression)
-          {
-              // Check if the MemberExpression refers to a Property
-              if (binaryMemberExpression.Member is PropertyInfo propInfo)
-              {
-                  return propInfo;
-              }
-              else
-              {
-                  throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
-              }
-          }
-          // Handle unexpected cases
-          throw new ArgumentException($"Expression '{propertyLambda}' is not a valid property expression.");
+    //      if (propertyLambda.Body.NodeType == ExpressionType.ArrayIndex && propertyLambda.Body is BinaryExpression binaryExpression && binaryExpression.Left is MemberExpression binaryMemberExpression)
+    //      {
+    //          // Check if the MemberExpression refers to a Property
+    //          if (binaryMemberExpression.Member is PropertyInfo propInfo)
+    //          {
+    //              return propInfo;
+    //          }
+    //          else
+    //          {
+    //              throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+    //          }
+    //      }
+    //      // Handle unexpected cases
+    //      throw new ArgumentException($"Expression '{propertyLambda}' is not a valid property expression.");
 
-        // return propInfo;
-    }
+    //    // return propInfo;
+    //}
 
     internal static IReadOnlyList<PropertyInfo> GetPropertyInfos<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
     {
