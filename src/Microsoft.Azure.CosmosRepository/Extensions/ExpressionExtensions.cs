@@ -42,11 +42,11 @@ internal static class ExpressionExtensions
 
     internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
     {
-        var propertyInfos = GetPropertyInfosInternal(propertyLambda);
+        //var propertyInfos = GetPropertyInfosInternal(propertyLambda);
 
-        PropertyInfo propInfo = propertyInfos[propertyInfos.Count - 1];
+        //PropertyInfo propInfo = propertyInfos[propertyInfos.Count - 1];
 
-        ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
+        //ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
       
         //Intermediate Step Our Code
           // Check if the body is a MemberExpression
@@ -78,7 +78,7 @@ internal static class ExpressionExtensions
           // Handle unexpected cases
           throw new ArgumentException($"Expression '{propertyLambda}' is not a valid property expression.");
 
-        return propInfo;
+        // return propInfo;
     }
 
     internal static IReadOnlyList<PropertyInfo> GetPropertyInfos<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)

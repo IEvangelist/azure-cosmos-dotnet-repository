@@ -8,44 +8,44 @@ using System.Reflection;
 [assembly: InternalsVisibleTo("Microsoft.Azure.CosmosRepositoryTests")]
 namespace Microsoft.Azure.CosmosRepository.Builders
 {
-    private readonly List<PatchOperation> _patchOperations = [];
-    private readonly NamingStrategy _namingStrategy;
 
-    internal readonly List<InternalPatchOperation> _rawPatchOperations = [];
-  
+
     internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> where TItem : IItem
     {
-        private readonly List<PatchOperation> _patchOperations = new();
+        private readonly List<PatchOperation> _patchOperations = [];
         private readonly NamingStrategy _namingStrategy;
 
-        internal readonly List<InternalPatchOperation> _rawPatchOperations = new();
+        internal readonly List<InternalPatchOperation> _rawPatchOperations = [];
 
         public IReadOnlyList<PatchOperation> PatchOperations => _patchOperations;
 
+
         public PatchOperationBuilder() =>
             _namingStrategy = new CamelCaseNamingStrategy();
-
-    public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
-    {
-        IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
-        var propertyToReplace = GetPropertyToReplace(propertyInfos);
-
-        _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Replace));
-        _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
-
-        return this;
-    }
-    public PatchOperationBuilder(CosmosPropertyNamingPolicy? cosmosPropertyNamingPolicy) =>
+        public PatchOperationBuilder(CosmosPropertyNamingPolicy? cosmosPropertyNamingPolicy) =>
             _namingStrategy = cosmosPropertyNamingPolicy == CosmosPropertyNamingPolicy.Default
                 ? new DefaultNamingStrategy()
                 : new CamelCaseNamingStrategy();
 
+        //public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
+        //{
+        //    var propertyInfo = expression.GetPropertyInfo();
+        //    var propertyInfos = expression.GetPropertyInfos();
+        //    var path = GetPath(expression);
+        //    return InternalReplace(path, propertyInfo, value);
+        //}
+
         public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
-            var propertyInfo = expression.GetPropertyInfo();
-            var path = GetPath(expression);
-            return InternalReplace(path, propertyInfo, value);
+            IReadOnlyList<PropertyInfo> propertyInfos = expression.GetPropertyInfos();
+            var propertyToReplace = GetPropertyToReplace(propertyInfos);
+
+            _rawPatchOperations.Add(new InternalPatchOperation(propertyInfos, value, PatchOperationType.Replace));
+            _patchOperations.Add(PatchOperation.Replace($"/{propertyToReplace}", value));
+
+            return this;
         }
+
         public IPatchOperationBuilder<TItem> Replace<TValue>(string path, TValue value)
         {
             var propertyInfo = GetPropertyInfoToReplace(path);
@@ -122,7 +122,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePathPrefix(path);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Replace, index));
+            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Replace, index));
             _patchOperations.Add(PatchOperation.Replace(path, value));
             return this;
         }
@@ -131,7 +131,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePathPrefix(path);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Set, index));
+            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Set, index));
             _patchOperations.Add(PatchOperation.Set(path, value));
             return this;
         }
@@ -140,7 +140,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePathPrefix(path);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment, index));
+            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Increment, index));
             _patchOperations.Add(PatchOperation.Increment(path, value));
             return this;
         }
@@ -149,7 +149,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePathPrefix(path);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment, index));
+            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Increment, index));
             _patchOperations.Add(PatchOperation.Increment(path, value));
             return this;
         }
@@ -159,7 +159,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             path = NormalizePathPrefix(path);
             path = NormalizePathSuffix(path, "/-");
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Add, index));
+            _rawPatchOperations.Add(new InternalPatchOperation([property], value, PatchOperationType.Add, index));
             _patchOperations.Add(PatchOperation.Add(path, value));
             return this;
         }
@@ -168,7 +168,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePathPrefix(path);
             var index = ExtractIndexFromPath(path);
-            _rawPatchOperations.Add(new InternalPatchOperation(property, null, PatchOperationType.Remove, index));
+            _rawPatchOperations.Add(new InternalPatchOperation([property], null, PatchOperationType.Remove, index));
             _patchOperations.Add(PatchOperation.Remove(path));
             return this;
         }
@@ -219,28 +219,28 @@ namespace Microsoft.Azure.CosmosRepository.Builders
                 ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
                 : attributes[0].PropertyName;
         }
-        
-         private string GetPropertyToReplace(IEnumerable<MemberInfo> propertyInfos)
-    {
-        List<string> propertiesNames = [];
 
-        foreach (PropertyInfo propertyInfo in propertyInfos)
+        private string GetPropertyToReplace(IEnumerable<MemberInfo> propertyInfos)
         {
-            JsonPropertyAttribute[] attributes =
-                propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
+            List<string> propertiesNames = [];
 
-            var propertyName = attributes.Length is 0
-                ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
-                : attributes[0].PropertyName;
+            foreach (PropertyInfo propertyInfo in propertyInfos)
+            {
+                JsonPropertyAttribute[] attributes =
+                    propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
 
-            propertiesNames.Add(propertyName);
+                var propertyName = attributes.Length is 0
+                    ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
+                    : attributes[0].PropertyName;
+
+                propertiesNames.Add(propertyName);
+            }
+
+            return string.Join("/", propertiesNames);
         }
 
-        return string.Join("/", propertiesNames);
-    }
-
-    private string GetPropertyToReplace(MemberInfo propertyInfo) =>
-        GetPropertyToReplace([propertyInfo]);
+        private string GetPropertyToReplace(MemberInfo propertyInfo) =>
+            GetPropertyToReplace([propertyInfo]);
 
 
         public string GetPath<TValue>(Expression<Func<TItem, TValue>> expr)
@@ -336,9 +336,10 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             // Iterate through each property in the path
             foreach (string propertyNameOrJsonProperty in properties)
             {
-  
+
                 //Checking if is a position in an array
-                if (int.TryParse(propertyNameOrJsonProperty, out int pos) || propertyNameOrJsonProperty.EndsWith("-")) {
+                if (int.TryParse(propertyNameOrJsonProperty, out int pos) || propertyNameOrJsonProperty.EndsWith("-"))
+                {
                     continue;
                 }
 
