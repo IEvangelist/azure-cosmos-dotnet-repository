@@ -7,19 +7,13 @@ using Microsoft.Azure.CosmosRepository.Specification;
 
 namespace Specification;
 
-public class SpecificationPagingSamples
+public class SpecificationPagingSamples(IRepository<Person> repository)
 {
-    private readonly IRepository<Person> _repository;
-
-    public SpecificationPagingSamples(IRepository<Person> repository)
-    {
-        _repository = repository;
-    }
     public async Task BasicPageAsync()
     {
         double totalCharge = 0;
         OffsetByPageNumberSpecification<Person> specification = new(1, 25);
-        IPageQueryResult<Person> page = await _repository.QueryAsync(specification);
+        IPageQueryResult<Person> page = await repository.QueryAsync(specification);
         while (page.HasNextPage is not null && page.HasNextPage.Value)
         {
             foreach (Person person in page.Items)
@@ -28,7 +22,7 @@ public class SpecificationPagingSamples
             }
             totalCharge += page.Charge;
             specification.NextPage();
-            page = await _repository.QueryAsync(specification);
+            page = await repository.QueryAsync(specification);
             Console.WriteLine($"Get page {page.PageNumber} 25 results cost {page.Charge}");
         }
         Console.WriteLine($"Total Charge {totalCharge} RU's");
@@ -40,7 +34,7 @@ public class SpecificationPagingSamples
         double totalCharge = 0;
 
         ContinuationTokenSpecification<Person> specification = new(null, pageSize: 25);
-        IPage<Person> page = await _repository.QueryAsync(specification);
+        IPage<Person> page = await repository.QueryAsync(specification);
         specification.UpdateContinuationToken(page.Continuation);
         var totalItems = 0;
         while (totalItems < page.Total)
@@ -53,7 +47,7 @@ public class SpecificationPagingSamples
             totalCharge += page.Charge;
             Console.WriteLine($"First 25 results cost {page.Charge}");
             specification.UpdateContinuationToken(page.Continuation);
-            page = await _repository.QueryAsync(specification);
+            page = await repository.QueryAsync(specification);
         }
 
         Console.WriteLine($"Last 50 results cost {page.Charge}");

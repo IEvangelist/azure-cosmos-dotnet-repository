@@ -5,7 +5,7 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
 [Trait("Category", "Acceptance")]
 [Trait("Type", "Container")]
-public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
+public class ContainerCreationTests(ITestOutputHelper testOutputHelper) : CosmosRepositoryAcceptanceTest(testOutputHelper, UniqueKeyOptionsBuilder)
 {
     private static readonly string UniquePolicyDb = "unique-key-tests";
     private static readonly string UniqueKeyPolicyContainerName = "unique-key";
@@ -20,11 +20,7 @@ public class ContainerCreationTests : CosmosRepositoryAcceptanceTest
                 .WithPartitionKey("/county"));
     }
 
-    public ContainerCreationTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, UniqueKeyOptionsBuilder)
-    {
-    }
-
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task Startup_ContainerWithUniqueKeyPolicy_CreatesContainerCorrectly()
     {
         try

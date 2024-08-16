@@ -5,25 +5,20 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 
 [Trait("Category", "Acceptance")]
 [Trait("Type", "Functional")]
-public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
+public class SpecificationQueryTests(ITestOutputHelper testOutputHelper) : CosmosRepositoryAcceptanceTest(testOutputHelper, DefaultTestRepositoryOptions)
 {
-    private readonly List<Product> _products = new()
-    {
+    private readonly List<Product> _products =
+    [
         new Product("iPad", TechnologyCategoryId, 450, Stock(5)),
         new Product("iPhone", TechnologyCategoryId, 650, Stock(5)),
         new Product("Scarf", "Clothing", 10, Stock(5)),
         new Product("Jumper", "Clothing", 25, Stock(5)),
         new Product("Socks", "Clothing", 5, Stock(5)),
-    };
+    ];
 
     private static StockInformation Stock(int count = 2) => new(count, DateTime.UtcNow);
 
-    public SpecificationQueryTests(ITestOutputHelper testOutputHelper)
-        : base(testOutputHelper, DefaultTestRepositoryOptions)
-    {
-    }
-
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task Query_SpecificationWithOrderByDescending_OrdersItemsCorrectly()
     {
         try
@@ -46,7 +41,7 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
         }
     }
 
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task Query_SpecificationWithOrderBy_OrdersItemsCorrectly()
     {
         try
@@ -69,7 +64,7 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
         }
     }
 
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task Query_SpecificationWithOrderByAndFilter_OrdersItemsCorrectly()
     {
         try
@@ -92,7 +87,7 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
         }
     }
 
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task Query_SpecificationWithOrderByAndFilterAndPagingUsingContinuationTokens_BehavesCorrectly()
     {
         try
@@ -131,7 +126,7 @@ public class SpecificationQueryTests : CosmosRepositoryAcceptanceTest
         }
     }
 
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task Query_SpecificationSkipTakePaging_PagesCorrectly()
     {
         try

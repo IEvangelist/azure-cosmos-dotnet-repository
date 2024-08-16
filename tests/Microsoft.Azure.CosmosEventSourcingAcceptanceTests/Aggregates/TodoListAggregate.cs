@@ -12,7 +12,7 @@ namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests.Aggregates;
 
 public class TodoListAggregate : AggregateRoot
 {
-    private readonly List<TodoItem> _items = new();
+    private readonly List<TodoItem> _items = [];
 
     public IReadOnlyList<TodoItem> Items => _items;
 

@@ -25,28 +25,38 @@ await SeedAsync();
 SpecificationPagingSamples pagingExamples = new(repository);
 
 Console.WriteLine("Specification paging");
+
 await pagingExamples.BasicPageAsync();
+
 Console.WriteLine("Specification continuation token");
+
 await pagingExamples.BasicScrollingAsync();
 
 SpecificationOrderSamples orderSamples = new(repository);
 
 Console.WriteLine("Simple ordering");
+
 await orderSamples.BasicOrderAsync();
+
 Console.WriteLine("Multiple fields ordering");
+
 //This requires a composite index with name desc then age to work
 await orderSamples.MultipleOrderByAsync();
 
 SpecificationFilterSamples filterSamples = new(repository);
+
 Console.WriteLine("Simple filtering");
+
 await filterSamples.FilterSamples();
 
 FullSpecificationSamples fullSpecificationSamples = new(repository);
 
 Console.WriteLine("Continuation Token with query sample");
+
 await fullSpecificationSamples.FullContinuationTokenSpecificationAsync(10);
 
 Console.WriteLine("Offset by page number query sample");
+
 await fullSpecificationSamples.FullPageNumberSpecificationAsync(10);
 
 async Task SeedAsync()

@@ -298,6 +298,52 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "joelsteventurner",
+      "name": "Joel Turner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11704606?v=4",
+      "profile": "https://github.com/joelsteventurner",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "r0ss88",
+      "name": "Ross",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35737434?v=4",
+      "profile": "https://github.com/r0ss88",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "mrfootoyou",
+      "name": "John Belcher",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4042025?v=4",
+      "profile": "https://github.com/mrfootoyou",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "victormarante",
+      "name": "Victor Marante",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41802977?v=4",
+      "profile": "https://github.com/victormarante",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mateuszkumpf",
+      "name": "Mateusz Kumpf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24723556?v=4",
+      "profile": "https://github.com/mateuszkumpf",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

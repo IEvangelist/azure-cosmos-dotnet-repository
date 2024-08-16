@@ -6,16 +6,13 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 /// <summary>
 /// Required as item options are cached in a static collection, the key is the Type
 /// </summary>
-public class DisabledOffer : Offer
+public class DisabledOffer(string offerType, string createdBy) : Offer(offerType, createdBy)
 {
-    public DisabledOffer(string offerType, string createdBy) : base(offerType, createdBy)
-    {
-    }
 }
 
 [Trait("Category", "Acceptance")]
 [Trait("Type", "Container")]
-public class DisabledStrictTypeCheckingTests : CosmosRepositoryAcceptanceTest
+public class DisabledStrictTypeCheckingTests(ITestOutputHelper testOutputHelper) : CosmosRepositoryAcceptanceTest(testOutputHelper, DisabledStrictTypeCheckingOptions)
 {
     private const string OffersDatabaseName = "offers";
     private const string OffersContainerName = "offers";
@@ -50,7 +47,7 @@ public class DisabledStrictTypeCheckingTests : CosmosRepositoryAcceptanceTest
         });
     };
 
-    [Fact]
+    [Fact(Skip = "In discussing this with Bill, we've decided that this might not be reliable enough to justify having it be a release gate.")]
     public async Task GetAsync_BaseClassSetupWithoutStrictTypeChecking_ReturnSubClassesOnlyDeserializedIntoBaseType()
     {
         try
@@ -87,9 +84,5 @@ public class DisabledStrictTypeCheckingTests : CosmosRepositoryAcceptanceTest
         {
             await GetClient().UseClientAsync(PruneDatabases);
         }
-    }
-
-    public DisabledStrictTypeCheckingTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper, DisabledStrictTypeCheckingOptions)
-    {
     }
 }

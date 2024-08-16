@@ -9,7 +9,7 @@ namespace Microsoft.Azure.CosmosEventSourcing.Converters;
 
 internal class DomainEventConverter : JsonConverter
 {
-    public static HashSet<Type> ConvertableTypes { get; } = new();
+    public static HashSet<Type> ConvertableTypes { get; } = [];
 
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) =>
         serializer.Serialize(writer, value, value.GetType());

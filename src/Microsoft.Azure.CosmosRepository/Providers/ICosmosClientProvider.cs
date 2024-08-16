@@ -8,7 +8,7 @@ namespace Microsoft.Azure.CosmosRepository.Providers;
 /// an instance to the configured <see cref="CosmosClient"/> object,
 /// which is shared.
 /// </summary>
-internal interface ICosmosClientProvider
+public interface ICosmosClientProvider
 {
     Task<T> UseClientAsync<T>(Func<CosmosClient, Task<T>> consume);
 

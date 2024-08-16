@@ -9,8 +9,8 @@ namespace Microsoft.Azure.CosmosEventSourcing.Aggregates;
 /// <inheritdoc />
 public abstract class AggregateRoot : IAggregateRoot
 {
-    private List<DomainEvent> _events = new();
-    private readonly List<DomainEvent> _newEvents = new();
+    private List<DomainEvent> _events = [];
+    private readonly List<DomainEvent> _newEvents = [];
     private AtomicEvent? _atomicEvent;
 
     /// <inheritdoc />

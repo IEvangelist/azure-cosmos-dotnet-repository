@@ -42,33 +42,98 @@ internal static class ExpressionExtensions
 
     internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
     {
-        // Check if the body is a MemberExpression
-        if (propertyLambda.Body is MemberExpression memberExpression)
+        var propertyInfos = GetPropertyInfosInternal(propertyLambda);
+
+        PropertyInfo propInfo = propertyInfos[propertyInfos.Count - 1];
+
+        ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
+      
+        //Intermediate Step Our Code
+          // Check if the body is a MemberExpression
+          if (propertyLambda.Body is MemberExpression memberExpression)
+          {
+              // Check if the MemberExpression refers to a Property
+              if (memberExpression.Member is PropertyInfo propInfo)
+              {
+                  return propInfo;
+              }
+              else
+              {
+                  throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+              }
+          }
+
+          if (propertyLambda.Body.NodeType == ExpressionType.ArrayIndex && propertyLambda.Body is BinaryExpression binaryExpression && binaryExpression.Left is MemberExpression binaryMemberExpression)
+          {
+              // Check if the MemberExpression refers to a Property
+              if (binaryMemberExpression.Member is PropertyInfo propInfo)
+              {
+                  return propInfo;
+              }
+              else
+              {
+                  throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+              }
+          }
+          // Handle unexpected cases
+          throw new ArgumentException($"Expression '{propertyLambda}' is not a valid property expression.");
+
+        return propInfo;
+    }
+
+    internal static IReadOnlyList<PropertyInfo> GetPropertyInfos<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
+    {
+        List<PropertyInfo> propertyInfos = GetPropertyInfosInternal(propertyLambda);
+
+        PropertyInfo propInfo = propertyInfos[0];
+
+        ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
+
+        return propertyInfos;
+    }
+
+    private static List<PropertyInfo> GetPropertyInfosInternal<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda)
+    {
+        List<PropertyInfo> propertyInfos = [];
+
+        MemberExpression? member = propertyLambda.Body as MemberExpression;
+
+        if (member == null)
         {
-            // Check if the MemberExpression refers to a Property
-            if (memberExpression.Member is PropertyInfo propInfo)
-            {
-                return propInfo;
-            }
-            else
-            {
-                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
-            }
+            throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
         }
 
-        if (propertyLambda.Body.NodeType == ExpressionType.ArrayIndex && propertyLambda.Body is BinaryExpression binaryExpression && binaryExpression.Left is MemberExpression binaryMemberExpression)
+        while (member != null)
         {
-            // Check if the MemberExpression refers to a Property
-            if (binaryMemberExpression.Member is PropertyInfo propInfo)
-            {
-                return propInfo;
-            }
-            else
+            if (member.Member is not PropertyInfo propertyInfo)
             {
                 throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
             }
+
+            propertyInfos.Add(propertyInfo);
+
+            member = member.Expression as MemberExpression;
         }
-        // Handle unexpected cases
-        throw new ArgumentException($"Expression '{propertyLambda}' is not a valid property expression.");
+
+        propertyInfos.Reverse(); // The properties are added from the leaf to the root, so we reverse to get them in the correct order.
+
+        return propertyInfos;
+    }
+
+    private static void ThrowArgumentExceptionIfPropertyIsNotFromSourceType<TSource, TProperty>(
+        Expression<Func<TSource, TProperty>> propertyLambda,
+        PropertyInfo propertyInfo)
+    {
+        var type = typeof(TSource);
+
+#pragma warning disable IDE0046 // Convert to conditional expression
+        if (propertyInfo.ReflectedType != null &&
+            type != propertyInfo.ReflectedType &&
+            !type.IsSubclassOf(propertyInfo.ReflectedType))
+        {
+            throw new ArgumentException($"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
+        }
+#pragma warning restore IDE0046 // Convert to conditional expression
+
     }
 }

@@ -39,12 +39,12 @@ public class DefaultRepositoryTests
     public async Task GetAsyncGivenExpressionQueriesContainerCorrectly()
     {
         //Arrange
-        List<TestItemWithEtag> items = new()
-        {
+        List<TestItemWithEtag> items =
+        [
             new() { Id = "a" },
             new() { Id = "c" },
             new() { Id = "ab" }
-        };
+        ];
 
         Expression<Func<TestItemWithEtag, bool>> predicate = item => item.Id == "a" || item.Id == "ab";
 
@@ -73,12 +73,12 @@ public class DefaultRepositoryTests
     public async Task ExistsAsyncGivenExpressionQueriesContainerCorrectly()
     {
         //Arrange
-        List<TestItemWithEtag> items = new()
-        {
+        List<TestItemWithEtag> items =
+        [
             new(){Id = "a"},
             new(){Id = "c"},
             new(){Id = "ab"}
-        };
+        ];
 
         Expression<Func<TestItemWithEtag, bool>> predicate = item => item.Id == "a" || item.Id == "ab";
 
