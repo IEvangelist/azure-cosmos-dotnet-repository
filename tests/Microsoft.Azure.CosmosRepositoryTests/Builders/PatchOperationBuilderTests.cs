@@ -24,6 +24,28 @@ public class RequiredAndJsonItem : Item
     public string TestProperty { get; set; } = null!;
 }
 
+public class Address
+{
+    public string Street { get; set; } = null!;
+    public int ZipCode { get; set; }
+
+    public CountryInfo Country { get; set; } = new CountryInfo();
+
+    public string[] Tags { get; set; } = default!;
+}
+
+public class CountryInfo
+{
+    public string Name { get; set; } = string.Empty;
+    public string CountryCode { get; set; } = string.Empty;
+}
+
+public class Person : Item
+{
+    public string Name { get; set; } = null!;
+    public Address Address { get; set; } = null!;
+}
+
 public class PatchOperationBuilderTests
 {
     [Fact]
@@ -87,6 +109,36 @@ public class PatchOperationBuilderTests
     }
 
     [Fact]
+    public void ReplaceDeeplyNestedPropertyUsingExpressionReplacesCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Replace(x => x.Address.Country.CountryCode, "UK");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+        Assert.Equal("/address/country/countryCode", operation.Path);
+    }
+
+    [Fact]
+    public void ReplaceDeeplyNestedPropertyUsingPathReplacesCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Replace("/address/country/countryCode", "UK");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+        Assert.Equal("/address/country/countryCode", operation.Path);
+    }
+
+    [Fact]
     public void SetGivenPropertySetsCorrectPatchOperation()
     {
         //Arrange
@@ -102,6 +154,36 @@ public class PatchOperationBuilderTests
     }
 
     [Fact]
+    public void SetDeeplyNestedPropertyUsingExpressionSetsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Set(x => x.Address.Country.Name, "United Kingdom");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Set, operation.OperationType);
+        Assert.Equal("/address/country/name", operation.Path);
+    }
+
+    [Fact]
+    public void SetDeeplyNestedPropertyUsingPathSetsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Set("/address/country/name", "United Kingdom");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Set, operation.OperationType);
+        Assert.Equal("/address/country/name", operation.Path);
+    }
+
+    [Fact]
     public void AddGivenPropertyAddsCorrectPatchOperation()
     {
         //Arrange
@@ -114,6 +196,36 @@ public class PatchOperationBuilderTests
         PatchOperation operation = builder.PatchOperations[0];
         Assert.Equal(PatchOperationType.Add, operation.OperationType);
         Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void AddDeeplyNestedPropertyUsingExpressionAddsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Add(x => x.Address.Tags, ["NewTag"]);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Add, operation.OperationType);
+        Assert.Equal("/address/tags/0", operation.Path);
+    }
+
+    [Fact]
+    public void AddDeeplyNestedPropertyUsingPathAddsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Add("/address/tags/-", "NewTag");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Add, operation.OperationType);
+        Assert.Equal("/address/tags/0", operation.Path);
     }
 
     [Fact]
@@ -222,6 +334,36 @@ public class PatchOperationBuilderTests
     }
 
     [Fact]
+    public void RemoveDeeplyNestedPropertyUsingExpressionRemovesCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Remove(x => x.Address.Tags[0]);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Remove, operation.OperationType);
+        Assert.Equal("/address/tags/0", operation.Path);
+    }
+
+    [Fact]
+    public void RemoveDeeplyNestedPropertyUsingPathRemovesCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Remove("/address/tags");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Remove, operation.OperationType);
+        Assert.Equal("/address/tags", operation.Path);
+    }
+
+    [Fact]
     public void IncrementGivenPathWithDoubleIncrementsCorrectPatchOperation()
     {
         //Arrange
@@ -249,6 +391,170 @@ public class PatchOperationBuilderTests
         PatchOperation operation = builder.PatchOperations[0];
         Assert.Equal(PatchOperationType.Increment, operation.OperationType);
         Assert.Equal("/testIntProperty", operation.Path);
+    }
+
+    [Fact]
+    public void ReplaceNestedPropertyUsingExpressionSetsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Replace(x => x.Address.Street, "123 Main St");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+        Assert.Equal("/address/street", operation.Path);
+    }
+    [Fact]
+    public void ReplaceDeeplyNestedPropertyUsingExpressionSetsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Replace(x => x.Address.Country.Name, "United Kingdom");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+        Assert.Equal("/address/country/name", operation.Path);
+    }
+
+    [Fact]
+    public void ReplaceNestedPropertyUsingPathSetsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Replace("/address/street", "456 Elm St");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+        Assert.Equal("/address/street", operation.Path);
+    }
+
+    [Fact]
+    public void SetNestedPropertyUsingExpressionSetsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Set(x => x.Address.ZipCode, 90210);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Set, operation.OperationType);
+        Assert.Equal("/address/zipCode", operation.Path);
+    }
+
+    [Fact]
+    public void SetNestedPropertyUsingPathSetsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Set("/address/zipCode", 12345);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Set, operation.OperationType);
+        Assert.Equal("/address/zipCode", operation.Path);
+    }
+
+    [Fact]
+    public void AddNestedPropertyUsingExpressionAddsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Add(x => x.Address.ZipCode, 11111);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Add, operation.OperationType);
+        Assert.Equal("/address/zipCode", operation.Path);
+    }
+
+    [Fact]
+    public void AddNestedPropertyUsingPathAddsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Add("/address/zipCode", 22222);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Add, operation.OperationType);
+        Assert.Equal("/address/zipCode", operation.Path);
+    }
+
+    [Fact]
+    public void RemoveNestedPropertyUsingExpressionRemovesCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Remove(x => x.Address.ZipCode);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Remove, operation.OperationType);
+        Assert.Equal("/address/zipCode", operation.Path);
+    }
+
+    [Fact]
+    public void RemoveNestedPropertyUsingPathRemovesCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Remove("/address/zipCode");
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Remove, operation.OperationType);
+        Assert.Equal("/address/zipCode", operation.Path); // Assuming camelCase naming strategy
+    }
+
+    [Fact]
+    public void IncrementNestedPropertyUsingExpressionIncrementsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Increment(x => x.Address.ZipCode, 10);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+        Assert.Equal("/address/zipCode", operation.Path);
+    }
+
+    [Fact]
+    public void IncrementNestedPropertyUsingPathIncrementsCorrectValue()
+    {
+        // Arrange
+        IPatchOperationBuilder<Person> builder = new PatchOperationBuilder<Person>();
+
+        // Act
+        builder.Increment("/address/zipCode", 5);
+
+        // Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Increment, operation.OperationType);
+        Assert.Equal("/address/zipCode", operation.Path);
     }
 
 

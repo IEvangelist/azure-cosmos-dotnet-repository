@@ -29,20 +29,21 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         public IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
             var propertyInfo = expression.GetPropertyInfo();
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalReplace(propertyToReplace, propertyInfo, value);
+            var path = GetPath(expression);
+            return InternalReplace(path, propertyInfo, value);
         }
         public IPatchOperationBuilder<TItem> Replace<TValue>(string path, TValue value)
         {
             var propertyInfo = GetPropertyInfoToReplace(path);
+
             return InternalReplace(path, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
             var propertyInfo = expression.GetPropertyInfo();
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalSet(propertyToReplace, propertyInfo, value);
+            var path = GetPath(expression);
+            return InternalSet(path, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Set<TValue>(string path, TValue? value)
@@ -54,55 +55,52 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         public IPatchOperationBuilder<TItem> Add<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value)
         {
             var propertyInfo = expression.GetPropertyInfo();
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalAdd(propertyToReplace, propertyInfo, value);
+            var path = GetPath(expression);
+            return InternalAdd(path, propertyInfo, value);
         }
         public IPatchOperationBuilder<TItem> Add<TValue>(string path, TValue? value)
         {
             var propertyInfo = GetPropertyInfoToReplace(path);
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalAdd(propertyToReplace, propertyInfo, value);
+            return InternalAdd(path, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Remove<TValue>(Expression<Func<TItem, TValue>> expression)
         {
             var propertyInfo = expression.GetPropertyInfo();
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalRemove(propertyToReplace, propertyInfo);
+            var path = GetPath(expression);
+            return InternalRemove(path, propertyInfo);
         }
 
         public IPatchOperationBuilder<TItem> Remove(string path)
         {
             var propertyInfo = GetPropertyInfoToReplace(path);
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalRemove(propertyToReplace, propertyInfo);
+            return InternalRemove(path, propertyInfo);
         }
 
         public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, double value)
         {
             var propertyInfo = expression.GetPropertyInfo();
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalIncrement(propertyToReplace, propertyInfo, value);
+            var path = GetPath(expression);
+            return InternalIncrement(path, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment<TValue>(Expression<Func<TItem, TValue>> expression, long value)
         {
             var propertyInfo = expression.GetPropertyInfo();
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalIncrement(propertyToReplace, propertyInfo, value);
+            var path = GetPath(expression);
+            return InternalIncrement(path, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment(string path, long value)
         {
             var propertyInfo = GetPropertyInfoToReplace(path);
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
-            return InternalIncrement(propertyToReplace, propertyInfo, value);
+            return InternalIncrement(path, propertyInfo, value);
         }
 
         public IPatchOperationBuilder<TItem> Increment(string path, double value)
         {
             var propertyInfo = GetPropertyInfoToReplace(path);
-            var propertyToReplace = GetPropertyToReplace(propertyInfo);
+            var propertyToReplace = GetPropertyName(propertyInfo);
             return InternalIncrement(propertyToReplace, propertyInfo, value);
         }
 
@@ -110,7 +108,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Replace));
-            _patchOperations.Add(PatchOperation.Replace($"/{path}", value));
+            _patchOperations.Add(PatchOperation.Replace(path, value));
             return this;
         }
 
@@ -118,7 +116,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Set));
-            _patchOperations.Add(PatchOperation.Set($"/{path}", value));
+            _patchOperations.Add(PatchOperation.Set(path, value));
             return this;
         }
 
@@ -126,7 +124,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment));
-            _patchOperations.Add(PatchOperation.Increment($"/{path}", value));
+            _patchOperations.Add(PatchOperation.Increment(path, value));
             return this;
         }
 
@@ -134,7 +132,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Increment));
-            _patchOperations.Add(PatchOperation.Increment($"/{path}", value));
+            _patchOperations.Add(PatchOperation.Increment(path, value));
             return this;
         }
 
@@ -142,7 +140,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, value, PatchOperationType.Add));
-            _patchOperations.Add(PatchOperation.Add($"/{path}", value));
+            _patchOperations.Add(PatchOperation.Add(path, value));
             return this;
         }
 
@@ -150,19 +148,19 @@ namespace Microsoft.Azure.CosmosRepository.Builders
         {
             path = NormalizePath(path);
             _rawPatchOperations.Add(new InternalPatchOperation(property, null, PatchOperationType.Remove));
-            _patchOperations.Add(PatchOperation.Remove($"/{path}"));
+            _patchOperations.Add(PatchOperation.Remove(path));
             return this;
         }
 
-        private string NormalizePath(string path) => path.StartsWith("/", StringComparison.CurrentCultureIgnoreCase) ? path.Substring(1) : path;
+        private string NormalizePath(string path) => "/" + path.TrimStart('/');
 
         /// <summary>
-        /// Get the property name to replace. This only works for a single level of nesting.
+        /// Get the property name. This only works for a single level of nesting.
         /// </summary>
         /// <remarks>If you're looking for nesting call the respective method with a given path instead.</remarks>
         /// <param name="propertyInfo">The property info of the property to be replaced.</param>
         /// <returns>Returns the path of the property name.</returns>
-        internal string GetPropertyToReplace(MemberInfo propertyInfo)
+        internal string GetPropertyName(MemberInfo propertyInfo)
         {
             JsonPropertyAttribute[] attributes =
                 propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
@@ -170,6 +168,44 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             return attributes.Length is 0
                 ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
                 : attributes[0].PropertyName;
+        }
+
+        public string GetPath<TValue>(Expression<Func<TItem, TValue>> expr)
+        {
+            var stack = new Stack<string>();
+
+            MemberExpression? me;
+            switch (expr.Body.NodeType)
+            {
+                case ExpressionType.Convert:
+                case ExpressionType.ConvertChecked:
+                    me = ((expr.Body is UnaryExpression ue) ? ue.Operand : null) as MemberExpression;
+                    break;
+                default:
+                    me = expr.Body as MemberExpression;
+                    break;
+            }
+
+            while (me != null)
+            {
+                var memberInfo = me.Member as PropertyInfo;
+
+                if (memberInfo != null)
+                {
+                    var jsonPropertyAttribute = memberInfo.GetCustomAttribute<JsonPropertyAttribute>(true);
+
+                    var propertyName = jsonPropertyAttribute != null
+                        ? jsonPropertyAttribute.PropertyName
+                        : _namingStrategy.GetPropertyName(memberInfo.Name, false);
+
+                    stack.Push(propertyName);
+                }
+
+                me = me.Expression as MemberExpression;
+            }
+
+            var path = string.Join("/", stack);
+            return NormalizePath(path); // Using the arrow function here
         }
 
         /// <summary>
@@ -187,27 +223,7 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             return property;
         }
 
-        public static PropertyInfo? GetPropertyInfoByJsonPropertyName(Type type, string jsonPropertyName)
-        {
-            // Iterate through all properties of the type
-            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                // Check if the property has a JsonPropertyAttribute
-                var jsonPropertyAttribute = property.GetCustomAttribute<JsonPropertyAttribute>();
-
-                // If the attribute is found and the PropertyName matches the provided jsonPropertyName
-                if (jsonPropertyAttribute != null && jsonPropertyAttribute.PropertyName == jsonPropertyName)
-                {
-                    // Return the PropertyInfo of the matching property
-                    return property;
-                }
-            }
-
-            // Return null if no matching property is found
-            return null;
-        }
-
-        public PropertyInfo? GetNestedPropertyInfo(Type type, string path)
+        private PropertyInfo? GetNestedPropertyInfo(Type type, string path)
         {
             // Split the path by '/' to get the individual property names
             string[] properties = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
@@ -218,39 +234,43 @@ namespace Microsoft.Azure.CosmosRepository.Builders
             // Iterate through each property in the path
             foreach (string propertyNameOrJsonProperty in properties)
             {
-                // If the property is not found by name, search by JsonPropertyAttribute
-                IEnumerable<PropertyInfo> currentProperties = currentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                // Search for the property prioritizing JsonPropertyAttribute
+                propertyInfo = FindProperty(currentType, propertyNameOrJsonProperty);
 
-                // First, attempt to get the property by its direct name
-                propertyInfo = currentProperties.FirstOrDefault(p => string.Equals(p.Name, propertyNameOrJsonProperty, StringComparison.OrdinalIgnoreCase));
-
-                // If the property is found by name, continue to the next level
-                if (propertyInfo != null)
-                {
-                    currentType = propertyInfo.PropertyType;
-                    continue;
-                }
-
-                foreach (var property in currentProperties)
-                {
-                    var jsonPropertyAttribute = property.GetCustomAttribute<JsonPropertyAttribute>();
-                    if (jsonPropertyAttribute != null && jsonPropertyAttribute.PropertyName == propertyNameOrJsonProperty)
-                    {
-                        propertyInfo = property;
-                        currentType = propertyInfo.PropertyType;
-                        break;
-                    }
-                }
-
-                // If no matching property is found at all, return null
+                // If no matching property is found, return null
                 if (propertyInfo == null)
                 {
                     return null;
                 }
+
+                // Move to the next level of nesting
+                currentType = propertyInfo.PropertyType;
             }
 
             // Return the final PropertyInfo
             return propertyInfo;
+        }
+
+        private PropertyInfo? FindProperty(Type type, string propertyNameOrJsonProperty)
+        {
+            // Get all public instance properties of the current type once
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            // Standardize the provided property name
+            var standardizedPropertyName = _namingStrategy.GetPropertyName(propertyNameOrJsonProperty, false);
+
+            // Search for the property prioritizing JsonPropertyAttribute, fallback to direct name matching
+            return properties.FirstOrDefault(p =>
+            {
+                var jsonPropertyAttribute = p.GetCustomAttribute<JsonPropertyAttribute>();
+                if (jsonPropertyAttribute != null)
+                {
+                    return string.Equals(jsonPropertyAttribute.PropertyName, standardizedPropertyName, StringComparison.OrdinalIgnoreCase);
+                }
+
+                // Fallback to direct property name comparison (standardized for consistency)
+                return string.Equals(_namingStrategy.GetPropertyName(p.Name, false), standardizedPropertyName, StringComparison.OrdinalIgnoreCase);
+            });
         }
 
     }

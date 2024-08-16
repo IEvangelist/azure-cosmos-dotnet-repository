@@ -47,13 +47,6 @@ internal static class ExpressionExtensions
         if (member.Member is not PropertyInfo propInfo)
             throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
 
-#pragma warning disable IDE0046 // Convert to conditional expression
-        if (propInfo.ReflectedType != null &&
-            type != propInfo.ReflectedType &&
-            !type.IsSubclassOf(propInfo.ReflectedType))
-            throw new ArgumentException($"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
-#pragma warning restore IDE0046 // Convert to conditional expression
-
         return propInfo;
     }
 }
