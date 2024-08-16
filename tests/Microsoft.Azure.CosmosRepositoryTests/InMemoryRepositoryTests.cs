@@ -989,6 +989,8 @@ public class InMemoryRepositoryTests
         Assert.Equal(2, deserialisedItem.NestedObject.Property2);
     }
 
+    //TODO: Add more PatchBuilder tests for Set, Add, Remove, Increment, etc.
+
     [Fact]
     public async Task PageAsync_PredicateThatDoesNotMatch_ReturnsEmptyList()
     {

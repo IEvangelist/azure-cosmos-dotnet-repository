@@ -460,6 +460,8 @@ public class DefaultRepositoryTests
                 It.Is<PatchItemRequestOptions>(options => options.IfMatchEtag == etag),
                 It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    //TODO: Add PatchBuilder tests for Set, Add, Remove, Increment, etc.
 }
 
 class MockExpressionProvider : IRepositoryExpressionProvider

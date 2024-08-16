@@ -1,6 +1,8 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Linq.Expressions;
+
 namespace Microsoft.Azure.CosmosRepository.Extensions;
 
 /// <summary>
@@ -37,16 +39,36 @@ internal static class ExpressionExtensions
         this Expression<Func<T, bool>> first,
         Expression<Func<T, bool>> second) => first.Compose(second, Expression.Or);
 
+
     internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
     {
-        Type type = typeof(TSource);
+        // Check if the body is a MemberExpression
+        if (propertyLambda.Body is MemberExpression memberExpression)
+        {
+            // Check if the MemberExpression refers to a Property
+            if (memberExpression.Member is PropertyInfo propInfo)
+            {
+                return propInfo;
+            }
+            else
+            {
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+            }
+        }
 
-        if (propertyLambda.Body is not MemberExpression member)
-            throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
-
-        if (member.Member is not PropertyInfo propInfo)
-            throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
-
-        return propInfo;
+        if (propertyLambda.Body.NodeType == ExpressionType.ArrayIndex && propertyLambda.Body is BinaryExpression binaryExpression && binaryExpression.Left is MemberExpression binaryMemberExpression)
+        {
+            // Check if the MemberExpression refers to a Property
+            if (binaryMemberExpression.Member is PropertyInfo propInfo)
+            {
+                return propInfo;
+            }
+            else
+            {
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+            }
+        }
+        // Handle unexpected cases
+        throw new ArgumentException($"Expression '{propertyLambda}' is not a valid property expression.");
     }
 }

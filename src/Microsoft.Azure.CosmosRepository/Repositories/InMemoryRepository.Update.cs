@@ -104,6 +104,8 @@ internal partial class InMemoryRepository<TItem>
 
         builder(patchOperationBuilder);
 
+
+        //TODO: Rely only on  patchOperationBuilder.PatchOperations to translate to InfoProperties and add support for Add, Set, Remove, and Increment operations
         foreach (InternalPatchOperation internalPatchOperation in
                  patchOperationBuilder._rawPatchOperations.Where(ipo => ipo.Type is PatchOperationType.Replace))
         {
