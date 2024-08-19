@@ -77,8 +77,8 @@ public interface IWriteOnlyRepository<TItem> where TItem : IItem
     /// <param name="builder">The <see cref="IPatchOperationBuilder{TItem}"/> that will define the update operations to perform.</param>
     /// <param name="cancellationToken">The cancellation token to use when making asynchronous operations.</param>
     /// <param name="etag">Indicate to set IfMatchEtag in the ItemRequestOptions in the underlying Cosmos call. This requires TItem to implement the IItemWithEtag interface.</param>
-    /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
-    ValueTask UpdateAsync(
+    /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation with the etag as value.</returns>
+    ValueTask<string> UpdateAsync(
         string id,
         Action<IPatchOperationBuilder<TItem>> builder,
         string? partitionKeyValue = null,
