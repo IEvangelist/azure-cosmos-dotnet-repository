@@ -68,7 +68,7 @@ internal partial class InMemoryRepository<TItem>
     }
 
     /// <inheritdoc/>
-    public async ValueTask UpdateAsync(string id,
+    public async ValueTask<string> UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
         string? partitionKeyValue = null,
         string? etag = default,
@@ -131,9 +131,13 @@ internal partial class InMemoryRepository<TItem>
 
         ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
 
-        items[id] = SerializeItem(item!, Guid.NewGuid().ToString(), CurrentTs);
+        var newETag = Guid.NewGuid().ToString();
+
+        items[id] = SerializeItem(item!, newETag, CurrentTs);
 
         Changes?.Invoke(new ChangeFeedItemArgs<TItem>(DeserializeItem(items[id])));
+
+        return newETag;
     }
 
     private void MismatchedEtags() =>

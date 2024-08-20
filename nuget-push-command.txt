@@ -1,0 +1,4 @@
+dotnet nuget push .\src\Microsoft.Azure.CosmosRepository.AspNetCore\bin\Release\QV.IEvangelist.Azure.CosmosRepository.AspNetCore.0.0.5-sandboxed.nupkg --source "QualiviewPush" --api-key y3sjfi7g2d237wg3lh342pzezytayg4bsdoh5gza6fwxu3yvljza
+
+
+dotnet nuget push .\src\Microsoft.Azure.CosmosRepository\bin\Release\QV.IEvangelist.Azure.CosmosRepository.0.0.5-sandboxed.nupkg --source "QualiviewPush" --api-key y3sjfi7g2d237wg3lh342pzezytayg4bsdoh5gza6fwxu3yvljza
