@@ -49,7 +49,7 @@ internal sealed partial class DefaultRepository<TItem>
         return updateTasks.Select(x => x.Result);
     }
 
-    public async ValueTask UpdateAsync(string id,
+    public async ValueTask<string> UpdateAsync(string id,
         Action<IPatchOperationBuilder<TItem>> builder,
         string? partitionKeyValue = null,
         string? etag = default,
@@ -71,7 +71,9 @@ internal sealed partial class DefaultRepository<TItem>
             patchItemRequestOptions.IfMatchEtag = etag;
         }
 
-        await container.PatchItemAsync<TItem>(id, new PartitionKey(partitionKeyValue),
+        var response = await container.PatchItemAsync<TItem>(id, new PartitionKey(partitionKeyValue),
             patchOperationBuilder.PatchOperations, patchItemRequestOptions, cancellationToken);
+
+        return response.ETag;
     }
 }

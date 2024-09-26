@@ -9,13 +9,14 @@
         <Copyright>Copyright © IEvangelist. All rights reserved. Licensed under the MIT License.</Copyright>
         <NeutralLanguage>en-US</NeutralLanguage>
         <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd))</CurrentDate>
-        <ClientVersion Condition=" '$(IsPreview)' != 'true' ">$(ClientOfficialVersion)</ClientVersion>
-        <ClientVersion Condition=" '$(IsPreview)' == 'true' ">$(ClientPreviewVersion)</ClientVersion>
-        <VersionSuffix Condition=" '$(IsNightly)' == 'true' ">nightly-$(CurrentDate)</VersionSuffix>
-        <VersionSuffix Condition=" '$(IsPreview)' == 'true' ">preview</VersionSuffix>
-        <Version Condition=" '$(VersionSuffix)' == '' ">$(ClientVersion)</Version>
-        <Version Condition=" '$(VersionSuffix)' != '' ">$(ClientVersion)-$(VersionSuffix)</Version>
-        <FileVersion>$(ClientVersion)</FileVersion>
+        <!--<ClientVersion Condition=" '$(IsPreview)' != 'true' ">$(ClientOfficialVersion)</ClientVersion>-->
+        <!--<ClientVersion Condition=" '$(IsPreview)' == 'true' ">$(ClientPreviewVersion)</ClientVersion>-->
+        <!--<VersionSuffix Condition=" '$(IsNightly)' == 'true' ">nightly-$(CurrentDate)</VersionSuffix>-->
+        <!--<VersionSuffix Condition=" '$(IsPreview)' == 'true' ">preview</VersionSuffix>-->
+        <!--<Version Condition=" '$(VersionSuffix)' == '' ">$(ClientVersion)</Version>-->
+        <!--<Version Condition=" '$(VersionSuffix)' != '' ">$(ClientVersion)-$(VersionSuffix)</Version>-->
+        <!--<FileVersion>$(ClientVersion)</FileVersion>-->
+        <Version>0.0.5.0-sandboxed</Version>
         <Authors>IEvangelist</Authors>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <AssemblyName>Microsoft.Azure.CosmosRepository</AssemblyName>
