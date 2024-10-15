@@ -18,6 +18,11 @@ internal class PagingEvaluator : IEvaluator
             return query;
         }
 
+        if (specification.PageSize < 0)
+        {
+            return query;
+        }
+
         if (specification.PageNumber.HasValue && specification.PageNumber != 0)
         {
             query = query.Skip(specification.PageSize * (specification.PageNumber.Value - 1));
