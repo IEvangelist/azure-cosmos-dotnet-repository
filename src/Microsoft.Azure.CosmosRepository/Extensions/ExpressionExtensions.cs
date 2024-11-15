@@ -1,6 +1,8 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Linq.Expressions;
+
 namespace Microsoft.Azure.CosmosRepository.Extensions;
 
 /// <summary>
@@ -37,16 +39,47 @@ internal static class ExpressionExtensions
         this Expression<Func<T, bool>> first,
         Expression<Func<T, bool>> second) => first.Compose(second, Expression.Or);
 
-    internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
-    {
-        var propertyInfos = GetPropertyInfosInternal(propertyLambda);
 
-        PropertyInfo propInfo = propertyInfos[propertyInfos.Count - 1];
+    //internal static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
+    //{
+    //    //var propertyInfos = GetPropertyInfosInternal(propertyLambda);
 
-        ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
+    //    //PropertyInfo propInfo = propertyInfos[propertyInfos.Count - 1];
 
-        return propInfo;
-    }
+    //    //ThrowArgumentExceptionIfPropertyIsNotFromSourceType(propertyLambda, propInfo);
+      
+    //    //Intermediate Step Our Code
+    //      // Check if the body is a MemberExpression
+    //      if (propertyLambda.Body is MemberExpression memberExpression)
+    //      {
+    //          // Check if the MemberExpression refers to a Property
+    //          if (memberExpression.Member is PropertyInfo propInfo)
+    //          {
+    //              return propInfo;
+    //          }
+    //          else
+    //          {
+    //              throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+    //          }
+    //      }
+
+    //      if (propertyLambda.Body.NodeType == ExpressionType.ArrayIndex && propertyLambda.Body is BinaryExpression binaryExpression && binaryExpression.Left is MemberExpression binaryMemberExpression)
+    //      {
+    //          // Check if the MemberExpression refers to a Property
+    //          if (binaryMemberExpression.Member is PropertyInfo propInfo)
+    //          {
+    //              return propInfo;
+    //          }
+    //          else
+    //          {
+    //              throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+    //          }
+    //      }
+    //      // Handle unexpected cases
+    //      throw new ArgumentException($"Expression '{propertyLambda}' is not a valid property expression.");
+
+    //    // return propInfo;
+    //}
 
     internal static IReadOnlyList<PropertyInfo> GetPropertyInfos<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
     {
@@ -101,5 +134,6 @@ internal static class ExpressionExtensions
             throw new ArgumentException($"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
         }
 #pragma warning restore IDE0046 // Convert to conditional expression
+
     }
 }

@@ -13,4 +13,6 @@ public class TestItem : FullItem
 
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public int Number { get; set; }
+
+    public IEnumerable<string> Items { get; set; } = default!;
 }
