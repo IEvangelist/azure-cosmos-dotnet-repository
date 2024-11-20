@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-dotnet@main
         with:
           dotnet-version: |
-            8.0.x
+            9.0.x
       - name: Install dependencies
         run: dotnet restore
 
@@ -32,7 +32,7 @@ jobs:
   #       uses: actions/setup-dotnet@main
   #       with:
   #         dotnet-version: |
-  #           8.0.x
+  #           9.0.x
   #     - name: Install dependencies
   #       run: dotnet restore
 
@@ -107,7 +107,7 @@ jobs:
         uses: actions/setup-dotnet@main
         with:
           dotnet-version: |
-            8.0.x
+            9.0.x
 
       - name: Restore ${{ matrix.project }} dependencies
         run: dotnet restore ./src/${{ matrix.project }}/${{ matrix.project }}.csproj

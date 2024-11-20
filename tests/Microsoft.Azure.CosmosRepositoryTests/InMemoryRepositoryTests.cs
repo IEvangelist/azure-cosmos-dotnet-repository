@@ -245,12 +245,10 @@ public class InMemoryRepositoryTests
             _invalidSerializableRepository.CreateAsync(invalidSerialisable).AsTask());
         Assert.True(InMemoryStorage.GetDictionary<InvalidSerialisable>().ContainsKey(invalidSerialisable.Id));
         Assert.Equal(args.Property1,
-            _invalidSerializableRepository
-                .DeserializeItem<ValidInvalidSerialisable>(
+            InMemoryRepository<InvalidSerialisable>.DeserializeItem<ValidInvalidSerialisable>(
                     InMemoryStorage.GetDictionary<InvalidSerialisable>()[invalidSerialisable.Id]).Property1);
         Assert.Equal(args.PartitionKey,
-            _invalidSerializableRepository
-                .DeserializeItem<ValidInvalidSerialisable>(
+            InMemoryRepository<InvalidSerialisable>.DeserializeItem<ValidInvalidSerialisable>(
                     InMemoryStorage.GetDictionary<InvalidSerialisable>()[invalidSerialisable.Id]).PartitionKey);
     }
 

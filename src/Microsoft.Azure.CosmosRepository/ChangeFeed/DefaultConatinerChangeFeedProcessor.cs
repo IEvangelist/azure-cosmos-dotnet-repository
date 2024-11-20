@@ -73,7 +73,7 @@ internal class DefaultContainerChangeFeedProcessor : IContainerChangeFeedProcess
 
         foreach (JObject change in changes)
         {
-            if (!change.TryGetValue("type", out JToken type))
+            if (!change.TryGetValue("type", out JToken? type))
             {
                 //TODO: _logger.LogWarning(...) here? Should this be turn on/off thing? A user might not have created documents with the type field ?!
                 continue;
@@ -121,7 +121,7 @@ internal class DefaultContainerChangeFeedProcessor : IContainerChangeFeedProcess
             try
             {
                 var response = handlerType.GetMethod("HandleAsync")?
-                    .Invoke(handler, new[] { item, cancellationToken });
+                    .Invoke(handler, [item, cancellationToken]);
 
                 if (response is ValueTask valueTask)
                 {

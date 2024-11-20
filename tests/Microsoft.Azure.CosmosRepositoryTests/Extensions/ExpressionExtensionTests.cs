@@ -8,8 +8,8 @@ public class ExpressionExtensionTests
     public static IEnumerable<object[]> CompositionInput => new[]
     {
         new object[] { new DateTime(1970, 4, 20), true },
-        new object[] { default(DateTime), false },
-        new object[] { DateTime.Now, false }
+        [default(DateTime), false],
+        [DateTime.Now, false]
     };
 
     [

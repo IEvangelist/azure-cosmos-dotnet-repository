@@ -46,7 +46,7 @@ internal class
             try
             {
                 var result = handlerType.GetMethod("HandleAsync")?
-                    .Invoke(handler, new object[] { eventItem.DomainEvent, eventItem, cancellationToken });
+                    .Invoke(handler, [eventItem.DomainEvent, eventItem, cancellationToken]);
 
                 if (result is ValueTask valueTask)
                 {

@@ -29,7 +29,7 @@ public static class ObjectExtensions
             obj,
             BindingFlags.NonPublic | BindingFlags.Instance,
             null,
-            new object?[] { val! },
+            [val!],
             null);
     }
 }

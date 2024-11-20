@@ -49,7 +49,7 @@ internal partial class InMemoryRepository<TItem>
             valueWithTimestamps.CreatedTimeUtc = DateTime.UtcNow;
         }
 
-        var serialisedValue = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
+        var serialisedValue = InMemoryRepository<TItem>.SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
 
         ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
         items.TryAdd(value.Id, serialisedValue);

@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CosmosEventSourcingAcceptanceTests;
 
 public partial class AcceptanceTests
 {
-    private readonly string[] _names = { "List 1", "List 2", "List 3" };
+    private readonly string[] _names = ["List 1", "List 2", "List 3"];
     private readonly TodoListMapper _mapper = new();
     private readonly List<string> _atomicEventIds = [];
 

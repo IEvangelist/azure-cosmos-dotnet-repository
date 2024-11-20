@@ -9,15 +9,15 @@ namespace Microsoft.Azure.CosmosEventSourcing.Converters;
 
 internal class DomainEventConverter : JsonConverter
 {
-    public static HashSet<Type> ConvertableTypes { get; } = [];
+    public static HashSet<Type> ConvertibleTypes { get; } = [];
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) =>
-        serializer.Serialize(writer, value, value.GetType());
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) =>
+        serializer.Serialize(writer, value, objectType: value?.GetType() ?? throw new ArgumentNullException(nameof(value)));
 
-    public override object ReadJson(
+    public override object? ReadJson(
         JsonReader reader,
         Type objectType,
-        object existingValue,
+        object? existingValue,
         JsonSerializer serializer)
     {
         try
@@ -25,18 +25,17 @@ internal class DomainEventConverter : JsonConverter
             var j = JToken.ReadFrom(reader);
             var type = j["eventName"]?.ToString();
             type ??= j["EventName"]?.ToString();
-            Type? payloadType = ConvertableTypes.FirstOrDefault(x => x.Name == type);
+            Type? payloadType = ConvertibleTypes.FirstOrDefault(x => x.Name == type);
 
-            if (payloadType is null)
+            return payloadType switch
             {
-                return new NonDeserializableEvent
+                null => new NonDeserializableEvent
                 {
                     Name = type ?? "not-defined",
-                    Payload = j.ToObject<JObject>()
-                };
-            }
-
-            return j.ToObject(payloadType);
+                    Payload = j.ToObject<JObject>() ?? []
+                },
+                _ => j.ToObject(payloadType)
+            };
         }
         catch (Exception e)
         {

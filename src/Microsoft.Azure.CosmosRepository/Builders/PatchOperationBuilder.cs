@@ -31,21 +31,18 @@ internal class PatchOperationBuilder<TItem> : IPatchOperationBuilder<TItem> wher
         return this;
     }
 
-    private string GetPropertyToReplace(MemberInfo propertyInfo) =>
-        GetPropertyToReplace([propertyInfo]);
-
     private string GetPropertyToReplace(IEnumerable<MemberInfo> propertyInfos)
     {
         List<string> propertiesNames = [];
 
-        foreach (PropertyInfo propertyInfo in propertyInfos)
+        foreach (PropertyInfo propertyInfo in propertyInfos.Cast<PropertyInfo>())
         {
             JsonPropertyAttribute[] attributes =
                 propertyInfo.GetCustomAttributes<JsonPropertyAttribute>(true).ToArray();
 
             var propertyName = attributes.Length is 0
                 ? _namingStrategy.GetPropertyName(propertyInfo.Name, false)
-                : attributes[0].PropertyName;
+                : attributes[0].PropertyName ?? propertyInfo.Name;
 
             propertiesNames.Add(propertyName);
         }

@@ -57,7 +57,7 @@ async Task SeedAsync()
 
 public class ExampleModel : Item
 {
-    public string Category { get; set; }
+    public required string Category { get; set; }
 }
 
 public class ExampleSpecification : DefaultSpecification<ExampleModel>

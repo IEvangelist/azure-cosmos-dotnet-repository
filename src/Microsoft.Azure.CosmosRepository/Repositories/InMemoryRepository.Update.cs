@@ -30,7 +30,7 @@ internal partial class InMemoryRepository<TItem>
             MismatchedEtags();
         }
 
-        items[value.Id] = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
+        items[value.Id] = InMemoryRepository<TItem>.SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
 
         TItem item = DeserializeItem(items[value.Id]);
 
@@ -129,7 +129,7 @@ internal partial class InMemoryRepository<TItem>
 
         ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
 
-        items[id] = SerializeItem(item!, Guid.NewGuid().ToString(), CurrentTs);
+        items[id] = InMemoryRepository<TItem>.SerializeItem(item!, Guid.NewGuid().ToString(), CurrentTs);
 
         Changes?.Invoke(new ChangeFeedItemArgs<TItem>(DeserializeItem(items[id])));
     }

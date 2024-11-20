@@ -37,7 +37,7 @@ public class LanguagesControllerTests : IClassFixture<WebTierApplicationFactory>
             Id = string.Empty,
             Name = "C#",
             Description = "A language created by Microsoft.",
-            Aliases = new[] { "C#", ".NET" },
+            Aliases = ["C#", ".NET"],
             PrimaryStyle = ProgrammingStyle.ObjectOriented,
             InitialReleaseDate = new DateTime(2001, 10, 25)
         };

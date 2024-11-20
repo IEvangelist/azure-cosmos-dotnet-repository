@@ -22,7 +22,7 @@ public partial class PagingTests
             _expressionProvider,
             _specificationEvaluator);
 
-    private static readonly string[] s_sourceArray = new[] { "🎶", "💿", "🎸", "🥁", "🎙" };
+    private static readonly string[] s_sourceArray = ["🎶", "💿", "🎸", "🥁", "🎙"];
 
     public PagingTests() =>
         _options.Setup(monitor => monitor.CurrentValue)
@@ -32,8 +32,8 @@ public partial class PagingTests
     public async Task ReadOnlyRepositoriesDefaultImplementationOfPageAsyncYieldsCorrectly()
     {
         // Arrange
-        TestItem[] items = new[]
-        {
+        TestItem[] items =
+        [
             new TestItem { Number = 100, Property = "🎶 Record player" },
             new TestItem { Number = 101, Property = "💿 Vinyl albums" },
             new TestItem { Number = 102, Property = "🎸 Electric guitar" },
@@ -48,7 +48,7 @@ public partial class PagingTests
             new TestItem { Number = 111, Property = "🎵 Music" },
             new TestItem { Number = 112, Property = "🎨 Art" },
             new TestItem { Number = 113, Property = "🎭 Self-expression" }
-        };
+        ];
 
         _containerProviderForTestItem.Setup(
             cp => cp.GetContainerAsync()).ReturnsAsync(_container.Object);

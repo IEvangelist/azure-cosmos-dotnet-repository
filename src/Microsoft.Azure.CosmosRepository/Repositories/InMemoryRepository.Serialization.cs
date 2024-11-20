@@ -7,7 +7,7 @@ namespace Microsoft.Azure.CosmosRepository;
 
 internal partial class InMemoryRepository<TItem>
 {
-    private string SerializeItem(
+    private static string SerializeItem(
         TItem item,
         string? etag = null,
         long? ts = null)
@@ -26,8 +26,9 @@ internal partial class InMemoryRepository<TItem>
         return jObject.ToString();
     }
 
-    internal TItem DeserializeItem(string jsonItem) => JsonConvert.DeserializeObject<TItem>(jsonItem);
+    internal TItem DeserializeItem(string jsonItem) =>
+        JsonConvert.DeserializeObject<TItem>(jsonItem)!;
 
-    internal TDeserializeTo DeserializeItem<TDeserializeTo>(string jsonItem) =>
-        JsonConvert.DeserializeObject<TDeserializeTo>(jsonItem);
+    internal static TDeserializeTo DeserializeItem<TDeserializeTo>(string jsonItem) =>
+        JsonConvert.DeserializeObject<TDeserializeTo>(jsonItem)!;
 }

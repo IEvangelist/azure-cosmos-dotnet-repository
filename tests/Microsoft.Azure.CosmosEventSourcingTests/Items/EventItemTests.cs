@@ -40,7 +40,7 @@ public class EventItemTests
     public void EventItem_Serialization_WorksCorrectly()
     {
         //Arrange
-        DomainEventConverter.ConvertableTypes.Add(typeof(SampleEvent));
+        DomainEventConverter.ConvertibleTypes.Add(typeof(SampleEvent));
         SampleEvent evt = new()
         {
             EventId = Guid.NewGuid().ToString(),
@@ -66,7 +66,7 @@ public class EventItemTests
     public void EventItem_AtomicEventSerialization_WorksCorrectlyWithNullTimeToLive()
     {
         //Arrange
-        DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
+        DomainEventConverter.ConvertibleTypes.Add(typeof(AtomicEvent));
         var etagValue = Guid.NewGuid().ToString();
         AtomicEvent evt = new(Guid.NewGuid().ToString(), string.Empty)
         {
@@ -97,7 +97,7 @@ public class EventItemTests
     public void EventItem_AtomicEventSerialization_WorksCorrectlyWithPopulatedTimeToLive()
     {
         //Arrange
-        DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
+        DomainEventConverter.ConvertibleTypes.Add(typeof(AtomicEvent));
         var etagValue = Guid.NewGuid().ToString();
         AtomicEvent evt = new(Guid.NewGuid().ToString(), string.Empty)
         {
@@ -132,7 +132,7 @@ public class EventItemTests
     public void EventItem_AtomicEventDeserialization_WorksCorrectly()
     {
         //Arrange
-        DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
+        DomainEventConverter.ConvertibleTypes.Add(typeof(AtomicEvent));
         var etagValue = Guid.NewGuid().ToString();
         AtomicEvent atomicEvent = new(nameof(AtomicEvent), null!)
         {
@@ -162,7 +162,7 @@ public class EventItemTests
     public void EventItem_AtomicEventPass_WorksCorrectly()
     {
         //Arrange
-        DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
+        DomainEventConverter.ConvertibleTypes.Add(typeof(AtomicEvent));
         var etagValue = Guid.NewGuid().ToString();
         AtomicEvent atomicEvent = new(nameof(AtomicEvent), null!)
         {

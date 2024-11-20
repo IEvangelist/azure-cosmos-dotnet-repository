@@ -59,7 +59,7 @@ static async Task RoundtripCrudOpsOnPeopleRepositoryAsync(IRepository<Person> re
 
     // Creating...
     Console.WriteLine("[Person] Repository creating...");
-    _ = await repository.CreateAsync(new[] { maryShaw, calvinWeatherfield });
+    _ = await repository.CreateAsync([maryShaw, calvinWeatherfield]);
 
     // Reading...
     Person mary = await repository.GetAsync(maryShaw.Id, maryShaw.SyntheticPartitionKey);
@@ -117,7 +117,7 @@ static async Task RawRepositoryExampleAsync(IRepository<Widget> repository)
 
     // Creating...
     Console.WriteLine("[Widget] Repository creating...");
-    _ = await repository.CreateAsync(new[] { widget1, widget2 });
+    _ = await repository.CreateAsync([widget1, widget2]);
 
     // Reading...
     Widget contraption = await repository.GetAsync(widget1.Id);
@@ -208,9 +208,9 @@ static async Task ServiceExampleAsync(IExampleService service)
 
     // Deleting...
     Console.WriteLine("[Person] Service deleting...");
-    await Task.WhenAll(new[]
-    {
+    await Task.WhenAll(
+    [
         service.DeletePersonAsync(james).AsTask(),
         service.DeletePersonAsync(adele).AsTask()
-    });
+    ]);
 }

@@ -69,7 +69,7 @@ public class DeadLetterProjectionBuilderDecoratorTests
                 .WithDeadLetterDecorator();
         });
 
-        DomainEventConverter.ConvertableTypes.Add(typeof(SampleDecoratorEvent));
+        DomainEventConverter.ConvertibleTypes.Add(typeof(SampleDecoratorEvent));
 
         services.AddInMemoryCosmosRepository();
 

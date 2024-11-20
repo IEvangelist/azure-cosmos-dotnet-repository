@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
         Action<ICosmosEventSourcingBuilder> eventSourcingBuilder)
     {
         DefaultCosmosEventSourcingBuilder builder = new(services);
-        DomainEventConverter.ConvertableTypes.Add(typeof(AtomicEvent));
+        DomainEventConverter.ConvertibleTypes.Add(typeof(AtomicEvent));
         eventSourcingBuilder.Invoke(builder);
         services.AddScoped<IContextService, DefaultContextService>();
         services.AddScoped(typeof(IEventStore<>), typeof(DefaultEventStore<>));
