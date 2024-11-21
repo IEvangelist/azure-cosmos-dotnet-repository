@@ -62,7 +62,7 @@ public interface ISpecificationBuilder<TItem, TResult>
     /// <summary>
     /// Sets the partition key for the query.
     /// </summary>
-    /// <param name="partitionKey"></param>
-    /// <returns></returns>
+    /// <param name="partitionKey">The partition key</param>
+    /// <returns>An instance of a <see cref="ISpecificationBuilder{TItem,TResult}"/></returns>
     ISpecificationBuilder<TItem, TResult> PartitionKey(PartitionKey partitionKey);
 }
