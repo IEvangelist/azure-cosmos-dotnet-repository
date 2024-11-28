@@ -36,25 +36,15 @@ internal sealed partial class DefaultRepository<TItem>(
     {
         string? continuationToken = null;
         List<TItem> results = [];
-        var readItemsCount = 0;
         double charge = 0;
         using var iterator = query.ToFeedIterator();
-        while (readItemsCount < pageSize && iterator.HasMoreResults)
+        while (results.Count != pageSize && iterator.HasMoreResults)
         {
             FeedResponse<TItem> next =
                 await iterator.ReadNextAsync(cancellationToken)
                     .ConfigureAwait(false);
 
-            foreach (TItem result in next)
-            {
-                if (readItemsCount == pageSize)
-                {
-                    break;
-                }
-
-                results.Add(result);
-                readItemsCount++;
-            }
+            results = results.Concat(pageSize > 0 ? next.Take(pageSize) : next).ToList();
 
             charge += next.RequestCharge;
             continuationToken = next.ContinuationToken;
