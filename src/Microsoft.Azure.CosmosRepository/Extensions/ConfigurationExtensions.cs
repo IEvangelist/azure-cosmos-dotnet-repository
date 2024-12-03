@@ -22,4 +22,11 @@ public static class ConfigurationExtensions
     /// <param name="configuration">The <see cref="IConfiguration"/> instance to read teh config from.</param>
     public static string? GetCosmosRepositoryDatabaseId(this IConfiguration configuration) =>
         configuration.GetValue<string>(RepositoryOptions.DatabaseIdConfigKey);
+
+    internal static bool IsEmulatorConnectionString(this IConfiguration configuration, string connectionName)
+    {
+        var connectionString = configuration.GetConnectionString(connectionName);
+
+        return connectionString.IsEmulatorConnectionString();
+    }
 }

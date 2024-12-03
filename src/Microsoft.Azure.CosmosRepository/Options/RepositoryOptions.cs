@@ -9,6 +9,8 @@ namespace Microsoft.Azure.CosmosRepository.Options;
 /// </summary>
 public class RepositoryOptions
 {
+    internal const string DefaultConfigSectionName = nameof(RepositoryOptions);
+
     /// <summary>
     /// The configuration key used for the connection string.
     /// </summary>
@@ -28,10 +30,10 @@ public class RepositoryOptions
     /// Gets or sets the cosmos account endpoint URI. This can be retrieved from the Overview section of the Azure Portal.
     /// This is required if you are authenticating using tokens.
     /// <remarks>
-    /// In the form of https://{databaseaccount}.documents.azure.com:443/, see: https://docs.microsoft.com/en-us/rest/api/cosmos-db/cosmosdb-resource-uri-syntax-for-rest
+    /// In the form of https://{databaseaccount}.documents.azure.com:443/, see: <a href="https://learn.microsoft.com/rest/api/cosmos-db/cosmosdb-resource-uri-syntax-for-rest"></a>
     /// </remarks>
     /// </summary>
-    public string? AccountEndpoint { get; set; }
+    public Uri? AccountEndpoint { get; set; }
 
     /// <summary>
     /// Gets or sets the name identifier for the cosmos database.
@@ -67,7 +69,7 @@ public class RepositoryOptions
     /// a container - because it doesn't really matter.
     /// </summary>
     /// <remarks>
-    ///Defaults to false, see: https://docs.microsoft.com/azure/cosmos-db/how-to-model-partition-example?WC.m_id=dapine
+    ///Defaults to false, see: https://learn.microsoft.com/azure/cosmos-db/how-to-model-partition-example?WC.m_id=dapine
     /// </remarks>
     public bool ContainerPerItemType { get; set; }
 
@@ -109,6 +111,14 @@ public class RepositoryOptions
     /// </summary>
     /// <remarks>This feature is very powerful for local development. However, in scenarios where infrastructure as code is used this may not be required.</remarks>
     public bool IsAutoResourceCreationIfNotExistsEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is disabled or not.
+    /// </summary>
+    /// <value>
+    /// The default value is <see langword="false"/>.
+    /// </value>
+    public bool DisableTracing { get; set; }
 
     /// <summary>
     /// Container options provided by the <see cref="Builders.IItemContainerBuilder"/>

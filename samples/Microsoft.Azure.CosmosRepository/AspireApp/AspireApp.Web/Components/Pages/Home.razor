@@ -1,0 +1,81 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header fs-1 fw-bold text-center">
+                    <code>Todos</code>
+                </div>
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="form-outline flex-fill">
+                            <label for="todo" class="form-label fs-5">Create a new todo:</label>
+                            <div class="input-group">
+                                <input id="todo" type="text" class="form-control form-control-lg"
+                                    @bind="@Model.Title"
+                                    @onkeyup="@OnKeyUp"
+                                    autocomplete="off"
+                                    placeholder="What needs to be done?" />
+                                <button id="add" type="button" class="btn btn-primary"
+                                    style="min-width: 6rem;"
+                                    disabled="@(Model.Title is not { Length: > 2 })"
+                                    @onclick="AddTodoAsync">
+                                        Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    @if (_todos is { Count: > 0 })
+                    {
+                        <ul id="todo-list" class="list-group mb-0 pt-5 fs-5">
+                            @foreach (var todo in _todos)
+                            {
+                                <li class="list-group-item d-flex align-items-center">
+                                    <label class="flex-fill" for="@todo.Id">
+                                        <input type="checkbox" class="form-check-input mx-2" id="@todo.Id"
+                                        value=@todo.IsCompleted style="transform: scale(1.5); cursor: pointer;"
+                                        checked=@todo.IsCompleted @onchange="@(async args =>
+                                               {
+                                                    var isCompleted = args.Value?.ToString()?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+                                                    todo.IsCompleted = isCompleted;
+
+                                                    await SaveTodoAsync(todo);
+                                               })" />
+                                        <span class="ps-3 @(todo.IsCompleted ? "text-decoration-line-through" : "")">@todo.Title</span>
+                                    </label>
+                                    <button class="btn btn-sm btn-danger" type="button"
+                                    title="Delete the '@todo.Title' (@todo.Id)?"
+                                    @onclick=@(_ => Delete(todo))>
+                                        Delete
+                                    </button>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>                
+                    @if (_todos is { Count: > 0 })
+                    {
+                        <div class="card-footer">
+                            <div class="d-flex flex-row justify-content-between">
+                                <div class="">
+                                    <button disabled class="btn btn-link text-info-emphasis" style="text-decoration: auto;">
+                                        @($"{_todos.Count(t => t.IsCompleted == false)} items left!")
+                                    </button>
+                                </div>
+                                <div class="">
+                                    <button class="btn btn-link" @onclick=@DeleteCompletedAsync>
+                                        Clear completed
+                                    </button>
+                                </div>
+                            </div>
+                       </div>
+                    }                
+            </div>
+        </div>
+    </div>
+</div>

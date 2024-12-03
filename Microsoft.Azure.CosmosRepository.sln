@@ -84,6 +84,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Azure.CosmosEvent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugSandbox", "samples\Microsoft.Azure.CosmosRepository\BugSandbox\BugSandbox.csproj", "{7354577A-699D-4952-B8DF-27CF0FC7F683}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireApp.AppHost", "samples\Microsoft.Azure.CosmosRepository\AspireApp\AspireApp.AppHost\AspireApp.AppHost.csproj", "{2A302849-3E35-42E5-A9CA-DC14B34476F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireApp.ServiceDefaults", "samples\Microsoft.Azure.CosmosRepository\AspireApp\AspireApp.ServiceDefaults\AspireApp.ServiceDefaults.csproj", "{CD50D0A9-F1EA-9983-6CCA-0E492FCDFC7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireApp.ApiService", "samples\Microsoft.Azure.CosmosRepository\AspireApp\AspireApp.ApiService\AspireApp.ApiService.csproj", "{9ACA5598-D93D-4956-A5BB-9311957301D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireApp.Web", "samples\Microsoft.Azure.CosmosRepository\AspireApp\AspireApp.Web\AspireApp.Web.csproj", "{CD93A91F-80F1-9232-0D40-5BCB93B297E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -186,6 +194,22 @@ Global
 		{7354577A-699D-4952-B8DF-27CF0FC7F683}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7354577A-699D-4952-B8DF-27CF0FC7F683}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7354577A-699D-4952-B8DF-27CF0FC7F683}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A302849-3E35-42E5-A9CA-DC14B34476F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A302849-3E35-42E5-A9CA-DC14B34476F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A302849-3E35-42E5-A9CA-DC14B34476F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A302849-3E35-42E5-A9CA-DC14B34476F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD50D0A9-F1EA-9983-6CCA-0E492FCDFC7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD50D0A9-F1EA-9983-6CCA-0E492FCDFC7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD50D0A9-F1EA-9983-6CCA-0E492FCDFC7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD50D0A9-F1EA-9983-6CCA-0E492FCDFC7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ACA5598-D93D-4956-A5BB-9311957301D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ACA5598-D93D-4956-A5BB-9311957301D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ACA5598-D93D-4956-A5BB-9311957301D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ACA5598-D93D-4956-A5BB-9311957301D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD93A91F-80F1-9232-0D40-5BCB93B297E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD93A91F-80F1-9232-0D40-5BCB93B297E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD93A91F-80F1-9232-0D40-5BCB93B297E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD93A91F-80F1-9232-0D40-5BCB93B297E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -217,6 +241,10 @@ Global
 		{7A2873BC-70A1-489B-9609-E9D7D382C826} = {8F8738AD-EBC3-4C24-882B-5D9FAC427E80}
 		{99ADC0F0-9433-49AD-86FA-34009CD293BA} = {F8ED6752-5ED3-4EA1-89F0-363C40F8D8E0}
 		{7354577A-699D-4952-B8DF-27CF0FC7F683} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
+		{2A302849-3E35-42E5-A9CA-DC14B34476F0} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
+		{CD50D0A9-F1EA-9983-6CCA-0E492FCDFC7C} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
+		{9ACA5598-D93D-4956-A5BB-9311957301D6} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
+		{CD93A91F-80F1-9232-0D40-5BCB93B297E9} = {2EEE3D0D-6457-46D8-B8E8-FA7364942F1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6AAE7641-B62C-48BA-8FE6-0F819E5B45EF}

@@ -8,16 +8,10 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/>
-    /// instances to interact with Cosmos DB.
-    /// </summary>
-    /// <param name="services">The service collection to add services to.</param>
-    /// <param name="setupAction">An action to configure the repository options</param>
-    /// <param name="additionalSetupAction">An action to configure the <see cref="CosmosClientOptions"/></param>
-    /// <returns>The same service collection that was provided, with the required cosmos services.</returns>
-    public static IServiceCollection AddCosmosRepository(
+    internal static IServiceCollection AddCosmosRepository(
         this IServiceCollection services,
+        string? connectionName,
+        IConfiguration? configuration,        
         Action<RepositoryOptions>? setupAction = default,
         Action<CosmosClientOptions>? additionalSetupAction = default)
     {
@@ -30,10 +24,26 @@ public static class ServiceCollectionExtensions
         services.AddOptions<RepositoryOptions>()
             .Configure<IConfiguration>(
                 (settings, configuration) =>
-                    configuration.GetSection(nameof(RepositoryOptions)).Bind(settings));
+                    configuration.GetSection(RepositoryOptions.DefaultConfigSectionName).Bind(settings));
 
         services.AddLogging()
             .AddHttpClient()
+            .ConfigureHttpClientDefaults(builder =>
+            {
+                if (configuration is null || connectionName is null)
+                {
+                    return; // This is only ever populated from the HostApplicationBuilderExtensions.
+                }
+
+                if (configuration.GetConnectionString(connectionName).IsEmulatorConnectionString())
+                {
+                    builder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+                    {
+                        ClientCertificateOptions = ClientCertificateOption.Manual,
+                        ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+                    });
+                }
+            })
             .AddSingleton(new CosmosClientOptionsManipulator(additionalSetupAction))
             .AddSingleton<ICosmosClientOptionsProvider, DefaultCosmosClientOptionsProvider>()
             .AddSingleton<ICosmosClientProvider, DefaultCosmosClientProvider>()
@@ -70,6 +80,26 @@ public static class ServiceCollectionExtensions
         }
 
         return services;
+    }
+
+    /// <summary>
+    /// Adds the services required to consume any number of <see cref="IRepository{TItem}"/>
+    /// instances to interact with Cosmos DB.
+    /// </summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <param name="setupAction">An action to configure the repository options</param>
+    /// <param name="additionalSetupAction">An action to configure the <see cref="CosmosClientOptions"/></param>
+    /// <returns>The same service collection that was provided, with the required cosmos services.</returns>
+    public static IServiceCollection AddCosmosRepository(
+        this IServiceCollection services,
+        Action<RepositoryOptions>? setupAction = default,
+        Action<CosmosClientOptions>? additionalSetupAction = default)
+    {
+        return services.AddCosmosRepository(
+            null,
+            null,
+            setupAction,
+            additionalSetupAction);
     }
 
     /// <summary>

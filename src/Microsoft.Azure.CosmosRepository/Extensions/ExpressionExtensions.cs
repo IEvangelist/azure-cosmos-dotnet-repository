@@ -5,7 +5,7 @@ namespace Microsoft.Azure.CosmosRepository.Extensions;
 
 /// <summary>
 /// Borrowed from:
-/// https://docs.microsoft.com/en-us/archive/blogs/meek/linq-to-entities-combining-predicates
+/// https://learn.microsoft.com/en-us/archive/blogs/meek/linq-to-entities-combining-predicates
 /// </summary>
 internal static class ExpressionExtensions
 {

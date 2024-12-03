@@ -138,7 +138,7 @@ public class ContainerOptionsBuilder(Type type)
 
     /// <summary>
     /// When your Cosmos DB resource is
-    /// <a href="https://docs.microsoft.com/azure/cosmos-db/serverless?WC.m_id=dapine">
+    /// <a href="https://learn.microsoft.com/azure/cosmos-db/serverless?WC.m_id=dapine">
     /// configured for serverless</a>, your containers must explicitly set
     /// serverless <see cref="ThroughputProperties"/>.
     /// </summary>

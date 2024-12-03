@@ -3,7 +3,7 @@
 
 namespace Microsoft.Azure.CosmosRepository.Providers;
 
-class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
+sealed class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
 {
     readonly Lazy<CosmosClient> _lazyCosmosClient;
     readonly CosmosClientOptions _cosmosClientOptions;
@@ -22,9 +22,10 @@ class DefaultCosmosClientProvider : ICosmosClientProvider, IDisposable
         _lazyCosmosClient = new Lazy<CosmosClient>(GetCosmoClient);
     }
 
-    CosmosClient GetCosmoClient() => _options.TokenCredential is not null && _options.AccountEndpoint is not null
-            ? new CosmosClient(_options.AccountEndpoint, _options.TokenCredential, _cosmosClientOptions)
-            : new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions);
+    CosmosClient GetCosmoClient() => _options.TokenCredential is not null
+        && _options.AccountEndpoint is not null
+        ? new CosmosClient(_options.AccountEndpoint.ToString(), _options.TokenCredential, _cosmosClientOptions)
+        : new CosmosClient(_options.CosmosConnectionString, _cosmosClientOptions);
 
     /// <inheritdoc/>
     public DefaultCosmosClientProvider(

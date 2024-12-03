@@ -70,7 +70,7 @@ public class DefaultRepositoryOptionsValidatorTests
         //Arrange
         _repositoryOptions.CosmosConnectionString = "Some Connection String";
         _repositoryOptions.TokenCredential = new TestTokenCredential();
-        _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
+        _repositoryOptions.AccountEndpoint = new("https://jsonplaceholder.typicode.com/");
         _options.Setup(o => o.Value).Returns(_repositoryOptions);
 
         //Act
@@ -85,7 +85,7 @@ public class DefaultRepositoryOptionsValidatorTests
         //Arrange
         _repositoryOptions.CosmosConnectionString = "Some Connection String";
         _repositoryOptions.TokenCredential = null;
-        _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
+        _repositoryOptions.AccountEndpoint = new("https://jsonplaceholder.typicode.com/");
         _options.Setup(o => o.Value).Returns(_repositoryOptions);
 
         //Act
@@ -115,7 +115,7 @@ public class DefaultRepositoryOptionsValidatorTests
         //Arrange
         _repositoryOptions.CosmosConnectionString = null;
         _repositoryOptions.TokenCredential = null;
-        _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
+        _repositoryOptions.AccountEndpoint = new("https://jsonplaceholder.typicode.com/");
         _repositoryOptions.ContainerPerItemType = false;
         _repositoryOptions.DatabaseId = "Database 1";
         _repositoryOptions.ContainerId = "Container";
@@ -194,7 +194,7 @@ public class DefaultRepositoryOptionsValidatorTests
         //Arrange
         _repositoryOptions.CosmosConnectionString = null;
         _repositoryOptions.TokenCredential = new TestTokenCredential();
-        _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
+        _repositoryOptions.AccountEndpoint = new("https://jsonplaceholder.typicode.com/");
         _repositoryOptions.ContainerPerItemType = true;
         _options.Setup(o => o.Value).Returns(_repositoryOptions);
 
@@ -207,7 +207,7 @@ public class DefaultRepositoryOptionsValidatorTests
         //Arrange
         _repositoryOptions.CosmosConnectionString = null;
         _repositoryOptions.TokenCredential = new TestTokenCredential();
-        _repositoryOptions.AccountEndpoint = "Some Account Endpoint";
+        _repositoryOptions.AccountEndpoint = new("https://jsonplaceholder.typicode.com/");
         _repositoryOptions.ContainerPerItemType = false;
         _repositoryOptions.DatabaseId = "Database 1";
         _repositoryOptions.ContainerId = "Container";

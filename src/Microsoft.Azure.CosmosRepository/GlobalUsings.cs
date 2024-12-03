@@ -2,11 +2,15 @@
 // Licensed under the MIT License.
 
 global using System.Collections.Concurrent;
+global using System.Data.Common;
 global using System.Linq.Expressions;
 global using System.Net;
 global using System.Reflection;
 global using System.Runtime.CompilerServices;
+
 global using Azure.Core;
+global using Azure.Identity;
+
 global using Microsoft.Azure.Cosmos;
 global using Microsoft.Azure.Cosmos.Linq;
 global using Microsoft.Azure.CosmosRepository;
@@ -32,6 +36,7 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
+
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Linq;
 global using Newtonsoft.Json.Serialization;

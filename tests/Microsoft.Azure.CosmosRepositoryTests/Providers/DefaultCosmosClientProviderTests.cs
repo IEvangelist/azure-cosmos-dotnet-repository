@@ -47,7 +47,7 @@ public class DefaultCosmosClientProviderTests
                 Microsoft.Extensions.Options.Options.Create(new RepositoryOptions
                 {
                     TokenCredential = new TestTokenCredential(),
-                    AccountEndpoint = "https://localtestcosmos.documents.azure.com:443/"
+                    AccountEndpoint = new("https://localtestcosmos.documents.azure.com:443/")
                 }));
 
         provider.Dispose();

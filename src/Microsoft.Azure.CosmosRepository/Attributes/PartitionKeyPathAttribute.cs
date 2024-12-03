@@ -9,7 +9,7 @@ namespace Microsoft.Azure.CosmosRepository.Attributes;
 /// conjunction with a <see cref="Newtonsoft.Json.JsonPropertyAttribute"/> on the <see cref="IItem"/> property
 /// whose value will act as the partition key. Partition key paths should start with "/",
 /// for example "/partition". For more information,
-/// see https://docs.microsoft.com/azure/cosmos-db/partitioning-overview.
+/// see https://learn.microsoft.com/azure/cosmos-db/partitioning-overview.
 /// </summary>
 /// <remarks>
 /// By default, "/id" is used.

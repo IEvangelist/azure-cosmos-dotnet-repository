@@ -26,15 +26,16 @@ class DefaultCosmosClientOptionsProvider : ICosmosClientOptionsProvider
         IServiceProvider serviceProvider,
         IConfiguration configuration)
     {
-        RepositoryOptions ro = new();
+        RepositoryOptions options = new();
+
         configuration.GetSection(nameof(RepositoryOptions))
-            .Bind(ro);
+            .Bind(options);
 
         CosmosClientOptions cosmosClientOptions = new()
         {
-            SerializerOptions = ro.SerializationOptions,
+            SerializerOptions = options.SerializationOptions,
             HttpClientFactory = () => ClientFactory(serviceProvider),
-            AllowBulkExecution = ro.AllowBulkExecution
+            AllowBulkExecution = options.AllowBulkExecution
         };
 
         CosmosClientOptionsManipulator manipulator =

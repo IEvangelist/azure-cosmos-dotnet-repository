@@ -11,13 +11,15 @@ class DefaultCosmosContainerService : ICosmosContainerService
     readonly RepositoryOptions _options;
     readonly Dictionary<string, DateTime> _containerSyncLog = [];
 
-    public DefaultCosmosContainerService(ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
+    public DefaultCosmosContainerService(
+        ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
         ICosmosClientProvider cosmosClientProvider,
         IOptions<RepositoryOptions> options,
         ILogger<DefaultCosmosContainerService> logger,
         IRepositoryOptionsValidator repositoryOptionsValidator)
     {
         repositoryOptionsValidator.ValidateForContainerCreation(options);
+
         _cosmosItemConfigurationProvider = cosmosItemConfigurationProvider;
         _cosmosClientProvider = cosmosClientProvider;
         _logger = logger;
