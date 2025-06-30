@@ -128,7 +128,7 @@ jobs:
 
       - name: Publish ${{ matrix.project }} package
         run: |
-          nuget push **\*.nupkg -NoSymbols -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+          dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Upload Package
         uses: actions/upload-artifact@main
