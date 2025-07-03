@@ -8,25 +8,30 @@ namespace Microsoft.Azure.CosmosRepository;
 internal sealed partial class DefaultRepository<TItem>
 {
     /// <inheritdoc/>
-    public async ValueTask<TResult> QueryAsync<TResult>(
+    public ValueTask<TResult> QueryAsync<TResult>(
         ISpecification<TItem, TResult> specification,
         CancellationToken cancellationToken = default)
-        where TResult : IQueryResult<TItem>
+        where TResult : IQueryResult<TItem> =>
+            QueryAsync(specification, new QueryRequestOptions(), cancellationToken);
+
+    /// <inheritdoc/>
+    public async ValueTask<TResult> QueryAsync<TResult>(
+        ISpecification<TItem, TResult> specification,
+        QueryRequestOptions requestOptions,
+        CancellationToken cancellationToken = default) where TResult : IQueryResult<TItem>
     {
         Container container = await containerProvider.GetContainerAsync()
             .ConfigureAwait(false);
 
-        QueryRequestOptions options = new();
-
         if (specification.UseContinuationToken)
         {
-            options.MaxItemCount = specification.PageSize;
+            requestOptions.MaxItemCount = specification.PageSize;
         }
 
         IQueryable<TItem> query = container
             .GetItemLinqQueryable<TItem>(
-                requestOptions: options,
-                continuationToken: specification.ContinuationToken, 
+                requestOptions: requestOptions,
+                continuationToken: specification.ContinuationToken,
                 linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
             .Where(repositoryExpressionProvider.Default<TItem>());
 
