@@ -8,7 +8,7 @@
     <PackageVersion Include="AspNetCore.HealthChecks.CosmosDb" Version="8.0.1" />
     <PackageVersion Include="Bogus" Version="35.6.1" />
     <PackageVersion Include="CorrelationId" Version="3.0.1" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="FluentAssertions" Version="7.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.4.0" />
