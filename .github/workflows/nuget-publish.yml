@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+          filter: tree:0
       - name: Setup .NET
         uses: actions/setup-dotnet@main
         with:
@@ -93,16 +96,16 @@ jobs:
         run: echo $GITHUB_REF
 
       - name: Extract version number
-        uses: actions-ecosystem/action-regex-match@v2
         id: regex-match
-        with:
-          text: ${{ github.ref }}
-          regex: "([pre0-9.-]+)$"
-
-      - name: Print version number
-        run: echo '${{ steps.regex-match.outputs.match }}'
+        run: |
+          VERSION=$(echo $GITHUB_REF | sed 's|refs/tags/||')
+          echo "match=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
 
       - uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+          filter: tree:0
       - name: Setup .NET
         uses: actions/setup-dotnet@main
         with:
