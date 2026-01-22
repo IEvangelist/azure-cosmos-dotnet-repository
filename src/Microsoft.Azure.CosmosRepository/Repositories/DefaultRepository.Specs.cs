@@ -26,7 +26,7 @@ internal sealed partial class DefaultRepository<TItem>
         IQueryable<TItem> query = container
             .GetItemLinqQueryable<TItem>(
                 requestOptions: options,
-                continuationToken: specification.ContinuationToken, 
+                continuationToken: specification.ContinuationToken,
                 linqSerializerOptions: optionsMonitor.CurrentValue.SerializationOptions)
             .Where(repositoryExpressionProvider.Default<TItem>());
 
