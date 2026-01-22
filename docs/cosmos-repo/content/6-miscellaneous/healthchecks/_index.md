@@ -42,3 +42,11 @@ Don't forget to map the health endpoint with:
 ```csharp
 app.MapHealthChecks("/healthz");
 ```
+
+## Container Initialization and Health Checks
+
+By default, Cosmos DB containers are created lazily on first repository access. This can cause health checks to fail during startup while containers are being created.
+
+If you're experiencing health check failures during application startup, consider using **eager container initialization** to create containers before the application starts handling requests.
+
+See [Container Initialization](../container-initialization/) for detailed information about lazy vs eager initialization and how to configure it.
