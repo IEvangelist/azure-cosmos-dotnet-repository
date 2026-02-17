@@ -1,0 +1,61 @@
+<Solution>
+  <Folder Name="/AspNetCore/">
+    <Project Path="src/Microsoft.Azure.CosmosRepository.AspNetCore/Microsoft.Azure.CosmosRepository.AspNetCore.csproj" />
+    <Project Path="tests/Microsoft.Azure.CosmosRepository.AspNetCoreTests/Microsoft.Azure.CosmosRepository.AspNetCoreTests.csproj" />
+  </Folder>
+  <Folder Name="/EventSourcing/">
+    <Project Path="src/Microsoft.Azure.CosmosEventSourcing/Microsoft.Azure.CosmosEventSourcing.csproj" />
+    <Project Path="tests/Microsoft.Azure.CosmosEventSourcingAcceptanceTests/Microsoft.Azure.CosmosEventSourcingAcceptanceTests.csproj" />
+    <Project Path="tests/Microsoft.Azure.CosmosEventSourcingTests/Microsoft.Azure.CosmosEventSourcingTests.csproj" />
+  </Folder>
+  <Folder Name="/Repository/">
+    <Project Path="src/Microsoft.Azure.CosmosRepository/Microsoft.Azure.CosmosRepository.csproj" />
+    <Project Path="tests/Microsoft.Azure.CosmosRepositoryAcceptanceTests/Microsoft.Azure.CosmosRepositoryAcceptanceTests.csproj" />
+    <Project Path="tests/Microsoft.Azure.CosmosRepositoryTests/Microsoft.Azure.CosmosRepositoryTests.csproj" />
+  </Folder>
+  <Folder Name="/Samples/">
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/AspireApp/AspireApp.ApiService/AspireApp.ApiService.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/AspireApp/AspireApp.AppHost/AspireApp.AppHost.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/AspireApp/AspireApp.ServiceDefaults/AspireApp.ServiceDefaults.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/AspireApp/AspireApp.Web/AspireApp.Web.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/AzureFunctionTier/AzureFunctionTier.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/BugSandbox/BugSandbox.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/InMemoryWebTier/InMemoryWebTier.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/OptimisticConcurrencyControl/OptimisticConcurrencyControl.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/Paging/Paging.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/ServiceTier/ServiceTier.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/Specification/Specification.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/WebTier.Integration.Tests/WebTier.Integration.Tests.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository/WebTier/WebTier.csproj" />
+  </Folder>
+  <Folder Name="/Samples/ChangeFeed/">
+    <Project Path="samples/Microsoft.Azure.CosmosRepository.AspNetCore/ChangedFeedSamples.Shared/ChangedFeedSamples.Shared.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository.AspNetCore/ChangeFeedConsole/ChangeFeedConsole.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosRepository.AspNetCore/ChangeFeedWeb/ChangeFeedWeb.csproj" />
+  </Folder>
+  <Folder Name="/Samples/EventSourcing/">
+    <Project Path="samples/Microsoft.Azure.CosmosEventSourcing/BasicEventSourcingSample/BasicEventSourcingSample.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosEventSourcing/EventSourcingCustomerAccount/EventSourcingCustomerAccount.csproj" />
+    <Project Path="samples/Microsoft.Azure.CosmosEventSourcing/EventSourcingJobsTracker/EventSourcingJobsTracker.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".all-contributorsrc" />
+    <File Path=".editorconfig" />
+    <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
+    <File Path=".github/ISSUE_TEMPLATE/feature_request.md" />
+    <File Path=".gitignore" />
+    <File Path=".gitmodules" />
+    <File Path="CODE_METRICS.md" />
+    <File Path="CODE_OF_CONDUCT.md" />
+    <File Path="CosmosRepository.png" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="logo-large.png" />
+    <File Path="logo.png" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="tools/CosmosTestHelper/CosmosTestHelper.csproj" />
+  </Folder>
+</Solution>

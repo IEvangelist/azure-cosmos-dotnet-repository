@@ -1,0 +1,16 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": ["src/Hex1b/Hex1b.csproj"],
+          "src": "../.."
+        }
+      ],
+      "dest": "_metadata",
+      "properties": {
+        "TargetFramework": "net10.0"
+      }
+    }
+  ]
+}
