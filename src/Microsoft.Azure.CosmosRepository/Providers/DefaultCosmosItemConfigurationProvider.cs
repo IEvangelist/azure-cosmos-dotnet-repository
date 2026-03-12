@@ -12,7 +12,7 @@ class DefaultCosmosItemConfigurationProvider(
     ICosmosThroughputProvider cosmosThroughputProvider,
     ICosmosStrictTypeCheckingProvider cosmosStrictTypeCheckingProvider) : ICosmosItemConfigurationProvider
 {
-    private static readonly ConcurrentDictionary<Type, ItemConfiguration> _itemOptionsMap = new();
+    private readonly ConcurrentDictionary<Type, ItemConfiguration> _itemOptionsMap = new();
 
     public ItemConfiguration GetItemConfiguration<TItem>() where TItem : IItem =>
         GetItemConfiguration(typeof(TItem));
