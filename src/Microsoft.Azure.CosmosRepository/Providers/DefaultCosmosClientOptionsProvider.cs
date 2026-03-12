@@ -15,22 +15,17 @@ class DefaultCosmosClientOptionsProvider : ICosmosClientOptionsProvider
     /// Default <see cref="ICosmosClientOptionsProvider"/> implementation.
     /// </summary>
     /// <param name="serviceProvider">Service provider implementation.</param>
-    /// <param name="configuration">Service configuration implementation.</param>
+    /// <param name="options">Repository options implementation.</param>
     public DefaultCosmosClientOptionsProvider(
         IServiceProvider serviceProvider,
-        IConfiguration configuration) =>
+        IOptions<RepositoryOptions> options) =>
         _lazyClientOptions = new Lazy<CosmosClientOptions>(
-            () => CreateCosmosClientOptions(serviceProvider, configuration));
+            () => CreateCosmosClientOptions(serviceProvider, options.Value));
 
     CosmosClientOptions CreateCosmosClientOptions(
         IServiceProvider serviceProvider,
-        IConfiguration configuration)
+        RepositoryOptions options)
     {
-        RepositoryOptions options = new();
-
-        configuration.GetSection(nameof(RepositoryOptions))
-            .Bind(options);
-
         CosmosClientOptions cosmosClientOptions = new()
         {
             SerializerOptions = options.SerializationOptions,
