@@ -2,9 +2,12 @@
 // Licensed under the MIT License.
 
 using System.Reflection;
+using Microsoft.Azure.CosmosRepository.AspNetCore;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Moq;
 using Xunit;
 
 namespace Microsoft.Azure.CosmosRepository.AspNetCoreTests.Extensions;
@@ -31,6 +34,26 @@ public class Processor2 : IItemChangeFeedProcessor<TestItem2>
 
 public class ServiceCollectionExtensionsTests
 {
+    [Fact]
+    public void AddCosmosRepositoryChangeFeedHostedService_AddsHostedService()
+    {
+        //Arrange
+        ServiceCollection services = new();
+        services.AddSingleton(Mock.Of<IChangeFeedService>());
+
+        //Act
+        services.AddCosmosRepositoryChangeFeedHostedService();
+
+        //Assert
+        using ServiceProvider provider = services.BuildServiceProvider();
+        CosmosRepositoryChangeFeedHostedService hostedService =
+            provider.GetServices<IHostedService>()
+                .OfType<CosmosRepositoryChangeFeedHostedService>()
+                .Single();
+
+        Assert.NotNull(hostedService);
+    }
+
     [Fact]
     public void AddCosmosRepositoryItemChangeFeedProcessors_AssemblyAddsProcessors()
     {
