@@ -5,6 +5,7 @@ using System.Reflection;
 using Microsoft.Azure.CosmosRepository.AspNetCore.Extensions;
 using Microsoft.Azure.CosmosRepository.ChangeFeed;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Microsoft.Azure.CosmosRepository.AspNetCoreTests.Extensions;
 
@@ -30,6 +31,7 @@ public class Processor2 : IItemChangeFeedProcessor<TestItem2>
 
 public class ServiceCollectionExtensionsTests
 {
+    [Fact]
     public void AddCosmosRepositoryItemChangeFeedProcessors_AssemblyAddsProcessors()
     {
         //Arrange
