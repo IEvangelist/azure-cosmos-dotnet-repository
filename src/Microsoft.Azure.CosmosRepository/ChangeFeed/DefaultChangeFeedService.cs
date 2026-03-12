@@ -7,12 +7,11 @@ class DefaultChangeFeedService(IEnumerable<IChangeFeedContainerProcessorProvider
 {
     private IEnumerable<IContainerChangeFeedProcessor> _processors = new List<IContainerChangeFeedProcessor>();
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken _)
     {
-        _processors = changeFeedContainerProcessorProvider.SelectMany(x => x.GetProcessors());
-
-        using CancellationTokenRegistration registration =
-            cancellationToken.Register(() => StopAsync().Wait(TimeSpan.FromSeconds(5)));
+        _processors = changeFeedContainerProcessorProvider
+            .SelectMany(x => x.GetProcessors())
+            .ToList();
 
         return Task.WhenAll(
             _processors.Select(
