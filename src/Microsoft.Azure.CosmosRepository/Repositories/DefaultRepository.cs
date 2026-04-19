@@ -11,7 +11,9 @@ internal sealed partial class DefaultRepository<TItem>(
     ILogger<DefaultRepository<TItem>> logger,
     ICosmosQueryableProcessor cosmosQueryableProcessor,
     IRepositoryExpressionProvider repositoryExpressionProvider,
-    ISpecificationEvaluator specificationEvaluator) : IRepository<TItem>
+    ISpecificationEvaluator specificationEvaluator,
+    ICosmosContainerService cosmosContainerService,
+    ICosmosItemConfigurationProvider cosmosItemConfigurationProvider) : IRepository<TItem>
     where TItem : IItem
 {
     private (bool OptimizeBandwidth, ItemRequestOptions Options) RequestOptions =>
