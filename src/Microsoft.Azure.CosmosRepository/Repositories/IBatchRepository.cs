@@ -29,6 +29,13 @@ public interface IBatchRepository<in TItem>
     where TItem : IItem
 {
     /// <summary>
+    /// Creates a fluent batch builder for the given partition key.
+    /// </summary>
+    /// <param name="partitionKey">The partition key for the batch.</param>
+    /// <returns>An <see cref="IBatchBuilder"/> for composing a batch.</returns>
+    IBatchBuilder Batch(string partitionKey);
+
+    /// <summary>
     /// Updates an <see cref="IEnumerable{TItem}"/> as a batch.
     /// </summary>
     /// <param name="items">The items to update.</param>
