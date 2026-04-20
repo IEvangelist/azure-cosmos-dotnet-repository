@@ -3,13 +3,10 @@ namespace Microsoft.Azure.CosmosRepositoryTests.Batching;
 public class DefaultBatchBuilderTests
 {
     private readonly Mock<ICosmosContainerService> _containerService = new();
-    private readonly Mock<ICosmosItemConfigurationProvider> _configurationProvider = new();
 
     [Fact]
     public async Task Batch_EmptyOps_ExecuteAsync_Throws()
     {
-        // Arrange
-        SetupContainer(typeof(TestItem), "container-a");
         IBatchBuilder builder = CreateBuilder("A");
 
         // Act
@@ -22,8 +19,6 @@ public class DefaultBatchBuilderTests
     [Fact]
     public void Batch_PartitionKeyMismatch_Throws()
     {
-        // Arrange
-        SetupContainer(typeof(TestItem), "container-a");
         IBatchBuilder builder = CreateBuilder("B");
 
         // Act
@@ -34,60 +29,59 @@ public class DefaultBatchBuilderTests
     }
 
     [Fact]
-    public void Batch_CrossContainer_AtAddTime_Throws()
+    public void Batch_SameContainerDifferentTypes_AddAcceptsBoth_Succeeds()
     {
-        // Arrange
         const string sharedPartitionKey = "shared";
-
-        SetupContainer(typeof(TestItem), "container-a");
-        SetupContainer(typeof(TestItemOther), "container-b");
 
         IBatchBuilder builder = CreateBuilder(sharedPartitionKey);
 
         // Act
-        Action act = () => builder.CreateItem(new TestItemOther { Id = sharedPartitionKey });
+        var sut = builder
+            .CreateItem(new TestItem { Id = sharedPartitionKey })
+            .DeleteItem<TestItemOther>(sharedPartitionKey);
 
         // Assert
-        Assert.Throws<InvalidOperationException>(act);
+        Assert.NotNull(sut);
     }
 
     [Fact]
-    public void Batch_SameContainerDifferentTypes_AddAcceptsBoth_Succeeds()
+    public async Task Batch_ExecuteAsync_PassesTrackedTypesToContainerService()
     {
-        // Arrange
         const string sharedPartitionKey = "shared";
 
-        SetupContainer(typeof(TestItem), "container-a");
-        SetupContainer(typeof(TestItemOther), "container-a");
+        Mock<Container> container = new();
+        Mock<TransactionalBatch> batch = new();
+        Mock<TransactionalBatchResponse> response = new();
 
-        IBatchBuilder builder = CreateBuilder(sharedPartitionKey);
+        container.Setup(c => c.CreateTransactionalBatch(It.Is<PartitionKey>(key => key == new PartitionKey(sharedPartitionKey))))
+            .Returns(batch.Object);
+        batch.Setup(b => b.ExecuteAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response.Object);
+        response.SetupGet(r => r.IsSuccessStatusCode).Returns(true);
 
-        // Act
-        Exception? exception = Record.Exception(() => builder
+        _containerService.Setup(service => service.GetContainerAsync(
+                It.Is<IReadOnlyList<Type>>(types =>
+                    types.Count == 2 &&
+                    types.Contains(typeof(TestItem)) &&
+                    types.Contains(typeof(TestItemOther)))))
+            .ReturnsAsync(container.Object);
+
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey)
             .CreateItem(new TestItem { Id = sharedPartitionKey })
-            .DeleteItem<TestItemOther>(sharedPartitionKey));
+            .DeleteItem<TestItemOther>(sharedPartitionKey);
 
-        // Assert
-        Assert.Null(exception);
+        await builder.ExecuteAsync();
+
+        _containerService.Verify(service => service.GetContainerAsync(
+            It.Is<IReadOnlyList<Type>>(types =>
+                types.Count == 2 &&
+                types.Contains(typeof(TestItem)) &&
+                types.Contains(typeof(TestItemOther)))), Times.Once);
     }
 
     private DefaultBatchBuilder CreateBuilder(string partitionKey) =>
         new(
             partitionKey,
             typeof(TestItem),
-            _containerService.Object,
-            _configurationProvider.Object);
-
-    private void SetupContainer(Type type, string containerName)
-    {
-        ItemConfiguration configuration = new(
-            type,
-            containerName,
-            "/id",
-            new UniqueKeyPolicy(),
-            ThroughputProperties.CreateManualThroughput(400));
-
-        _configurationProvider.Setup(provider => provider.GetItemConfiguration(type))
-            .Returns(configuration);
-    }
+            _containerService.Object);
 }

@@ -3,11 +3,8 @@ namespace Microsoft.Azure.CosmosRepository;
 internal sealed class DefaultBatchBuilder(
     string partitionKey,
     Type seedType,
-    ICosmosContainerService containerService,
-    ICosmosItemConfigurationProvider configProvider) : IBatchBuilder
+    ICosmosContainerService containerService) : IBatchBuilder
 {
-    private readonly string _partitionKey = partitionKey;
-    private readonly string _seedContainerName = configProvider.GetItemConfiguration(seedType).ContainerName;
     private readonly List<PendingOp> _operations = [];
     private readonly HashSet<Type> _seenTypes = [seedType];
 
@@ -30,7 +27,7 @@ internal sealed class DefaultBatchBuilder(
             throw new ArgumentNullException(nameof(id));
         }
 
-        ValidateContainer(typeof(TItem));
+        _seenTypes.Add(typeof(TItem));
         _operations.Add(new(OpKind.Delete, typeof(TItem), null, id, null));
 
         return this;
@@ -45,10 +42,11 @@ internal sealed class DefaultBatchBuilder(
                 nameof(_operations));
         }
 
+        // This call ensures that all the types are valid for the same container
         Container container = await containerService.GetContainerAsync(_seenTypes.ToList())
             .ConfigureAwait(false);
 
-        TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(_partitionKey));
+        TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
 
         foreach (PendingOp operation in _operations)
         {
@@ -89,7 +87,8 @@ internal sealed class DefaultBatchBuilder(
             throw new ArgumentNullException(nameof(item));
         }
 
-        ValidateContainer(typeof(TItem));
+        _seenTypes.Add(typeof(TItem));
+
         ValidatePartitionKey(item);
 
         _operations.Add(new(
@@ -97,35 +96,20 @@ internal sealed class DefaultBatchBuilder(
             typeof(TItem),
             item,
             item.Id,
-            (kind is OpKind.Replace or OpKind.Upsert) && item is IItemWithEtag itemWithEtag
+            kind is OpKind.Replace or OpKind.Upsert && item is IItemWithEtag itemWithEtag
                 ? itemWithEtag.Etag
                 : null));
 
         return this;
     }
 
-    private void ValidateContainer(Type itemType)
-    {
-        if (!_seenTypes.Add(itemType))
-        {
-            return;
-        }
-
-        string containerName = configProvider.GetItemConfiguration(itemType).ContainerName;
-
-        if (!string.Equals(containerName, _seedContainerName, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException(
-                $"The item type {itemType.Name} is not configured to use the same container as {seedType.Name}.");
-        }
-    }
 
     private void ValidatePartitionKey(IItem item)
     {
-        if (!string.Equals(item.PartitionKey, _partitionKey, StringComparison.Ordinal))
+        if (!string.Equals(item.PartitionKey, partitionKey, StringComparison.Ordinal))
         {
             throw new ArgumentException(
-                $"The item partition key '{item.PartitionKey}' does not match the batch partition key '{_partitionKey}'.",
+                $"The item partition key '{item.PartitionKey}' does not match the batch partition key '{partitionKey}'.",
                 nameof(item));
         }
     }

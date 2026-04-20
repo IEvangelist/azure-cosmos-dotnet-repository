@@ -11,8 +11,7 @@ internal partial class DefaultRepository<TItem>
         new DefaultBatchBuilder(
             partitionKey,
             typeof(TItem),
-            cosmosContainerService,
-            cosmosItemConfigurationProvider);
+            cosmosContainerService);
 
     /// <inheritdoc />
     public async ValueTask UpdateAsBatchAsync(
