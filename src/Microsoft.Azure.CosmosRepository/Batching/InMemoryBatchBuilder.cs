@@ -17,6 +17,7 @@ internal sealed class InMemoryBatchBuilder(string partitionKey) : IBatchBuilder
         }
 
         ValidatePartitionKey(item);
+        EnsureCapacity();
         _operations.Add(cancellationToken => CreateAsync(item, cancellationToken));
 
         return this;
@@ -30,6 +31,7 @@ internal sealed class InMemoryBatchBuilder(string partitionKey) : IBatchBuilder
         }
 
         ValidatePartitionKey(item);
+        EnsureCapacity();
         _operations.Add(cancellationToken => UpsertAsync(item, cancellationToken));
 
         return this;
@@ -43,6 +45,7 @@ internal sealed class InMemoryBatchBuilder(string partitionKey) : IBatchBuilder
         }
 
         ValidatePartitionKey(item);
+        EnsureCapacity();
         _operations.Add(cancellationToken => UpsertAsync(item, cancellationToken));
 
         return this;
@@ -56,6 +59,7 @@ internal sealed class InMemoryBatchBuilder(string partitionKey) : IBatchBuilder
         }
 
         ValidatePartitionKey(item);
+        EnsureCapacity();
         _operations.Add(cancellationToken => DeleteAsync<TItem>(item.Id, cancellationToken));
 
         return this;
@@ -68,6 +72,7 @@ internal sealed class InMemoryBatchBuilder(string partitionKey) : IBatchBuilder
             throw new ArgumentNullException(nameof(id));
         }
 
+        EnsureCapacity();
         _operations.Add(cancellationToken => DeleteAsync<TItem>(id, cancellationToken));
 
         return this;
@@ -95,6 +100,15 @@ internal sealed class InMemoryBatchBuilder(string partitionKey) : IBatchBuilder
             throw new ArgumentException(
                 $"The item partition key '{item.PartitionKey}' does not match the batch partition key '{_partitionKey}'.",
                 nameof(item));
+        }
+    }
+
+    private void EnsureCapacity()
+    {
+        if (_operations.Count >= BatchConstants.MaxBatchSize)
+        {
+            throw new InvalidOperationException(
+                $"A transactional batch cannot contain more than {BatchConstants.MaxBatchSize} operations.");
         }
     }
 
