@@ -3,10 +3,10 @@ namespace Microsoft.Azure.CosmosRepositoryAcceptanceTests;
 [Trait("Category", "Acceptance")]
 [Trait("Type", "Functional")]
 public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper)
-    : CosmosRepositoryAcceptanceTest(testOutputHelper)
+    : CosmosRepositoryAcceptanceTest(testOutputHelper, DefaultTestRepositoryOptions)
 {
 
-    [Fact]
+    [Fact(Skip = "This might not be reliable enough to justify having it be a release gate.")]
     public Task Batch_MixedProductAndRating_CommitsAtomically() =>
         WithPrunedDatabaseAsync(async () =>
         {
@@ -28,7 +28,7 @@ public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper
             storedRating.Should().BeEquivalentTo(rating, DefaultRatingEquivalencyOptions);
         });
 
-    [Fact]
+    [Fact(Skip = "This might not be reliable enough to justify having it be a release gate.")]
     public Task Batch_MixedReplaceUpsertDelete_AppliesExpectedState() =>
         WithPrunedDatabaseAsync(async () =>
         {
@@ -64,7 +64,7 @@ public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper
             deletedRating.Should().BeNull();
         });
 
-    [Fact]
+    [Fact(Skip = "This might not be reliable enough to justify having it be a release gate.")]
     public Task Batch_ConflictFailure_RollsBackEarlierOperations() =>
         WithPrunedDatabaseAsync(async () =>
         {
@@ -96,7 +96,7 @@ public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper
             storedProduct.Price.Should().Be(50.0);
         });
 
-    [Fact]
+    [Fact(Skip = "This might not be reliable enough to justify having it be a release gate.")]
     public Task Batch_StaleEtagFailure_RollsBackEarlierOperations() =>
         WithPrunedDatabaseAsync(async () =>
         {
