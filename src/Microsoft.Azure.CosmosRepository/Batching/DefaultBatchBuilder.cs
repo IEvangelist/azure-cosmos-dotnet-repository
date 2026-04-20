@@ -71,15 +71,13 @@ internal sealed class DefaultBatchBuilder(
             }
         }
 
-        TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken)
+        using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken)
             .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
             throw new BatchOperationException(response);
         }
-
-        response.Dispose();
     }
 
     private IBatchBuilder Add<TItem>(OpKind kind, TItem item) where TItem : IItem
