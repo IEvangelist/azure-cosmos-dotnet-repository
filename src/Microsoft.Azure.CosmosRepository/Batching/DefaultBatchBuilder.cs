@@ -27,6 +27,8 @@ internal sealed class DefaultBatchBuilder(
             throw new ArgumentNullException(nameof(id));
         }
 
+        EnsureCapacity();
+
         _seenTypes.Add(typeof(TItem));
         _operations.Add(new(OpKind.Delete, typeof(TItem), null, id, null));
 
@@ -87,9 +89,10 @@ internal sealed class DefaultBatchBuilder(
             throw new ArgumentNullException(nameof(item));
         }
 
-        _seenTypes.Add(typeof(TItem));
-
         ValidatePartitionKey(item);
+        EnsureCapacity();
+
+        _seenTypes.Add(typeof(TItem));
 
         _operations.Add(new(
             kind,
@@ -111,6 +114,15 @@ internal sealed class DefaultBatchBuilder(
             throw new ArgumentException(
                 $"The item partition key '{item.PartitionKey}' does not match the batch partition key '{partitionKey}'.",
                 nameof(item));
+        }
+    }
+
+    private void EnsureCapacity()
+    {
+        if (_operations.Count >= BatchConstants.MaxBatchSize)
+        {
+            throw new InvalidOperationException(
+                $"A transactional batch cannot contain more than {BatchConstants.MaxBatchSize} operations.");
         }
     }
 

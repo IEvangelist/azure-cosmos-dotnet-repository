@@ -146,6 +146,54 @@ public class InMemoryBatchBuilderTests : IDisposable
         stored.Property.Should().Be("current");
     }
 
+    [Fact]
+    public void Batch_AtMaxItems_DoesNotThrow()
+    {
+        const string sharedPartitionKey = "shared";
+
+        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey);
+
+        for (int i = 0; i < BatchConstants.MaxBatchSize; i++)
+        {
+            builder.CreateItem(new BatchCreateItem { Id = sharedPartitionKey });
+        }
+    }
+
+    [Fact]
+    public void Batch_ExceedsMaxItems_ThrowsInvalidOperationException()
+    {
+        const string sharedPartitionKey = "shared";
+
+        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey);
+
+        for (int i = 0; i < BatchConstants.MaxBatchSize; i++)
+        {
+            builder.CreateItem(new BatchCreateItem { Id = sharedPartitionKey });
+        }
+
+        Action act = () => builder.CreateItem(new BatchCreateItem { Id = sharedPartitionKey });
+
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(act);
+        exception.Message.Should().Contain(BatchConstants.MaxBatchSize.ToString());
+    }
+
+    [Fact]
+    public void Batch_ExceedsMaxItemsViaDeleteById_ThrowsInvalidOperationException()
+    {
+        const string sharedPartitionKey = "shared";
+
+        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey);
+
+        for (int i = 0; i < BatchConstants.MaxBatchSize; i++)
+        {
+            builder.DeleteItem<BatchCreateItem>(sharedPartitionKey);
+        }
+
+        Action act = () => builder.DeleteItem<BatchCreateItem>(sharedPartitionKey);
+
+        Assert.Throws<InvalidOperationException>(act);
+    }
+
     private static void ClearStorage()
     {
         InMemoryStorage.GetDictionary<BatchSeedItem>().Clear();
