@@ -48,6 +48,41 @@ public class DefaultCosmosPartitionKeyPathProviderTests
         Assert.Equal("/pickles", path);
         Assert.Equal("[\"Hey, where's the chips?!\"]", new Cosmos.PartitionKey(((IItem)new PickleChipsItem()).PartitionKey).ToString());
     }
+
+    [Fact]
+    public void CosmosPartitionKeyPathProviderItemsThatShareAContainerWithEqualValuesReturnPath()
+    {
+        _repositoryOptions.ContainerBuilder.Configure<Person>(options =>
+            options.WithContainer("people").WithPartitionKey("/email"));
+
+        _repositoryOptions.ContainerBuilder.Configure<AnotherPerson>(options =>
+            options.WithContainer("people"));
+
+        ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
+
+        string path = provider.GetPartitionKeyPath<Person>();
+
+        Assert.Equal("/email", path);
+    }
+
+    [Fact]
+    public void CosmosPartitionKeyPathProviderItemsThatShareAContainerWithConflictingValuesThrow()
+    {
+        _repositoryOptions.ContainerBuilder.Configure<Person>(options =>
+            options.WithContainer("people").WithPartitionKey("/firstName"));
+
+        _repositoryOptions.ContainerBuilder.Configure<AnotherPerson>(options =>
+            options.WithContainer("people"));
+
+        ICosmosPartitionKeyPathProvider provider = new DefaultCosmosPartitionKeyPathProvider(_options.Object);
+
+        InvalidOperationException exception =
+            Assert.Throws<InvalidOperationException>(() => provider.GetPartitionKeyPath<Person>());
+
+        Assert.Contains("partition key paths", exception.Message);
+        Assert.Contains("/firstName", exception.Message);
+        Assert.Contains("/email", exception.Message);
+    }
 }
 
 [PartitionKeyPath("/email")]

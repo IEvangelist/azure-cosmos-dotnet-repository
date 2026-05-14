@@ -15,9 +15,33 @@ class DefaultCosmosPartitionKeyPathProvider(IOptions<RepositoryOptions> options)
 
     public string GetPartitionKeyPath(Type itemType)
     {
-        Type attributeType = typeof(PartitionKeyPathAttribute);
-
         ContainerOptionsBuilder? optionsBuilder = _options.Value.GetContainerOptions(itemType);
+        string partitionKeyPath = GetPartitionKeyPath(itemType, optionsBuilder);
+
+        if (optionsBuilder is not null)
+        {
+            foreach (ContainerOptionsBuilder sharedContainerOptions in _options.Value.GetContainerSharedContainerOptions(itemType))
+            {
+                string sharedPartitionKeyPath = GetPartitionKeyPath(sharedContainerOptions.Type, sharedContainerOptions);
+
+                if (string.Equals(sharedPartitionKeyPath, partitionKeyPath, StringComparison.Ordinal) is false)
+                {
+                    string containerName = optionsBuilder.Name ?? _options.Value.ContainerId;
+
+                    throw new InvalidOperationException(
+                        $"The container {containerName} has conflicting partition key paths. " +
+                        $"({optionsBuilder.Type.Name}->{partitionKeyPath} vs " +
+                        $"{sharedContainerOptions.Type.Name}->{sharedPartitionKeyPath}).");
+                }
+            }
+        }
+
+        return partitionKeyPath;
+    }
+
+    private static string GetPartitionKeyPath(Type itemType, ContainerOptionsBuilder? optionsBuilder)
+    {
+        Type attributeType = typeof(PartitionKeyPathAttribute);
 
         if (optionsBuilder is { } && string.IsNullOrWhiteSpace(optionsBuilder.PartitionKey) is false)
         {
