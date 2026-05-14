@@ -7,7 +7,7 @@ class DefaultLeaseContainerProvider : ILeaseContainerProvider
 {
     private readonly ICosmosClientProvider _cosmosClientProvider;
     private readonly Lazy<Task<Container>> _lazyContainer;
-    private readonly RepositoryOptions _repositoryOptions;
+    private readonly IOptionsMonitor<RepositoryOptions> _optionsMonitor;
     private const string LeaseContainerName = "lease";
     private const string LeastContainerPartitionKey = "/id";
 
@@ -15,8 +15,8 @@ class DefaultLeaseContainerProvider : ILeaseContainerProvider
         ICosmosClientProvider cosmosClientProvider,
         IOptionsMonitor<RepositoryOptions> optionsMonitor)
     {
-        _repositoryOptions = optionsMonitor.CurrentValue;
         _cosmosClientProvider = cosmosClientProvider;
+        _optionsMonitor = optionsMonitor;
         _lazyContainer = new Lazy<Task<Container>>(BuildLeaseContainer);
     }
 
@@ -25,17 +25,19 @@ class DefaultLeaseContainerProvider : ILeaseContainerProvider
 
     private async Task<Container> BuildLeaseContainer()
     {
+        RepositoryOptions repositoryOptions = _optionsMonitor.CurrentValue;
+
         Database database =
-            _repositoryOptions.IsAutoResourceCreationIfNotExistsEnabled
+            repositoryOptions.IsAutoResourceCreationIfNotExistsEnabled
                 ? await _cosmosClientProvider.UseClientAsync(
-                        client => client.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId))
+                        client => client.CreateDatabaseIfNotExistsAsync(repositoryOptions.DatabaseId))
                     .ConfigureAwait(false)
                 : await _cosmosClientProvider.UseClientAsync(
-                        client => Task.FromResult(client.GetDatabase(_repositoryOptions.DatabaseId)))
+                        client => Task.FromResult(client.GetDatabase(repositoryOptions.DatabaseId)))
                     .ConfigureAwait(false);
 
         Container container =
-            _repositoryOptions.IsAutoResourceCreationIfNotExistsEnabled
+            repositoryOptions.IsAutoResourceCreationIfNotExistsEnabled
                 ? await database.CreateContainerIfNotExistsAsync(LeaseContainerName, LeastContainerPartitionKey)
                     .ConfigureAwait(false)
                 : await Task.FromResult(database.GetContainer(LeaseContainerName));
