@@ -270,6 +270,17 @@
   @apply inline-flex items-center rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground;
 }
 
+/* Docs section card grid (used on /docs index). Reset prose list styles. */
+.prose-docs ul.docs-card-grid {
+  @apply m-0 grid list-none gap-3 p-0 sm:grid-cols-2;
+}
+.prose-docs ul.docs-card-grid > li {
+  @apply m-0 list-none p-0;
+}
+.prose-docs ul.docs-card-grid a {
+  @apply text-card-foreground no-underline hover:text-primary;
+}
+
 /* Astro-shiki: ensure dark theme picks up on .dark. */
 html.dark .astro-code,
 html.dark .astro-code span {

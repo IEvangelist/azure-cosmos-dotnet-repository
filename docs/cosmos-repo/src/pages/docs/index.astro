@@ -42,12 +42,12 @@ const crumbs = [{ title: "Docs" }];
 
   {
     sections.map((section) => (
-      <section class="not-prose mt-10">
+      <section class="mt-10">
         <h2 class="mb-1 text-2xl font-semibold tracking-tight">{section.title}</h2>
         {section.description && (
           <p class="mb-4 text-sm text-muted-foreground">{section.description}</p>
         )}
-        <ul class="grid gap-3 sm:grid-cols-2">
+        <ul class="docs-card-grid">
           {section.items.map((item) => (
             <li>
               <a
