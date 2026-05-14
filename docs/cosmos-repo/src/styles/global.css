@@ -257,9 +257,18 @@
   @apply border-l-4 border-primary/40 pl-4 italic text-muted-foreground my-4;
 }
 .prose-docs code:not(pre code):not(.expressive-code code) {
-  @apply rounded bg-muted px-1.5 py-0.5 text-[0.875em] font-mono text-foreground;
+  /* Brand-tinted inline code: subtle primary bg + primary text. */
+  background-color: color-mix(in oklab, var(--primary) 10%, transparent);
+  color: var(--primary);
+  border: 1px solid color-mix(in oklab, var(--primary) 18%, transparent);
+  @apply rounded px-1.5 py-0.5 text-[0.85em] font-mono font-medium;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+.dark .prose-docs code:not(pre code):not(.expressive-code code) {
+  background-color: color-mix(in oklab, var(--primary) 14%, transparent);
+  color: color-mix(in oklab, var(--primary) 85%, white);
+  border-color: color-mix(in oklab, var(--primary) 28%, transparent);
 }
 .prose-docs .expressive-code {
   @apply my-6 min-w-0 max-w-full;
@@ -303,61 +312,106 @@
 }
 
 /* ============================================================ */
-/* Callouts — on-theme variants using design tokens.            */
+/* Callouts — GitHub-alert style. Token-colored title row +     */
+/* soft tinted bg + bold left bar. AA contrast both themes.     */
 /* ============================================================ */
 .callout {
   background-color: var(--card);
-  border-color: var(--border);
+}
+.callout .callout-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
 }
 .callout .callout-icon {
-  background-color: color-mix(in oklab, var(--primary) 12%, transparent);
-  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Compact 18px icon chip, color matches title row. */
+  width: 1.125rem;
+  height: 1.125rem;
 }
+/* Per-variant: left bar + soft bg + title/icon color. */
 .callout-info {
   border-left-color: var(--primary);
-  background-color: color-mix(in oklab, var(--primary) 6%, var(--card));
+  background-color: color-mix(in oklab, var(--primary) 7%, var(--card));
 }
+.callout-info .callout-title,
 .callout-info .callout-icon {
-  background-color: color-mix(in oklab, var(--primary) 18%, transparent);
   color: var(--primary);
 }
+.dark .callout-info {
+  background-color: color-mix(in oklab, var(--primary) 14%, var(--card));
+}
+.dark .callout-info .callout-title,
+.dark .callout-info .callout-icon {
+  color: color-mix(in oklab, var(--primary) 88%, white);
+}
+
 .callout-tip {
-  border-left-color: var(--ring);
-  background-color: color-mix(in oklab, var(--accent) 35%, var(--card));
+  border-left-color: oklch(0.62 0.16 196);
+  background-color: color-mix(in oklab, oklch(0.62 0.16 196) 9%, var(--card));
 }
+.callout-tip .callout-title,
 .callout-tip .callout-icon {
-  background-color: color-mix(in oklab, var(--accent) 70%, transparent);
-  color: var(--accent-foreground);
+  color: oklch(0.40 0.14 196);
 }
+.dark .callout-tip {
+  background-color: color-mix(in oklab, oklch(0.62 0.16 196) 16%, var(--card));
+}
+.dark .callout-tip .callout-title,
+.dark .callout-tip .callout-icon {
+  color: oklch(0.78 0.14 196);
+}
+
 .callout-success {
-  border-left-color: oklch(0.65 0.16 150);
-  background-color: color-mix(in oklab, oklch(0.65 0.16 150) 8%, var(--card));
+  border-left-color: oklch(0.62 0.16 150);
+  background-color: color-mix(in oklab, oklch(0.62 0.16 150) 9%, var(--card));
 }
+.callout-success .callout-title,
 .callout-success .callout-icon {
-  background-color: color-mix(in oklab, oklch(0.65 0.16 150) 22%, transparent);
-  color: oklch(0.42 0.13 150);
+  color: oklch(0.40 0.13 150);
 }
+.dark .callout-success {
+  background-color: color-mix(in oklab, oklch(0.62 0.16 150) 16%, var(--card));
+}
+.dark .callout-success .callout-title,
 .dark .callout-success .callout-icon {
-  color: oklch(0.82 0.16 150);
+  color: oklch(0.78 0.16 150);
 }
+
 .callout-warning {
-  border-left-color: oklch(0.74 0.16 70);
-  background-color: color-mix(in oklab, oklch(0.74 0.16 70) 10%, var(--card));
+  border-left-color: oklch(0.70 0.16 70);
+  background-color: color-mix(in oklab, oklch(0.70 0.16 70) 11%, var(--card));
 }
+.callout-warning .callout-title,
 .callout-warning .callout-icon {
-  background-color: color-mix(in oklab, oklch(0.74 0.16 70) 25%, transparent);
-  color: oklch(0.48 0.14 70);
+  color: oklch(0.45 0.14 70);
 }
+.dark .callout-warning {
+  background-color: color-mix(in oklab, oklch(0.70 0.16 70) 18%, var(--card));
+}
+.dark .callout-warning .callout-title,
 .dark .callout-warning .callout-icon {
-  color: oklch(0.85 0.16 70);
+  color: oklch(0.80 0.16 70);
 }
+
 .callout-danger {
   border-left-color: var(--destructive);
-  background-color: color-mix(in oklab, var(--destructive) 8%, var(--card));
+  background-color: color-mix(in oklab, var(--destructive) 9%, var(--card));
 }
+.callout-danger .callout-title,
 .callout-danger .callout-icon {
-  background-color: color-mix(in oklab, var(--destructive) 18%, transparent);
   color: var(--destructive);
+}
+.dark .callout-danger {
+  background-color: color-mix(in oklab, var(--destructive) 16%, var(--card));
+}
+.dark .callout-danger .callout-title,
+.dark .callout-danger .callout-icon {
+  color: oklch(0.80 0.18 22);
 }
 
 /* ============================================================ */

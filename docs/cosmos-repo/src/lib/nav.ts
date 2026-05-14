@@ -102,6 +102,14 @@ export const docsNav: NavItem[] = [
     description: "Major release notes and migration guidance.",
     items: [{ title: "Overview", url: "/docs/release-notes" }],
   },
+  {
+    title: "API reference",
+    url: "/docs/api",
+    icon: "FileCode2",
+    description:
+      "Auto-generated reference for every public type in the package, with members, parameters, and remarks.",
+    items: [{ title: "All types", url: "/docs/api" }],
+  },
 ];
 
 /**

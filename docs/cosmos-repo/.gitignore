@@ -36,3 +36,8 @@ playwright/.cache/
 
 # pagefind cache (regenerated on every build)
 public/pagefind/
+
+# docfx API metadata + generated MDX (regenerated on every build via `pnpm api`)
+api-yml/
+src/content/docs/api/
+src/content/docs/api.mdx

@@ -2,9 +2,15 @@
 import { defineEcConfig } from "astro-expressive-code";
 
 export default defineEcConfig({
-  themes: ["github-dark", "github-light"],
+  // IMPORTANT: github-light is first so it becomes the unconditional default
+  // (emitted without a selector prefix). github-dark only applies when
+  // `html.dark` is present, giving us reliable theme switching.
+  themes: ["github-light", "github-dark"],
+  // EC injects each theme selector as: `${selector} :root, ${selector} .expressive-code, .expressive-code${selector}`.
+  // Returning `.dark` produces `:root.dark .expressive-code, .expressive-code.dark` — both valid.
+  // (We add the `.dark` class on the <html> element, which is the :root.)
   themeCssSelector: (theme) =>
-    theme.name === "github-dark" ? "html.dark" : "html:not(.dark)",
+    theme.name === "github-dark" ? ".dark" : false,
   useDarkModeMediaQuery: false,
   // Inline the EC base + theme styles directly into each page instead of
   // emitting an external stylesheet. This avoids a known issue where the

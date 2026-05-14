@@ -39,20 +39,17 @@ const Icon = icons[type];
   role="note"
   aria-label={labels[type]}
   class:list={[
-    "callout not-prose my-5 flex gap-3 rounded-lg border border-l-4 p-4 text-sm shadow-sm",
+    "callout not-prose my-5 rounded-md border-l-[3px] px-4 py-3 text-sm",
     styles[type],
   ]}
 >
-  <span
-    class="callout-icon mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-md"
-    aria-hidden="true"
-  >
-    <Icon className="size-4" aria-hidden="true" />
-  </span>
-  <div class="min-w-0 flex-1 text-foreground">
-    <p class="callout-title mb-1 font-semibold">{labels[type]}</p>
-    <div class="callout-body text-foreground/90 leading-6 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
-      <slot />
-    </div>
+  <p class="callout-title mb-1">
+    <span class="callout-icon" aria-hidden="true">
+      <Icon className="size-[1.125rem]" aria-hidden="true" />
+    </span>
+    <span>{labels[type]}</span>
+  </p>
+  <div class="callout-body text-foreground/95 leading-6 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
+    <slot />
   </div>
 </aside>

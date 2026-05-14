@@ -46,6 +46,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # docfx 2.78+ requires .NET 8/9 runtime; we already use 9 for the SDK.
+          dotnet-version: 9.0.x
+
+      - name: Install docfx
+        run: dotnet tool install -g docfx --version 2.78.5
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -60,6 +69,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Generate API reference (docfx → MDX)
+        run: pnpm api
 
       - name: Type check
         run: pnpm check

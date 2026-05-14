@@ -1,0 +1,25 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": ["Microsoft.Azure.CosmosRepository.csproj"],
+          "src": "../../src/Microsoft.Azure.CosmosRepository"
+        },
+        {
+          "files": ["Microsoft.Azure.CosmosRepository.AspNetCore.csproj"],
+          "src": "../../src/Microsoft.Azure.CosmosRepository.AspNetCore"
+        }
+      ],
+      "dest": "api-yml",
+      "includePrivateMembers": false,
+      "disableGitFeatures": true,
+      "disableDefaultFilter": false,
+      "noRestore": false,
+      "namespaceLayout": "flattened",
+      "memberLayout": "samePage",
+      "EnumSortOrder": "alphabetic",
+      "allowCompilationErrors": true
+    }
+  ]
+}

@@ -93,6 +93,9 @@ importers:
       vitest:
         specifier: ^4.1.6
         version: 4.1.6(@types/node@24.12.4)(@vitest/ui@4.1.6)(jsdom@29.1.1)(vite@7.3.3(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.0))
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
 
 packages:
 

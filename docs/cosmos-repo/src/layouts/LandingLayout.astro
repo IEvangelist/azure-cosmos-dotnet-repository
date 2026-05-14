@@ -1,8 +1,10 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import NuGetIcon from "@/components/icons/NuGetIcon.astro";
+import DiscordIcon from "@/components/icons/DiscordIcon.astro";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { withBase } from "@/lib/utils";
+import { BookOpen, History } from "lucide-react";
 
 export interface Props {
   title: string;
@@ -35,16 +37,23 @@ const { title, description } = Astro.props;
         </span>
       </a>
       <nav
-        class="text-muted-foreground hidden items-center gap-6 text-sm font-medium md:flex"
+        class="text-muted-foreground hidden items-center gap-5 text-sm font-medium md:flex"
         aria-label="Primary"
       >
-        <a class="hover:text-foreground" href={withBase("/docs/getting-started")}
-          >Docs</a
-        >
         <a
-          class="hover:text-foreground"
-          href={withBase("/docs/release-notes")}>Release notes</a
+          class="hover:text-foreground inline-flex items-center gap-1.5"
+          href={withBase("/docs/getting-started")}
         >
+          <BookOpen className="size-4" aria-hidden="true" />
+          Docs
+        </a>
+        <a
+          class="hover:text-foreground inline-flex items-center gap-1.5"
+          href={withBase("/docs/release-notes")}
+        >
+          <History className="size-4" aria-hidden="true" />
+          Release notes
+        </a>
         <a
           class="hover:text-foreground inline-flex items-center gap-1.5"
           href="https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository"
@@ -115,9 +124,12 @@ const { title, description } = Astro.props;
             NuGet
           </a>
           <a
-            class="hover:text-foreground"
-            href="https://discord.com/invite/qMXrX4shAv">Discord</a
+            class="hover:text-foreground inline-flex items-center gap-1.5"
+            href="https://discord.com/invite/qMXrX4shAv"
           >
+            <DiscordIcon class="size-3.5" />
+            Discord
+          </a>
         </div>
       </div>
     </footer>

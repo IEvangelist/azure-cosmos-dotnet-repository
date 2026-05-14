@@ -28,6 +28,13 @@ const fullTitle =
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    {/* Force browsers to revalidate HTML on each visit. GitHub Pages caches
+        HTML for 600s and serves stale HTML that references the previous
+        build's asset hashes (now 404). These meta tags are honored by
+        Firefox/Safari and help Chromium revalidate too. */}
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <link
       rel="icon"
       type="image/svg+xml"

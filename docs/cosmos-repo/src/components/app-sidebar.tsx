@@ -4,6 +4,7 @@ import {
   BookOpen,
   Boxes,
   ChevronRight,
+  FileCode2,
   Layers,
   Rocket,
   Search,
@@ -45,13 +46,17 @@ const ICONS: Record<string, LucideIcon> = {
   Activity,
   SlidersHorizontal,
   BookOpen,
+  FileCode2,
 };
 
 function isPathActive(item: NavItem, currentPath: string): boolean {
   const normalize = (p: string) => p.replace(/\/$/, "");
   const cur = normalize(currentPath);
-  if (normalize(item.url) === cur) return true;
+  const itemUrl = normalize(item.url);
+  if (itemUrl === cur) return true;
   if (item.items?.some((c) => normalize(c.url) === cur)) return true;
+  // Treat any descendant of a section URL (e.g. /docs/api/foo) as active for that section.
+  if (itemUrl && itemUrl !== "/docs" && cur.startsWith(itemUrl + "/")) return true;
   return false;
 }
 
