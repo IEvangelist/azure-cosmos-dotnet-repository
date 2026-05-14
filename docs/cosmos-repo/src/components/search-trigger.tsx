@@ -132,7 +132,7 @@ export function SearchTrigger() {
         id={DIALOG_ID}
         ref={dialogRef}
         aria-label="Search documentation"
-        className="bg-popover text-popover-foreground fixed top-[10vh] m-0 w-[min(640px,92vw)] max-w-none rounded-xl border border-border p-0 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+        className="bg-popover text-popover-foreground fixed top-[10vh] left-1/2 -translate-x-1/2 m-0 w-[min(640px,92vw)] max-w-none rounded-xl border border-border p-0 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm"
         onClick={(event) => {
           if (event.target === event.currentTarget) close();
         }}
