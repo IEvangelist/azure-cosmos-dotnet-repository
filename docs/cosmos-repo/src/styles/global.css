@@ -150,6 +150,19 @@
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  /* Cursor: pointer on every interactable that the user can click. */
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  label[for],
+  select:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  [type="button"]:not(:disabled),
+  [type="checkbox"]:not(:disabled),
+  [type="radio"]:not(:disabled) {
+    cursor: pointer;
+  }
   ::selection {
     background: oklch(0.49 0.18 263 / 0.25);
   }
@@ -241,17 +254,21 @@
 .prose-docs blockquote {
   @apply border-l-4 border-primary/40 pl-4 italic text-muted-foreground my-4;
 }
-.prose-docs code:not(pre code) {
+.prose-docs code:not(pre code):not(.expressive-code code) {
   @apply rounded bg-muted px-1.5 py-0.5 text-[0.875em] font-mono text-foreground;
 }
-.prose-docs pre {
-  @apply my-4 overflow-x-auto rounded-lg border border-border bg-card p-4 text-sm;
+.prose-docs .expressive-code {
+  @apply my-6 min-w-0 max-w-full;
 }
-.prose-docs pre code {
-  @apply font-mono;
+/* Always keep the expressive-code copy button discoverable, not just on hover. */
+.expressive-code .copy button {
+  opacity: 1 !important;
+}
+.expressive-code .copy {
+  opacity: 1 !important;
 }
 .prose-docs table {
-  @apply my-4 w-full text-sm border-collapse;
+  @apply my-4 block w-max max-w-full overflow-x-auto text-sm border-collapse;
 }
 .prose-docs th,
 .prose-docs td {
@@ -279,11 +296,4 @@
 }
 .prose-docs ul.docs-card-grid a {
   @apply text-card-foreground no-underline hover:text-primary;
-}
-
-/* Astro-shiki: ensure dark theme picks up on .dark. */
-html.dark .astro-code,
-html.dark .astro-code span {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
 }

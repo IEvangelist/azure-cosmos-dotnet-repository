@@ -103,7 +103,7 @@ export function SearchTrigger() {
         type="button"
         variant="outline"
         size="sm"
-        className="text-muted-foreground hidden h-9 w-full max-w-xs justify-between gap-2 text-sm md:flex"
+        className="text-muted-foreground hidden h-9 max-w-xs flex-1 justify-between gap-2 text-sm md:flex"
         onClick={open}
         aria-haspopup="dialog"
         aria-controls={DIALOG_ID}

@@ -26,7 +26,9 @@ const section = docsNav.find((s) =>
 
 const crumbs = [
   { title: "Docs", href: "/docs" },
-  ...(section ? [{ title: section.title, href: section.url }] : []),
+  ...(section && section.url !== path
+    ? [{ title: section.title, href: section.url }]
+    : []),
   { title: entry.data.title },
 ];
 

@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
+import expressiveCode from "astro-expressive-code";
 import tailwindcss from "@tailwindcss/vite";
 
 const SITE = "https://ievangelist.github.io";
@@ -19,6 +20,9 @@ export default defineConfig({
   },
   integrations: [
     react(),
+    // Expressive Code must come before MDX so it can register its remark/rehype hooks.
+    // Config lives in `ec.config.mjs` (required because of the function-valued `themeCssSelector`).
+    expressiveCode(),
     mdx({
       gfm: true,
     }),
@@ -30,15 +34,6 @@ export default defineConfig({
       alias: {
         "@": new URL("./src", import.meta.url).pathname,
       },
-    },
-  },
-  markdown: {
-    shikiConfig: {
-      themes: {
-        light: "github-light",
-        dark: "github-dark",
-      },
-      wrap: true,
     },
   },
 });

@@ -166,18 +166,6 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="GitHub repository">
-              <a
-                href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository"
-                rel="noreferrer"
-                target="_blank"
-              >
-                <BookOpen aria-hidden="true" />
-                <span>GitHub</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="NuGet package">
               <a
                 href="https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository"
