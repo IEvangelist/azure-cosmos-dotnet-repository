@@ -29,6 +29,17 @@ public abstract class CosmosRepositoryAcceptanceTest
         return options;
     }
 
+    protected EquivalencyAssertionOptions<Rating> DefaultRatingEquivalencyOptions(
+        EquivalencyAssertionOptions<Rating> options)
+    {
+        options.Excluding(x => x.Etag);
+        options.Excluding(x => x.CreatedTimeUtc);
+        options.Excluding(x => x.LastUpdatedTimeRaw);
+        options.Excluding(x => x.LastUpdatedTimeUtc);
+
+        return options;
+    }
+
     protected CosmosRepositoryAcceptanceTest(
         ITestOutputHelper testOutputHelper,
         Action<RepositoryOptions>? builderOptions = null)

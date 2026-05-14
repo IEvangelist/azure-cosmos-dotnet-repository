@@ -1,7 +1,4 @@
-﻿// Copyright (c) David Pine. All rights reserved.
-// Licensed under the MIT License.
-
-namespace Microsoft.Extensions.DependencyInjection;
+﻿namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// Extension methods for adding and configuring the Azure Cosmos DB services.
@@ -11,7 +8,7 @@ public static class ServiceCollectionExtensions
     internal static IServiceCollection AddCosmosRepository(
         this IServiceCollection services,
         string? connectionName,
-        IConfiguration? configuration,        
+        IConfiguration? configuration,
         Action<RepositoryOptions>? setupAction = default,
         Action<CosmosClientOptions>? additionalSetupAction = default)
     {
@@ -118,6 +115,7 @@ public static class ServiceCollectionExtensions
         services
             .AddSingleton(typeof(IReadOnlyRepository<>), typeof(InMemoryRepository<>))
             .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(InMemoryRepository<>))
+            .AddSingleton(typeof(IBatchRepository<>), typeof(InMemoryRepository<>))
             .AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
             .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
             .AddSingleton(typeof(InMemoryChangeFeed<>));
