@@ -105,13 +105,33 @@ function renderInline(text) {
     },
   );
 
-  out = out.replace(/<\/?[a-zA-Z][^>]*>/g, "");
+  out = stripTagsOutsideCode(out);
 
-  out = out.replace(/[ \t]+/g, " ").replace(/\n[ \t]+/g, "\n");
+  out = collapseProseWhitespace(out);
 
   out = escapeBracesOutsideCode(out);
 
   return out.trim();
+}
+
+function stripTagsOutsideCode(text) {
+  const parts = String(text).split(/(```[\s\S]*?```)/g);
+  return parts
+    .map((part, i) => {
+      if (i % 2 === 1) return part;
+      return part.replace(/<\/?[a-zA-Z][^>]*>/g, "");
+    })
+    .join("");
+}
+
+function collapseProseWhitespace(text) {
+  const parts = String(text).split(/(```[\s\S]*?```)/g);
+  return parts
+    .map((part, i) => {
+      if (i % 2 === 1) return part;
+      return part.replace(/[ \t]+/g, " ").replace(/\n[ \t]+/g, "\n");
+    })
+    .join("");
 }
 
 function escapeBracesOutsideCode(text) {

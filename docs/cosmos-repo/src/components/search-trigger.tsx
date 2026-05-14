@@ -78,6 +78,7 @@ export function SearchTrigger() {
           new window.PagefindUI({
             element: `#${CONTAINER_ID}`,
             showSubResults: true,
+            showImages: false,
             resetStyles: false,
           });
           setMounted(true);
