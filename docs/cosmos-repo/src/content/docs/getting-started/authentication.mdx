@@ -1,0 +1,62 @@
+---
+title: Authentication
+description: Authenticate against Azure Cosmos DB with a connection string or a TokenCredential identity (RBAC).
+section: Getting started
+order: 2
+---
+import Callout from "@/components/Callout.astro";
+
+Cosmos Repository supports both connection-string and identity-based authentication. The right choice usually depends on whether you have control-plane access to assign role-based access control (RBAC) roles to a managed identity.
+
+## Connection string
+
+The simplest setup. Set `RepositoryOptions.CosmosConnectionString` and the SDK will use it for both control- and data-plane operations.
+
+```csharp
+builder.Services.AddCosmosRepository(options =>
+{
+    options.CosmosConnectionString = "<connection string>";
+    options.DatabaseId = "samples";
+    options.ContainerId = "data-store";
+});
+```
+
+<Callout type="warning" title="Broad access">
+  A connection string grants full data-plane access to the Cosmos account. Prefer identity-based auth (below) for production workloads when possible. Read more about [control plane vs data plane](https://learn.microsoft.com/azure/azure-resource-manager/management/control-plane-and-data-plane).
+</Callout>
+
+## Identity (TokenCredential)
+
+The Azure Cosmos DB .NET SDK also supports authenticating with a `TokenCredential`. Identities (users, groups, application registrations, or managed identities) are typically preferred from an audit and least-privilege perspective.
+
+You will need to set both `AccountEndpoint` and `TokenCredential` on `RepositoryOptions`:
+
+1. Create the identity in Microsoft Entra ID if it doesn't already exist.
+2. Use the Azure CLI to [assign a Cosmos DB data-plane role](https://learn.microsoft.com/cli/azure/cosmosdb/sql/role/assignment) to the identity at the desired scope. Built-in roles are usually sufficient; see the [list of built-in role definitions](https://learn.microsoft.com/azure/cosmos-db/how-to-setup-rbac#built-in-role-definitions).
+3. Configure your application to pass the credential:
+
+   ```csharp
+   using Azure.Identity;
+   using Microsoft.Azure.CosmosRepository;
+
+   var builder = WebApplication.CreateBuilder(args);
+
+   builder.Services.AddCosmosRepository(options =>
+   {
+       options.TokenCredential = new DefaultAzureCredential();
+       options.AccountEndpoint = new Uri("<account endpoint URI>");
+       options.ContainerId = "data-store";
+       options.DatabaseId = "samples";
+   });
+   ```
+
+`DefaultAzureCredential` from the [Azure.Identity](https://www.nuget.org/packages/Azure.Identity) NuGet package picks the right credential for each environment (Visual Studio, CLI, managed identity, environment variables, …). See the [Azure Identity overview](https://learn.microsoft.com/dotnet/api/overview/azure/identity-readme) for details.
+
+## When to choose which
+
+| Scenario | Recommendation |
+| --- | --- |
+| Local prototype, sandbox key | Connection string |
+| Azure-hosted production app | `DefaultAzureCredential` + RBAC role assignment |
+| CI/CD secrets-free build | Workload Identity Federation + `DefaultAzureCredential` |
+| Multi-tenant app per-tenant identity | Build a `ChainedTokenCredential` and inject it |

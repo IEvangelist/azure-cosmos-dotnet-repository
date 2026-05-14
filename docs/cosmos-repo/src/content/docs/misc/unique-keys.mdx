@@ -1,0 +1,144 @@
+---
+title: Unique key policies
+description: Enforce uniqueness within a partition with [UniqueKey] attributes.
+section: Miscellaneous
+order: 4
+---
+import Callout from "@/components/Callout.astro";
+
+Azure Cosmos DB supports [unique key policies](https://learn.microsoft.com/azure/cosmos-db/unique-keys) — properties that, in combination, must be unique **within a partition**. You can define multiple policies per partition.
+
+## What unique keys do
+
+Imagine you store people in a Cosmos container partitioned by `/county`. You want at most one person per county with the same name **and** age. That's a unique key built from `firstName` and `age`, scoped to the `/county` partition.
+
+## Single key policy
+
+Decorate the relevant properties with `[UniqueKey(propertyPath: "...")]`:
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
+
+namespace Sample.Models;
+
+public class Person : Item
+{
+    [UniqueKey(propertyPath: "/firstName")]
+    public string FirstName { get; set; }
+
+    [UniqueKey(propertyPath: "/age")]
+    public int Age { get; set; }
+
+    public string County { get; set; }
+
+    public string FavouriteColor { get; set; }
+
+    protected override string GetPartitionKeyValue() => County;
+
+    public Person(string firstName, int age, string county, string favouriteColor)
+    {
+        FirstName = firstName;
+        Age = age;
+        County = county;
+        FavouriteColor = favouriteColor;
+    }
+}
+```
+
+The following sequence shows when the policy fires:
+
+```csharp
+var repository = serviceProvider.GetRequiredService<IRepository<Person>>();
+
+var bobInYorkshire = new Person("bob", 20, "Yorkshire", "Blue");
+await repository.CreateAsync(bobInYorkshire);
+
+// Different partition — allowed.
+var bobInMerseyside = new Person("bob", 20, "Merseyside", "Green");
+await repository.CreateAsync(bobInMerseyside);
+
+// Same partition, different age — allowed.
+var bobInYorkshireWhoIs22 = new Person("bob", 22, "Yorkshire", "Red");
+await repository.CreateAsync(bobInYorkshireWhoIs22);
+
+try
+{
+    // Same partition, same name + age — violates the policy.
+    var anotherBob = new Person("bob", 20, "Yorkshire", "Yellow");
+    await repository.CreateAsync(anotherBob);
+}
+catch (CosmosException e) when (e.StatusCode == HttpStatusCode.Conflict)
+{
+    // Unique-key violation
+}
+```
+
+<Callout type="info">
+  Unique-key policies are scoped to a single partition. Read more in the [official Cosmos DB docs](https://learn.microsoft.com/azure/cosmos-db/unique-keys).
+</Callout>
+
+## Multiple key policies
+
+You can group attributes into different policies by giving them named keys. Below, `firstName` + `age` form one policy and `favouriteColor` forms a second:
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
+
+namespace Sample.Models;
+
+public class Person : Item
+{
+    [UniqueKey(keyName: "nameAndAgePolicyKeyName", propertyPath: "/firstName")]
+    public string FirstName { get; set; }
+
+    [UniqueKey(keyName: "nameAndAgePolicyKeyName", propertyPath: "/age")]
+    public int Age { get; set; }
+
+    public string County { get; set; }
+
+    [UniqueKey(keyName: "favouriteColorPolicyKeyName", propertyPath: "/favouriteColor")]
+    public string FavouriteColor { get; set; }
+
+    protected override string GetPartitionKeyValue() => County;
+
+    public Person(string firstName, int age, string county, string favouriteColor)
+    {
+        FirstName = firstName;
+        Age = age;
+        County = county;
+        FavouriteColor = favouriteColor;
+    }
+}
+```
+
+```csharp
+var repository = serviceProvider.GetRequiredService<IRepository<Person>>();
+
+var bobInYorkshire = new Person("bob", 20, "Yorkshire", "Blue");
+await repository.CreateAsync(bobInYorkshire);
+
+// Different partition — allowed.
+var bobInMerseyside = new Person("bob", 20, "Merseyside", "Green");
+await repository.CreateAsync(bobInMerseyside);
+
+// Same partition, different age — allowed.
+var bobInYorkshireWhoIs22 = new Person("bob", 22, "Yorkshire", "Red");
+await repository.CreateAsync(bobInYorkshireWhoIs22);
+
+try
+{
+    // Fred has a unique name+age, but "Red" already exists in Yorkshire.
+    var fredInYorkshireWhoAlsoLikeRed = new Person("fred", 30, "Yorkshire", "Red");
+    await repository.CreateAsync(fredInYorkshireWhoAlsoLikeRed);
+}
+catch (CosmosException e) when (e.StatusCode == HttpStatusCode.Conflict)
+{
+    // Violation of the favouriteColorPolicyKeyName policy
+}
+```
+
+<Callout type="warning" title="Set policies before the container exists">
+  Cosmos DB only honors unique-key policies that are present when the container is **created**. Adding `[UniqueKey]` attributes to an existing container does not retroactively enforce the policy.
+</Callout>

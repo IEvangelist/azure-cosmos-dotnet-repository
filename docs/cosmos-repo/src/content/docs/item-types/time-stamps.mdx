@@ -1,0 +1,42 @@
+---
+title: Time stamps
+description: Track CreatedTimeUtc, LastUpdatedTimeUtc, and the raw `_ts` for every item.
+section: Item types
+order: 4
+---
+import Callout from "@/components/Callout.astro";
+
+`TimeStampedItem` and `FullItem` add three timestamp properties out of the box:
+
+| Property | Source | Notes |
+| --- | --- | --- |
+| `CreatedTimeUtc` | Set by the library on `CreateAsync` | If you set it before `CreateAsync`, the library leaves your value alone. Existing data may have `null`. |
+| `LastUpdatedTimeUtc` | Derived from Cosmos's `_ts` | Friendly `DateTime`. |
+| `LastUpdatedTimeRaw` | Cosmos's `_ts` | Raw seconds since epoch. |
+
+The `_ts` property is documented in the official Cosmos DB [REST reference](https://learn.microsoft.com/rest/api/cosmos-db/documents) — it is automatically maintained on every update.
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+
+public class AuditEntry : TimeStampedItem
+{
+    public string Action { get; set; } = null!;
+    public string PerformedBy { get; set; } = null!;
+}
+
+var repository = serviceProvider.GetRequiredService<IRepository<AuditEntry>>();
+
+var entry = await repository.CreateAsync(new AuditEntry
+{
+    Action = "DELETE",
+    PerformedBy = "alice@contoso.com",
+});
+
+Console.WriteLine($"Created at {entry.CreatedTimeUtc:O}");
+Console.WriteLine($"Last updated at {entry.LastUpdatedTimeUtc:O}");
+```
+
+<Callout type="tip" title="Backfilling existing data">
+  Need historical timestamps? Set `CreatedTimeUtc` yourself before calling `CreateAsync` — the library will respect your value rather than overwriting it.
+</Callout>

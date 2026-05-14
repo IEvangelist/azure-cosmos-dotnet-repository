@@ -1,0 +1,326 @@
+---
+import LandingLayout from "@/layouts/LandingLayout.astro";
+import { Code as CodeBlock } from "astro:components";
+import { withBase } from "@/lib/utils";
+import {
+  Activity,
+  Boxes,
+  Layers,
+  Rocket,
+  Search,
+  ShieldCheck,
+  SlidersHorizontal,
+  Sparkles,
+} from "lucide-react";
+
+const features = [
+  {
+    title: "Repository pattern",
+    description:
+      "Inject IRepository<T> for any item type and get full create / read / update / delete with batching and paging.",
+    href: "/docs/getting-started",
+    icon: Rocket,
+  },
+  {
+    title: "Item types",
+    description:
+      "Pick the base class that fits — Item, EtagItem, TimeStampedItem, TimeToLiveItem, or FullItem.",
+    href: "/docs/item-types",
+    icon: Layers,
+  },
+  {
+    title: "Container configuration",
+    description:
+      "Fluent options for partitioning, throughput, TTL, change-feed, and unique keys.",
+    href: "/docs/container-config",
+    icon: Boxes,
+  },
+  {
+    title: "Specification queries",
+    description:
+      "Encapsulate filters, ordering, and paging as reusable Specification classes.",
+    href: "/docs/queries/specification-pattern",
+    icon: Search,
+  },
+  {
+    title: "Change feed",
+    description:
+      "Process container changes with IItemChangeFeedProcessor and the AspNetCore hosted service.",
+    href: "/docs/change-feed",
+    icon: Activity,
+  },
+  {
+    title: "Production-ready",
+    description:
+      "Health checks, eager container init, structured logging — everything you need for prod.",
+    href: "/docs/misc/health-checks",
+    icon: ShieldCheck,
+  },
+];
+
+const samples = [
+  {
+    label: "Register the repository",
+    code: `using Microsoft.Azure.CosmosRepository;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository(options =>
+{
+    options.CosmosConnectionString = "<connection string>";
+    options.DatabaseId  = "samples";
+    options.ContainerId = "data-store";
+});`,
+  },
+  {
+    label: "Define an item",
+    code: `using Microsoft.Azure.CosmosRepository;
+
+public class Person : Item
+{
+    public string FirstName { get; set; } = null!;
+    public string LastName  { get; set; } = null!;
+}`,
+  },
+  {
+    label: "Inject and use",
+    code: `public class PeopleService(IRepository<Person> repository)
+{
+    public Task<Person> CreateAsync(Person person) =>
+        repository.CreateAsync(person).AsTask();
+
+    public Task<IEnumerable<Person>> GetWithoutMiddleNamesAsync() =>
+        repository.GetAsync(p => p.MiddleName == null).AsTask();
+}`,
+  },
+];
+---
+
+<LandingLayout
+  title="Cosmos Repository"
+  description="A modern, dependency-injection-friendly repository pattern for Azure Cosmos DB."
+>
+  <section class="relative isolate overflow-hidden">
+    <div
+      class="hero-gradient absolute inset-0 -z-10 opacity-70"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="mx-auto max-w-6xl px-4 py-20 md:px-8 md:py-28">
+      <p
+        class="mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur"
+      >
+        <Sparkles className="size-3.5 text-primary" aria-hidden="true" />
+        IEvangelist.Azure.CosmosRepository · MIT licensed
+      </p>
+      <h1
+        class="text-balance text-4xl font-bold tracking-tight md:text-6xl"
+      >
+        Azure Cosmos DB,<br />
+        the <span class="text-primary">repository</span> way.
+      </h1>
+      <p
+        class="mt-5 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl"
+      >
+        A dependency-injection-friendly <code>IRepository&lt;T&gt;</code>
+        wrapper around the official <code>Microsoft.Azure.Cosmos</code> SDK.
+        Configure once, inject everywhere, ship faster.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <a
+          href={withBase("/docs/getting-started")}
+          class="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          Get started
+        </a>
+        <a
+          href="https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository"
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex h-11 items-center justify-center rounded-md border border-border bg-background px-6 text-sm font-medium text-foreground transition hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          View on NuGet
+        </a>
+      </div>
+
+      <div
+        class="mt-10 flex max-w-xl items-center gap-2 rounded-xl border border-border/60 bg-card/80 p-2 font-mono text-sm shadow-sm backdrop-blur"
+      >
+        <span class="ml-2 select-none text-muted-foreground">$</span>
+        <code class="flex-1 truncate text-foreground"
+          >dotnet add package IEvangelist.Azure.CosmosRepository</code
+        >
+        <button
+          type="button"
+          data-copy-target="install-cmd"
+          class="rounded-md border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Copy install command"
+        >
+          Copy
+        </button>
+        <span id="install-cmd" hidden
+          >dotnet add package IEvangelist.Azure.CosmosRepository</span
+        >
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center gap-3 text-xs">
+        <a
+          href="https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="NuGet version badge"
+        >
+          <img
+            src="https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository?label=NuGet&color=3a3aff"
+            alt="NuGet version"
+            loading="lazy"
+            decoding="async"
+            height="20"
+          />
+        </a>
+        <a
+          href="https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="NuGet downloads badge"
+        >
+          <img
+            src="https://img.shields.io/nuget/dt/IEvangelist.Azure.CosmosRepository?label=Downloads&color=3a3aff"
+            alt="NuGet downloads"
+            loading="lazy"
+            decoding="async"
+            height="20"
+          />
+        </a>
+        <a
+          href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/LICENSE"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="License badge"
+        >
+          <img
+            src="https://img.shields.io/github/license/IEvangelist/azure-cosmos-dotnet-repository?color=3a3aff"
+            alt="MIT license"
+            loading="lazy"
+            decoding="async"
+            height="20"
+          />
+        </a>
+        <a
+          href="https://discord.com/invite/qMXrX4shAv"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Discord invite badge"
+        >
+          <img
+            src="https://img.shields.io/discord/868239483529723914?label=Discord&color=5865f2"
+            alt="Discord"
+            loading="lazy"
+            decoding="async"
+            height="20"
+          />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-border/60 bg-muted/30">
+    <div class="mx-auto max-w-6xl px-4 py-16 md:px-8">
+      <div class="mb-10 max-w-2xl">
+        <h2 class="text-3xl font-semibold tracking-tight md:text-4xl">
+          Built on the official SDK
+        </h2>
+        <p class="mt-3 text-muted-foreground">
+          Every base type, every option, and every fluent extension is documented and
+          backed by working samples in the repo.
+        </p>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          features.map((feature) => (
+            <a
+              href={withBase(feature.href)}
+              class="group flex h-full flex-col gap-2 rounded-2xl border border-border/60 bg-background p-6 shadow-sm transition hover:border-primary/40 hover:shadow-md"
+            >
+              <span
+                class="inline-flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                aria-hidden="true"
+              >
+                <feature.icon className="size-5" />
+              </span>
+              <h3 class="mt-2 text-lg font-semibold tracking-tight text-foreground group-hover:text-primary">
+                {feature.title}
+              </h3>
+              <p class="text-sm text-muted-foreground">{feature.description}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="mx-auto max-w-6xl px-4 py-16 md:px-8">
+      <div class="mb-10 max-w-2xl">
+        <h2 class="text-3xl font-semibold tracking-tight md:text-4xl">
+          Three steps from <code>dotnet add</code> to running
+        </h2>
+        <p class="mt-3 text-muted-foreground">
+          Install the package, register the services, and inject
+          <code>IRepository&lt;T&gt;</code> wherever you need data access.
+        </p>
+      </div>
+      <div class="grid gap-6 lg:grid-cols-3">
+        {
+          samples.map((sample, i) => (
+            <figure class="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+              <figcaption class="flex items-center justify-between border-b border-border/60 bg-muted/40 px-4 py-2 text-xs font-medium text-muted-foreground">
+                <span>
+                  Step {i + 1} · {sample.label}
+                </span>
+                <SlidersHorizontal className="size-3.5" aria-hidden="true" />
+              </figcaption>
+              <div class="overflow-x-auto p-4 text-sm">
+                <CodeBlock code={sample.code} lang="csharp" />
+              </div>
+            </figure>
+          ))
+        }
+      </div>
+      <p class="mt-8 text-center text-sm text-muted-foreground">
+        Want more? Browse <a
+          class="text-foreground underline-offset-4 hover:underline"
+          href={withBase("/docs")}>the full docs</a
+        > or jump straight to <a
+          class="text-foreground underline-offset-4 hover:underline"
+          href={withBase("/docs/getting-started")}>Getting started</a
+        >.
+      </p>
+    </div>
+  </section>
+
+  <script is:inline>
+    document.addEventListener("click", (e) => {
+      const target = e.target;
+      if (!(target instanceof Element)) return;
+      const btn = target.closest("[data-copy-target]");
+      if (!(btn instanceof HTMLButtonElement)) return;
+      const id = btn.getAttribute("data-copy-target");
+      if (!id) return;
+      const node = document.getElementById(id);
+      if (!node || !node.textContent) return;
+      navigator.clipboard
+        .writeText(node.textContent.trim())
+        .then(() => {
+          const original = btn.textContent;
+          btn.textContent = "Copied";
+          setTimeout(() => {
+            btn.textContent = original;
+          }, 1500);
+        })
+        .catch(() => {
+          /* ignore */
+        });
+    });
+  </script>
+</LandingLayout>

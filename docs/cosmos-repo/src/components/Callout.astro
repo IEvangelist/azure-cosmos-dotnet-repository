@@ -1,0 +1,55 @@
+---
+import { Info, Lightbulb, AlertTriangle, OctagonAlert, CheckCircle2 } from "lucide-react";
+
+export interface Props {
+  type?: "info" | "tip" | "warning" | "danger" | "success";
+  title?: string;
+}
+
+const { type = "info", title } = Astro.props;
+
+const styles: Record<string, string> = {
+  info: "border-sky-500/30 bg-sky-500/8 text-sky-700 dark:text-sky-200",
+  tip: "border-violet-500/30 bg-violet-500/8 text-violet-700 dark:text-violet-200",
+  warning:
+    "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-200",
+  danger: "border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-200",
+  success:
+    "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-200",
+};
+
+const labels: Record<string, string> = {
+  info: title ?? "Note",
+  tip: title ?? "Tip",
+  warning: title ?? "Warning",
+  danger: title ?? "Danger",
+  success: title ?? "Success",
+};
+
+const icons: Record<string, typeof Info> = {
+  info: Info,
+  tip: Lightbulb,
+  warning: AlertTriangle,
+  danger: OctagonAlert,
+  success: CheckCircle2,
+};
+
+const Icon = icons[type];
+---
+
+<aside
+  role="note"
+  aria-label={labels[type]}
+  class:list={[
+    "not-prose my-5 flex gap-3 rounded-xl border p-4 text-sm",
+    styles[type],
+  ]}
+>
+  <Icon className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+  <div class="min-w-0 flex-1">
+    <p class="mb-1 font-semibold">{labels[type]}</p>
+    <div class="leading-6 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
+      <slot />
+    </div>
+  </div>
+</aside>

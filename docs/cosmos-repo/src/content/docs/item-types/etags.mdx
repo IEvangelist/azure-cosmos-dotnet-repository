@@ -1,0 +1,83 @@
+---
+title: ETags & optimistic concurrency
+description: Avoid lost updates with EtagItem, FullItem, and IItemWithEtag.
+section: Item types
+order: 2
+---
+import Callout from "@/components/Callout.astro";
+
+The default repository supports etags whenever `IItemWithEtag` is implemented (the base classes `EtagItem` and `FullItem` already do this). The etag check is enforced on every update for a matching `TItem`. You can opt out per-call with the `ignoreEtag` parameter. The in-memory repository also honors etags so your tests behave the same as production.
+
+The full pattern is demonstrated by the [`OptimisticConcurrencyControl`](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/Microsoft.Azure.CosmosRepository/OptimisticConcurrencyControl) sample.
+
+## Capturing the new etag on create
+
+When you create an item, capture the result. Cosmos DB assigns a fresh etag and you'll need it for the next update.
+
+```csharp
+TItem currentItem = new TItem(...);
+currentItem = await _repository.CreateAsync(currentItem);
+```
+
+## Sequential updates
+
+Sequential updates to the same item must each pick up the latest etag. Two strategies depending on the value of `RepositoryOptions.OptimizeBandwidth`:
+
+### `OptimizeBandwidth = false`
+
+The update returns the updated item including its new etag.
+
+```csharp
+TItem currentItem = await _repository.CreateAsync(itemConfig);
+currentItem = await _repository.UpdateAsync(currentItem);
+currentItem = await _repository.UpdateAsync(currentItem);
+```
+
+### `OptimizeBandwidth = true` (the default)
+
+The update returns the **original** instance because the response body is suppressed. You must re-fetch to get the new etag.
+
+```csharp
+TItem currentItem = await _repository.CreateAsync(itemConfig);
+await _repository.UpdateAsync(currentItem);
+currentItem = await _repository.GetAsync(currentItem.Id);
+await _repository.UpdateAsync(currentItem);
+currentItem = await _repository.GetAsync(currentItem.Id);
+currentItem = await _repository.UpdateAsync(currentItem);
+```
+
+## Catching mismatched etags
+
+A failed precondition surfaces as `CosmosException` with `StatusCode == HttpStatusCode.PreconditionFailed`.
+
+```csharp
+try
+{
+    currentBankAccount = await repository.UpdateAsync(currentBankAccount);
+    Console.WriteLine($"Updated bank account: {currentBankAccount}.");
+}
+catch (CosmosException exception)
+    when (exception.StatusCode == HttpStatusCode.PreconditionFailed)
+{
+    Console.WriteLine("Failed to update balance — etags did not match.");
+}
+```
+
+## Bypassing the etag check
+
+```csharp
+await repository.UpdateAsync(currentBankAccount, ignoreEtag: true);
+```
+
+## Patch updates with an explicit etag
+
+```csharp
+await repository.UpdateAsync(
+    currentBankAccount.Id,
+    builder => builder.Replace(account => account.Balance, currentBankAccount.Balance - 250),
+    etag: currentBankAccount.Etag);
+```
+
+<Callout type="info" title="EtagItem is abstract">
+  Since 3.0.0 `EtagItem` is `abstract` — derive from it (or `FullItem`) instead of using it directly. See the [3.0.0 release notes](/docs/release-notes#release-300).
+</Callout>

@@ -1,0 +1,147 @@
+---
+title: Partitioning
+description: Pick the right Cosmos DB partitioning strategy with attributes, the container builder, or a synthetic key.
+section: Getting started
+order: 3
+---
+import Callout from "@/components/Callout.astro";
+
+Partitioning is one of the most important Cosmos DB design decisions. Cosmos Repository lets you split different `IItem` types across containers, share types in a single container, or even bucket every type into one container — whatever shape fits your data best.
+
+## Default strategy
+
+Calling `AddCosmosRepository()` with no extra configuration uses the simplest strategy: every `IItem` type is stored in a **single** container, partitioned by `/id`.
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository();
+
+var app = builder.Build();
+
+app.MapGet("/", () => "Default Cosmos Repository partitioning strategy");
+
+app.Run();
+```
+
+Because each item's `Id` defaults to a fresh GUID, all items end up in their own logical partition. This is fine for small applications, but if you expect to span multiple physical partitions you'll want to take more control.
+
+> The default strategy is also demonstrated in the [`WebTier`](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/Microsoft.Azure.CosmosRepository/WebTier) sample.
+
+## Taking control
+
+To opt into per-item-type containers, set `ContainerPerItemType = true`. Then choose **one** of two ways to configure each item's container and partition key.
+
+```csharp
+builder.Services.AddCosmosRepository(options =>
+{
+    options.ContainerPerItemType = true;
+});
+```
+
+### Option 1 — `IItemContainerBuilder`
+
+Reach for `options.ContainerBuilder.Configure<TItem>(...)` when you want partitioning details to live next to your DI registration.
+
+#### Customer / order example
+
+```csharp
+builder.Services.AddCosmosRepository(options =>
+{
+    options.ContainerPerItemType = true;
+
+    options.ContainerBuilder.Configure<Customer>(c =>
+    {
+        c.WithContainer("customers");
+        c.WithPartitionKey("/emailAddress");
+    });
+
+    options.ContainerBuilder.Configure<Order>(c =>
+    {
+        c.WithContainer("orders");
+        c.WithPartitionKey("/customerId");
+    });
+});
+```
+
+#### Inventory example — sharing a container
+
+Two or more `IItem` types can share a container and partitioning strategy. Below `Stock` and `StockRecord` live in the same `stock` container partitioned by `/stockReferenceNumber`, so a stock item and its movement records always live in the same logical partition.
+
+```csharp
+builder.Services.AddCosmosRepository(options =>
+{
+    options.ContainerPerItemType = true;
+
+    options.ContainerBuilder.Configure<Stock>(c =>
+    {
+        c.WithContainer("stock");
+        c.WithPartitionKey("/stockReferenceNumber");
+    });
+
+    options.ContainerBuilder.Configure<StockRecord>(c =>
+    {
+        c.WithContainer("stock");
+        c.WithPartitionKey("/stockReferenceNumber");
+    });
+});
+```
+
+### Option 2 — Attributes
+
+Decorate the `IItem` class with `[Container]` and `[PartitionKeyPath]`. This keeps the partitioning hint with the model.
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
+
+[Container("customers")]
+[PartitionKeyPath("/emailAddress")]
+public class Customer : FullItem
+{
+    public string EmailAddress { get; set; } = null!;
+
+    protected override string GetPartitionKeyValue() => EmailAddress;
+}
+```
+
+<Callout type="info">
+  Override `GetPartitionKeyValue()` whenever the partition key path is **not** `/id`. The library uses the returned string to build a `Cosmos.PartitionKey` for every operation.
+</Callout>
+
+## Synthetic / composite keys
+
+If you want a partition key derived from multiple fields, expose a computed property and serialize it under the matching JSON path:
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
+using Newtonsoft.Json;
+
+[PartitionKeyPath("/synthetic")]
+public class Person : Item
+{
+    public string FirstName { get; set; } = null!;
+    public string? MiddleName { get; set; }
+    public string LastName { get; set; } = null!;
+
+    [JsonProperty("synthetic")]
+    public string SyntheticPartitionKey => $"{FirstName}-{LastName}";
+
+    protected override string GetPartitionKeyValue() => SyntheticPartitionKey;
+}
+```
+
+Make sure the `JsonProperty` name (`"synthetic"`) matches the partition key path (`"/synthetic"`) and that `ContainerPerItemType = true` so the per-type container has the correct partition key path applied.
+
+## Recap
+
+| Knob | What it controls |
+| --- | --- |
+| `ContainerPerItemType` | One container per `IItem` type vs. all in one container |
+| `[Container]` | Container name when `ContainerPerItemType = true` |
+| `[PartitionKeyPath]` | JSON path used as the partition key |
+| `Item.GetPartitionKeyValue()` | The runtime value placed on each request's `PartitionKey` |
+| `IItemContainerBuilder.Configure<T>` | Code-first equivalent of the two attributes above |

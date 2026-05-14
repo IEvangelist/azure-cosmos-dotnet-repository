@@ -1,0 +1,92 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { withBase } from "@/lib/utils";
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="relative isolate">
+    <header
+      class="bg-background/70 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border px-4 backdrop-blur md:px-8"
+    >
+      <a
+        href={withBase("/")}
+        class="text-foreground font-semibold tracking-tight"
+        aria-label="Cosmos Repository home"
+      >
+        <span class="inline-flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            class="bg-primary inline-block size-2.5 rounded-full"
+          ></span>
+          Cosmos Repository
+        </span>
+      </a>
+      <nav
+        class="text-muted-foreground hidden items-center gap-6 text-sm font-medium md:flex"
+        aria-label="Primary"
+      >
+        <a class="hover:text-foreground" href={withBase("/docs/getting-started")}
+          >Docs</a
+        >
+        <a
+          class="hover:text-foreground"
+          href={withBase("/docs/release-notes")}>Release notes</a
+        >
+        <a
+          class="hover:text-foreground"
+          href="https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository"
+          target="_blank"
+          rel="noreferrer">NuGet</a
+        >
+        <a
+          class="hover:text-foreground"
+          href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository"
+          target="_blank"
+          rel="noreferrer">GitHub</a
+        >
+      </nav>
+      <div class="flex items-center gap-1">
+        <ThemeToggle client:load />
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer
+      class="border-t border-border px-4 py-8 text-sm text-muted-foreground md:px-8"
+    >
+      <div
+        class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 md:flex-row md:items-center"
+      >
+        <p>
+          © {new Date().getFullYear()} David Pine and contributors. MIT
+          licensed.
+        </p>
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <a
+            class="hover:text-foreground"
+            href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository"
+            >Source</a
+          >
+          <a
+            class="hover:text-foreground"
+            href="https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository"
+            >NuGet</a
+          >
+          <a
+            class="hover:text-foreground"
+            href="https://discord.com/invite/qMXrX4shAv">Discord</a
+          >
+        </div>
+      </div>
+    </footer>
+  </div>
+</BaseLayout>

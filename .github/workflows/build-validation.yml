@@ -8,6 +8,9 @@ on:
       - "**.csproj"
       - "**.yml"
       - "!docs/**"
+      - "!.github/workflows/docs-deploy.yml"
+      - "!.github/workflows/docs-pr-check.yml"
+      - "!.github/workflows/es_docs_deploy.yaml"
   workflow_dispatch:
     inputs:
       reason:

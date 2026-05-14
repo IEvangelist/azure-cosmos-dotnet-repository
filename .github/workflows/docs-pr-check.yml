@@ -1,0 +1,66 @@
+# Validates docs changes on pull requests. Runs only when a PR touches files
+# under `docs/cosmos-repo/**` or this workflow file.
+
+name: docs-pr-check
+
+on:
+  pull_request:
+    paths:
+      - "docs/cosmos-repo/**"
+      - ".github/workflows/docs-pr-check.yml"
+
+concurrency:
+  group: docs-pr-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Type-check, build, and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./docs/cosmos-repo
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: docs/cosmos-repo/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm check
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build site
+        run: pnpm build
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run end-to-end tests
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: docs/cosmos-repo/playwright-report/
+          retention-days: 7

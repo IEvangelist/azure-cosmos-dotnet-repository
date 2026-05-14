@@ -1,0 +1,86 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { DocsShell } from "@/components/docs-shell";
+import { withBase } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+export interface NeighborLink {
+  title: string;
+  url: string;
+}
+
+export interface Props {
+  title: string;
+  description?: string;
+  /** Slug-relative path used to build the GitHub edit URL. e.g. `getting-started.mdx` */
+  editPath?: string;
+  /** Trail of breadcrumb segments. The last entry is rendered as the current page. */
+  crumbs?: { title: string; href?: string }[];
+  /** Optional previous page link rendered in the footer */
+  previous?: NeighborLink;
+  /** Optional next page link rendered in the footer */
+  next?: NeighborLink;
+}
+
+const { title, description, editPath, crumbs = [], previous, next } = Astro.props;
+const currentPath =
+  Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ""), "") || "/";
+
+const editUrl = editPath
+  ? `https://github.com/IEvangelist/azure-cosmos-dotnet-repository/edit/main/${editPath}`
+  : undefined;
+---
+
+<BaseLayout title={title} description={description}>
+  <DocsShell
+    client:load
+    currentPath={currentPath}
+    crumbs={crumbs}
+    editUrl={editUrl}
+  >
+    <article>
+      <slot />
+    </article>
+    {
+      (previous || next) && (
+        <nav
+          class="not-prose mt-12 grid gap-3 border-t border-border pt-6 sm:grid-cols-2"
+          aria-label="Pagination"
+        >
+          {previous ? (
+            <a
+              href={withBase(previous.url)}
+              rel="prev"
+              class="group flex flex-col gap-1 rounded-lg border border-border/60 px-4 py-3 transition hover:border-primary/40 hover:bg-accent/30"
+            >
+              <span class="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                <ChevronLeft className="size-3.5" aria-hidden="true" /> Previous
+              </span>
+              <span class="font-medium text-foreground group-hover:text-primary">
+                {previous.title}
+              </span>
+            </a>
+          ) : (
+            <div aria-hidden="true" />
+          )}
+          {next ? (
+            <a
+              href={withBase(next.url)}
+              rel="next"
+              class="group flex flex-col gap-1 rounded-lg border border-border/60 px-4 py-3 text-right transition hover:border-primary/40 hover:bg-accent/30 sm:items-end"
+            >
+              <span class="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                Next <ChevronRight className="size-3.5" aria-hidden="true" />
+              </span>
+              <span class="font-medium text-foreground group-hover:text-primary">
+                {next.title}
+              </span>
+            </a>
+          ) : (
+            <div aria-hidden="true" />
+          )}
+        </nav>
+      )
+    }
+  </DocsShell>
+</BaseLayout>

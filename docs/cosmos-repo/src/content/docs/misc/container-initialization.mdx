@@ -1,0 +1,213 @@
+---
+title: Container initialization
+description: Choose between lazy (default) and eager container creation for predictable startup.
+section: Miscellaneous
+order: 1
+---
+import Callout from "@/components/Callout.astro";
+
+This page explains how and when Cosmos DB containers are created when using the repository pattern.
+
+## Lazy initialization (default)
+
+By default, containers are created **lazily** — on the first repository operation that touches them.
+
+```csharp
+// Container doesn't exist yet
+var repository = serviceProvider.GetRequiredService<IRepository<Product>>();
+
+// Container is created here on first access
+var product = await repository.CreateAsync(new Product { Name = "Widget" });
+```
+
+### How lazy initialization works
+
+1. Application starts — no containers are created.
+2. First repository operation (`CreateAsync`, `GetAsync`, …) is called.
+3. The internal `ICosmosContainerService` checks whether the container exists.
+4. If `IsAutoResourceCreationIfNotExistsEnabled` is `true`, it creates the database/container.
+5. The repository operation completes.
+
+### Configuration
+
+Lazy creation is gated by `IsAutoResourceCreationIfNotExistsEnabled`:
+
+```csharp
+builder.Services.AddCosmosRepository(options =>
+{
+    options.IsAutoResourceCreationIfNotExistsEnabled = true; // Default
+});
+```
+
+| Value | Behavior |
+| --- | --- |
+| `true` (default) | Containers are created on demand; database is created if missing. Convenient for dev. |
+| `false` | Containers must already exist. Recommended for production when infrastructure is managed externally (Bicep, Terraform, ARM, …). |
+
+### Pros and cons
+
+**Pros:** simple, no extra code, only creates what you use.
+
+**Cons:** higher first-request latency, health checks may flap during startup, configuration errors only surface at runtime, can break Kubernetes readiness probes.
+
+## Eager initialization
+
+Eager initialization creates containers at application startup before any requests are handled.
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository(options =>
+{
+    options.ContainerBuilder.Configure<Product>(c => c
+        .WithContainer("products")
+        .WithPartitionKey("/category"));
+});
+
+var app = builder.Build();
+
+await app.Services.EagerlyInitializeCosmosContainersAsync();
+
+app.Run();
+```
+
+### How eager initialization works
+
+`EagerlyInitializeCosmosContainersAsync()`:
+
+1. Returns immediately if `IsAutoResourceCreationIfNotExistsEnabled` is `false`.
+2. Discovers item types in priority order:
+   * Types explicitly configured via `ContainerBuilder.Configure<TItem>()`.
+   * Types from the assemblies you pass in.
+   * Types from all loaded assemblies (fallback).
+3. Calls `ICosmosContainerService.GetContainerAsync()` for each type.
+4. Awaits all containers before returning.
+5. Logs the initialization process.
+
+### When to use eager initialization
+
+✅ **Use when:**
+* Your app uses health checks (Kubernetes, load balancers, …).
+* You want consistent latency on every request, including the first.
+* You want to fail fast at startup if Cosmos DB is misconfigured.
+* You're running in containers with readiness probes.
+
+❌ **Don't use when:**
+* `IsAutoResourceCreationIfNotExistsEnabled` is `false` (it's a no-op).
+* You have many containers and want quick startup.
+* Containers are created externally (Infrastructure as Code).
+
+### Explicit type discovery
+
+If item types live in assemblies that aren't loaded at startup, pass them explicitly:
+
+```csharp
+await app.Services.EagerlyInitializeCosmosContainersAsync(
+    typeof(Product).Assembly,
+    typeof(Order).Assembly);
+```
+
+If you used `ContainerBuilder.Configure<T>()` they are discovered automatically:
+
+```csharp
+builder.Services.AddCosmosRepository(options =>
+{
+    options.ContainerBuilder.Configure<Product>(c => c.WithContainer("products"));
+});
+
+await app.Services.EagerlyInitializeCosmosContainersAsync(); // Discovers Product
+```
+
+## Comparison
+
+| Aspect | Lazy | Eager |
+| --- | --- | --- |
+| When containers are created | First repository access | App startup |
+| First request latency | Higher (creation + request) | Normal |
+| Startup time | Faster | Slower (waits for containers) |
+| Configuration | Default | Requires explicit call |
+| Health checks | May fail during init | Pass after startup completes |
+| Fail-fast | Errors at runtime | Errors at startup |
+| Best for | Dev / simple apps | Production with health checks |
+
+## Common scenarios
+
+### Development
+
+```csharp
+builder.Services.AddCosmosRepository(options =>
+{
+    options.CosmosConnectionString = "AccountEndpoint=https://localhost:8081/...";
+    options.IsAutoResourceCreationIfNotExistsEnabled = true;
+});
+```
+
+### Production with health checks
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCosmosRepository(options =>
+{
+    options.IsAutoResourceCreationIfNotExistsEnabled = true;
+    options.ContainerBuilder.Configure<Product>(c => c.WithContainer("products"));
+    options.ContainerBuilder.Configure<Order>(c => c.WithContainer("orders"));
+});
+
+builder.Services.AddHealthChecks().AddCosmosRepository();
+
+var app = builder.Build();
+
+await app.Services.EagerlyInitializeCosmosContainersAsync();
+
+app.MapHealthChecks("/health");
+app.Run();
+```
+
+### Production with Infrastructure as Code
+
+```csharp
+builder.Services.AddCosmosRepository(options =>
+{
+    // Containers are created externally (Bicep / Terraform / ARM)
+    options.IsAutoResourceCreationIfNotExistsEnabled = false;
+});
+
+// No eager initialization needed
+```
+
+## Logging
+
+Both modes emit detailed logs:
+
+```text
+// Lazy
+[Debug] Container 'products' does not exist. Creating...
+[Information] Successfully created container 'products'
+
+// Eager
+[Information] Eagerly initializing 2 Cosmos DB container(s) for 2 item type(s)
+[Debug] Successfully initialized container 'products' for item type 'Product'
+[Debug] Successfully initialized container 'orders' for item type 'Order'
+[Information] Successfully completed eager initialization of 2 Cosmos DB container(s)
+```
+
+Set the log level to `Debug` for the most detail:
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Microsoft.Azure.CosmosRepository": "Debug"
+    }
+  }
+}
+```
+
+## Best practices
+
+1. Use eager initialization with health checks to avoid startup flapping.
+2. Configure types explicitly via `ContainerBuilder.Configure<T>()` for automatic discovery.
+3. Set `IsAutoResourceCreationIfNotExistsEnabled = false` when infrastructure is externally managed.
+4. Watch the startup logs — verify containers are created the way you expect.
+5. Use generous startup probe timeouts when using eager initialization with many containers.
