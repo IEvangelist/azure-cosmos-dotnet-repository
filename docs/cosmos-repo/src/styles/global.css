@@ -244,6 +244,8 @@
 }
 .prose-docs a {
   @apply text-primary underline underline-offset-4 hover:text-primary/80;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .prose-docs ul {
   @apply my-4 list-disc pl-6 space-y-1;
@@ -256,6 +258,8 @@
 }
 .prose-docs code:not(pre code):not(.expressive-code code) {
   @apply rounded bg-muted px-1.5 py-0.5 text-[0.875em] font-mono text-foreground;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .prose-docs .expressive-code {
   @apply my-6 min-w-0 max-w-full;

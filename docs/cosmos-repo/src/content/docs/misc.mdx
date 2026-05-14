@@ -1,0 +1,20 @@
+---
+title: Miscellaneous
+description: Container initialization, health checks, logging, and unique key policies.
+section: Miscellaneous
+order: 1
+---
+import Callout from "@/components/Callout.astro";
+
+A grab-bag of cross-cutting features that don't belong with the core CRUD or query APIs but are essential to running Cosmos Repository confidently in production.
+
+## In this section
+
+* [**Container initialization**](/docs/misc/container-initialization) — choose between lazy (default) and eager container creation for predictable startup behavior.
+* [**Health checks**](/docs/misc/health-checks) — ASP.NET Core `IHealthCheck` implementations that surface Cosmos DB connectivity through the standard health-check pipeline.
+* [**Logging**](/docs/misc/logging) — Event ID ranges and the high-performance source-generated logging used by the library.
+* [**Unique keys**](/docs/misc/unique-keys) — enforce uniqueness within a partition with the `[UniqueKey]` attribute.
+
+<Callout type="tip">
+  These topics build on the [container configuration](/docs/container-config) story — make sure you've registered Cosmos Repository before adopting these features.
+</Callout>
