@@ -339,10 +339,10 @@ indexLines.push(
 );
 indexLines.push("---");
 indexLines.push("");
-  indexLines.push(
-    "These pages are generated from the project's XML documentation comments via `docfx metadata`, then converted to MDX so they render with the same theme, search, and navigation as the rest of the docs. Re-run `pnpm api` to refresh.",
-  );
-  indexLines.push("");
+indexLines.push(
+  "A complete reference for every public type in the `Microsoft.Azure.CosmosRepository` and `Microsoft.Azure.CosmosRepository.AspNetCore` packages — pick a namespace to dive in.",
+);
+indexLines.push("");
 const namespaces = [...byNs.keys()].sort();
 for (const ns of namespaces) {
   indexLines.push(`## ${ns}`);
@@ -365,7 +365,7 @@ for (const ns of namespaces) {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
     indexLines.push(
-      `  <li><a href="./api/${slug}/"><strong>${name}</strong><br /><span class="text-sm text-muted-foreground">${desc}</span></a></li>`,
+      `  <li><a href="./${slug}/"><strong>${name}</strong><br /><span class="text-sm text-muted-foreground">${desc}</span></a></li>`,
     );
   }
   indexLines.push("</ul>");

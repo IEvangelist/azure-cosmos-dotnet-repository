@@ -20,8 +20,11 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 
 const path = `/docs/${entry.id}`;
-const section = docsNav.find((s) =>
-  (s.items ?? []).some((i) => i.url === path) || s.url === path,
+const section = docsNav.find(
+  (s) =>
+    s.url === path ||
+    (s.items ?? []).some((i) => i.url === path) ||
+    (s.url !== "/docs" && path.startsWith(`${s.url}/`)),
 );
 
 const crumbs = [
