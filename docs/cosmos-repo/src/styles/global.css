@@ -301,3 +301,163 @@
 .prose-docs ul.docs-card-grid a {
   @apply text-card-foreground no-underline hover:text-primary;
 }
+
+/* ============================================================ */
+/* Callouts — on-theme variants using design tokens.            */
+/* ============================================================ */
+.callout {
+  background-color: var(--card);
+  border-color: var(--border);
+}
+.callout .callout-icon {
+  background-color: color-mix(in oklab, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+.callout-info {
+  border-left-color: var(--primary);
+  background-color: color-mix(in oklab, var(--primary) 6%, var(--card));
+}
+.callout-info .callout-icon {
+  background-color: color-mix(in oklab, var(--primary) 18%, transparent);
+  color: var(--primary);
+}
+.callout-tip {
+  border-left-color: var(--ring);
+  background-color: color-mix(in oklab, var(--accent) 35%, var(--card));
+}
+.callout-tip .callout-icon {
+  background-color: color-mix(in oklab, var(--accent) 70%, transparent);
+  color: var(--accent-foreground);
+}
+.callout-success {
+  border-left-color: oklch(0.65 0.16 150);
+  background-color: color-mix(in oklab, oklch(0.65 0.16 150) 8%, var(--card));
+}
+.callout-success .callout-icon {
+  background-color: color-mix(in oklab, oklch(0.65 0.16 150) 22%, transparent);
+  color: oklch(0.42 0.13 150);
+}
+.dark .callout-success .callout-icon {
+  color: oklch(0.82 0.16 150);
+}
+.callout-warning {
+  border-left-color: oklch(0.74 0.16 70);
+  background-color: color-mix(in oklab, oklch(0.74 0.16 70) 10%, var(--card));
+}
+.callout-warning .callout-icon {
+  background-color: color-mix(in oklab, oklch(0.74 0.16 70) 25%, transparent);
+  color: oklch(0.48 0.14 70);
+}
+.dark .callout-warning .callout-icon {
+  color: oklch(0.85 0.16 70);
+}
+.callout-danger {
+  border-left-color: var(--destructive);
+  background-color: color-mix(in oklab, var(--destructive) 8%, var(--card));
+}
+.callout-danger .callout-icon {
+  background-color: color-mix(in oklab, var(--destructive) 18%, transparent);
+  color: var(--destructive);
+}
+
+/* ============================================================ */
+/* Sidebar — boost active state visibility (AA contrast).       */
+/* ============================================================ */
+[data-sidebar="menu-button"][data-active="true"],
+[data-sidebar="menu-sub-button"][data-active="true"] {
+  background-color: color-mix(in oklab, var(--sidebar-primary) 14%, transparent);
+  color: var(--sidebar-primary);
+  font-weight: 500;
+  box-shadow: inset 2px 0 0 var(--sidebar-primary);
+}
+.dark [data-sidebar="menu-button"][data-active="true"],
+.dark [data-sidebar="menu-sub-button"][data-active="true"] {
+  background-color: color-mix(in oklab, var(--sidebar-primary) 22%, transparent);
+  color: var(--sidebar-primary);
+}
+[data-sidebar="menu-button"][data-active="true"]:hover,
+[data-sidebar="menu-sub-button"][data-active="true"]:hover {
+  background-color: color-mix(in oklab, var(--sidebar-primary) 20%, transparent);
+  color: var(--sidebar-primary);
+}
+
+/* ============================================================ */
+/* Pagefind UI — theme aware, WCAG AA contrast for both modes.  */
+/* https://pagefind.app/docs/ui/#customising-the-styles         */
+/* ============================================================ */
+.pagefind-ui {
+  --pagefind-ui-primary: var(--primary);
+  --pagefind-ui-text: var(--popover-foreground);
+  --pagefind-ui-background: var(--popover);
+  --pagefind-ui-border: var(--border);
+  --pagefind-ui-tag: var(--muted);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 0.5rem;
+  --pagefind-ui-image-border-radius: 0.375rem;
+  --pagefind-ui-image-box-ratio: 3 / 2;
+  --pagefind-ui-font: var(--font-sans);
+}
+/* Search input — must visibly use theme bg/text in both modes. */
+.pagefind-ui .pagefind-ui__search-input {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border-color: var(--border);
+}
+.pagefind-ui .pagefind-ui__search-input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 1;
+}
+.pagefind-ui .pagefind-ui__search-clear {
+  color: var(--muted-foreground);
+}
+.pagefind-ui .pagefind-ui__search-clear:hover,
+.pagefind-ui .pagefind-ui__search-clear:focus-visible {
+  color: var(--foreground);
+}
+.pagefind-ui .pagefind-ui__result-title,
+.pagefind-ui .pagefind-ui__result-link {
+  color: var(--popover-foreground);
+  text-decoration: none;
+}
+.pagefind-ui .pagefind-ui__result-link:hover,
+.pagefind-ui .pagefind-ui__result-link:focus-visible {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.pagefind-ui .pagefind-ui__result-excerpt,
+.pagefind-ui .pagefind-ui__message {
+  color: var(--muted-foreground);
+}
+.pagefind-ui .pagefind-ui__result-tags,
+.pagefind-ui .pagefind-ui__suggestion {
+  color: var(--muted-foreground);
+}
+.pagefind-ui .pagefind-ui__result {
+  border-top-color: var(--border);
+}
+/* Highlight matches on-brand instead of raw yellow. */
+.pagefind-ui mark,
+.pagefind-ui__result-excerpt mark,
+.pagefind-ui__suggestion mark {
+  background-color: color-mix(in oklab, var(--primary) 28%, transparent);
+  color: var(--popover-foreground);
+  padding: 0 0.125rem;
+  border-radius: 0.125rem;
+}
+.dark .pagefind-ui mark,
+.dark .pagefind-ui__result-excerpt mark,
+.dark .pagefind-ui__suggestion mark {
+  background-color: color-mix(in oklab, var(--primary) 35%, transparent);
+  color: var(--foreground);
+}
+.pagefind-ui .pagefind-ui__button {
+  background-color: var(--muted);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+.pagefind-ui .pagefind-ui__button:hover,
+.pagefind-ui .pagefind-ui__button:focus-visible {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}

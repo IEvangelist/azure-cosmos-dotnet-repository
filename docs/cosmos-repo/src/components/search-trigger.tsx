@@ -45,6 +45,21 @@ export function SearchTrigger() {
   const dialogRef = React.useRef<HTMLDialogElement | null>(null);
   const [mounted, setMounted] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [shortcutLabel, setShortcutLabel] = React.useState<string>("Ctrl K");
+  const [shortcutAria, setShortcutAria] =
+    React.useState<string>("Control plus K");
+
+  React.useEffect(() => {
+    const ua =
+      typeof navigator !== "undefined"
+        ? `${navigator.platform || ""} ${navigator.userAgent || ""}`
+        : "";
+    const isMac = /Mac|iPhone|iPad/i.test(ua);
+    if (isMac) {
+      setShortcutLabel("⌘ K");
+      setShortcutAria("Command plus K");
+    }
+  }, []);
 
   const open = React.useCallback(async () => {
     const dialog = dialogRef.current;
@@ -112,8 +127,11 @@ export function SearchTrigger() {
           <Search className="size-4" aria-hidden="true" />
           Search docs…
         </span>
-        <kbd className="bg-muted text-muted-foreground rounded border border-border px-1.5 py-0.5 font-mono text-xs">
-          ⌘K
+        <kbd
+          className="bg-muted text-muted-foreground rounded border border-border px-1.5 py-0.5 font-mono text-xs"
+          aria-label={`Keyboard shortcut: ${shortcutAria}`}
+        >
+          {shortcutLabel}
         </kbd>
       </Button>
       <Button
@@ -138,7 +156,10 @@ export function SearchTrigger() {
         }}
       >
         <div className="border-b border-border px-4 py-3 text-sm font-medium flex items-center justify-between">
-          <span>Search documentation</span>
+          <span className="inline-flex items-center gap-2">
+            <Search className="size-4" aria-hidden="true" />
+            Search documentation
+          </span>
           <kbd className="bg-muted text-muted-foreground rounded border border-border px-1.5 py-0.5 font-mono text-xs">
             Esc
           </kbd>

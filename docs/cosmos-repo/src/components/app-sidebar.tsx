@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { NuGetIcon } from "@/components/icons/nuget-icon";
 import { docsNav, type NavItem } from "@/lib/nav";
 import { withBase } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -65,12 +67,14 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href={withBase("/")} aria-label="Cosmos Repository home">
-                <div
-                  className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"
+                <img
+                  src={withBase("/logo.svg")}
+                  alt=""
                   aria-hidden="true"
-                >
-                  <Boxes className="size-4" />
-                </div>
+                  width={32}
+                  height={32}
+                  className="aspect-square size-8"
+                />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
                     Cosmos Repository
@@ -116,21 +120,29 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                   className="group/collapsible"
                 >
                   <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton
-                        tooltip={section.title}
-                        isActive={active}
+                    <SidebarMenuButton
+                      tooltip={section.title}
+                      isActive={active}
+                      asChild
+                    >
+                      <a
+                        href={withBase(section.url)}
+                        aria-current={active ? "page" : undefined}
                       >
                         {Icon ? <Icon aria-hidden="true" /> : null}
                         <span>{section.title}</span>
-                        <ChevronRight
-                          className={cn(
-                            "ml-auto transition-transform duration-200",
-                            "group-data-[state=open]/collapsible:rotate-90",
-                          )}
-                          aria-hidden="true"
-                        />
-                      </SidebarMenuButton>
+                      </a>
+                    </SidebarMenuButton>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuAction
+                        aria-label={`Toggle ${section.title} sub-pages`}
+                        className={cn(
+                          "transition-transform duration-200",
+                          "data-[state=open]:rotate-90",
+                        )}
+                      >
+                        <ChevronRight aria-hidden="true" />
+                      </SidebarMenuAction>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
@@ -172,7 +184,7 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                 rel="noreferrer"
                 target="_blank"
               >
-                <Rocket aria-hidden="true" />
+                <NuGetIcon className="size-4 fill-current" aria-hidden="true" />
                 <span>NuGet</span>
               </a>
             </SidebarMenuButton>

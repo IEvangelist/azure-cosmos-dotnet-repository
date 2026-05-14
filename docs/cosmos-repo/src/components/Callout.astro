@@ -9,13 +9,11 @@ export interface Props {
 const { type = "info", title } = Astro.props;
 
 const styles: Record<string, string> = {
-  info: "border-sky-500/30 bg-sky-500/8 text-sky-700 dark:text-sky-200",
-  tip: "border-violet-500/30 bg-violet-500/8 text-violet-700 dark:text-violet-200",
-  warning:
-    "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-200",
-  danger: "border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-200",
-  success:
-    "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-200",
+  info: "callout-info",
+  tip: "callout-tip",
+  warning: "callout-warning",
+  danger: "callout-danger",
+  success: "callout-success",
 };
 
 const labels: Record<string, string> = {
@@ -41,14 +39,19 @@ const Icon = icons[type];
   role="note"
   aria-label={labels[type]}
   class:list={[
-    "not-prose my-5 flex gap-3 rounded-xl border p-4 text-sm",
+    "callout not-prose my-5 flex gap-3 rounded-lg border border-l-4 p-4 text-sm shadow-sm",
     styles[type],
   ]}
 >
-  <Icon className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
-  <div class="min-w-0 flex-1">
-    <p class="mb-1 font-semibold">{labels[type]}</p>
-    <div class="leading-6 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
+  <span
+    class="callout-icon mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-md"
+    aria-hidden="true"
+  >
+    <Icon className="size-4" aria-hidden="true" />
+  </span>
+  <div class="min-w-0 flex-1 text-foreground">
+    <p class="callout-title mb-1 font-semibold">{labels[type]}</p>
+    <div class="callout-body text-foreground/90 leading-6 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
       <slot />
     </div>
   </div>
