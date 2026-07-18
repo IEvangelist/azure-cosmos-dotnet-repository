@@ -5,20 +5,33 @@ internal sealed class DefaultBatchBuilder(
     Type seedType,
     ICosmosContainerService containerService) : IBatchBuilder
 {
-    private readonly List<PendingOp> _operations = [];
+    private readonly List<Action<TransactionalBatch>> _operations = [];
     private readonly HashSet<Type> _seenTypes = [seedType];
 
     public IBatchBuilder CreateItem<TItem>(TItem item) where TItem : IItem =>
-        Add(OpKind.Create, item);
+        Add(item, batch => batch.CreateItem(item));
 
-    public IBatchBuilder ReplaceItem<TItem>(TItem item) where TItem : IItem =>
-        Add(OpKind.Replace, item);
+    public IBatchBuilder ReplaceItem<TItem>(TItem item) where TItem : IItem
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        string id = item.Id;
+        string? etag = GetEtag(item);
+        return Add(item, batch => batch.ReplaceItem(id, item, CreateRequestOptions(etag)));
+    }
 
-    public IBatchBuilder UpsertItem<TItem>(TItem item) where TItem : IItem =>
-        Add(OpKind.Upsert, item);
+    public IBatchBuilder UpsertItem<TItem>(TItem item) where TItem : IItem
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        string? etag = GetEtag(item);
+        return Add(item, batch => batch.UpsertItem(item, CreateRequestOptions(etag)));
+    }
 
-    public IBatchBuilder DeleteItem<TItem>(TItem item) where TItem : IItem =>
-        Add(OpKind.Delete, item);
+    public IBatchBuilder DeleteItem<TItem>(TItem item) where TItem : IItem
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        string id = item.Id;
+        return Add(item, batch => batch.DeleteItem(id));
+    }
 
     public IBatchBuilder DeleteItem<TItem>(string id) where TItem : IItem
     {
@@ -30,7 +43,7 @@ internal sealed class DefaultBatchBuilder(
         EnsureCapacity();
 
         _seenTypes.Add(typeof(TItem));
-        _operations.Add(new(OpKind.Delete, typeof(TItem), null, id, null));
+        _operations.Add(batch => batch.DeleteItem(id));
 
         return this;
     }
@@ -50,25 +63,9 @@ internal sealed class DefaultBatchBuilder(
 
         TransactionalBatch batch = container.CreateTransactionalBatch(new PartitionKey(partitionKey));
 
-        foreach (PendingOp operation in _operations)
+        foreach (Action<TransactionalBatch> operation in _operations)
         {
-            switch (operation.Kind)
-            {
-                case OpKind.Create:
-                    batch.CreateItem(operation.Item);
-                    break;
-                case OpKind.Replace:
-                    batch.ReplaceItem(operation.Id, operation.Item, CreateRequestOptions(operation.Etag));
-                    break;
-                case OpKind.Upsert:
-                    batch.UpsertItem(operation.Item, CreateRequestOptions(operation.Etag));
-                    break;
-                case OpKind.Delete:
-                    batch.DeleteItem(operation.Id);
-                    break;
-                default:
-                    throw new InvalidOperationException($"Unknown batch operation kind: {operation.Kind}");
-            }
+            operation(batch);
         }
 
         using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken)
@@ -80,7 +77,7 @@ internal sealed class DefaultBatchBuilder(
         }
     }
 
-    private IBatchBuilder Add<TItem>(OpKind kind, TItem item) where TItem : IItem
+    private IBatchBuilder Add<TItem>(TItem item, Action<TransactionalBatch> operation) where TItem : IItem
     {
         if (item is null)
         {
@@ -91,19 +88,13 @@ internal sealed class DefaultBatchBuilder(
         EnsureCapacity();
 
         _seenTypes.Add(typeof(TItem));
-
-        _operations.Add(new(
-            kind,
-            typeof(TItem),
-            item,
-            item.Id,
-            kind is OpKind.Replace or OpKind.Upsert && item is IItemWithEtag itemWithEtag
-                ? itemWithEtag.Etag
-                : null));
+        _operations.Add(operation);
 
         return this;
     }
 
+    private static string? GetEtag(IItem item) =>
+        item is IItemWithEtag itemWithEtag ? itemWithEtag.Etag : null;
 
     private void ValidatePartitionKey(IItem item)
     {
@@ -134,40 +125,5 @@ internal sealed class DefaultBatchBuilder(
         }
 
         return options;
-    }
-
-    private enum OpKind
-    {
-        Create,
-        Replace,
-        Upsert,
-        Delete
-    }
-
-    private sealed class PendingOp
-    {
-        public PendingOp(
-            OpKind kind,
-            Type itemType,
-            object? item,
-            string id,
-            string? etag)
-        {
-            Kind = kind;
-            ItemType = itemType;
-            Item = item;
-            Id = id;
-            Etag = etag;
-        }
-
-        public OpKind Kind { get; }
-
-        public Type ItemType { get; }
-
-        public object? Item { get; }
-
-        public string Id { get; }
-
-        public string? Etag { get; }
     }
 }

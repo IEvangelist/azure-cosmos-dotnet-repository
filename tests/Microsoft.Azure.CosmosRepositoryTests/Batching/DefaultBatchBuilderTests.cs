@@ -80,6 +80,94 @@ public class DefaultBatchBuilderTests
     }
 
     [Fact]
+    public async Task Batch_ExecuteAsync_PreservesGenericItemTypeForSdkCalls()
+    {
+        const string sharedPartitionKey = "shared";
+
+        Mock<Container> container = new();
+        Mock<TransactionalBatch> batch = new();
+        Mock<TransactionalBatchResponse> response = new();
+
+        container.Setup(c => c.CreateTransactionalBatch(It.IsAny<PartitionKey>()))
+            .Returns(batch.Object);
+        batch.Setup(b => b.ExecuteAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response.Object);
+        response.SetupGet(r => r.IsSuccessStatusCode).Returns(true);
+
+        _containerService.Setup(service => service.GetContainerAsync(It.IsAny<IReadOnlyList<Type>>()))
+            .ReturnsAsync(container.Object);
+
+        TestItem created = new() { Id = sharedPartitionKey };
+        TestItemOther replaced = new() { Id = sharedPartitionKey };
+        TestItem upserted = new() { Id = sharedPartitionKey };
+
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey)
+            .CreateItem(created)
+            .ReplaceItem(replaced)
+            .UpsertItem(upserted);
+
+        await builder.ExecuteAsync();
+
+        // The SDK serializer selects metadata by the generic type argument, so the
+        // closed generic must be the item's own type - not object.
+        batch.Verify(b => b.CreateItem(created, It.IsAny<TransactionalBatchItemRequestOptions>()), Times.Once);
+        batch.Verify(b => b.ReplaceItem(replaced.Id, replaced, It.IsAny<TransactionalBatchItemRequestOptions>()), Times.Once);
+        batch.Verify(b => b.UpsertItem(upserted, It.IsAny<TransactionalBatchItemRequestOptions>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Batch_QueuedOperations_UseQueuedIdsAndEtags()
+    {
+        Mock<Container> container = new();
+        Mock<TransactionalBatch> batch = new();
+        Mock<TransactionalBatchResponse> response = new();
+        container.Setup(value => value.CreateTransactionalBatch(It.IsAny<PartitionKey>())).Returns(batch.Object);
+        batch.Setup(value => value.ExecuteAsync(It.IsAny<CancellationToken>())).ReturnsAsync(response.Object);
+        response.SetupGet(value => value.IsSuccessStatusCode).Returns(true);
+        _containerService.Setup(value => value.GetContainerAsync(It.IsAny<IReadOnlyList<Type>>())).ReturnsAsync(container.Object);
+
+        MutableEtagItem replaced = new()
+        {
+            Id = "queued-replace-id",
+            PartitionKey = "partition",
+            Etag = "queued-replace-etag"
+        };
+        MutableEtagItem upserted = new()
+        {
+            Id = "queued-upsert-id",
+            PartitionKey = "partition",
+            Etag = "queued-upsert-etag"
+        };
+        MutableEtagItem deleted = new()
+        {
+            Id = "queued-delete-id",
+            PartitionKey = "partition"
+        };
+
+        IBatchBuilder builder = CreateBuilder("partition")
+            .ReplaceItem(replaced)
+            .UpsertItem(upserted)
+            .DeleteItem(deleted);
+        replaced.Id = "execution-replace-id";
+        replaced.Etag = "execution-replace-etag";
+        upserted.Etag = "execution-upsert-etag";
+        deleted.Id = "execution-delete-id";
+
+        await builder.ExecuteAsync();
+
+        batch.Verify(value => value.ReplaceItem(
+            "queued-replace-id",
+            replaced,
+            It.Is<TransactionalBatchItemRequestOptions>(options => options.IfMatchEtag == "queued-replace-etag")), Times.Once);
+        batch.Verify(value => value.UpsertItem(
+            upserted,
+            It.Is<TransactionalBatchItemRequestOptions>(options => options.IfMatchEtag == "queued-upsert-etag")), Times.Once);
+        batch.Verify(value => value.DeleteItem(
+            "queued-delete-id",
+            It.IsAny<TransactionalBatchItemRequestOptions>()), Times.Once);
+    }
+
+    [Fact]
     public void Batch_AtMaxItems_DoesNotThrow()
     {
         const string sharedPartitionKey = "shared";
@@ -132,4 +220,15 @@ public class DefaultBatchBuilderTests
             partitionKey,
             typeof(TestItem),
             _containerService.Object);
+
+    private sealed class MutableEtagItem : IItemWithEtag
+    {
+        public string Id { get; set; } = default!;
+
+        public string Type { get; set; } = nameof(MutableEtagItem);
+
+        public string PartitionKey { get; set; } = default!;
+
+        public string? Etag { get; set; }
+    }
 }
