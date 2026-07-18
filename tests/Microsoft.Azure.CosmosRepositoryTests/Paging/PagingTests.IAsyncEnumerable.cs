@@ -13,7 +13,6 @@ public partial class PagingTests
     readonly Mock<Container> _container = new();
     readonly IRepositoryExpressionProvider _expressionProvider = new MockExpressionProvider();
     readonly ISpecificationEvaluator _specificationEvaluator = new SpecificationEvaluator();
-    readonly Mock<ICosmosContainerService> _cosmosContainerService = new();
 
     private DefaultRepository<TestItem> RepositoryForTestItem =>
         new(_options.Object,
@@ -21,8 +20,7 @@ public partial class PagingTests
             new NullLogger<DefaultRepository<TestItem>>(),
             _queryableProcessor.Object,
             _expressionProvider,
-            _specificationEvaluator,
-            _cosmosContainerService.Object);
+            _specificationEvaluator);
 
     private static readonly string[] s_sourceArray = ["🎶", "💿", "🎸", "🥁", "🎙"];
 

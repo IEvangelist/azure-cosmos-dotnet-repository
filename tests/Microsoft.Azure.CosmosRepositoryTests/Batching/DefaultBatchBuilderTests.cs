@@ -218,7 +218,6 @@ public class DefaultBatchBuilderTests
     private DefaultBatchBuilder CreateBuilder(string partitionKey) =>
         new(
             partitionKey,
-            typeof(TestItem),
             _containerService.Object);
 
     private sealed class MutableEtagItem : IItemWithEtag

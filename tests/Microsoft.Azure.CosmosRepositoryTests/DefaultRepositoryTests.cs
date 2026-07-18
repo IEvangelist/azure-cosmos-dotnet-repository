@@ -13,7 +13,6 @@ public class DefaultRepositoryTests
     readonly Mock<Container> _container = new();
     readonly IRepositoryExpressionProvider _expressionProvider = new MockExpressionProvider();
     readonly ISpecificationEvaluator _specificationEvaluator = new SpecificationEvaluator();
-    readonly Mock<ICosmosContainerService> _cosmosContainerService = new();
 
     public DefaultRepositoryTests()
     {
@@ -26,8 +25,7 @@ public class DefaultRepositoryTests
             new NullLogger<DefaultRepository<TestItemWithEtag>>(),
             _queryableProcessor.Object,
             _expressionProvider,
-            _specificationEvaluator,
-            _cosmosContainerService.Object);
+            _specificationEvaluator);
 
     private DefaultRepository<TestItem> RepositoryForItemWithoutETag =>
         new(_options.Object,
@@ -35,8 +33,7 @@ public class DefaultRepositoryTests
             new NullLogger<DefaultRepository<TestItem>>(),
             _queryableProcessor.Object,
             _expressionProvider,
-            _specificationEvaluator,
-            _cosmosContainerService.Object);
+            _specificationEvaluator);
 
     [Fact]
     public async Task GetAsyncGivenExpressionQueriesContainerCorrectly()

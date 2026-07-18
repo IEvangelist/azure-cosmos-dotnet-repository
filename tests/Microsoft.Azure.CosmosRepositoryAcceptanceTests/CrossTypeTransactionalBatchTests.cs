@@ -15,8 +15,8 @@ public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper
             Product product = CreateProduct("Widget", sharedPartitionKey, 9.99);
             Rating rating = CreateRating(sharedPartitionKey, 5, "great");
 
-            await _productsRepository
-                .Batch(sharedPartitionKey)
+            await _provider.GetRequiredService<IBatchBuilderFactory>()
+                .CreateBatch(sharedPartitionKey)
                 .CreateItem(product)
                 .CreateItem(rating)
                 .ExecuteAsync();
@@ -47,8 +47,8 @@ public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper
             Rating upsertedRating = CreateRating(sharedPartitionKey, 5, "updated");
             upsertedRating.Id = existingRating.Id;
 
-            await _productsRepository
-                .Batch(sharedPartitionKey)
+            await _provider.GetRequiredService<IBatchBuilderFactory>()
+                .CreateBatch(sharedPartitionKey)
                 .ReplaceItem(replacementProduct)
                 .UpsertItem(upsertedRating)
                 .DeleteItem<Rating>(obsoleteRating.Id)
@@ -78,8 +78,8 @@ public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper
             conflictingProduct.Id = existingProduct.Id;
 
             BatchOperationException exception = await Assert.ThrowsAsync<BatchOperationException>(() =>
-                _productsRepository
-                    .Batch(sharedPartitionKey)
+                _provider.GetRequiredService<IBatchBuilderFactory>()
+                    .CreateBatch(sharedPartitionKey)
                     .CreateItem(ratingThatShouldRollback)
                     .CreateItem(conflictingProduct)
                     .ExecuteAsync()
@@ -115,8 +115,8 @@ public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper
             Rating ratingThatShouldRollback = CreateRating(sharedPartitionKey, 3, "etag-roll-back");
 
             BatchOperationException exception = await Assert.ThrowsAsync<BatchOperationException>(() =>
-                _productsRepository
-                    .Batch(sharedPartitionKey)
+                _provider.GetRequiredService<IBatchBuilderFactory>()
+                    .CreateBatch(sharedPartitionKey)
                     .CreateItem(ratingThatShouldRollback)
                     .ReplaceItem(staleProduct)
                     .ExecuteAsync()

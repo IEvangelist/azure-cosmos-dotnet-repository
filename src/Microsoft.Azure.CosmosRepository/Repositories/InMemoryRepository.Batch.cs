@@ -6,10 +6,6 @@ namespace Microsoft.Azure.CosmosRepository;
 
 internal partial class InMemoryRepository<TItem>
 {
-    /// <inheritdoc />
-    public IBatchBuilder Batch(string partitionKey) =>
-        new InMemoryBatchBuilder(partitionKey);
-
     public async ValueTask CreateAsBatchAsync(
         IEnumerable<TItem> items,
         CancellationToken cancellationToken = default)

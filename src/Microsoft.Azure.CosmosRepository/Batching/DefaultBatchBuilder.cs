@@ -2,11 +2,10 @@ namespace Microsoft.Azure.CosmosRepository;
 
 internal sealed class DefaultBatchBuilder(
     string partitionKey,
-    Type seedType,
     ICosmosContainerService containerService) : IBatchBuilder
 {
     private readonly List<Action<TransactionalBatch>> _operations = [];
-    private readonly HashSet<Type> _seenTypes = [seedType];
+    private readonly HashSet<Type> _seenTypes = [];
 
     public IBatchBuilder CreateItem<TItem>(TItem item) where TItem : IItem =>
         Add(item, batch => batch.CreateItem(item));
