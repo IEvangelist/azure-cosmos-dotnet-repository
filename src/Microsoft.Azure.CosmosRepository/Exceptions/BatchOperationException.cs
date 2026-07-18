@@ -9,6 +9,19 @@ namespace Microsoft.Azure.CosmosRepository.Exceptions;
 /// <remarks>Creates <see cref="BatchOperationException"/>.</remarks>
 public class BatchOperationException : Exception
 {
+    private readonly HttpStatusCode _statusCode;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BatchOperationException"/> class.
+    /// </summary>
+    /// <param name="statusCode">The status code from the failed batch operation.</param>
+    /// <param name="innerException">The exception that caused the batch operation to fail.</param>
+    public BatchOperationException(HttpStatusCode statusCode, Exception? innerException = null)
+        : base($"Failed to execute batch operation. Status: {statusCode}", innerException)
+    {
+        _statusCode = statusCode;
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BatchOperationException"/> class.
     /// </summary>
@@ -32,17 +45,18 @@ public class BatchOperationException : Exception
         }
 
         Response = response;
+        _statusCode = response.StatusCode;
     }
 
     /// <summary>
-    /// The response from the batch operation.
+    /// The response from the batch operation, or <see langword="null"/> for simulated in-memory failures.
     /// </summary>
-    public TransactionalBatchResponse Response { get; }
+    public TransactionalBatchResponse? Response { get; }
 
     /// <summary>
-    /// The status code returned from the <see cref="TransactionalBatchResponse"/>.
+    /// The status code returned from the batch operation.
     /// </summary>
-    public HttpStatusCode StatusCode => Response.StatusCode;
+    public HttpStatusCode StatusCode => _statusCode;
 
     private static string CreateMessage(TransactionalBatchResponse response)
     {

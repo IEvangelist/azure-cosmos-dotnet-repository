@@ -19,24 +19,25 @@ internal partial class InMemoryRepository<TItem>
 #endif
 
         ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
+        (string Key, TItem Item)? stored = FindStoredItem(value.Id, value.PartitionKey);
 
         if (value is IItemWithEtag valueWithEtag &&
             !string.IsNullOrWhiteSpace(valueWithEtag.Etag) &&
-            items.ContainsKey(value.Id) &&
-            DeserializeItem(items[value.Id]) is IItemWithEtag existingItemWithEtag &&
-            !ignoreEtag
-            && valueWithEtag.Etag != existingItemWithEtag.Etag)
+            stored is { } storedValue &&
+            storedValue.Item is IItemWithEtag existingItemWithEtag &&
+            !ignoreEtag &&
+            valueWithEtag.Etag != existingItemWithEtag.Etag)
         {
             MismatchedEtags();
         }
 
-        items[value.Id] = InMemoryRepository<TItem>.SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
-
-        TItem item = DeserializeItem(items[value.Id]);
+        string storageKey = stored?.Key ?? InMemoryStorage.GetKey(value.Id, value.PartitionKey);
+        items[storageKey] = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
+        TItem item = DeserializeItem(items[storageKey]);
 
         if (raiseChanges)
         {
-            Changes?.Invoke(new ChangeFeedItemArgs<TItem>(item));
+            PublishChanges(new ChangeFeedItemArgs<TItem>(item));
         }
 
         return item;
@@ -62,7 +63,7 @@ internal partial class InMemoryRepository<TItem>
             results.Add(await UpdateAsync(value, false, ignoreEtag));
         }
 
-        Changes?.Invoke(new ChangeFeedItemArgs<TItem>(results));
+        PublishChanges(new ChangeFeedItemArgs<TItem>(results));
 
         return results;
     }
@@ -82,10 +83,8 @@ internal partial class InMemoryRepository<TItem>
 
         partitionKeyValue ??= id;
 
-        TItem? item = InMemoryStorage
-            .GetValues<TItem>()
-            .Select(DeserializeItem)
-            .FirstOrDefault(x => x.Id == id && x.PartitionKey == partitionKeyValue);
+        (string Key, TItem Item)? stored = FindStoredItem(id, partitionKeyValue);
+        TItem? item = stored is { } storedValue ? storedValue.Item : default;
 
         switch (item)
         {
@@ -128,10 +127,9 @@ internal partial class InMemoryRepository<TItem>
         }
 
         ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
-
-        items[id] = InMemoryRepository<TItem>.SerializeItem(item!, Guid.NewGuid().ToString(), CurrentTs);
-
-        Changes?.Invoke(new ChangeFeedItemArgs<TItem>(DeserializeItem(items[id])));
+        string storageKey = stored!.Value.Key;
+        items[storageKey] = SerializeItem(item!, Guid.NewGuid().ToString(), CurrentTs);
+        PublishChanges(new ChangeFeedItemArgs<TItem>(DeserializeItem(items[storageKey])));
     }
 
     private void MismatchedEtags() =>

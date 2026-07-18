@@ -3,6 +3,13 @@ namespace Microsoft.Azure.CosmosRepository;
 /// <summary>
 /// Builds a transactional batch for a single partition key.
 /// </summary>
+/// <remarks>
+/// The Cosmos implementation executes the batch atomically as a
+/// transactional batch. The in-memory implementation validates every
+/// operation before committing any of them, so a failing operation leaves
+/// storage unchanged; it does not, however, isolate the sequential commit
+/// phase from concurrent access.
+/// </remarks>
 public interface IBatchBuilder
 {
     /// <summary>
@@ -50,5 +57,6 @@ public interface IBatchBuilder
     /// </summary>
     /// <param name="cancellationToken">A token to cancel the async operation.</param>
     /// <returns>A <see cref="ValueTask"/> that represents the async batch operation.</returns>
+    /// <exception cref="BatchOperationException">Thrown when a batch operation fails.</exception>
     ValueTask ExecuteAsync(CancellationToken cancellationToken = default);
 }

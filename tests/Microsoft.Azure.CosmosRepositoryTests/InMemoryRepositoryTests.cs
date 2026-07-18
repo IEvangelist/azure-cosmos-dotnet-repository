@@ -243,13 +243,29 @@ public class InMemoryRepositoryTests
         //Assert
         await Assert.ThrowsAsync<NullReferenceException>(() =>
             _invalidSerializableRepository.CreateAsync(invalidSerialisable).AsTask());
-        Assert.True(InMemoryStorage.GetDictionary<InvalidSerialisable>().ContainsKey(invalidSerialisable.Id));
-        Assert.Equal(args.Property1,
-            InMemoryRepository<InvalidSerialisable>.DeserializeItem<ValidInvalidSerialisable>(
-                    InMemoryStorage.GetDictionary<InvalidSerialisable>()[invalidSerialisable.Id]).Property1);
-        Assert.Equal(args.PartitionKey,
-            InMemoryRepository<InvalidSerialisable>.DeserializeItem<ValidInvalidSerialisable>(
-                    InMemoryStorage.GetDictionary<InvalidSerialisable>()[invalidSerialisable.Id]).PartitionKey);
+        string storedJson = Assert.Single(InMemoryStorage.GetDictionary<InvalidSerialisable>().Values);
+        ValidInvalidSerialisable stored =
+            InMemoryRepository<InvalidSerialisable>.DeserializeItem<ValidInvalidSerialisable>(storedJson);
+
+        Assert.Equal(args.Property1, stored.Property1);
+        Assert.Equal(args.PartitionKey, stored.PartitionKey);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ItemsWithSameIdInDifferentPartitions_StoresBothItems()
+    {
+        string id = Guid.NewGuid().ToString();
+        Dog first = new("first-partition", "first") { Id = id };
+        Dog second = new("second-partition", "second") { Id = id };
+
+        await _dogRepository.CreateAsync(first);
+        await _dogRepository.CreateAsync(second);
+
+        Dog storedFirst = await _dogRepository.GetAsync(id, first.Breed);
+        Dog storedSecond = await _dogRepository.GetAsync(id, second.Breed);
+
+        storedFirst.Name.Should().Be("first");
+        storedSecond.Name.Should().Be("second");
     }
 
     [Fact]
