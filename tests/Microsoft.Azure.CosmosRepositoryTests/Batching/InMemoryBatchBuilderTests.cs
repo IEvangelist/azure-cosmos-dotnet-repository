@@ -202,6 +202,56 @@ public class InMemoryBatchBuilderTests : IDisposable
     }
 
     [Fact]
+    public async Task Batch_ContainerPerItemTypeWithDifferentContainers_ExecuteAsyncThrows()
+    {
+        // Arrange
+        const string sharedPartitionKey = "shared";
+
+        IBatchBuilder builder = new ServiceCollection()
+            .AddInMemoryCosmosRepository()
+            .Configure<RepositoryOptions>(options => options.ContainerPerItemType = true)
+            .BuildServiceProvider()
+            .GetRequiredService<IBatchBuilderFactory>()
+            .CreateBatch(sharedPartitionKey)
+            .CreateItem(new BatchCreateItem { Id = sharedPartitionKey })
+            .CreateItem(new BatchSeedItem { Id = sharedPartitionKey });
+
+        // Act
+        Func<Task> act = () => builder.ExecuteAsync().AsTask();
+
+        // Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(act);
+    }
+
+    [Fact]
+    public async Task Batch_ContainerPerItemTypeWithSharedContainer_ExecuteAsyncSucceeds()
+    {
+        // Arrange
+        const string sharedPartitionKey = "shared";
+
+        IBatchBuilder builder = new ServiceCollection()
+            .AddInMemoryCosmosRepository()
+            .Configure<RepositoryOptions>(options =>
+            {
+                options.ContainerPerItemType = true;
+                options.ContainerBuilder.Configure<BatchCreateItem>(builder => builder.WithContainer("shared-container"));
+                options.ContainerBuilder.Configure<BatchSeedItem>(builder => builder.WithContainer("shared-container"));
+            })
+            .BuildServiceProvider()
+            .GetRequiredService<IBatchBuilderFactory>()
+            .CreateBatch(sharedPartitionKey)
+            .CreateItem(new BatchCreateItem { Id = sharedPartitionKey })
+            .CreateItem(new BatchSeedItem { Id = sharedPartitionKey });
+
+        // Act
+        await builder.ExecuteAsync();
+
+        // Assert
+        BatchCreateItem created = await new InMemoryRepository<BatchCreateItem>().GetAsync(sharedPartitionKey);
+        created.Id.Should().Be(sharedPartitionKey);
+    }
+
+    [Fact]
     public async Task Batch_ExecuteAsync_PublishesChangesToInMemoryChangeFeed()
     {
         // Arrange

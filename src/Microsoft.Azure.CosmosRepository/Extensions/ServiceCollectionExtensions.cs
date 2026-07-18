@@ -114,6 +114,8 @@ public static class ServiceCollectionExtensions
         }
 
         services
+            .AddOptions()
+            .AddSingleton<ICosmosContainerNameProvider, DefaultCosmosContainerNameProvider>()
             .AddSingleton(typeof(IReadOnlyRepository<>), typeof(InMemoryRepository<>))
             .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(InMemoryRepository<>))
             .AddSingleton(typeof(IBatchRepository<>), typeof(InMemoryRepository<>))

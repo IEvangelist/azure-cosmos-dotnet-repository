@@ -10,6 +10,7 @@ internal sealed class InMemoryBatchBuilder(
 {
     private readonly string _partitionKey = partitionKey;
     private readonly List<Func<CancellationToken, ValueTask>> _operations = [];
+    private readonly HashSet<Type> _seenTypes = [];
 
     public IBatchBuilder CreateItem<TItem>(TItem item) where TItem : IItem
     {
@@ -20,6 +21,7 @@ internal sealed class InMemoryBatchBuilder(
 
         ValidatePartitionKey(item);
         EnsureCapacity();
+        _seenTypes.Add(typeof(TItem));
         _operations.Add(cancellationToken => CreateAsync(item, cancellationToken));
 
         return this;
@@ -34,6 +36,7 @@ internal sealed class InMemoryBatchBuilder(
 
         ValidatePartitionKey(item);
         EnsureCapacity();
+        _seenTypes.Add(typeof(TItem));
         _operations.Add(cancellationToken => UpsertAsync(item, cancellationToken));
 
         return this;
@@ -48,6 +51,7 @@ internal sealed class InMemoryBatchBuilder(
 
         ValidatePartitionKey(item);
         EnsureCapacity();
+        _seenTypes.Add(typeof(TItem));
         _operations.Add(cancellationToken => UpsertAsync(item, cancellationToken));
 
         return this;
@@ -62,6 +66,7 @@ internal sealed class InMemoryBatchBuilder(
 
         ValidatePartitionKey(item);
         EnsureCapacity();
+        _seenTypes.Add(typeof(TItem));
         _operations.Add(cancellationToken => DeleteAsync<TItem>(item.Id, cancellationToken));
 
         return this;
@@ -75,6 +80,7 @@ internal sealed class InMemoryBatchBuilder(
         }
 
         EnsureCapacity();
+        _seenTypes.Add(typeof(TItem));
         _operations.Add(cancellationToken => DeleteAsync<TItem>(id, cancellationToken));
 
         return this;
@@ -88,6 +94,13 @@ internal sealed class InMemoryBatchBuilder(
                 "Unable to perform batch operation with no items",
                 nameof(_operations));
         }
+
+        // Mirrors the same-container validation the Cosmos builder performs
+        // through ICosmosContainerService.GetContainerAsync(IReadOnlyList<Type>).
+        BatchContainerValidation.EnsureSameContainer(
+            _seenTypes,
+            serviceProvider.GetRequiredService<IOptions<RepositoryOptions>>().Value,
+            serviceProvider.GetRequiredService<ICosmosContainerNameProvider>().GetContainerName);
 
         foreach (Func<CancellationToken, ValueTask> operation in _operations)
         {
