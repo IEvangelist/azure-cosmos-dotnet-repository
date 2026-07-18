@@ -338,6 +338,122 @@ public class DefaultCosmosContainerServiceTests
         Assert.Equal(_container.Object, container);
     }
 
+    [Fact]
+    public async Task GetContainerAsyncWithMultipleTypesWhenContainerPerItemTypeIsNotSetReturnsSharedContainer()
+    {
+        //Arrange
+        ICosmosContainerService service = CreateDefaultCosmosContainerService();
+        _repositoryOptions.ContainerPerItemType = false;
+        _repositoryOptions.ContainerId = "containerA";
+
+        ItemConfiguration testItemConfiguration = new(
+            typeof(TestItemWithEtag),
+            nameof(TestItemWithEtag),
+            "/id",
+            new(),
+            ThroughputProperties.CreateManualThroughput(400));
+
+        ItemConfiguration anotherTestItemConfiguration = new(
+            typeof(AnotherTestItem),
+            nameof(AnotherTestItem),
+            "/id",
+            new(),
+            ThroughputProperties.CreateManualThroughput(400));
+
+        _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(TestItemWithEtag))).Returns(testItemConfiguration);
+        _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(AnotherTestItem))).Returns(anotherTestItemConfiguration);
+
+        _cosmosClient.Setup(o =>
+                o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
+            .ReturnsAsync(_databaseResponse.Object);
+
+        _database.Setup(o =>
+                o.CreateContainerIfNotExistsAsync(
+                    It.Is<ContainerProperties>(c => c.Id == "containerA"),
+                    It.IsAny<ThroughputProperties>(),
+                    null,
+                    CancellationToken.None))
+            .ReturnsAsync(_containerResponse.Object);
+
+        //Act
+        Container container = await service.GetContainerAsync(new List<Type> { typeof(TestItemWithEtag), typeof(AnotherTestItem) });
+
+        //Assert
+        Assert.Equal(_container.Object, container);
+    }
+
+    [Fact]
+    public async Task GetContainerAsyncWithMultipleTypesWhenContainerPerItemTypeIsSetAndContainerNamesDifferThrows()
+    {
+        //Arrange
+        ICosmosContainerService service = CreateDefaultCosmosContainerService();
+        _repositoryOptions.ContainerPerItemType = true;
+
+        ItemConfiguration testItemConfiguration = new(
+            typeof(TestItemWithEtag),
+            "containerA",
+            "/id",
+            new(),
+            ThroughputProperties.CreateManualThroughput(400));
+
+        ItemConfiguration anotherTestItemConfiguration = new(
+            typeof(AnotherTestItem),
+            "containerB",
+            "/id",
+            new(),
+            ThroughputProperties.CreateManualThroughput(400));
+
+        _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(TestItemWithEtag))).Returns(testItemConfiguration);
+        _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(AnotherTestItem))).Returns(anotherTestItemConfiguration);
+
+        //Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.GetContainerAsync(new List<Type> { typeof(TestItemWithEtag), typeof(AnotherTestItem) }));
+    }
+
+    [Fact]
+    public async Task GetContainerAsyncWithMultipleTypesWhenContainerPerItemTypeIsSetAndContainerNamesMatchReturnsContainer()
+    {
+        //Arrange
+        ICosmosContainerService service = CreateDefaultCosmosContainerService();
+        _repositoryOptions.ContainerPerItemType = true;
+
+        ItemConfiguration testItemConfiguration = new(
+            typeof(TestItemWithEtag),
+            "shared",
+            "/id",
+            new(),
+            ThroughputProperties.CreateManualThroughput(400));
+
+        ItemConfiguration anotherTestItemConfiguration = new(
+            typeof(AnotherTestItem),
+            "shared",
+            "/id",
+            new(),
+            ThroughputProperties.CreateManualThroughput(400));
+
+        _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(TestItemWithEtag))).Returns(testItemConfiguration);
+        _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(AnotherTestItem))).Returns(anotherTestItemConfiguration);
+
+        _cosmosClient.Setup(o =>
+                o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
+            .ReturnsAsync(_databaseResponse.Object);
+
+        _database.Setup(o =>
+                o.CreateContainerIfNotExistsAsync(
+                    It.Is<ContainerProperties>(c => c.Id == "shared"),
+                    It.IsAny<ThroughputProperties>(),
+                    null,
+                    CancellationToken.None))
+            .ReturnsAsync(_containerResponse.Object);
+
+        //Act
+        Container container = await service.GetContainerAsync(new List<Type> { typeof(TestItemWithEtag), typeof(AnotherTestItem) });
+
+        //Assert
+        Assert.Equal(_container.Object, container);
+    }
+
     static bool ValidateContainerProperties(ContainerProperties properties) =>
         properties.Id == "a"
         && properties.PartitionKeyPath == "/test"

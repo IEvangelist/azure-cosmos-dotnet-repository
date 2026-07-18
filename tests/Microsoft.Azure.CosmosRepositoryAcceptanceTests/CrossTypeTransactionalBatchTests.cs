@@ -151,3 +151,52 @@ public class CrossTypeTransactionalBatchTests(ITestOutputHelper testOutputHelper
     private static Rating CreateRating(string partitionKey, int stars, string text) =>
         new(productId: partitionKey, stars: stars, text: text, categoryId: partitionKey);
 }
+
+/// <summary>
+/// Exercises cross-type batches with the default ContainerPerItemType = false,
+/// where differently named item types share the single physical container.
+/// </summary>
+[Trait("Category", "Acceptance")]
+[Trait("Type", "Functional")]
+public class CrossTypeTransactionalBatchDefaultOptionsTests(ITestOutputHelper testOutputHelper)
+    : CosmosRepositoryAcceptanceTest(testOutputHelper, SharedContainerOptions)
+{
+    private static readonly Action<RepositoryOptions> SharedContainerOptions = options =>
+    {
+        options.CosmosConnectionString = GetCosmosConnectionString();
+        options.DatabaseId = BuildDatabaseName("products");
+        options.ContainerId = "cross-type-batches";
+        options.ContainerBuilder.Configure<Product>(builder => builder.WithPartitionKey(DefaultPartitionKey));
+        options.ContainerBuilder.Configure<Rating>(builder => builder.WithPartitionKey(DefaultPartitionKey));
+    };
+
+    [Fact(Skip = "This might not be reliable enough to justify having it be a release gate.")]
+    public async Task Batch_MixedProductAndRating_WithSharedDefaultContainer_CommitsAtomically()
+    {
+        try
+        {
+            await GetClient().UseClientAsync(PruneDatabases);
+
+            const string sharedPartitionKey = TechnologyCategoryId;
+
+            Product product = new("Widget", sharedPartitionKey, 9.99, new StockInformation(3, DateTime.UtcNow));
+            Rating rating = new(productId: sharedPartitionKey, stars: 5, text: "great", categoryId: sharedPartitionKey);
+
+            await _provider.GetRequiredService<IBatchBuilderFactory>()
+                .CreateBatch(sharedPartitionKey)
+                .CreateItem(product)
+                .CreateItem(rating)
+                .ExecuteAsync();
+
+            Product storedProduct = await _productsRepository.GetAsync(product.Id, sharedPartitionKey);
+            Rating storedRating = await _ratingsRepository.GetAsync(rating.Id, sharedPartitionKey);
+
+            storedProduct.Should().BeEquivalentTo(product, DefaultProductEquivalencyOptions);
+            storedRating.Should().BeEquivalentTo(rating, DefaultRatingEquivalencyOptions);
+        }
+        finally
+        {
+            await GetClient().UseClientAsync(PruneDatabases);
+        }
+    }
+}

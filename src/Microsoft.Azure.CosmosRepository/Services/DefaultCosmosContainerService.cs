@@ -111,6 +111,14 @@ class DefaultCosmosContainerService : ICosmosContainerService
             throw new InvalidOperationException("You must provided at least one item type to get a container for");
         }
 
+        // When ContainerPerItemType is false every item type shares the single
+        // physical container (_options.ContainerId), regardless of each type's
+        // logical container name.
+        if (_options.ContainerPerItemType is false)
+        {
+            return GetContainerAsync(itemTypes[0]);
+        }
+
         var containerName =
             _cosmosItemConfigurationProvider.GetItemConfiguration(itemTypes[0]).ContainerName;
 
