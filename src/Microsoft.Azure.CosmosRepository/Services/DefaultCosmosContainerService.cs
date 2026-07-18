@@ -116,6 +116,10 @@ class DefaultCosmosContainerService : ICosmosContainerService
             _options,
             itemType => _cosmosItemConfigurationProvider.GetItemConfiguration(itemType).ContainerName);
 
-        return GetContainerAsync(itemTypes[0]);
+        Type seedType = itemTypes
+            .OrderBy(itemType => itemType.FullName, StringComparer.Ordinal)
+            .First();
+
+        return GetContainerAsync(seedType);
     }
 }

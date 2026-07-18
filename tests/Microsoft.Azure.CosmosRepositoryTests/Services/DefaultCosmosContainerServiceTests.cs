@@ -383,6 +383,35 @@ public class DefaultCosmosContainerServiceTests
     }
 
     [Fact]
+    public async Task GetContainerAsyncWithSharedTypesSelectsConfigurationIndependentOfInputOrder()
+    {
+        _repositoryOptions.ContainerPerItemType = false;
+        _repositoryOptions.ContainerId = "shared";
+        ItemConfiguration testConfiguration = new(
+            typeof(TestItemWithEtag), nameof(TestItemWithEtag), "/test", new(), ThroughputProperties.CreateManualThroughput(400));
+        ItemConfiguration anotherConfiguration = new(
+            typeof(AnotherTestItem), nameof(AnotherTestItem), "/another", new(), ThroughputProperties.CreateManualThroughput(400));
+        _itemConfigurationProvider.Setup(value => value.GetItemConfiguration(typeof(TestItemWithEtag))).Returns(testConfiguration);
+        _itemConfigurationProvider.Setup(value => value.GetItemConfiguration(typeof(AnotherTestItem))).Returns(anotherConfiguration);
+        _cosmosClient.Setup(value => value.CreateDatabaseIfNotExistsAsync(
+                _repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
+            .ReturnsAsync(_databaseResponse.Object);
+
+        List<string> selectedPaths = [];
+        _database.Setup(value => value.CreateContainerIfNotExistsAsync(
+                It.IsAny<ContainerProperties>(), It.IsAny<ThroughputProperties>(), null, CancellationToken.None))
+            .Callback<ContainerProperties, ThroughputProperties, RequestOptions, CancellationToken>(
+                (properties, _, _, _) => selectedPaths.Add(properties.PartitionKeyPath))
+            .ReturnsAsync(_containerResponse.Object);
+
+        DefaultCosmosContainerService service = CreateDefaultCosmosContainerService();
+        await service.GetContainerAsync([typeof(TestItemWithEtag), typeof(AnotherTestItem)]);
+        await service.GetContainerAsync([typeof(AnotherTestItem), typeof(TestItemWithEtag)]);
+
+        selectedPaths.Should().Equal("/another", "/another");
+    }
+
+    [Fact]
     public async Task GetContainerAsyncWithMultipleTypesWhenContainerPerItemTypeIsSetAndContainerNamesDifferThrows()
     {
         //Arrange
