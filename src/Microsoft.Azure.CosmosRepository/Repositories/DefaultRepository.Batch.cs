@@ -7,6 +7,13 @@ namespace Microsoft.Azure.CosmosRepository;
 internal partial class DefaultRepository<TItem>
 {
     /// <inheritdoc />
+    public IBatchBuilder Batch(string partitionKey) =>
+        new DefaultBatchBuilder(
+            partitionKey,
+            typeof(TItem),
+            cosmosContainerService);
+
+    /// <inheritdoc />
     public async ValueTask UpdateAsBatchAsync(
         IEnumerable<TItem> items,
         CancellationToken cancellationToken = default)

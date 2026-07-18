@@ -14,4 +14,16 @@ public class ServiceCollectionExtensionsTests
     public void AddInMemoryCosmosRepositoryThrowsWithNullServiceCollection() =>
         Assert.Throws<ArgumentNullException>(
             () => (null as IServiceCollection)!.AddInMemoryCosmosRepository());
+
+    [Fact]
+    public void AddInMemoryCosmosRepositoryRegistersBatchRepository()
+    {
+        IServiceProvider provider = new ServiceCollection()
+            .AddInMemoryCosmosRepository()
+            .BuildServiceProvider();
+
+        IBatchRepository<TestItem> repository = provider.GetRequiredService<IBatchRepository<TestItem>>();
+
+        Assert.NotNull(repository);
+    }
 }
