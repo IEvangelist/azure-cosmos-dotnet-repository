@@ -7,6 +7,7 @@ public class DefaultCosmosContainerServiceTests
 {
     readonly Mock<IOptions<RepositoryOptions>> _options = new();
     readonly Mock<ICosmosItemConfigurationProvider> _itemConfigurationProvider = new();
+    readonly Mock<ICosmosContainerNameProvider> _containerNameProvider = new();
     readonly Mock<IRepositoryOptionsValidator> _repositoryOptionsValidator = new();
     readonly Mock<CosmosClient> _cosmosClient = new();
     readonly Mock<Database> _database = new();
@@ -29,6 +30,7 @@ public class DefaultCosmosContainerServiceTests
     DefaultCosmosContainerService CreateDefaultCosmosContainerService() =>
         new(
             _itemConfigurationProvider.Object,
+            _containerNameProvider.Object,
             GetClientProvider(),
             _options.Object,
             new NullLogger<DefaultCosmosContainerService>(),
@@ -434,6 +436,8 @@ public class DefaultCosmosContainerServiceTests
 
         _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(TestItemWithEtag))).Returns(testItemConfiguration);
         _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(AnotherTestItem))).Returns(anotherTestItemConfiguration);
+        _containerNameProvider.Setup(value => value.GetContainerName(typeof(TestItemWithEtag))).Returns("containerA");
+        _containerNameProvider.Setup(value => value.GetContainerName(typeof(AnotherTestItem))).Returns("containerB");
 
         //Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
@@ -463,6 +467,8 @@ public class DefaultCosmosContainerServiceTests
 
         _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(TestItemWithEtag))).Returns(testItemConfiguration);
         _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(AnotherTestItem))).Returns(anotherTestItemConfiguration);
+        _containerNameProvider.Setup(value => value.GetContainerName(typeof(TestItemWithEtag))).Returns("shared");
+        _containerNameProvider.Setup(value => value.GetContainerName(typeof(AnotherTestItem))).Returns("shared");
 
         _cosmosClient.Setup(o =>
                 o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
@@ -481,6 +487,8 @@ public class DefaultCosmosContainerServiceTests
 
         //Assert
         Assert.Equal(_container.Object, container);
+        _containerNameProvider.Verify(value => value.GetContainerName(typeof(TestItemWithEtag)), Times.Once);
+        _containerNameProvider.Verify(value => value.GetContainerName(typeof(AnotherTestItem)), Times.Once);
     }
 
     static bool ValidateContainerProperties(ContainerProperties properties) =>

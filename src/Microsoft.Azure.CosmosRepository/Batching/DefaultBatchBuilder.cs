@@ -15,14 +15,14 @@ internal sealed class DefaultBatchBuilder(
         ArgumentNullException.ThrowIfNull(item);
         string id = item.Id;
         string? etag = GetEtag(item);
-        return Add(item, batch => batch.ReplaceItem(id, item, CreateRequestOptions(etag)));
+        return Add(item, batch => batch.ReplaceItem(id, item, BatchRequestOptions.Create(etag)));
     }
 
     public IBatchBuilder UpsertItem<TItem>(TItem item) where TItem : IItem
     {
         ArgumentNullException.ThrowIfNull(item);
         string? etag = GetEtag(item);
-        return Add(item, batch => batch.UpsertItem(item, CreateRequestOptions(etag)));
+        return Add(item, batch => batch.UpsertItem(item, BatchRequestOptions.Create(etag)));
     }
 
     public IBatchBuilder DeleteItem<TItem>(TItem item) where TItem : IItem
@@ -112,17 +112,5 @@ internal sealed class DefaultBatchBuilder(
             throw new InvalidOperationException(
                 $"A transactional batch cannot contain more than {BatchConstants.MaxBatchSize} operations.");
         }
-    }
-
-    private static TransactionalBatchItemRequestOptions CreateRequestOptions(string? etag)
-    {
-        TransactionalBatchItemRequestOptions options = new();
-
-        if (!string.IsNullOrWhiteSpace(etag))
-        {
-            options.IfMatchEtag = etag;
-        }
-
-        return options;
     }
 }

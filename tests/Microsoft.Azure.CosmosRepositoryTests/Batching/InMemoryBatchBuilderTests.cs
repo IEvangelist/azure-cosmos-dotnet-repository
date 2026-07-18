@@ -287,6 +287,36 @@ public class InMemoryBatchBuilderTests : IDisposable
     }
 
     [Fact]
+    public async Task Batch_SecondWriteWithOriginalEtag_FailsPrecondition()
+    {
+        const string sharedPartitionKey = "shared";
+        InMemoryRepository<BatchSeedItem> repository = new();
+        BatchSeedItem stored = await repository.CreateAsync(new BatchSeedItem
+        {
+            Id = sharedPartitionKey,
+            Property = "before"
+        });
+
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey)
+            .UpsertItem(new BatchSeedItem(stored.Etag!)
+            {
+                Id = sharedPartitionKey,
+                Property = "first"
+            })
+            .ReplaceItem(new BatchSeedItem(stored.Etag!)
+            {
+                Id = sharedPartitionKey,
+                Property = "second"
+            });
+
+        BatchOperationException exception =
+            await Assert.ThrowsAsync<BatchOperationException>(() => builder.ExecuteAsync().AsTask());
+
+        exception.StatusCode.Should().Be(HttpStatusCode.PreconditionFailed);
+        (await repository.GetAsync(sharedPartitionKey)).Property.Should().Be("before");
+    }
+
+    [Fact]
     public void Batch_AtMaxItems_DoesNotThrow()
     {
         const string sharedPartitionKey = "shared";

@@ -21,14 +21,7 @@ internal partial class DefaultRepository<TItem>
 
         foreach (TItem item in list)
         {
-            TransactionalBatchItemRequestOptions options = new();
-
-            if (item is IItemWithEtag itemWithEtag)
-            {
-                options.IfMatchEtag = itemWithEtag.Etag;
-            }
-
-            batch.UpsertItem(item, options);
+            batch.UpsertItem(item, BatchRequestOptions.Create(item));
         }
 
         using TransactionalBatchResponse response = await batch.ExecuteAsync(cancellationToken);

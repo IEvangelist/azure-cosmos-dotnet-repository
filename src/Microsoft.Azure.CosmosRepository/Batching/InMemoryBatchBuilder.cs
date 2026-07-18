@@ -26,9 +26,7 @@ internal sealed class InMemoryBatchBuilder(
         }
 
         ValidatePartitionKey(item);
-        EnsureCapacity();
-        _seenTypes.Add(typeof(TItem));
-        _operations.Add(new(
+        return Add<TItem>(new(
             async (entries, createdIds, cancellationToken) =>
             {
                 SimulatedEntry entry = await GetEntryAsync<TItem>(entries, item.Id, cancellationToken).ConfigureAwait(false);
@@ -44,12 +42,10 @@ internal sealed class InMemoryBatchBuilder(
                 }
 
                 entry.Exists = true;
-                entry.TouchedInBatch = true;
+                entry.Etag = null;
             },
             cancellationToken => CreateAsync(item, cancellationToken),
             () => BatchRepository<TItem>()));
-
-        return this;
     }
 
     public IBatchBuilder ReplaceItem<TItem>(TItem item) where TItem : IItem
@@ -60,9 +56,7 @@ internal sealed class InMemoryBatchBuilder(
         }
 
         ValidatePartitionKey(item);
-        EnsureCapacity();
-        _seenTypes.Add(typeof(TItem));
-        _operations.Add(new(
+        return Add<TItem>(new(
             async (entries, _, cancellationToken) =>
             {
                 SimulatedEntry entry = await GetEntryAsync<TItem>(entries, item.Id, cancellationToken).ConfigureAwait(false);
@@ -75,12 +69,10 @@ internal sealed class InMemoryBatchBuilder(
                 }
 
                 ValidateEtag(item, entry);
-                entry.TouchedInBatch = true;
+                entry.Etag = null;
             },
             cancellationToken => UpsertAsync(item, cancellationToken),
             () => BatchRepository<TItem>()));
-
-        return this;
     }
 
     public IBatchBuilder UpsertItem<TItem>(TItem item) where TItem : IItem
@@ -91,21 +83,17 @@ internal sealed class InMemoryBatchBuilder(
         }
 
         ValidatePartitionKey(item);
-        EnsureCapacity();
-        _seenTypes.Add(typeof(TItem));
-        _operations.Add(new(
+        return Add<TItem>(new(
             async (entries, _, cancellationToken) =>
             {
                 SimulatedEntry entry = await GetEntryAsync<TItem>(entries, item.Id, cancellationToken).ConfigureAwait(false);
 
                 ValidateEtag(item, entry);
                 entry.Exists = true;
-                entry.TouchedInBatch = true;
+                entry.Etag = null;
             },
             cancellationToken => UpsertAsync(item, cancellationToken),
             () => BatchRepository<TItem>()));
-
-        return this;
     }
 
     public IBatchBuilder DeleteItem<TItem>(TItem item) where TItem : IItem
@@ -127,9 +115,7 @@ internal sealed class InMemoryBatchBuilder(
             throw new ArgumentNullException(nameof(id));
         }
 
-        EnsureCapacity();
-        _seenTypes.Add(typeof(TItem));
-        _operations.Add(new(
+        return Add<TItem>(new(
             async (entries, _, cancellationToken) =>
             {
                 SimulatedEntry entry = await GetEntryAsync<TItem>(entries, id, cancellationToken).ConfigureAwait(false);
@@ -140,12 +126,9 @@ internal sealed class InMemoryBatchBuilder(
                 }
 
                 entry.Exists = false;
-                entry.TouchedInBatch = true;
             },
             cancellationToken => DeleteAsync<TItem>(id, cancellationToken),
             () => BatchRepository<TItem>()));
-
-        return this;
     }
 
     public async ValueTask ExecuteAsync(CancellationToken cancellationToken = default)
@@ -161,10 +144,15 @@ internal sealed class InMemoryBatchBuilder(
 
         // Mirrors the same-container validation the Cosmos builder performs
         // through ICosmosContainerService.GetContainerAsync(IReadOnlyList<Type>).
+        RepositoryOptions options = serviceProvider.GetRequiredService<IOptions<RepositoryOptions>>().Value;
+        ICosmosContainerNameProvider containerNameProvider =
+            serviceProvider.GetRequiredService<ICosmosContainerNameProvider>();
+
         BatchContainerValidation.EnsureSameContainer(
             _seenTypes,
-            serviceProvider.GetRequiredService<IOptions<RepositoryOptions>>().Value,
-            serviceProvider.GetRequiredService<ICosmosContainerNameProvider>().GetContainerName);
+            itemType => options.ContainerPerItemType
+                ? containerNameProvider.GetContainerName(itemType)
+                : options.ContainerId);
 
         List<IInMemoryBatchRepository> repositories = _operations
             .Select(operation => operation.Repository())
@@ -238,6 +226,14 @@ internal sealed class InMemoryBatchBuilder(
         }
     }
 
+    private IBatchBuilder Add<TItem>(BatchOperation operation) where TItem : IItem
+    {
+        EnsureCapacity();
+        _seenTypes.Add(typeof(TItem));
+        _operations.Add(operation);
+        return this;
+    }
+
     private void EnsureCapacity()
     {
         if (_operations.Count >= BatchConstants.MaxBatchSize)
@@ -284,8 +280,8 @@ internal sealed class InMemoryBatchBuilder(
     }
 
     // Mirrors the etag rule of InMemoryRepository.UpdateAsync: a non-empty
-    // etag on an existing item must match the stored etag. An item modified
-    // earlier in this batch has a new etag, so any supplied etag is stale.
+    // etag on an existing item must match the stored etag. A simulated write
+    // invalidates the etag, so any etag supplied to a later operation is stale.
     private static void ValidateEtag(IItem item, SimulatedEntry entry)
     {
         if (item is not IItemWithEtag itemWithEtag ||
@@ -295,7 +291,7 @@ internal sealed class InMemoryBatchBuilder(
             return;
         }
 
-        if (entry.TouchedInBatch || itemWithEtag.Etag != entry.Etag)
+        if (itemWithEtag.Etag != entry.Etag)
         {
             throw PreconditionFailed();
         }
@@ -347,7 +343,5 @@ internal sealed class InMemoryBatchBuilder(
         public bool Exists { get; set; }
 
         public string? Etag { get; set; }
-
-        public bool TouchedInBatch { get; set; }
     }
 }

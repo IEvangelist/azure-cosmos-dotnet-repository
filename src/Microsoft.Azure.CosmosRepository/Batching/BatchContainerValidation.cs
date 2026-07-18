@@ -2,9 +2,7 @@ namespace Microsoft.Azure.CosmosRepository;
 
 /// <summary>
 /// Shared validation ensuring that every item type in a batch resolves to
-/// the same container. When <see cref="RepositoryOptions.ContainerPerItemType"/>
-/// is false all item types share the single physical container, so any
-/// combination is valid.
+/// the same physical container.
 /// </summary>
 internal static class BatchContainerValidation
 {
@@ -13,14 +11,8 @@ internal static class BatchContainerValidation
 
     internal static void EnsureSameContainer(
         IEnumerable<Type> itemTypes,
-        RepositoryOptions options,
         Func<Type, string> getContainerName)
     {
-        if (options.ContainerPerItemType is false)
-        {
-            return;
-        }
-
         string? containerName = null;
 
         foreach (Type itemType in itemTypes)

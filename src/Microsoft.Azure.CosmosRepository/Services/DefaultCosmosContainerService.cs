@@ -6,6 +6,7 @@ namespace Microsoft.Azure.CosmosRepository.Services;
 class DefaultCosmosContainerService : ICosmosContainerService
 {
     readonly ICosmosItemConfigurationProvider _cosmosItemConfigurationProvider;
+    readonly ICosmosContainerNameProvider _cosmosContainerNameProvider;
     readonly ICosmosClientProvider _cosmosClientProvider;
     readonly ILogger<DefaultCosmosContainerService> _logger;
     readonly RepositoryOptions _options;
@@ -14,6 +15,7 @@ class DefaultCosmosContainerService : ICosmosContainerService
 
     public DefaultCosmosContainerService(
         ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
+        ICosmosContainerNameProvider cosmosContainerNameProvider,
         ICosmosClientProvider cosmosClientProvider,
         IOptions<RepositoryOptions> options,
         ILogger<DefaultCosmosContainerService> logger,
@@ -22,6 +24,7 @@ class DefaultCosmosContainerService : ICosmosContainerService
         repositoryOptionsValidator.ValidateForContainerCreation(options);
 
         _cosmosItemConfigurationProvider = cosmosItemConfigurationProvider;
+        _cosmosContainerNameProvider = cosmosContainerNameProvider;
         _cosmosClientProvider = cosmosClientProvider;
         _logger = logger;
         _options = options.Value;
@@ -113,8 +116,9 @@ class DefaultCosmosContainerService : ICosmosContainerService
 
         BatchContainerValidation.EnsureSameContainer(
             itemTypes,
-            _options,
-            itemType => _cosmosItemConfigurationProvider.GetItemConfiguration(itemType).ContainerName);
+            itemType => _options.ContainerPerItemType
+                ? _cosmosContainerNameProvider.GetContainerName(itemType)
+                : _options.ContainerId);
 
         Type seedType = itemTypes
             .OrderBy(itemType => itemType.FullName, StringComparer.Ordinal)
