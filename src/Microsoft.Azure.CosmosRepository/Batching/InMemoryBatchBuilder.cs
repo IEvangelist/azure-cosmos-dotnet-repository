@@ -4,7 +4,9 @@ namespace Microsoft.Azure.CosmosRepository;
 /// In-memory batch builder that executes queued operations sequentially.
 /// </summary>
 /// <remarks>The in-memory implementation is not atomic.</remarks>
-internal sealed class InMemoryBatchBuilder(string partitionKey) : IBatchBuilder
+internal sealed class InMemoryBatchBuilder(
+    string partitionKey,
+    IServiceProvider serviceProvider) : IBatchBuilder
 {
     private readonly string _partitionKey = partitionKey;
     private readonly List<Func<CancellationToken, ValueTask>> _operations = [];
@@ -112,12 +114,18 @@ internal sealed class InMemoryBatchBuilder(string partitionKey) : IBatchBuilder
         }
     }
 
-    private static async ValueTask CreateAsync<TItem>(TItem item, CancellationToken cancellationToken) where TItem : IItem =>
-        await new InMemoryRepository<TItem>().CreateAsync(item, cancellationToken).ConfigureAwait(false);
+    private async ValueTask CreateAsync<TItem>(TItem item, CancellationToken cancellationToken) where TItem : IItem =>
+        await Repository<TItem>().CreateAsync(item, cancellationToken).ConfigureAwait(false);
 
-    private static async ValueTask UpsertAsync<TItem>(TItem item, CancellationToken cancellationToken) where TItem : IItem =>
-        await new InMemoryRepository<TItem>().UpdateAsync(item, cancellationToken: cancellationToken).ConfigureAwait(false);
+    private async ValueTask UpsertAsync<TItem>(TItem item, CancellationToken cancellationToken) where TItem : IItem =>
+        await Repository<TItem>().UpdateAsync(item, cancellationToken: cancellationToken).ConfigureAwait(false);
 
     private async ValueTask DeleteAsync<TItem>(string id, CancellationToken cancellationToken) where TItem : IItem =>
-        await new InMemoryRepository<TItem>().DeleteAsync(id, _partitionKey, cancellationToken).ConfigureAwait(false);
+        await Repository<TItem>().DeleteAsync(id, _partitionKey, cancellationToken).ConfigureAwait(false);
+
+    // Resolving through DI targets the same repository instances the
+    // InMemoryChangeFeed subscribes to, so batch writes raise change
+    // notifications like every other repository operation.
+    private IRepository<TItem> Repository<TItem>() where TItem : IItem =>
+        serviceProvider.GetRequiredService<IRepository<TItem>>();
 }

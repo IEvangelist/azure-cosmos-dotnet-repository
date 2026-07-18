@@ -6,11 +6,18 @@ public class InMemoryBatchBuilderTests : IDisposable
 
     public void Dispose() => ClearStorage();
 
+    private static IBatchBuilder CreateBuilder(string partitionKey) =>
+        new ServiceCollection()
+            .AddInMemoryCosmosRepository()
+            .BuildServiceProvider()
+            .GetRequiredService<IBatchBuilderFactory>()
+            .CreateBatch(partitionKey);
+
     [Fact]
     public async Task Batch_NoOps_Throws()
     {
         // Arrange
-        IBatchBuilder builder = new InMemoryBatchBuilder("shared");
+        IBatchBuilder builder = CreateBuilder("shared");
 
         // Act
         Func<Task> act = () => builder.ExecuteAsync().AsTask();
@@ -23,7 +30,7 @@ public class InMemoryBatchBuilderTests : IDisposable
     public void Batch_PartitionKeyMismatch_Throws()
     {
         // Arrange
-        IBatchBuilder builder = new InMemoryBatchBuilder("B");
+        IBatchBuilder builder = CreateBuilder("B");
 
         // Act
         Action act = () => builder.CreateItem(new BatchSeedItem { Id = "A" });
@@ -54,7 +61,7 @@ public class InMemoryBatchBuilderTests : IDisposable
             Property = "delete-me"
         });
 
-        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey)
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey)
             .CreateItem(new BatchCreateItem { Id = sharedPartitionKey })
             .UpsertItem(new BatchSeedItem(existing.Etag!)
             {
@@ -93,7 +100,7 @@ public class InMemoryBatchBuilderTests : IDisposable
             Property = "existing"
         });
 
-        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey)
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey)
             .CreateItem(new BatchDeleteItem
             {
                 Id = sharedPartitionKey,
@@ -129,7 +136,7 @@ public class InMemoryBatchBuilderTests : IDisposable
             Property = "current"
         });
 
-        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey)
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey)
             .UpsertItem(new BatchSeedItem("stale-etag")
             {
                 Id = sharedPartitionKey,
@@ -151,7 +158,7 @@ public class InMemoryBatchBuilderTests : IDisposable
     {
         const string sharedPartitionKey = "shared";
 
-        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey);
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey);
 
         for (int i = 0; i < BatchConstants.MaxBatchSize; i++)
         {
@@ -164,7 +171,7 @@ public class InMemoryBatchBuilderTests : IDisposable
     {
         const string sharedPartitionKey = "shared";
 
-        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey);
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey);
 
         for (int i = 0; i < BatchConstants.MaxBatchSize; i++)
         {
@@ -182,7 +189,7 @@ public class InMemoryBatchBuilderTests : IDisposable
     {
         const string sharedPartitionKey = "shared";
 
-        IBatchBuilder builder = new InMemoryBatchBuilder(sharedPartitionKey);
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey);
 
         for (int i = 0; i < BatchConstants.MaxBatchSize; i++)
         {
@@ -192,6 +199,43 @@ public class InMemoryBatchBuilderTests : IDisposable
         Action act = () => builder.DeleteItem<BatchCreateItem>(sharedPartitionKey);
 
         Assert.Throws<InvalidOperationException>(act);
+    }
+
+    [Fact]
+    public async Task Batch_ExecuteAsync_PublishesChangesToInMemoryChangeFeed()
+    {
+        // Arrange
+        const string sharedPartitionKey = "shared";
+
+        RecordingChangeFeedProcessor processor = new();
+
+        IServiceProvider provider = new ServiceCollection()
+            .AddInMemoryCosmosRepository()
+            .AddSingleton<IItemChangeFeedProcessor<BatchCreateItem>>(processor)
+            .BuildServiceProvider();
+
+        provider.GetRequiredService<InMemoryChangeFeed<BatchCreateItem>>().Setup();
+
+        IBatchBuilder builder = provider.GetRequiredService<IBatchBuilderFactory>()
+            .CreateBatch(sharedPartitionKey)
+            .CreateItem(new BatchCreateItem { Id = sharedPartitionKey });
+
+        // Act
+        await builder.ExecuteAsync();
+
+        // Assert
+        processor.ReceivedItems.Should().ContainSingle(item => item.Id == sharedPartitionKey);
+    }
+
+    private sealed class RecordingChangeFeedProcessor : IItemChangeFeedProcessor<BatchCreateItem>
+    {
+        public List<BatchCreateItem> ReceivedItems { get; } = [];
+
+        public ValueTask HandleAsync(BatchCreateItem item, CancellationToken cancellationToken)
+        {
+            ReceivedItems.Add(item);
+            return ValueTask.CompletedTask;
+        }
     }
 
     private static void ClearStorage()
