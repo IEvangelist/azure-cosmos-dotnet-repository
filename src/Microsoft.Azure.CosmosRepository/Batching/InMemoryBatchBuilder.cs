@@ -37,7 +37,7 @@ internal sealed class InMemoryBatchBuilder(
         ValidatePartitionKey(item);
         EnsureCapacity();
         _seenTypes.Add(typeof(TItem));
-        _operations.Add(cancellationToken => UpsertAsync(item, cancellationToken));
+        _operations.Add(cancellationToken => ReplaceAsync(item, cancellationToken));
 
         return this;
     }
@@ -132,6 +132,20 @@ internal sealed class InMemoryBatchBuilder(
 
     private async ValueTask UpsertAsync<TItem>(TItem item, CancellationToken cancellationToken) where TItem : IItem =>
         await Repository<TItem>().UpdateAsync(item, cancellationToken: cancellationToken).ConfigureAwait(false);
+
+    // Cosmos transactional batches fail a replace with 404 when the item does
+    // not exist; the in-memory upsert would otherwise silently create it.
+    private async ValueTask ReplaceAsync<TItem>(TItem item, CancellationToken cancellationToken) where TItem : IItem
+    {
+        IRepository<TItem> repository = Repository<TItem>();
+
+        if (await repository.ExistsAsync(item.Id, _partitionKey, cancellationToken).ConfigureAwait(false) is false)
+        {
+            throw new CosmosException(string.Empty, HttpStatusCode.NotFound, 0, string.Empty, 0);
+        }
+
+        await repository.UpdateAsync(item, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 
     private async ValueTask DeleteAsync<TItem>(string id, CancellationToken cancellationToken) where TItem : IItem =>
         await Repository<TItem>().DeleteAsync(id, _partitionKey, cancellationToken).ConfigureAwait(false);

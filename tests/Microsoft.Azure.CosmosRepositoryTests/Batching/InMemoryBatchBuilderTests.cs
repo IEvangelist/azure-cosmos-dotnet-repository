@@ -123,6 +123,29 @@ public class InMemoryBatchBuilderTests : IDisposable
     }
 
     [Fact]
+    public async Task Batch_ReplaceMissingItem_ThrowsNotFoundAndDoesNotCreate()
+    {
+        // Arrange
+        const string sharedPartitionKey = "shared";
+
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey)
+            .ReplaceItem(new BatchSeedItem
+            {
+                Id = sharedPartitionKey,
+                Property = "missing"
+            });
+
+        // Act
+        CosmosException exception = await Assert.ThrowsAsync<CosmosException>(() => builder.ExecuteAsync().AsTask());
+
+        // Assert
+        exception.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        BatchSeedItem? stored = await new InMemoryRepository<BatchSeedItem>().TryGetAsync(sharedPartitionKey);
+        stored.Should().BeNull();
+    }
+
+    [Fact]
     public async Task Batch_EtagMismatch_ThrowsCosmosException()
     {
         // Arrange
