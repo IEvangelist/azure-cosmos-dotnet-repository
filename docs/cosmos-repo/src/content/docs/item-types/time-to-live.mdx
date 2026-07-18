@@ -1,0 +1,86 @@
+---
+title: Time-to-live
+description: Set TTL at the container or item level using TimeToLiveItem and FullItem.
+section: Item types
+order: 5
+---
+import Callout from "@/components/Callout.astro";
+
+Cosmos DB lets you expire items automatically using a [time-to-live (TTL)](https://learn.microsoft.com/azure/cosmos-db/sql/time-to-live) value. With Cosmos Repository you can set the TTL at the **container** level (default for every item) or at the **item** level (per-row override).
+
+## Container-level default
+
+Use `WithContainerDefaultTimeToLive` on the container builder:
+
+```csharp
+options.ContainerBuilder.Configure<BankAccount>(
+    x => x.WithContainerDefaultTimeToLive(TimeSpan.FromHours(2)));
+```
+
+Every item in the `BankAccount` container expires after two hours unless overridden.
+
+## Item-level override
+
+Inherit from `TimeToLiveItem` (or `FullItem`) and set `TimeToLive` per item:
+
+```csharp
+BankAccount currentBankAccount = await repository.CreateAsync(
+    new BankAccount
+    {
+        Name = "Current Account",
+        Balance = 500.0,
+        TimeToLive = TimeSpan.FromHours(4)
+    });
+```
+
+This row will live for four hours rather than the container default of two.
+
+## Disabling TTL for a single item
+
+Set `TimeToLive = TimeSpan.FromSeconds(-1)` to opt the item out of expiration entirely:
+
+```csharp
+BankAccount currentBankAccount = await repository.CreateAsync(
+    new BankAccount
+    {
+        Name = "Current Account",
+        Balance = 500.0,
+        TimeToLive = TimeSpan.FromSeconds(-1)
+    });
+```
+
+<Callout type="info">
+  See the official [TTL documentation](https://learn.microsoft.com/azure/cosmos-db/sql/time-to-live) for the full matrix of container vs item TTL combinations.
+</Callout>
+
+## Sample BankAccount class
+
+The full example referenced above (used in the [`OptimisticConcurrencyControl`](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/Microsoft.Azure.CosmosRepository/OptimisticConcurrencyControl) sample):
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
+
+namespace OptimisticConcurrencyControl;
+
+[Container("accounts")]
+[PartitionKeyPath("/id")]
+public class BankAccount : FullItem
+{
+    public string Name { get; set; } = string.Empty;
+    public double Balance { get; set; }
+
+    public void Withdraw(double amount)
+    {
+        if (Balance - amount < 0.0)
+            throw new InvalidOperationException("Cannot go overdrawn");
+
+        Balance -= amount;
+    }
+
+    public void Deposit(double amount) => Balance += amount;
+
+    public override string ToString() =>
+        $"Account (Name = {Name}, Balance = {Balance}, Etag = {Etag})";
+}
+```

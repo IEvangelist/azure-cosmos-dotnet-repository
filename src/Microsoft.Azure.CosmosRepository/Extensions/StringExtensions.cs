@@ -18,6 +18,11 @@ internal static class StringExtensions
             return false;
         }
 
+        if (Uri.TryCreate(connectionString, UriKind.Absolute, out var _))
+        {
+            return false;
+        }
+
         var builder = new DbConnectionStringBuilder
         {
             ConnectionString = connectionString

@@ -1,0 +1,164 @@
+---
+title: Querying
+description: Filters, paging, continuation tokens, streaming, and the specification pattern.
+section: Queries
+order: 1
+---
+import Callout from "@/components/Callout.astro";
+
+The Cosmos Repository supports a rich set of methods for the queries you'll actually run: simple `Where` filters, page-number / page-size paging, Cosmos DB continuation-token paging, and a [specification pattern](/docs/queries/specification-pattern) for more advanced scenarios.
+
+## Basic queries
+
+The simplest entry point is `IRepository<TItem>.GetAsync` — pass an expression and the library translates it into a Cosmos SQL query.
+
+```csharp
+public static class PeopleRepositoryExtensions
+{
+    public static async Task<IEnumerable<Person>> GetPeopleOlderThan(
+        this IRepository<Person> repository, DateTime date)
+    {
+        return await repository.GetAsync(p => p.BirthDate > date);
+    }
+
+    public static async Task<IEnumerable<Person>> GetPeopleWithoutMiddleNames(
+        this IRepository<Person> repository)
+    {
+        IEnumerable<Person> peopleWithoutMiddleNames =
+            await repository.GetAsync(p => p.MiddleName == null);
+
+        return peopleWithoutMiddleNames;
+    }
+}
+```
+
+<Callout type="info">
+  Encapsulating queries in extension methods on `IRepository<TItem>` keeps your call sites tidy and gives you a single place to enforce indexed filters.
+</Callout>
+
+## Page-number paging
+
+The simplest paging API uses page numbers and a fixed page size:
+
+```csharp
+public class PagingExamples
+{
+    public async Task BasicPageAsync(IRepository<Person> repository)
+    {
+        double totalCharge = 0;
+
+        IPageQueryResult<Person> page = await repository.PageAsync(pageNumber: 1, pageSize: 25);
+
+        while (page.HasNextPage)
+        {
+            foreach (Person person in page.Items)
+            {
+                Console.WriteLine(person);
+            }
+
+            totalCharge += page.Charge;
+            page = await repository.PageAsync(
+                pageNumber: page.PageNumber.Value + 1,
+                pageSize: 25);
+
+            Console.WriteLine($"Get page {page.PageNumber} (25 results) cost {page.Charge}");
+        }
+
+        Console.WriteLine($"Total Charge {totalCharge} RU's");
+    }
+}
+```
+
+<Callout type="warning" title="Cost grows with page depth">
+  Page-number paging issues an `OFFSET … LIMIT` query under the hood, so the per-page RU cost grows the further into the result set you read. Prefer continuation-token paging for large data.
+</Callout>
+
+## Continuation-token paging
+
+A more cost-effective approach: pass the continuation token from the previous page back to `PageAsync`.
+
+```csharp
+public class PagingExamples
+{
+    public async Task BasicScrollingAsync(IRepository<Person> repository)
+    {
+        double totalCharge = 0;
+
+        IPage<Person> page = await repository.PageAsync(pageSize: 25, continuationToken: null);
+
+        foreach (Person person in page.Items)
+            Console.WriteLine(person);
+
+        totalCharge += page.Charge;
+        Console.WriteLine($"First 25 results cost {page.Charge}");
+
+        page = await repository.PageAsync(pageSize: 25, continuationToken: page.Continuation);
+
+        foreach (Person person in page.Items)
+            Console.WriteLine(person);
+
+        totalCharge += page.Charge;
+        Console.WriteLine($"Second 25 results cost {page.Charge}");
+
+        page = await repository.PageAsync(pageSize: 50, continuationToken: page.Continuation);
+
+        foreach (Person person in page.Items)
+            Console.WriteLine(person);
+
+        totalCharge += page.Charge;
+
+        Console.WriteLine($"Last 50 results cost {page.Charge}");
+        Console.WriteLine($"Total Charge {totalCharge} RU's");
+    }
+}
+```
+
+## Streaming with `IAsyncEnumerable<T>`
+
+To stream large result sets, expose pages as `IAsyncEnumerable<T>` and let consumers pull chunks at their own pace:
+
+```csharp
+public class ParcelRepository
+{
+    private readonly IRepository<Parcel> _parcelCosmosRepository;
+
+    public ParcelRepository(IRepository<Parcel> parcelCosmosRepository) =>
+        _parcelCosmosRepository = parcelCosmosRepository;
+
+    public async IAsyncEnumerable<IParcel> StreamParcelsWithDeliveryRegionId(
+        string deliveryRegionId,
+        int max,
+        int chunkSize = 25,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        int collected = 0;
+        bool hasMoreResults = true;
+        string? token = null;
+
+        Expression<Func<Parcel, bool>> expression = parcel =>
+            parcel.PartitionKey == deliveryRegionId &&
+            parcel.Status == ParcelStatus.Inducted;
+
+        while (hasMoreResults && collected < max)
+        {
+            var page = await _parcelCosmosRepository
+                .PageAsync(expression, chunkSize, token, cancellationToken);
+
+            token = page.Continuation;
+            hasMoreResults = page.Continuation is not null;
+
+            foreach (var item in page.Items)
+            {
+                if (collected < max)
+                    yield return item;
+
+                collected++;
+            }
+        }
+    }
+}
+```
+
+## Want even more?
+
+* [Specification pattern](/docs/queries/specification-pattern) — encapsulate complex filters, ordering, and projections as classes.

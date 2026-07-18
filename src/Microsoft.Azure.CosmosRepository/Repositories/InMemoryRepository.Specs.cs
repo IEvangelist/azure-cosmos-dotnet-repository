@@ -18,7 +18,7 @@ internal partial class InMemoryRepository<TItem>
         await Task.CompletedTask;
 #endif
 
-        if (specification.UseContinuationToken)
+        if (specification.ContinuationToken is not null)
         {
             throw new NotImplementedException();
         }

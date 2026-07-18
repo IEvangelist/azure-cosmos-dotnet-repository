@@ -1,0 +1,57 @@
+---
+title: Item types
+description: Pick the right base class — Item, EtagItem, TimeStampedItem, TimeToLiveItem, or FullItem.
+section: Item types
+order: 1
+---
+import Callout from "@/components/Callout.astro";
+
+The library provides a small family of base classes that opt your model into specific Cosmos DB features. Inherit from the one that has just enough behavior for your scenario.
+
+## Hierarchy at a glance
+
+| Base class | Use when you want… |
+| --- | --- |
+| `Item` | The simplest CRUD model. Adds `Id`, `Type`, and partition-key handling. |
+| [`EtagItem`](/docs/item-types/etags) | `Item` + an `Etag` for [optimistic concurrency control](/docs/item-types/etags). Abstract. |
+| [`TimeStampedItem`](/docs/item-types/time-stamps) | `Item` + `CreatedTimeUtc`, `LastUpdatedTimeUtc`, and `LastUpdatedTimeRaw`. |
+| [`TimeToLiveItem`](/docs/item-types/time-to-live) | `Item` + a `TimeToLive` property that overrides the container default TTL. |
+| [`FullItem`](/docs/item-types/full-item) | Everything in `EtagItem`, `TimeStampedItem`, **and** `TimeToLiveItem`. |
+
+The corresponding interfaces (`IItem`, `IItemWithEtag`, `IItemWithTimeStamps`, `IItemWithTimeToLive`) are exposed if you need to compose your own base.
+
+## The simplest item
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+
+public class Product : Item
+{
+    public string Name { get; set; } = null!;
+
+    public string CategoryId { get; set; } = null!;
+
+    public double Price { get; set; }
+
+    public StockInformation Stock { get; set; } = null!;
+
+    protected override string GetPartitionKeyValue() => CategoryId;
+}
+```
+
+`Item` already gives you:
+
+* `Id` (default: `Guid.NewGuid().ToString()`).
+* `Type` (the .NET class name — used as a discriminator inside shared containers).
+* `GetPartitionKeyValue()` — defaults to `Id`. Override when partitioning by another field.
+
+<Callout type="tip">
+  Make sure the result of `GetPartitionKeyValue()` matches the value of the property at your `[PartitionKeyPath("/<path>")]`. Otherwise reads will not find your writes.
+</Callout>
+
+## When to upgrade
+
+* Need optimistic concurrency? → [`EtagItem`](/docs/item-types/etags) or `IItemWithEtag`.
+* Need created / updated timestamps? → [`TimeStampedItem`](/docs/item-types/time-stamps).
+* Need item-level TTL overrides? → [`TimeToLiveItem`](/docs/item-types/time-to-live).
+* Want all three? → [`FullItem`](/docs/item-types/full-item).

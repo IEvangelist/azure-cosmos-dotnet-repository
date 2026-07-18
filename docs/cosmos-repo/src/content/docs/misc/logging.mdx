@@ -1,0 +1,42 @@
+---
+title: Logging
+description: Event ID ranges and the high-performance logging strategy used by the library.
+section: Miscellaneous
+order: 3
+---
+import Callout from "@/components/Callout.astro";
+
+The library follows the [high-performance logging guidelines](https://learn.microsoft.com/aspnet/core/fundamentals/logging/loggermessage) and uses `LoggerMessage` source generators throughout. This means structured logging with very low allocation overhead.
+
+## Event ID ranges
+
+Every log message is emitted with an `EventId`. We split the range so you can filter by severity quickly:
+
+| Log level     | `EventId` range |
+|---------------|-----------------|
+| Debug/Verbose | 15000 – 15100   |
+| Information   | 15101 – 15200   |
+| Warning       | 15201 – 15300   |
+| Error         | 15301 – 15400   |
+| Critical      | 15401 – 15500   |
+
+<Callout type="info">
+  See the canonical [`EventIds.cs`](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/blob/main/src/Microsoft.Azure.CosmosRepository/Logging/EventIds.cs) for the full list of named event IDs.
+</Callout>
+
+## Tuning the log level
+
+You can configure the library's log level independently from the rest of your application:
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.Azure.CosmosRepository": "Debug"
+    }
+  }
+}
+```
+
+Drop to `Debug` to see container creation, change-feed lifecycle, and per-operation diagnostics.

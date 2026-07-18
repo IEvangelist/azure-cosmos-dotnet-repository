@@ -69,12 +69,60 @@ public class DefaultCosmosItemConfigurationProviderTests
         containerNames.Should().BeEquivalentTo(expectedContainerNames);
     }
 
+    [Fact]
+    public void GetItemConfigurationDoesNotReuseCachedContainerNameAcrossProviderInstances()
+    {
+        const string firstContainerName = "first-container";
+        const string secondContainerName = "second-container";
+
+        Mock<ICosmosContainerNameProvider> firstContainerNameProvider = new();
+        firstContainerNameProvider
+            .Setup(o => o.GetContainerName(typeof(CacheLeakItem)))
+            .Returns(firstContainerName);
+
+        ICosmosItemConfigurationProvider firstProvider = new DefaultCosmosItemConfigurationProvider(
+            firstContainerNameProvider.Object,
+            _partitionKeyPathProvider.Object,
+            _uniqueKeyPolicyProvider.Object,
+            _defaultTimeToLiveProvider.Object,
+            _syncContainerPropertiesProvider.Object,
+            _throughputProvider.Object,
+            _strictTypeCheckingProvider.Object);
+
+        Mock<ICosmosContainerNameProvider> secondContainerNameProvider = new();
+        secondContainerNameProvider
+            .Setup(o => o.GetContainerName(typeof(CacheLeakItem)))
+            .Returns(secondContainerName);
+
+        ICosmosItemConfigurationProvider secondProvider = new DefaultCosmosItemConfigurationProvider(
+            secondContainerNameProvider.Object,
+            _partitionKeyPathProvider.Object,
+            _uniqueKeyPolicyProvider.Object,
+            _defaultTimeToLiveProvider.Object,
+            _syncContainerPropertiesProvider.Object,
+            _throughputProvider.Object,
+            _strictTypeCheckingProvider.Object);
+
+        ItemConfiguration firstConfiguration = firstProvider.GetItemConfiguration<CacheLeakItem>();
+        ItemConfiguration secondConfiguration = secondProvider.GetItemConfiguration<CacheLeakItem>();
+
+        Assert.Equal(firstContainerName, firstConfiguration.ContainerName);
+        Assert.Equal(secondContainerName, secondConfiguration.ContainerName);
+        firstContainerNameProvider.Verify(o => o.GetContainerName(typeof(CacheLeakItem)), Times.Once);
+        secondContainerNameProvider.Verify(o => o.GetContainerName(typeof(CacheLeakItem)), Times.Once);
+    }
+
     class Item1 : Item
     {
 
     }
 
     class Item2 : Item
+    {
+
+    }
+
+    class CacheLeakItem : Item
     {
 
     }

@@ -213,6 +213,93 @@ public class DefaultCosmosContainerServiceTests
     }
 
     [Fact]
+    public async Task GetContainerAsyncWhenSyncContainerPropertiesIsSetAndConcurrentCallsShareContainerSyncsOnlyOnce()
+    {
+        //Arrange
+        ICosmosContainerService service = CreateDefaultCosmosContainerService();
+        _repositoryOptions.ContainerPerItemType = true;
+
+        ItemConfiguration itemConfiguration = new(typeof(TestItemWithEtag), "a", "/test", new(), ThroughputProperties.CreateManualThroughput(400), 5, true);
+
+        TaskCompletionSource<bool> firstSyncStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<bool> secondCallCreatedContainer = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<ThroughputResponse> completeFirstThroughputReplace = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        Mock<Container> firstContainer = new();
+        Mock<Container> secondContainer = new();
+        Mock<ContainerResponse> firstContainerResponse = new();
+        Mock<ContainerResponse> secondContainerResponse = new();
+        Mock<ThroughputResponse> throughputResponse = new();
+        int createContainerCallCount = 0;
+
+        _itemConfigurationProvider.Setup(o => o.GetItemConfiguration(typeof(TestItemWithEtag))).Returns(itemConfiguration);
+
+        _cosmosClient.Setup(o =>
+                o.CreateDatabaseIfNotExistsAsync(_repositoryOptions.DatabaseId, (int?)null, null, CancellationToken.None))
+            .ReturnsAsync(_databaseResponse.Object);
+
+        firstContainerResponse.Setup(o => o.Container).Returns(firstContainer.Object);
+        secondContainerResponse.Setup(o => o.Container).Returns(secondContainer.Object);
+
+        _database.Setup(o =>
+                o.CreateContainerIfNotExistsAsync(
+                    It.Is<ContainerProperties>(c => ValidateContainerProperties(c)),
+                    itemConfiguration.ThroughputProperties,
+                    null,
+                    CancellationToken.None))
+            .Returns(() =>
+            {
+                int call = Interlocked.Increment(ref createContainerCallCount);
+                if (call == 2)
+                {
+                    secondCallCreatedContainer.TrySetResult(true);
+                }
+
+                return Task.FromResult(
+                    call == 1
+                        ? firstContainerResponse.Object
+                        : secondContainerResponse.Object);
+            });
+
+        firstContainer.Setup(o => o.Id).Returns("a");
+        secondContainer.Setup(o => o.Id).Returns("a");
+
+        firstContainer.Setup(o => o.ReplaceThroughputAsync(itemConfiguration.ThroughputProperties, null, CancellationToken.None))
+            .Returns(() =>
+            {
+                firstSyncStarted.TrySetResult(true);
+                return completeFirstThroughputReplace.Task;
+            });
+
+        secondContainer.Setup(o => o.ReplaceThroughputAsync(itemConfiguration.ThroughputProperties, null, CancellationToken.None))
+            .ReturnsAsync(throughputResponse.Object);
+
+        firstContainer.Setup(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None))
+            .ReturnsAsync(firstContainerResponse.Object);
+
+        secondContainer.Setup(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None))
+            .ReturnsAsync(secondContainerResponse.Object);
+
+        //Act
+        // Hold the first sync in-flight so the second call overlaps after container creation.
+        Task<Container> firstCall = Task.Run(() => service.GetContainerAsync<TestItemWithEtag>());
+        await firstSyncStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Task<Container> secondCall = Task.Run(() => service.GetContainerAsync<TestItemWithEtag>());
+        await secondCallCreatedContainer.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        completeFirstThroughputReplace.TrySetResult(throughputResponse.Object);
+
+        Container[] containers = await Task.WhenAll(firstCall, secondCall).WaitAsync(TimeSpan.FromSeconds(5));
+
+        //Assert
+        Assert.Equal(firstContainer.Object, containers[0]);
+        Assert.Equal(secondContainer.Object, containers[1]);
+        firstContainer.Verify(o => o.ReplaceContainerAsync(It.Is<ContainerProperties>(c => ValidateContainerProperties(c)), null, CancellationToken.None), Times.Once);
+        firstContainer.Verify(o => o.ReplaceThroughputAsync(itemConfiguration.ThroughputProperties, null, CancellationToken.None), Times.Once);
+        secondContainer.Verify(o => o.ReplaceContainerAsync(It.IsAny<ContainerProperties>(), null, CancellationToken.None), Times.Never);
+        secondContainer.Verify(o => o.ReplaceThroughputAsync(It.IsAny<ThroughputProperties>(), null, CancellationToken.None), Times.Never);
+    }
+
+    [Fact]
     public async Task GetContainerAsyncWhenSyncContainerPropertiesIsSetAndContainerHasAlreadyBeenSyncByItemSharingTheContainerDoesNotSyncContainerAgain()
     {
         //Arrange

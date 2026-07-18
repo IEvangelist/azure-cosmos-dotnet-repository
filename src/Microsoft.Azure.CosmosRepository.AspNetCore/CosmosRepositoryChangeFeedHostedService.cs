@@ -18,10 +18,27 @@ namespace Microsoft.Azure.CosmosRepository.AspNetCore;
 public class CosmosRepositoryChangeFeedHostedService(IChangeFeedService changeFeedService) : BackgroundService
 {
     /// <summary>
-    /// Start's the <see cref="IChangeFeedService"/>
+    /// Starts the <see cref="IChangeFeedService"/>.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public override Task StartAsync(CancellationToken cancellationToken) =>
+        changeFeedService.StartAsync(cancellationToken);
+
+    /// <summary>
+    /// Stops the <see cref="IChangeFeedService"/>.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public override Task StopAsync(CancellationToken cancellationToken) =>
+        changeFeedService.StopAsync();
+
+    /// <summary>
+    /// Background execution is not used because startup and shutdown are explicitly
+    /// delegated to the <see cref="IChangeFeedService"/>.
     /// </summary>
     /// <param name="stoppingToken"></param>
     /// <returns></returns>
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken) =>
-        await changeFeedService.StartAsync(stoppingToken);
+    protected override Task ExecuteAsync(CancellationToken stoppingToken) =>
+        Task.CompletedTask;
 }

@@ -1,0 +1,104 @@
+# Builds the Astro docs site under `docs/cosmos-repo/` and deploys it to GitHub Pages.
+#
+# Maintainer note: this workflow uses the official GitHub Pages deployment pipeline
+# (`actions/configure-pages` + `actions/deploy-pages`). The previous workflow used
+# `peaceiris/actions-gh-pages` which pushed to a `gh-pages` branch.
+#
+# To enable this workflow:
+#   1. In repo Settings → Pages, set "Source" to **GitHub Actions**.
+#   2. (Optional) delete the old `gh-pages` branch — it is no longer used.
+#
+# The site will continue to be served at:
+#   https://ievangelist.github.io/azure-cosmos-dotnet-repository/
+
+name: docs-deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/cosmos-repo/**"
+      - ".github/workflows/docs-deploy.yml"
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "The reason for running the workflow"
+        required: true
+        default: "Manual run"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build (Astro)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./docs/cosmos-repo
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # docfx 2.78+ requires .NET 8/9 runtime; we already use 9 for the SDK.
+          dotnet-version: 9.0.x
+
+      - name: Install docfx
+        run: dotnet tool install -g docfx --version 2.78.5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: docs/cosmos-repo/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate API reference (docfx → MDX)
+        run: pnpm api
+
+      - name: Type check
+        run: pnpm check
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build site
+        run: pnpm build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/cosmos-repo/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

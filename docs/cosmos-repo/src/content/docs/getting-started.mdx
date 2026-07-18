@@ -1,0 +1,171 @@
+---
+title: Getting started
+description: Install the Microsoft.Azure.CosmosRepository package, register it with DI, and create your first item.
+section: Getting started
+order: 1
+---
+import Callout from "@/components/Callout.astro";
+
+The quickest way to get started using the `IEvangelist.Azure.CosmosRepository` package is to call the `AddCosmosRepository` extension method on `IServiceCollection`. This single call registers everything the SDK needs and exposes the `IRepository<TItem>` interface to your application.
+
+## Install the package
+
+```bash
+dotnet add package IEvangelist.Azure.CosmosRepository
+```
+
+For ASP.NET Core integrations (health checks, change-feed hosted services) also install:
+
+```bash
+dotnet add package IEvangelist.Azure.CosmosRepository.AspNetCore
+```
+
+## Quick start
+
+1. Create an Azure Cosmos DB SQL resource.
+2. Obtain the resource connection string from the **Keys** blade. Use the connection string (compound key + endpoint URL), not the raw key.
+3. Register the repository:
+
+   ```csharp
+   using Microsoft.Azure.CosmosRepository;
+
+   var builder = WebApplication.CreateBuilder(args);
+
+   builder.Services.AddCosmosRepository();
+   ```
+
+   The optional `setupAction` lets you configure the `RepositoryOptions` object directly:
+
+   ```csharp
+   builder.Services.AddCosmosRepository(options =>
+   {
+       options.CosmosConnectionString = "<connection string>";
+       options.ContainerId = "data-store";
+       options.DatabaseId = "samples";
+   });
+   ```
+
+4. Define an item type. Models must inherit from `Item` (or another base such as `EtagItem`, `TimeStampedItem`, `TimeToLiveItem`, or `FullItem`):
+
+   ```csharp
+   using Microsoft.Azure.CosmosRepository;
+
+   public class Person : Item
+   {
+       public string FirstName { get; set; } = null!;
+       public string LastName { get; set; } = null!;
+   }
+   ```
+
+5. Inject `IRepository<TItem>`:
+
+   ```csharp
+   public class Consumer
+   {
+       readonly IRepository<Person> _repository;
+
+       public Consumer(IRepository<Person> repository) =>
+           _repository = repository;
+
+       public Task<Person> CreateAsync(Person person) =>
+           _repository.CreateAsync(person).AsTask();
+   }
+   ```
+
+6. Perform CRUD operations on `_repository`. Done.
+
+<Callout type="tip" title="In-memory repository for tests">
+  Swap `services.AddCosmosRepository()` for `services.AddInMemoryCosmosRepository()` to back the same `IRepository<TItem>` with an in-memory store. This is ideal for `Microsoft.AspNetCore.Mvc.Testing` integration tests without paying for live Cosmos DB resources.
+</Callout>
+
+## Configuration
+
+When `OptimizeBandwidth` is `true` (the default), the SDK reduces networking and CPU load by **not** sending the resource back over the network or serializing it on the client for create / update / patch / delete. See [Enable content response on write](https://devblogs.microsoft.com/cosmosdb/enable-content-response-on-write).
+
+There is much debate over how to structure databases and containers. Many developers with relational background prefer a container per item type; others lean on Cosmos's flexibility. By default, `ContainerPerItemType` is `false` and **all** items live in the same container. When set to `true`, each distinct subclass of `Item` gets its own container named after the class (or the `[Container]` attribute name).
+
+### Well-known configuration keys
+
+The library is wired to the .NET configuration system. The following keys map onto `RepositoryOptions` instances. Double underscores work for environment variables; colons work for `appsettings.json`.
+
+| Key | Type | Default |
+| --- | --- | --- |
+| `RepositoryOptions:CosmosConnectionString` | `string` | `null` |
+| `RepositoryOptions:AccountEndpoint` | `Uri` | `null` |
+| `RepositoryOptions:DatabaseId` | `string` | `"database"` |
+| `RepositoryOptions:ContainerId` | `string` | `"container"` |
+| `RepositoryOptions:OptimizeBandwidth` | `bool` | `true` |
+| `RepositoryOptions:ContainerPerItemType` | `bool` | `false` |
+| `RepositoryOptions:AllowBulkExecution` | `bool` | `false` |
+| `RepositoryOptions:SyncAllContainerProperties` | `bool` | `false` |
+| `RepositoryOptions:IsAutoResourceCreationIfNotExistsEnabled` | `bool` | `true` |
+| `RepositoryOptions:DisableTracing` | `bool` | `false` |
+| `RepositoryOptions:SerializationOptions:IgnoreNullValues` | `bool` | `false` |
+| `RepositoryOptions:SerializationOptions:Indented` | `bool` | `false` |
+| `RepositoryOptions:SerializationOptions:PropertyNamingPolicy` | `CosmosPropertyNamingPolicy` | `CamelCase` |
+
+<Callout type="info">
+  `TokenCredential` and `ContainerBuilder` are not bound from configuration — set them in code via the `setupAction` overload of `AddCosmosRepository`.
+</Callout>
+
+### Example `appsettings.json`
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "RepositoryOptions": {
+    "CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
+    "AccountEndpoint": "<Your-CosmosDB-URI>",
+    "DatabaseId": "<Your-CosmosDB-DatabaseName>",
+    "ContainerId": "<Your-CosmosDB-ContainerName>",
+    "OptimizeBandwidth": true,
+    "ContainerPerItemType": true,
+    "AllowBulkExecution": true,
+    "SerializationOptions": {
+      "IgnoreNullValues": true,
+      "PropertyNamingPolicy": "CamelCase"
+    }
+  }
+}
+```
+
+For more, see the [JSON configuration provider](https://docs.microsoft.com/dotnet/core/extensions/configuration-providers#json-configuration-provider) docs.
+
+### Example `appsettings.json` for Azure Functions
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "Values": {
+    "RepositoryOptions:CosmosConnectionString": "<Your-CosmosDB-ConnectionString>",
+    "RepositoryOptions:AccountEndpoint": "<Your-CosmosDB-URI>",
+    "RepositoryOptions:DatabaseId": "<Your-CosmosDB-DatabaseName>",
+    "RepositoryOptions:ContainerId": "<Your-CosmosDB-ContainerName>",
+    "RepositoryOptions:OptimizeBandwidth": true,
+    "RepositoryOptions:ContainerPerItemType": true,
+    "RepositoryOptions:AllowBulkExecution": true,
+    "RepositoryOptions:SerializationOptions:IgnoreNullValues": true,
+    "RepositoryOptions:SerializationOptions:PropertyNamingPolicy": "CamelCase"
+  }
+}
+```
+
+## Where to next?
+
+* [Authentication](/docs/getting-started/authentication) — connection strings vs. Microsoft Entra identities.
+* [Partitioning](/docs/getting-started/partitioning) — choose the right partitioning strategy.
+* [Container configuration](/docs/container-config) — fluent and attribute-based container setup.

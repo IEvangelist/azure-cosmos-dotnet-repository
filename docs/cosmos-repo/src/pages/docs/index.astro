@@ -1,0 +1,72 @@
+---
+import { getCollection } from "astro:content";
+import DocLayout from "@/layouts/DocLayout.astro";
+import { docsNav } from "@/lib/nav";
+
+const entries = await getCollection("docs");
+
+type DocsCard = { title: string; url: string; description: string | undefined };
+
+const sections = docsNav.map((section) => ({
+  title: section.title,
+  description: section.description,
+  items: (section.items ?? [])
+    .map<DocsCard | null>((item) => {
+      const slug = item.url.replace(/^\/docs\//, "");
+      const entry = entries.find((e) => e.id === slug);
+      return entry
+        ? {
+            title: item.title,
+            url: item.url,
+            description: entry.data.description,
+          }
+        : null;
+    })
+    .filter((i): i is DocsCard => i !== null),
+}));
+
+const crumbs = [{ title: "Docs" }];
+---
+
+<DocLayout
+  title="Documentation"
+  description="Browse the full Cosmos Repository documentation."
+  crumbs={crumbs}
+>
+  <h1>Documentation</h1>
+  <p class="lead">
+    Everything you need to ship Azure Cosmos DB-backed apps with the
+    <code>IEvangelist.Azure.CosmosRepository</code> package — installation, partitioning,
+    querying, the change feed, and more.
+  </p>
+
+  {
+    sections.map((section) => (
+      <section class="mt-10">
+        <h2 class="mb-1 text-2xl font-semibold tracking-tight">{section.title}</h2>
+        {section.description && (
+          <p class="mb-4 text-sm text-muted-foreground">{section.description}</p>
+        )}
+        <ul class="docs-card-grid">
+          {section.items.map((item) => (
+            <li>
+              <a
+                href={import.meta.env.BASE_URL.replace(/\/$/, "") + item.url}
+                class="group block h-full rounded-xl border border-border/60 bg-card p-4 transition hover:border-primary/40 hover:bg-accent/30"
+              >
+                <span class="block font-medium text-card-foreground group-hover:text-primary">
+                  {item.title}
+                </span>
+                {item.description && (
+                  <span class="mt-1 block text-sm text-muted-foreground">
+                    {item.description}
+                  </span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</DocLayout>

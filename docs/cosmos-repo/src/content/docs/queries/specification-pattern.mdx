@@ -1,0 +1,85 @@
+---
+title: Specification pattern
+description: Encapsulate filters, ordering, and projections in reusable specification classes.
+section: Queries
+order: 2
+---
+import Callout from "@/components/Callout.astro";
+
+Cosmos Repository ships with a [specification pattern](https://github.com/ardalis/Specification) — inspired by `ardalis/Specification` — that lets you declare a query as a class and run it via `IRepository<T>.QueryAsync(spec)`.
+
+The base types live in `Microsoft.Azure.CosmosRepository.Specification`:
+
+* `BaseSpecification<TItem>` — abstract base; build a `Query` to add filters, ordering, and projections.
+* `DefaultSpecification<TItem>` — concrete subclass for ad-hoc inline use.
+* `PageNumberPageSizeSpecification<TItem>` — pre-wired for page-number paging.
+* `ContinuationTokenSpecification<TItem>` — pre-wired for continuation-token paging.
+
+## Simple specification
+
+The specification below queries for all products in a category, ordered by price.
+
+```csharp
+public class ProductSpecificationExamples
+{
+    private class ProductsPriceLowestToHighestInCategory : DefaultSpecification<Product>
+    {
+        public ProductsPriceLowestToHighestInCategory(string categoryId) =>
+            Query
+                .Where(x => x.PartitionKey == categoryId)
+                .OrderBy(x => x.Price);
+    }
+
+    public async Task<IQueryResult<Product>> RunDemoAsync(IRepository<Product> repository)
+    {
+        IQueryResult<Product> orderedProducts = await repository
+            .QueryAsync(new ProductsPriceLowestToHighestInCategory("Clothing"));
+
+        return orderedProducts;
+    }
+}
+```
+
+## Multiple ordering clauses
+
+Stack `OrderBy` / `OrderByDescending` with `ThenBy` / `ThenByDescending` to sort by additional properties:
+
+```csharp
+public class ProductSpecificationAdvancedOrderingExamples
+{
+    private class ProductsPriceLowestToHighestThenByName : DefaultSpecification<Product>
+    {
+        public ProductsPriceLowestToHighestThenByName() =>
+            Query
+                .OrderBy(x => x.Price)
+                .ThenByDescending(x => x.Name);
+    }
+
+    public async Task<IQueryResult<Product>> RunDemoAsync(IRepository<Product> repository)
+    {
+        IQueryResult<Product> orderedProducts = await repository
+            .QueryAsync(new ProductsPriceLowestToHighestThenByName());
+
+        return orderedProducts;
+    }
+}
+```
+
+<Callout type="warning" title="Composite indexes required">
+  Using `ThenBy` / `ThenByDescending` requires a [composite index](https://learn.microsoft.com/azure/cosmos-db/sql/index-policy#composite-indexes) on the involved fields. Without one, Cosmos DB will throw at query time.
+</Callout>
+
+## Built-in paging specifications
+
+* `PageNumberPageSizeSpecification<TItem>` accepts `pageNumber`, `pageSize`, and an optional `returnTotal` flag for total counts.
+* `ContinuationTokenSpecification<TItem>` accepts `pageSize` and a `continuationToken` for stable, cost-effective scrolling.
+
+Subclass either when your specification needs paging out of the box.
+
+## Where to look in the codebase
+
+Real specifications used in the project's tests and the [`Specification` sample](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/tree/main/samples/Microsoft.Azure.CosmosRepository/Specification) are great references:
+
+* `BaseSpecification<TItem>` — see what `Query` exposes.
+* `DefaultSpecification<TItem>` — minimal concrete subclass.
+* `IQueryResult<TItem>` / `IPageQueryResult<TItem>` — what's returned.

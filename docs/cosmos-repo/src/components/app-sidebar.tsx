@@ -1,0 +1,202 @@
+import * as React from "react";
+import {
+  Activity,
+  BookOpen,
+  Boxes,
+  ChevronRight,
+  FileCode2,
+  Layers,
+  Rocket,
+  Search,
+  SlidersHorizontal,
+  type LucideIcon,
+} from "lucide-react";
+
+import { NuGetIcon } from "@/components/icons/nuget-icon";
+import { docsNav, type NavItem } from "@/lib/nav";
+import { withBase } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarRail,
+} from "@/components/ui/sidebar";
+
+const ICONS: Record<string, LucideIcon> = {
+  Rocket,
+  Boxes,
+  Layers,
+  Search,
+  Activity,
+  SlidersHorizontal,
+  BookOpen,
+  FileCode2,
+};
+
+function isPathActive(item: NavItem, currentPath: string): boolean {
+  const normalize = (p: string) => p.replace(/\/$/, "");
+  const cur = normalize(currentPath);
+  const itemUrl = normalize(item.url);
+  if (itemUrl === cur) return true;
+  if (item.items?.some((c) => normalize(c.url) === cur)) return true;
+  // Treat any descendant of a section URL (e.g. /docs/api/foo) as active for that section.
+  if (itemUrl && itemUrl !== "/docs" && cur.startsWith(itemUrl + "/")) return true;
+  return false;
+}
+
+export type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  currentPath: string;
+};
+
+export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <a href={withBase("/")} aria-label="Cosmos Repository home">
+                <img
+                  src={withBase("/logo.svg")}
+                  alt=""
+                  aria-hidden="true"
+                  width={32}
+                  height={32}
+                  className="aspect-square size-8"
+                />
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">
+                    Cosmos Repository
+                  </span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    .NET SDK · Documentation
+                  </span>
+                </div>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Documentation</SidebarGroupLabel>
+          <SidebarMenu>
+            {docsNav.map((section) => {
+              const Icon = section.icon ? ICONS[section.icon] : undefined;
+              const active = isPathActive(section, currentPath);
+              const hasChildren = (section.items?.length ?? 0) > 1;
+              if (!hasChildren) {
+                return (
+                  <SidebarMenuItem key={section.title}>
+                    <SidebarMenuButton
+                      tooltip={section.title}
+                      isActive={active}
+                      asChild
+                    >
+                      <a href={withBase(section.url)}>
+                        {Icon ? <Icon aria-hidden="true" /> : null}
+                        <span>{section.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              }
+              return (
+                <Collapsible
+                  key={section.title}
+                  asChild
+                  defaultOpen={active}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      tooltip={section.title}
+                      isActive={active}
+                      asChild
+                    >
+                      <a
+                        href={withBase(section.url)}
+                        aria-current={active ? "page" : undefined}
+                      >
+                        {Icon ? <Icon aria-hidden="true" /> : null}
+                        <span>{section.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuAction
+                        aria-label={`Toggle ${section.title} sub-pages`}
+                        className={cn(
+                          "transition-transform duration-200",
+                          "data-[state=open]:rotate-90",
+                        )}
+                      >
+                        <ChevronRight aria-hidden="true" />
+                      </SidebarMenuAction>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {section.items!.map((sub) => {
+                          const subActive =
+                            currentPath.replace(/\/$/, "") ===
+                            sub.url.replace(/\/$/, "");
+                          return (
+                            <SidebarMenuSubItem key={sub.title}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={subActive}
+                              >
+                                <a
+                                  href={withBase(sub.url)}
+                                  aria-current={subActive ? "page" : undefined}
+                                >
+                                  <span>{sub.title}</span>
+                                </a>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          );
+                        })}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="NuGet package">
+              <a
+                href="https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <NuGetIcon className="size-4 fill-current" aria-hidden="true" />
+                <span>NuGet</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}

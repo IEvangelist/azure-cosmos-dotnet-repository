@@ -9,7 +9,8 @@ class DefaultCosmosContainerService : ICosmosContainerService
     readonly ICosmosClientProvider _cosmosClientProvider;
     readonly ILogger<DefaultCosmosContainerService> _logger;
     readonly RepositoryOptions _options;
-    readonly Dictionary<string, DateTime> _containerSyncLog = [];
+    readonly ConcurrentDictionary<string, DateTime> _containerSyncLog = [];
+    readonly ConcurrentDictionary<string, SemaphoreSlim> _containerSyncLocks = [];
 
     public DefaultCosmosContainerService(
         ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
@@ -58,18 +59,38 @@ class DefaultCosmosContainerService : ICosmosContainerService
                         containerProperties, itemConfiguration.ThroughputProperties).ConfigureAwait(false)
                     : await Task.FromResult(database.GetContainer(containerProperties.Id)).ConfigureAwait(false);
 
+            string containerId = containerProperties.Id;
+
             if ((itemConfiguration.SyncContainerProperties is false ||
-                 _containerSyncLog.ContainsKey(container.Id)) && forceContainerSync is false)
+                 _containerSyncLog.ContainsKey(containerId)) && forceContainerSync is false)
             {
                 return container;
             }
 
-            await container.ReplaceThroughputAsync(itemConfiguration.ThroughputProperties);
-            await container.ReplaceContainerAsync(containerProperties);
+            SemaphoreSlim containerSyncLock =
+                _containerSyncLocks.GetOrAdd(containerId, static _ => new SemaphoreSlim(1, 1));
 
-            if (itemConfiguration.SyncContainerProperties)
+            await containerSyncLock.WaitAsync().ConfigureAwait(false);
+
+            try
             {
-                _containerSyncLog.Add(container.Id, DateTime.UtcNow);
+                if ((itemConfiguration.SyncContainerProperties is false ||
+                     _containerSyncLog.ContainsKey(containerId)) && forceContainerSync is false)
+                {
+                    return container;
+                }
+
+                await container.ReplaceThroughputAsync(itemConfiguration.ThroughputProperties).ConfigureAwait(false);
+                await container.ReplaceContainerAsync(containerProperties).ConfigureAwait(false);
+
+                if (itemConfiguration.SyncContainerProperties)
+                {
+                    _containerSyncLog.TryAdd(containerId, DateTime.UtcNow);
+                }
+            }
+            finally
+            {
+                containerSyncLock.Release();
             }
 
             return container;

@@ -1,0 +1,59 @@
+---
+title: FullItem
+description: One base class that combines etags, timestamps, and time-to-live.
+section: Item types
+order: 3
+---
+import Callout from "@/components/Callout.astro";
+
+`FullItem` combines every behavior offered by the smaller bases:
+
+* `IItem` — `Id`, `Type`, and partition-key handling (from `Item`).
+* `IItemWithEtag` — optimistic concurrency control via `Etag`.
+* `IItemWithTimeStamps` — `CreatedTimeUtc`, `LastUpdatedTimeUtc`, and `LastUpdatedTimeRaw`.
+* `IItemWithTimeToLive` — per-item `TimeToLive` overriding the container default.
+
+If you want the works without thinking about it, derive from `FullItem`.
+
+```csharp
+using Microsoft.Azure.CosmosRepository;
+using Microsoft.Azure.CosmosRepository.Attributes;
+
+namespace OptimisticConcurrencyControl;
+
+[Container("accounts")]
+[PartitionKeyPath("/id")]
+public class BankAccount : FullItem
+{
+    public string Name { get; set; } = string.Empty;
+    public double Balance { get; set; }
+
+    public void Withdraw(double amount)
+    {
+        if (Balance - amount < 0.0)
+            throw new InvalidOperationException("Cannot go overdrawn");
+
+        Balance -= amount;
+    }
+
+    public void Deposit(double amount) => Balance += amount;
+
+    public override string ToString() =>
+        $"Account (Name = {Name}, Balance = {Balance}, Etag = {Etag})";
+}
+```
+
+## When you don't want everything
+
+`FullItem` is the most expressive base, but it's also the most opinionated. Pick a smaller base when:
+
+| Need | Base class |
+| --- | --- |
+| Only optimistic concurrency | [`EtagItem`](/docs/item-types/etags) |
+| Only timestamps | [`TimeStampedItem`](/docs/item-types/time-stamps) |
+| Only TTL overrides | [`TimeToLiveItem`](/docs/item-types/time-to-live) |
+| Custom mix | Implement the matching `IItemWith*` interfaces yourself |
+
+<Callout type="tip">
+  `FullItem` also makes a great default for greenfield apps — you can opt out of any feature by simply not setting the corresponding properties.
+</Callout>

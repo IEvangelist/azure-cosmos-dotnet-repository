@@ -1,0 +1,54 @@
+---
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import DocLayout from "@/layouts/DocLayout.astro";
+import { docsNav, findNeighbors } from "@/lib/nav";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("docs");
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"docs">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const path = `/docs/${entry.id}`;
+const section = docsNav.find(
+  (s) =>
+    s.url === path ||
+    (s.items ?? []).some((i) => i.url === path) ||
+    (s.url !== "/docs" && path.startsWith(`${s.url}/`)),
+);
+
+const crumbs = [
+  { title: "Docs", href: "/docs" },
+  ...(section && section.url !== path
+    ? [{ title: section.title, href: section.url }]
+    : []),
+  { title: entry.data.title },
+];
+
+const { prev, next } = findNeighbors(path);
+
+const editPath = `docs/cosmos-repo/src/content/docs/${entry.id}.mdx`;
+---
+
+<DocLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  crumbs={crumbs}
+  editPath={editPath}
+  previous={prev ? { title: prev.title, url: prev.url } : undefined}
+  next={next ? { title: next.title, url: next.url } : undefined}
+>
+  <h1>{entry.data.title}</h1>
+  {entry.data.description ? <p class="lead">{entry.data.description}</p> : null}
+  <Content />
+</DocLayout>

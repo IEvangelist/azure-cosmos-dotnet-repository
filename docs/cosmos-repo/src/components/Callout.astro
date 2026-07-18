@@ -1,0 +1,55 @@
+---
+import { Info, Lightbulb, AlertTriangle, OctagonAlert, CheckCircle2 } from "lucide-react";
+
+export interface Props {
+  type?: "info" | "tip" | "warning" | "danger" | "success";
+  title?: string;
+}
+
+const { type = "info", title } = Astro.props;
+
+const styles: Record<string, string> = {
+  info: "callout-info",
+  tip: "callout-tip",
+  warning: "callout-warning",
+  danger: "callout-danger",
+  success: "callout-success",
+};
+
+const labels: Record<string, string> = {
+  info: title ?? "Note",
+  tip: title ?? "Tip",
+  warning: title ?? "Warning",
+  danger: title ?? "Danger",
+  success: title ?? "Success",
+};
+
+const icons: Record<string, typeof Info> = {
+  info: Info,
+  tip: Lightbulb,
+  warning: AlertTriangle,
+  danger: OctagonAlert,
+  success: CheckCircle2,
+};
+
+const Icon = icons[type];
+---
+
+<aside
+  role="note"
+  aria-label={labels[type]}
+  class:list={[
+    "callout not-prose my-5 rounded-md border-l-[3px] px-4 py-3 text-sm",
+    styles[type],
+  ]}
+>
+  <p class="callout-title mb-1">
+    <span class="callout-icon" aria-hidden="true">
+      <Icon className="size-[1.125rem]" aria-hidden="true" />
+    </span>
+    <span>{labels[type]}</span>
+  </p>
+  <div class="callout-body text-foreground/95 leading-6 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
+    <slot />
+  </div>
+</aside>

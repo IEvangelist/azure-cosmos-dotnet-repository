@@ -1,0 +1,60 @@
+---
+title: Major release notes
+description: Highlights of the breaking changes you should be aware of.
+section: Release notes
+order: 1
+---
+import Callout from "@/components/Callout.astro";
+
+This page summarizes the breaking changes from major releases. Always pair an upgrade with the [GitHub release notes](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/releases) for the full changelog.
+
+## Release 3.0.0
+
+### Nullable reference types
+
+The most significant change is full support for nullable reference types. The public API surface is now nullable-aware, which may surface warnings in code that previously didn't have to deal with `null`. Projects with `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` will see compile errors until the warnings are addressed.
+
+### `GetAsync` no longer returns `null` on type mismatch
+
+`_repository.GetAsync(id, partitionKey)` previously returned `null` if the item was found in Cosmos but its `type` discriminator did not match the .NET class name. Take this JSON for example:
+
+```json
+{
+    "partitionKey": "BookCategory",
+    "_etag": "\"3100b48c-0000-0700-0000-6219f58b0000\"",
+    "timeToLive": null,
+    "createdTimeUtc": "2022-02-26T09:40:27.000061Z",
+    "id": "Engineering",
+    "type": "BookCategory",
+    "_rid": "vG1RAMQtoX4LAAAAAAAAAA==",
+    "_self": "dbs/vG1RAA==/colls/vG1RAMQtoX4=/docs/vG1RAMQtoX4LAAAAAAAAAA==/",
+    "_attachments": "attachments/",
+    "_ts": 1645868427
+}
+```
+
+The `type` field is `BookCategory`. If you tried to read it via an `IRepository<Category>`, the previous behavior was to silently return `null`.
+
+📣 As of 3.0.0 the library throws `MissMatchedTypeDiscriminatorException` instead. Code that previously checked for `null` should now catch the exception.
+
+### Opt-in total counts when paging
+
+Previously every page request issued an extra `COUNT` query, which can be expensive for large datasets. The count query is now opt-in via `returnTotal`:
+
+```csharp
+_dogRepository.PageAsync(
+    d => d.Breed == "cocker spaniel",
+    pageNumber,
+    pageSize,
+    returnTotal: true);
+```
+
+`returnTotal` defaults to `false`.
+
+### `EtagItem` is now `abstract`
+
+Small but breaking — `EtagItem` is now abstract. Derive from it (or `FullItem`) instead of using it directly.
+
+<Callout type="tip" title="Want the full changelog?">
+  See the [GitHub releases page](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/releases) for every patch and minor release between major versions.
+</Callout>

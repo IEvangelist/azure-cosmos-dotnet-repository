@@ -1,0 +1,59 @@
+---
+title: Health checks
+description: ASP.NET Core health checks for Cosmos DB powered by Cosmos Repository's container metadata.
+section: Miscellaneous
+order: 2
+---
+import Callout from "@/components/Callout.astro";
+
+`IEvangelist.Azure.CosmosRepository.AspNetCore` adds support for [ASP.NET Core health checks](https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks) using the [HealthChecks.CosmosDb](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/blob/master/src/HealthChecks.CosmosDb/README.md) package.
+
+## Setup
+
+Add the Cosmos DB health check:
+
+```csharp
+services.AddHealthChecks().AddCosmosRepository();
+```
+
+By default this scans every assembly in your solution to locate the container names registered for each `IItem` type. To narrow the scan and reduce startup time, pass the assemblies that contain your items:
+
+```csharp
+services.AddHealthChecks()
+    .AddCosmosRepository(assemblies: typeof(ExampleItem).Assembly);
+```
+
+Alternatively, supply an `AzureCosmosDbHealthCheckOptions` factory and specify the containers to check explicitly:
+
+```csharp
+services.AddHealthChecks()
+    .AddCosmosRepository(optionsFactory: sp => new AzureCosmosDbHealthCheckOptions
+    {
+        DatabaseId = "my-database",
+        ContainerIds = new[] { "Container1", "Container2" }
+    });
+```
+
+Pass `optionsFactory: null` to fall back to the default behavior of the `HealthChecks.CosmosDb` package (a single `CosmosClient.ReadAccountAsync()` call):
+
+```csharp
+services.AddHealthChecks().AddCosmosRepository(optionsFactory: null);
+```
+
+The health check supports the full ASP.NET Core feature set — `failureStatus`, tags, and so on. See the [official docs](https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks) for configuration details.
+
+Don't forget to map the endpoint:
+
+```csharp
+app.MapHealthChecks("/healthz");
+```
+
+## Container initialization & health checks
+
+By default Cosmos DB containers are created **lazily** on first repository access. That can cause health checks to fail during startup while containers are still being created.
+
+If you're seeing startup failures, switch to **eager initialization** so containers exist before the app starts handling requests. See [Container initialization](/docs/misc/container-initialization) for the full details.
+
+<Callout type="tip" title="Pair with eager init">
+  Pair `AddCosmosRepository().AddCosmosRepositoryHealthChecks()` with `await app.Services.EagerlyInitializeCosmosContainersAsync()` for the best startup story under Kubernetes readiness probes.
+</Callout>

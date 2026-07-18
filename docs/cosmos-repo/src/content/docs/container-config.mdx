@@ -1,0 +1,83 @@
+---
+title: Container configuration
+description: Fluent configuration of containers, partition keys, throughput, time-to-live, and change-feed monitoring.
+section: Container configuration
+order: 1
+---
+import Callout from "@/components/Callout.astro";
+
+When `RepositoryOptions.ContainerPerItemType` is `true`, you can take fine-grained control of each container created for an `IItem`. The `IItemContainerBuilder` (accessible as `options.ContainerBuilder`) exposes a fluent `ContainerOptionsBuilder` per item type.
+
+## The full `ContainerOptionsBuilder` surface
+
+```csharp
+options.ContainerBuilder.Configure<Product>(c => c
+    .WithContainer("products")
+    .WithPartitionKey("/categoryId")
+    .WithContainerDefaultTimeToLive(TimeSpan.FromDays(30))
+    .WithSyncableContainerProperties()
+    .WithAutoscaleThroughput(maxAutoScaleThroughput: 4_000)
+    .WithChangeFeedMonitoring(o =>
+    {
+        o.ProcessorName = "products-processor";
+        o.PollInterval  = TimeSpan.FromSeconds(2);
+        o.StartTime     = DateTime.UtcNow;
+    })
+    .WithoutStrictTypeChecking());
+```
+
+Every method returns the builder so calls can be chained.
+
+| Method | Effect |
+| --- | --- |
+| `WithContainer(string name)` | Sets the container name. Required when `ContainerPerItemType = true`. |
+| `WithPartitionKey(string path)` | Sets the partition key path (e.g. `"/categoryId"`). |
+| `WithContainerDefaultTimeToLive(TimeSpan)` | Default TTL applied to every item in the container. Items can override via `TimeToLive`. |
+| `WithSyncableContainerProperties()` | Pushes container property changes (TTL, throughput) when the container is first opened. |
+| `WithManualThroughput(int rus = 400)` | Sets manual throughput. Must be ≥ 400 RU/s. |
+| `WithAutoscaleThroughput(int max = 1000)` | Sets autoscale throughput in 1,000 RU/s increments between 1,000 and 1,000,000. |
+| `WithServerlessThroughput()` | Use when your account is configured for [serverless](https://learn.microsoft.com/azure/cosmos-db/serverless). Clears throughput properties. |
+| `WithChangeFeedMonitoring(Action<ChangeFeedOptions>?)` | Subscribes the container to change-feed processing. See [Change feed](/docs/change-feed). |
+| `WithoutStrictTypeChecking()` | Skips the implicit `type` discriminator filter in queries. Useful when sub-types deserialize into a base type. |
+
+<Callout type="warning" title="Throughput is set on first create">
+  Cosmos DB throughput cannot be updated through this builder if the container already exists with different settings. To change throughput on an existing container, use the Cosmos SDK or the Azure portal.
+</Callout>
+
+## Sharing a container
+
+Two `IItem` types can share a container by giving them the same `WithContainer` name and partition key:
+
+```csharp
+options.ContainerBuilder.Configure<Stock>(c => c
+    .WithContainer("inventory")
+    .WithPartitionKey("/sku"));
+
+options.ContainerBuilder.Configure<StockMovement>(c => c
+    .WithContainer("inventory")
+    .WithPartitionKey("/sku"));
+```
+
+Cosmos Repository disambiguates items in the same container by the implicit `type` JSON property (the .NET class name, or the `[Container]` attribute name if specified).
+
+## Strict type checking
+
+By default the library appends `WHERE c.type = '<TypeName>'` to every query so two item types in the same container don't bleed into each other's results. If you have a polymorphic hierarchy where queries should return all sub-types, call `WithoutStrictTypeChecking()` on the parent type.
+
+## Equivalent attributes
+
+The fluent API has near-identical attribute equivalents. Pick whichever style fits your codebase:
+
+```csharp
+[Container("products")]
+[PartitionKeyPath("/categoryId")]
+public class Product : Item { /* … */ }
+```
+
+Attributes work even when `ContainerPerItemType` is `false` — they're applied when the container is created.
+
+## What's next?
+
+* [Item types](/docs/item-types) — pick the right base class for your model.
+* [Change feed](/docs/change-feed) — react to container changes in real time.
+* [Container initialization](/docs/misc/container-initialization) — eager vs lazy creation.

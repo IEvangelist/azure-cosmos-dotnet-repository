@@ -5,13 +5,11 @@ namespace Microsoft.Azure.CosmosRepositoryTests.ChangeFeed;
 
 public class DefaultChangeFeedOptionsProviderTests
 {
-    private readonly RepositoryOptions _repositoryOptions = new();
-
-    private IChangeFeedOptionsProvider CreateSut()
+    private IChangeFeedOptionsProvider CreateSut(Func<RepositoryOptions> getCurrentOptions)
     {
         Mock<IOptionsMonitor<RepositoryOptions>> monitor = new();
         monitor.SetupGet(o => o.CurrentValue)
-            .Returns(_repositoryOptions);
+            .Returns(getCurrentOptions);
 
         return new DefaultChangeFeedOptionsProvider(monitor.Object);
     }
@@ -20,11 +18,12 @@ public class DefaultChangeFeedOptionsProviderTests
     public void GetOptionsForItems_ItemTypes_GetsChangeFeedOptions()
     {
         //Arrange
-        IChangeFeedOptionsProvider sut = CreateSut();
+        RepositoryOptions repositoryOptions = new();
+        IChangeFeedOptionsProvider sut = CreateSut(() => repositoryOptions);
 
-        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithChangeFeedMonitoring());
+        repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithChangeFeedMonitoring());
 
-        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder => builder.WithChangeFeedMonitoring());
+        repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder => builder.WithChangeFeedMonitoring());
 
         //Act
         ChangeFeedOptions options = sut.GetOptionsForItems(new[] { typeof(TestItem), typeof(AnotherTestItem) });
@@ -37,11 +36,12 @@ public class DefaultChangeFeedOptionsProviderTests
     public void GetOptionsForItems_ItemTypesWithDifferentChangeFeedOptions_ThrowsMissMatchedChangeFeedOptionsException()
     {
         //Arrange
-        IChangeFeedOptionsProvider sut = CreateSut();
+        RepositoryOptions repositoryOptions = new();
+        IChangeFeedOptionsProvider sut = CreateSut(() => repositoryOptions);
 
-        _repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithChangeFeedMonitoring());
+        repositoryOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithChangeFeedMonitoring());
 
-        _repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder => builder.WithChangeFeedMonitoring(options => options.InstanceName = "different"));
+        repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder => builder.WithChangeFeedMonitoring(options => options.InstanceName = "different"));
 
         IReadOnlyList<Type> types = new[] { typeof(TestItem), typeof(AnotherTestItem) };
 
@@ -49,5 +49,27 @@ public class DefaultChangeFeedOptionsProviderTests
         //Assert
         Assert.Throws<MissMatchedChangeFeedOptionsException>(() =>
             sut.GetOptionsForItems(types));
+    }
+
+    [Fact]
+    public void GetOptionsForItems_UsesCurrentOptionsValueAtCallTime()
+    {
+        //Arrange
+        RepositoryOptions initialOptions = new();
+        initialOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithChangeFeedMonitoring(options => options.InstanceName = "initial"));
+
+        RepositoryOptions updatedOptions = new();
+        updatedOptions.ContainerBuilder.Configure<TestItem>(builder => builder.WithChangeFeedMonitoring(options => options.InstanceName = "updated"));
+
+        RepositoryOptions currentOptions = initialOptions;
+        IChangeFeedOptionsProvider sut = CreateSut(() => currentOptions);
+
+        currentOptions = updatedOptions;
+
+        //Act
+        ChangeFeedOptions options = sut.GetOptionsForItems(new[] { typeof(TestItem) });
+
+        //Assert
+        Assert.Equal("updated", options.InstanceName);
     }
 }
