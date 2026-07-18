@@ -33,14 +33,14 @@ internal static class InMemoryStorage
 
     internal static void Restore(IReadOnlyDictionary<Type, Dictionary<string, string>> snapshot)
     {
-        foreach ((Type itemType, Dictionary<string, string> values) in snapshot)
+        foreach (KeyValuePair<Type, Dictionary<string, string>> snapshotEntry in snapshot)
         {
-            ConcurrentDictionary<string, string> items = GetDictionary(itemType);
+            ConcurrentDictionary<string, string> items = GetDictionary(snapshotEntry.Key);
             items.Clear();
 
-            foreach ((string key, string value) in values)
+            foreach (KeyValuePair<string, string> itemEntry in snapshotEntry.Value)
             {
-                items[key] = value;
+                items[itemEntry.Key] = itemEntry.Value;
             }
         }
     }

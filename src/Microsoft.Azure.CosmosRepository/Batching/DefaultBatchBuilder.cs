@@ -12,7 +12,11 @@ internal sealed class DefaultBatchBuilder(
 
     public IBatchBuilder ReplaceItem<TItem>(TItem item) where TItem : IItem
     {
-        ArgumentNullException.ThrowIfNull(item);
+        if (item is null)
+        {
+            throw new ArgumentNullException(nameof(item));
+        }
+
         string id = item.Id;
         string? etag = GetEtag(item);
         return Add(item, batch => batch.ReplaceItem(id, item, BatchRequestOptions.Create(etag)));
@@ -20,14 +24,22 @@ internal sealed class DefaultBatchBuilder(
 
     public IBatchBuilder UpsertItem<TItem>(TItem item) where TItem : IItem
     {
-        ArgumentNullException.ThrowIfNull(item);
+        if (item is null)
+        {
+            throw new ArgumentNullException(nameof(item));
+        }
+
         string? etag = GetEtag(item);
         return Add(item, batch => batch.UpsertItem(item, BatchRequestOptions.Create(etag)));
     }
 
     public IBatchBuilder DeleteItem<TItem>(TItem item) where TItem : IItem
     {
-        ArgumentNullException.ThrowIfNull(item);
+        if (item is null)
+        {
+            throw new ArgumentNullException(nameof(item));
+        }
+
         string id = item.Id;
         return Add(item, batch => batch.DeleteItem(id));
     }
