@@ -22,7 +22,11 @@ internal sealed class DefaultBatchBuilder(
 
         string id = item.Id;
         string? etag = GetEtag(item);
-        return Add(item, batch => batch.ReplaceItem(id, item, BatchRequestOptions.Create(etag)));
+        return Add(item, batch =>
+        {
+            BatchItemValidation.EnsureIdUnchanged(id, item.Id);
+            batch.ReplaceItem(id, item, BatchRequestOptions.Create(etag));
+        });
     }
 
     public IBatchBuilder UpsertItem<TItem>(TItem item) where TItem : IItem

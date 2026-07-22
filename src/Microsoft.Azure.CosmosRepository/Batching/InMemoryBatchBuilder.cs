@@ -59,10 +59,14 @@ internal sealed class InMemoryBatchBuilder(
         }
 
         ValidatePartitionKey(item);
+
+        string id = item.Id;
         return Add<TItem>(new(
             async (entries, _, cancellationToken) =>
             {
-                SimulatedEntry entry = await GetEntryAsync<TItem>(entries, item.Id, cancellationToken).ConfigureAwait(false);
+                BatchItemValidation.EnsureIdUnchanged(id, item.Id);
+
+                SimulatedEntry entry = await GetEntryAsync<TItem>(entries, id, cancellationToken).ConfigureAwait(false);
 
                 // Cosmos transactional batches fail a replace with 404 when
                 // the item does not exist; an upsert would silently create it.

@@ -160,7 +160,6 @@ public class DefaultBatchBuilderTests
             .ReplaceItem(replaced)
             .UpsertItem(upserted)
             .DeleteItem(deleted);
-        replaced.Id = "execution-replace-id";
         replaced.Etag = "execution-replace-etag";
         upserted.Etag = "execution-upsert-etag";
         deleted.Id = "execution-delete-id";
@@ -177,6 +176,33 @@ public class DefaultBatchBuilderTests
         batch.Verify(value => value.DeleteItem(
             "queued-delete-id",
             It.IsAny<TransactionalBatchItemRequestOptions>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Batch_ReplaceItemIdChangedAfterQueuing_ThrowsAndSendsNothing()
+    {
+        Mock<Container> container = new();
+        Mock<TransactionalBatch> batch = new();
+        container.Setup(value => value.CreateTransactionalBatch(It.IsAny<PartitionKey>())).Returns(batch.Object);
+        _containerService.Setup(value => value.GetContainerAsync(It.IsAny<IReadOnlyList<Type>>())).ReturnsAsync(container.Object);
+
+        MutableEtagItem replaced = new()
+        {
+            Id = "queued-replace-id",
+            PartitionKey = "partition"
+        };
+
+        IBatchBuilder builder = CreateBuilder("partition").ReplaceItem(replaced);
+        replaced.Id = "execution-replace-id";
+
+        // A replace routes on the queued id but serializes the item at
+        // execution time. Cosmos treats id as immutable and would fail the
+        // whole batch, so this has to fail locally instead.
+        Func<Task> act = () => builder.ExecuteAsync().AsTask();
+
+        InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(act);
+        exception.Message.Should().Contain("queued-replace-id").And.Contain("execution-replace-id");
+        batch.Verify(value => value.ExecuteAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]

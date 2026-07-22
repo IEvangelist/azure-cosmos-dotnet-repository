@@ -263,6 +263,41 @@ public class InMemoryBatchBuilderTests : IDisposable
     }
 
     [Fact]
+    public async Task Batch_ReplaceItemIdChangedAfterQueuing_ThrowsAndLeavesStorageUntouched()
+    {
+        // Arrange
+        const string sharedPartitionKey = "shared";
+
+        BatchSeedItem seeded = new()
+        {
+            Id = sharedPartitionKey,
+            Property = "seeded"
+        };
+        await new InMemoryRepository<BatchSeedItem>().CreateAsync(seeded);
+
+        BatchSeedItem replaced = new()
+        {
+            Id = sharedPartitionKey,
+            Property = "replaced"
+        };
+
+        IBatchBuilder builder = CreateBuilder(sharedPartitionKey).ReplaceItem(replaced);
+        replaced.Id = "changed-id";
+
+        // Matches DefaultBatchBuilder: Cosmos would reject the mismatched
+        // route id and payload, so the in-memory double must not accept it
+        // either - previously it replaced under the changed id and succeeded.
+        Func<Task> act = () => builder.ExecuteAsync().AsTask();
+
+        // Assert
+        InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(act);
+        exception.Message.Should().Contain(sharedPartitionKey).And.Contain("changed-id");
+
+        BatchSeedItem stored = await new InMemoryRepository<BatchSeedItem>().GetAsync(sharedPartitionKey);
+        stored.Property.Should().Be("seeded");
+    }
+
+    [Fact]
     public async Task Batch_EtagMismatch_ThrowsBatchOperationException()
     {
         // Arrange
