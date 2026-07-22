@@ -7,5 +7,7 @@ internal sealed class InMemoryBatchBuilderFactory(
     IServiceProvider serviceProvider) : IBatchBuilderFactory
 {
     public IBatchBuilder CreateBatch(string partitionKey) =>
-        new InMemoryBatchBuilder(partitionKey, serviceProvider);
+        new InMemoryBatchBuilder(
+            partitionKey ?? throw new ArgumentNullException(nameof(partitionKey)),
+            serviceProvider);
 }

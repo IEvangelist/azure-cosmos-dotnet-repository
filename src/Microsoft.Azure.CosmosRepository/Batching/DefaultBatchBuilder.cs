@@ -66,9 +66,8 @@ internal sealed class DefaultBatchBuilder(
     {
         if (_operations.Count == 0)
         {
-            throw new ArgumentException(
-                "Unable to perform batch operation with no items",
-                nameof(_operations));
+            throw new InvalidOperationException(
+                "Unable to perform batch operation with no items");
         }
 
         // This call ensures that all the types are valid for the same container

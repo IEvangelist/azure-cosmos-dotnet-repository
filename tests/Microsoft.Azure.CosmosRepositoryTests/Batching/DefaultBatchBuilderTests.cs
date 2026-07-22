@@ -5,6 +5,18 @@ public class DefaultBatchBuilderTests
     private readonly Mock<ICosmosContainerService> _containerService = new();
 
     [Fact]
+    public void CreateBatch_NullPartitionKey_Throws()
+    {
+        IBatchBuilderFactory factory = new DefaultBatchBuilderFactory(_containerService.Object);
+
+        // Act
+        Action act = () => factory.CreateBatch(null!);
+
+        // Assert
+        Assert.Throws<ArgumentNullException>(act);
+    }
+
+    [Fact]
     public async Task Batch_EmptyOps_ExecuteAsync_Throws()
     {
         IBatchBuilder builder = CreateBuilder("A");
@@ -13,7 +25,7 @@ public class DefaultBatchBuilderTests
         Func<Task> act = () => builder.ExecuteAsync().AsTask();
 
         // Assert
-        await Assert.ThrowsAsync<ArgumentException>(act);
+        await Assert.ThrowsAsync<InvalidOperationException>(act);
     }
 
     [Fact]

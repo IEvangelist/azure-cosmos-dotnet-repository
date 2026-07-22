@@ -138,9 +138,8 @@ internal sealed class InMemoryBatchBuilder(
     {
         if (_operations.Count == 0)
         {
-            throw new ArgumentException(
-                "Unable to perform batch operation with no items",
-                nameof(_operations));
+            throw new InvalidOperationException(
+                "Unable to perform batch operation with no items");
         }
 
         cancellationToken.ThrowIfCancellationRequested();

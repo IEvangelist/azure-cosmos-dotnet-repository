@@ -14,6 +14,16 @@ public class InMemoryBatchBuilderTests : IDisposable
             .CreateBatch(partitionKey);
 
     [Fact]
+    public void CreateBatch_NullPartitionKey_Throws()
+    {
+        // Act
+        Action act = () => CreateBuilder(null!);
+
+        // Assert
+        Assert.Throws<ArgumentNullException>(act);
+    }
+
+    [Fact]
     public async Task Batch_NoOps_Throws()
     {
         // Arrange
@@ -23,7 +33,7 @@ public class InMemoryBatchBuilderTests : IDisposable
         Func<Task> act = () => builder.ExecuteAsync().AsTask();
 
         // Assert
-        await Assert.ThrowsAsync<ArgumentException>(act);
+        await Assert.ThrowsAsync<InvalidOperationException>(act);
     }
 
     [Fact]

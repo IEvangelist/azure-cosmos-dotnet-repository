@@ -7,5 +7,7 @@ internal sealed class DefaultBatchBuilderFactory(
     ICosmosContainerService containerService) : IBatchBuilderFactory
 {
     public IBatchBuilder CreateBatch(string partitionKey) =>
-        new DefaultBatchBuilder(partitionKey, containerService);
+        new DefaultBatchBuilder(
+            partitionKey ?? throw new ArgumentNullException(nameof(partitionKey)),
+            containerService);
 }

@@ -30,6 +30,7 @@ public interface IBatchBuilderFactory
     /// Creates a fluent batch builder for the given partition key.
     /// </summary>
     /// <param name="partitionKey">The partition key for the batch.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="partitionKey"/> is null.</exception>
     /// <returns>An <see cref="IBatchBuilder"/> for composing a batch.</returns>
     IBatchBuilder CreateBatch(string partitionKey);
 }
