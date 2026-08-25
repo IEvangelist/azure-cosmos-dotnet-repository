@@ -20,7 +20,12 @@ public interface IPatchOperationBuilder<TItem> where TItem : IItem
     /// <param name="value">The value to replace the property defined with.</param>
     /// <typeparam name="TValue">The type of the property that is been replaced.</typeparam>
     /// <returns>The same instance of <see cref="IPatchOperationBuilder{TItem}"/></returns>
-    /// <remarks>This currently only supports operations on properties on the root level of a JSON document,
-    /// replacing properties on a nested object for example are currently not supported.</remarks>
+    /// <remarks>
+    /// Properties on nested objects are supported. The path is composed from the entire member access
+    /// chain of the given <paramref name="expression"/>, where each segment is resolved using the
+    /// <see cref="JsonPropertyAttribute"/> applied to the property when present, and the configured
+    /// <see cref="CosmosPropertyNamingPolicy"/> otherwise. For example, <c>item => item.Address.City</c>
+    /// operates on the <c>/address/city</c> path.
+    /// </remarks>
     IPatchOperationBuilder<TItem> Replace<TValue>(Expression<Func<TItem, TValue>> expression, TValue? value);
 }

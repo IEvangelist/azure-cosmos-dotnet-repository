@@ -24,6 +24,19 @@ public class RequiredAndJsonItem : Item
     public string TestProperty { get; set; } = null!;
 }
 
+public class NestedItem : Item
+{
+    public NestedItemAddress Address { get; set; } = null!;
+}
+
+public class NestedItemAddress
+{
+    public string City { get; set; } = null!;
+
+    [JsonProperty("zip_code")]
+    public string PostCode { get; set; } = null!;
+}
+
 public class PatchOperationBuilderTests
 {
     [Fact]
@@ -84,6 +97,36 @@ public class PatchOperationBuilderTests
         PatchOperation operation = builder.PatchOperations[0];
         Assert.Equal(PatchOperationType.Replace, operation.OperationType);
         Assert.Equal("/testProperty", operation.Path);
+    }
+
+    [Fact]
+    public void ReplaceGivenNestedPropertySetsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<NestedItem> builder = new PatchOperationBuilder<NestedItem>();
+
+        //Act
+        builder.Replace(x => x.Address.City, "Amsterdam");
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+        Assert.Equal("/address/city", operation.Path);
+    }
+
+    [Fact]
+    public void ReplaceGivenNestedPropertyWithJsonAttributeSetsCorrectPatchOperation()
+    {
+        //Arrange
+        IPatchOperationBuilder<NestedItem> builder = new PatchOperationBuilder<NestedItem>();
+
+        //Act
+        builder.Replace(x => x.Address.PostCode, "1011AB");
+
+        //Assert
+        PatchOperation operation = builder.PatchOperations[0];
+        Assert.Equal(PatchOperationType.Replace, operation.OperationType);
+        Assert.Equal("/address/zip_code", operation.Path);
     }
 
     [Theory]
