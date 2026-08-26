@@ -170,7 +170,7 @@ public class CrossTypeTransactionalBatchDefaultOptionsTests(ITestOutputHelper te
         options.ContainerBuilder.Configure<Rating>(builder => builder.WithPartitionKey(DefaultPartitionKey));
     };
 
-    [Fact(Skip = "This might not be reliable enough to justify having it be a release gate.")]
+    [Fact]
     public async Task Batch_MixedProductAndRating_WithSharedDefaultContainer_CommitsAtomically()
     {
         try
