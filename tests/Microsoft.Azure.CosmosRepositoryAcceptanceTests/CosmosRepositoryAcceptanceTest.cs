@@ -42,7 +42,8 @@ public abstract class CosmosRepositoryAcceptanceTest
 
     protected CosmosRepositoryAcceptanceTest(
         ITestOutputHelper testOutputHelper,
-        Action<RepositoryOptions>? builderOptions = null)
+        Action<RepositoryOptions>? builderOptions = null,
+        Action<CosmosClientOptions>? clientOptions = null)
     {
         ConfigurationBuilder config = new();
         config.AddEnvironmentVariables();
@@ -52,7 +53,7 @@ public abstract class CosmosRepositoryAcceptanceTest
         ServiceCollection services = new();
         services.AddSingleton(builtConfig);
 
-        services.AddCosmosRepository(builderOptions);
+        services.AddCosmosRepository(builderOptions, clientOptions);
 
         services.AddCosmosRepositoryItemChangeFeedProcessors(typeof(CosmosRepositoryAcceptanceTest).Assembly);
 
