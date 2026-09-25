@@ -57,9 +57,43 @@ public class ChangeFeedOptions
         }
     }
 
+    /// <summary>
+    /// The interval on which instances scan the lease store for expired or unowned leases to
+    /// acquire. When <see langword="null"/> the change feed processor SDK default is used.
+    /// </summary>
+    public TimeSpan? LeaseAcquireInterval { get; set; }
+
+    /// <summary>
+    /// The interval after which a lease is considered expired when it has not been renewed,
+    /// allowing another instance to acquire it. When <see langword="null"/> the change feed
+    /// processor SDK default is used.
+    /// </summary>
+    /// <remarks>
+    /// Keep this comfortably larger than <see cref="LeaseRenewInterval"/>; if it is not, a live
+    /// owner can lose its lease before renewing, causing changes to be processed more than once.
+    /// A good rule of thumb is roughly three to four times the renew interval (for example a 30s
+    /// renew with a 120s expiration), which mirrors the SDK defaults. The intervals are not
+    /// validated against each other.
+    /// </remarks>
+    public TimeSpan? LeaseExpirationInterval { get; set; }
+
+    /// <summary>
+    /// The interval on which the current owner renews (heartbeats) its leases. A larger value
+    /// results in fewer lease writes. When <see langword="null"/> the change feed processor SDK
+    /// default is used.
+    /// </summary>
+    /// <remarks>
+    /// If you raise this above the SDK default lease expiration, also raise
+    /// <see cref="LeaseExpirationInterval"/> so leases do not expire before they are renewed.
+    /// </remarks>
+    public TimeSpan? LeaseRenewInterval { get; set; }
+
     internal bool IsTheSameAs(ChangeFeedOptions? options) =>
         options?.InstanceName == InstanceName &&
         options?.PollInterval == PollInterval &&
         options?.ProcessorName == ProcessorName &&
-        options?.StartTime == StartTime;
+        options?.StartTime == StartTime &&
+        options?.LeaseAcquireInterval == LeaseAcquireInterval &&
+        options?.LeaseExpirationInterval == LeaseExpirationInterval &&
+        options?.LeaseRenewInterval == LeaseRenewInterval;
 }
