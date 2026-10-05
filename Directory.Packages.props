@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Azure.Identity" Version="1.13.1" />
-    <PackageVersion Include="Aspire.Hosting.Azure.CosmosDB" Version="9.0.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.CosmosDB" Version="13.4.6" />
     <PackageVersion Include="AspNetCore.HealthChecks.CosmosDb" Version="8.0.1" />
     <PackageVersion Include="Bogus" Version="35.6.1" />
     <PackageVersion Include="CorrelationId" Version="3.0.1" />
