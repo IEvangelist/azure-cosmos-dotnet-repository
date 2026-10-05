@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Azure.Identity" Version="1.13.1" />
+    <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="Aspire.Hosting.Azure.CosmosDB" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.HealthChecks.CosmosDb" Version="8.0.1" />
     <PackageVersion Include="Bogus" Version="35.6.1" />
