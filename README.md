@@ -1,7 +1,7 @@
 ![build](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/build/badge.svg) ![CodeQL](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/workflows/CodeQL/badge.svg) [![NuGet](https://img.shields.io/nuget/v/IEvangelist.Azure.CosmosRepository.svg?style=flat&label=NuGet%20version)](https://www.nuget.org/packages/IEvangelist.Azure.CosmosRepository) ![Nuget](https://img.shields.io/nuget/dt/IEvangelist.Azure.CosmosRepository?color=blue&label=NuGet%20downloads&logo=nuget) [![.NET code metrics](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml/badge.svg)](https://github.com/IEvangelist/azure-cosmos-dotnet-repository/actions/workflows/code-metrics.yml) [![Discord](https://img.shields.io/discord/868239483529723914.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.com/invite/qMXrX4shAv)
 
  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-35-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-37-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Azure Cosmos DB Repository .NET SDK
@@ -180,6 +180,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mrfootoyou"><img src="https://avatars.githubusercontent.com/u/4042025?v=4?s=100" width="100px;" alt="John Belcher"/><br /><sub><b>John Belcher</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=mrfootoyou" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/victormarante"><img src="https://avatars.githubusercontent.com/u/41802977?v=4?s=100" width="100px;" alt="Victor Marante"/><br /><sub><b>Victor Marante</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=victormarante" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mateuszkumpf"><img src="https://avatars.githubusercontent.com/u/24723556?v=4?s=100" width="100px;" alt="Mateusz Kumpf"/><br /><sub><b>Mateusz Kumpf</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=mateuszkumpf" title="Code">💻</a> <a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=mateuszkumpf" title="Tests">⚠️</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jjepson"><img src="https://avatars.githubusercontent.com/u/19563197?v=4?s=100" width="100px;" alt="jjepson"/><br /><sub><b>jjepson</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=jjepson" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.marcselman.com/"><img src="https://avatars.githubusercontent.com/u/514683?v=4?s=100" width="100px;" alt="Marc Selman"/><br /><sub><b>Marc Selman</b></sub></a><br /><a href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository/commits?author=marcselman" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

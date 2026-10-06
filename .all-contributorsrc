@@ -344,6 +344,24 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "jjepson",
+      "name": "jjepson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19563197?v=4",
+      "profile": "https://github.com/jjepson",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "marcselman",
+      "name": "Marc Selman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/514683?v=4",
+      "profile": "http://www.marcselman.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
