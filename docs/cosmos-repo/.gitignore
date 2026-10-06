@@ -41,3 +41,6 @@ public/pagefind/
 api-yml/
 src/content/docs/api/
 src/content/docs/api.mdx
+
+# contributor data (regenerated on every build via `pnpm contributors`)
+src/data/contributors.json
