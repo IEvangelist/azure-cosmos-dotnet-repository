@@ -36,6 +36,31 @@ public class DefaultRepositoryTests
             _specificationEvaluator);
 
     [Fact]
+    public async Task UpdateAsBatchAsync_WithWhitespaceEtag_OmitsIfMatchEtag()
+    {
+        Mock<TransactionalBatch> batch = new();
+        Mock<TransactionalBatchResponse> response = new();
+        TestItemWithEtag item = new() { Id = "shared", Etag = "   " };
+
+        _containerProviderForTestItemWithETag
+            .Setup(value => value.GetContainerAsync())
+            .ReturnsAsync(_container.Object);
+        _container
+            .Setup(value => value.CreateTransactionalBatch(It.IsAny<PartitionKey>()))
+            .Returns(batch.Object);
+        batch
+            .Setup(value => value.ExecuteAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response.Object);
+        response.SetupGet(value => value.IsSuccessStatusCode).Returns(true);
+
+        await RepositoryForItemWithETag.UpdateAsBatchAsync([item]);
+
+        batch.Verify(value => value.UpsertItem(
+            item,
+            It.Is<TransactionalBatchItemRequestOptions>(options => options.IfMatchEtag == null)), Times.Once);
+    }
+
+    [Fact]
     public async Task GetAsyncGivenExpressionQueriesContainerCorrectly()
     {
         //Arrange

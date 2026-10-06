@@ -25,7 +25,7 @@ internal partial class InMemoryRepository<TItem>
             results.Add(item);
         }
 
-        Changes?.Invoke(new ChangeFeedItemArgs<TItem>(results));
+        PublishChanges(new ChangeFeedItemArgs<TItem>(results));
 
         return results;
     }
@@ -34,12 +34,7 @@ internal partial class InMemoryRepository<TItem>
     {
         await Task.CompletedTask;
 
-        TItem? item = InMemoryStorage
-            .GetValues<TItem>()
-            .Select(DeserializeItem)
-            .FirstOrDefault(i => i.Id == value.Id && i.PartitionKey == value.PartitionKey);
-
-        if (item is not null)
+        if (FindStoredItem(value.Id, value.PartitionKey) is not null)
         {
             Conflict();
         }
@@ -49,16 +44,20 @@ internal partial class InMemoryRepository<TItem>
             valueWithTimestamps.CreatedTimeUtc = DateTime.UtcNow;
         }
 
-        var serialisedValue = InMemoryRepository<TItem>.SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
-
+        string storageKey = InMemoryStorage.GetKey(value.Id, value.PartitionKey);
+        string serialisedValue = SerializeItem(value, Guid.NewGuid().ToString(), CurrentTs);
         ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
-        items.TryAdd(value.Id, serialisedValue);
 
-        value = DeserializeItem(items[value.Id]);
+        if (!items.TryAdd(storageKey, serialisedValue))
+        {
+            Conflict();
+        }
+
+        value = DeserializeItem(items[storageKey]);
 
         if (raiseChanges)
         {
-            Changes?.Invoke(new ChangeFeedItemArgs<TItem>(value));
+            PublishChanges(new ChangeFeedItemArgs<TItem>(value));
         }
 
         return value;

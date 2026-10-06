@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
     internal static IServiceCollection AddCosmosRepository(
         this IServiceCollection services,
         string? connectionName,
-        IConfiguration? configuration,        
+        IConfiguration? configuration,
         Action<RepositoryOptions>? setupAction = default,
         Action<CosmosClientOptions>? additionalSetupAction = default)
     {
@@ -55,6 +55,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(DefaultRepository<>))
             .AddSingleton(typeof(IBatchRepository<>), typeof(DefaultRepository<>))
             .AddSingleton(typeof(IRepository<>), typeof(DefaultRepository<>))
+            .AddSingleton<IBatchBuilderFactory, DefaultBatchBuilderFactory>()
             .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
             .AddSingleton<ICosmosItemConfigurationProvider, DefaultCosmosItemConfigurationProvider>()
             .AddSingleton<ICosmosQueryableProcessor, DefaultCosmosQueryableProcessor>()
@@ -116,9 +117,13 @@ public static class ServiceCollectionExtensions
         }
 
         services
+            .AddOptions()
+            .AddSingleton<ICosmosContainerNameProvider, DefaultCosmosContainerNameProvider>()
             .AddSingleton(typeof(IReadOnlyRepository<>), typeof(InMemoryRepository<>))
             .AddSingleton(typeof(IWriteOnlyRepository<>), typeof(InMemoryRepository<>))
+            .AddSingleton(typeof(IBatchRepository<>), typeof(InMemoryRepository<>))
             .AddSingleton(typeof(IRepository<>), typeof(InMemoryRepository<>))
+            .AddSingleton<IBatchBuilderFactory, InMemoryBatchBuilderFactory>()
             .AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>()
             .AddSingleton(typeof(InMemoryChangeFeed<>));
 

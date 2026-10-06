@@ -6,6 +6,7 @@ namespace Microsoft.Azure.CosmosRepository.Services;
 class DefaultCosmosContainerService : ICosmosContainerService
 {
     readonly ICosmosItemConfigurationProvider _cosmosItemConfigurationProvider;
+    readonly ICosmosContainerNameProvider _cosmosContainerNameProvider;
     readonly ICosmosClientProvider _cosmosClientProvider;
     readonly ILogger<DefaultCosmosContainerService> _logger;
     readonly RepositoryOptions _options;
@@ -14,6 +15,7 @@ class DefaultCosmosContainerService : ICosmosContainerService
 
     public DefaultCosmosContainerService(
         ICosmosItemConfigurationProvider cosmosItemConfigurationProvider,
+        ICosmosContainerNameProvider cosmosContainerNameProvider,
         ICosmosClientProvider cosmosClientProvider,
         IOptions<RepositoryOptions> options,
         ILogger<DefaultCosmosContainerService> logger,
@@ -22,6 +24,7 @@ class DefaultCosmosContainerService : ICosmosContainerService
         repositoryOptionsValidator.ValidateForContainerCreation(options);
 
         _cosmosItemConfigurationProvider = cosmosItemConfigurationProvider;
+        _cosmosContainerNameProvider = cosmosContainerNameProvider;
         _cosmosClientProvider = cosmosClientProvider;
         _logger = logger;
         _options = options.Value;
@@ -111,16 +114,16 @@ class DefaultCosmosContainerService : ICosmosContainerService
             throw new InvalidOperationException("You must provided at least one item type to get a container for");
         }
 
-        var containerName =
-            _cosmosItemConfigurationProvider.GetItemConfiguration(itemTypes[0]).ContainerName;
+        BatchContainerValidation.EnsureSameContainer(
+            itemTypes,
+            itemType => _options.ContainerPerItemType
+                ? _cosmosContainerNameProvider.GetContainerName(itemType)
+                : _options.ContainerId);
 
-        if (itemTypes.Select(x => _cosmosItemConfigurationProvider.GetItemConfiguration(x))
-            .All(x => x.ContainerName == containerName))
-        {
-            return GetContainerAsync(itemTypes[0]);
-        }
+        Type seedType = itemTypes
+            .OrderBy(itemType => itemType.FullName, StringComparer.Ordinal)
+            .First();
 
-        throw new InvalidOperationException(
-            "The item types provided are not all configured to use the same container");
+        return GetContainerAsync(seedType);
     }
 }

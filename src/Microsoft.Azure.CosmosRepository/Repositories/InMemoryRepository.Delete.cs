@@ -31,17 +31,25 @@ internal partial class InMemoryRepository<TItem>
             partitionKey = new PartitionKey(id);
         }
 
-        TItem? item = InMemoryStorage
-            .GetValues<TItem>()
-            .Select(DeserializeItem)
-            .FirstOrDefault(i => i.Id == id && new PartitionKey(i.PartitionKey) == partitionKey);
+        ConcurrentDictionary<string, string> items = InMemoryStorage.GetDictionary<TItem>();
+        string? storageKey = null;
 
-        if (item is null)
+        foreach (KeyValuePair<string, string> entry in items)
+        {
+            TItem item = DeserializeItem(entry.Value);
+
+            if (item.Id == id && new PartitionKey(item.PartitionKey) == partitionKey)
+            {
+                storageKey = entry.Key;
+                break;
+            }
+        }
+
+        if (storageKey is null)
         {
             NotFound();
         }
 
-
-        InMemoryStorage.GetDictionary<TItem>().TryRemove(item!.Id, out _);
+        items.TryRemove(storageKey!, out _);
     }
 }
