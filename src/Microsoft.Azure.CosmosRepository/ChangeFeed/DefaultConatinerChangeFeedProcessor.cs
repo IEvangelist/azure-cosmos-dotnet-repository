@@ -53,6 +53,17 @@ internal class DefaultContainerChangeFeedProcessor : IContainerChangeFeedProcess
         {
             builder.WithStartTime(_changeFeedOptions.StartTime.Value);
         }
+
+        if (_changeFeedOptions.LeaseAcquireInterval.HasValue ||
+            _changeFeedOptions.LeaseExpirationInterval.HasValue ||
+            _changeFeedOptions.LeaseRenewInterval.HasValue)
+        {
+            builder.WithLeaseConfiguration(
+                _changeFeedOptions.LeaseAcquireInterval,
+                _changeFeedOptions.LeaseExpirationInterval,
+                _changeFeedOptions.LeaseRenewInterval);
+        }
+
         _processor = builder.Build();
 
         _logger.LogInformation("Starting change feed processor for container {ContainerName}", itemContainer.Id);

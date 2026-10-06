@@ -52,6 +52,47 @@ public class DefaultChangeFeedOptionsProviderTests
     }
 
     [Fact]
+    public void GetOptionsForItems_ItemTypesWithDifferentLeaseIntervals_ThrowsMissMatchedChangeFeedOptionsException()
+    {
+        //Arrange
+        RepositoryOptions repositoryOptions = new();
+        IChangeFeedOptionsProvider sut = CreateSut(() => repositoryOptions);
+
+        repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
+            builder.WithChangeFeedMonitoring(options => options.LeaseRenewInterval = TimeSpan.FromSeconds(30)));
+
+        repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
+            builder.WithChangeFeedMonitoring(options => options.LeaseRenewInterval = TimeSpan.FromSeconds(45)));
+
+        IReadOnlyList<Type> types = new[] { typeof(TestItem), typeof(AnotherTestItem) };
+
+        //Act
+        //Assert
+        Assert.Throws<MissMatchedChangeFeedOptionsException>(() =>
+            sut.GetOptionsForItems(types));
+    }
+
+    [Fact]
+    public void GetOptionsForItems_ItemTypesWithSameLeaseIntervals_GetsChangeFeedOptions()
+    {
+        //Arrange
+        RepositoryOptions repositoryOptions = new();
+        IChangeFeedOptionsProvider sut = CreateSut(() => repositoryOptions);
+
+        repositoryOptions.ContainerBuilder.Configure<TestItem>(builder =>
+            builder.WithChangeFeedMonitoring(options => options.LeaseRenewInterval = TimeSpan.FromSeconds(30)));
+
+        repositoryOptions.ContainerBuilder.Configure<AnotherTestItem>(builder =>
+            builder.WithChangeFeedMonitoring(options => options.LeaseRenewInterval = TimeSpan.FromSeconds(30)));
+
+        //Act
+        ChangeFeedOptions options = sut.GetOptionsForItems(new[] { typeof(TestItem), typeof(AnotherTestItem) });
+
+        //Assert
+        Assert.Equal(TimeSpan.FromSeconds(30), options.LeaseRenewInterval);
+    }
+
+    [Fact]
     public void GetOptionsForItems_UsesCurrentOptionsValueAtCallTime()
     {
         //Arrange

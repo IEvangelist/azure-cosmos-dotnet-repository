@@ -39,4 +39,80 @@ public class ChangeFeedOptionsTests
         //Assert
         Assert.Null(actual.StartTime);
     }
+
+    [Fact]
+    public void LeaseIntervals_SetValues_RoundTrip()
+    {
+        //Arrange
+        var acquire = TimeSpan.FromSeconds(13);
+        var expiration = TimeSpan.FromSeconds(120);
+        var renew = TimeSpan.FromSeconds(30);
+
+        //Act
+        var actual = new ChangeFeedOptions(typeof(object))
+        {
+            LeaseAcquireInterval = acquire,
+            LeaseExpirationInterval = expiration,
+            LeaseRenewInterval = renew
+        };
+
+        //Assert
+        Assert.Equal(acquire, actual.LeaseAcquireInterval);
+        Assert.Equal(expiration, actual.LeaseExpirationInterval);
+        Assert.Equal(renew, actual.LeaseRenewInterval);
+    }
+
+    [Fact]
+    public void LeaseIntervals_NotSet_AreNull()
+    {
+        //Arrange
+        //Act
+        var actual = new ChangeFeedOptions(typeof(object));
+
+        //Assert
+        Assert.Null(actual.LeaseAcquireInterval);
+        Assert.Null(actual.LeaseExpirationInterval);
+        Assert.Null(actual.LeaseRenewInterval);
+    }
+
+    [Fact]
+    public void IsTheSameAs_SameLeaseIntervals_ReturnsTrue()
+    {
+        //Arrange
+        var left = new ChangeFeedOptions(typeof(object))
+        {
+            LeaseAcquireInterval = TimeSpan.FromSeconds(13),
+            LeaseExpirationInterval = TimeSpan.FromSeconds(120),
+            LeaseRenewInterval = TimeSpan.FromSeconds(30)
+        };
+        var right = new ChangeFeedOptions(typeof(object))
+        {
+            LeaseAcquireInterval = TimeSpan.FromSeconds(13),
+            LeaseExpirationInterval = TimeSpan.FromSeconds(120),
+            LeaseRenewInterval = TimeSpan.FromSeconds(30)
+        };
+
+        //Act
+        //Assert
+        Assert.True(left.IsTheSameAs(right));
+    }
+
+    public static IEnumerable<object[]> DifferingLeaseInterval()
+    {
+        yield return new object[] { new ChangeFeedOptions(typeof(object)) { LeaseAcquireInterval = TimeSpan.FromSeconds(13) } };
+        yield return new object[] { new ChangeFeedOptions(typeof(object)) { LeaseExpirationInterval = TimeSpan.FromSeconds(120) } };
+        yield return new object[] { new ChangeFeedOptions(typeof(object)) { LeaseRenewInterval = TimeSpan.FromSeconds(30) } };
+    }
+
+    [Theory]
+    [MemberData(nameof(DifferingLeaseInterval))]
+    public void IsTheSameAs_DifferentLeaseInterval_ReturnsFalse(ChangeFeedOptions withInterval)
+    {
+        //Arrange
+        var without = new ChangeFeedOptions(typeof(object));
+
+        //Act
+        //Assert
+        Assert.False(withInterval.IsTheSameAs(without));
+    }
 }
