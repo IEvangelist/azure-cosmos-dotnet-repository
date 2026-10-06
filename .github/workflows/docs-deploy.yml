@@ -73,6 +73,9 @@ jobs:
       - name: Generate API reference (docfx → MDX)
         run: pnpm api
 
+      - name: Sync contributors data
+        run: pnpm contributors
+
       - name: Type check
         run: pnpm check
 

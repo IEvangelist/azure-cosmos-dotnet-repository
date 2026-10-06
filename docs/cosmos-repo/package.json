@@ -6,9 +6,11 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "predev": "pnpm contributors",
     "dev": "astro dev",
     "api": "docfx metadata docfx.json && node scripts/api-to-mdx.mjs",
-    "build": "astro build && pagefind --site dist",
+    "contributors": "node scripts/sync-contributors.mjs",
+    "build": "pnpm contributors && astro build && pagefind --site dist",
     "build:astro": "astro build",
     "preview": "astro preview",
     "astro": "astro",

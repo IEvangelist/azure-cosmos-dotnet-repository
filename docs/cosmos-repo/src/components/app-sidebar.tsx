@@ -9,6 +9,7 @@ import {
   Rocket,
   Search,
   SlidersHorizontal,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -182,6 +183,14 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Contributors">
+              <a href={withBase("/contributors")}>
+                <Users aria-hidden="true" />
+                <span>Contributors</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="NuGet package">
               <a

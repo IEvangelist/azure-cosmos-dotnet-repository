@@ -1,0 +1,56 @@
+---
+import LandingLayout from "@/layouts/LandingLayout.astro";
+import { ContributorsExplorer } from "@/components/contributors-explorer";
+import { withBase } from "@/lib/utils";
+import { HeartHandshake } from "lucide-react";
+import contributors from "@/data/contributors.json";
+---
+
+<LandingLayout
+  title="Contributors"
+  description="Everyone who has helped build and improve the Azure Cosmos DB Repository .NET SDK."
+>
+  <section class="relative isolate overflow-hidden">
+    <div
+      class="hero-gradient absolute inset-0 -z-10 opacity-70"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="mx-auto max-w-6xl px-4 py-16 md:px-8 md:py-24">
+      <p
+        class="mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur"
+      >
+        <HeartHandshake className="size-3.5 text-primary" aria-hidden="true" />
+        Thank you
+      </p>
+      <h1 class="text-balance text-4xl font-bold tracking-tight md:text-6xl">
+        Built by the <span class="text-primary">community</span>.
+      </h1>
+      <p class="mt-5 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
+        This project follows the <a
+          class="cursor-pointer text-foreground underline-offset-4 hover:underline"
+          href="https://github.com/all-contributors/all-contributors"
+          target="_blank"
+          rel="noreferrer">all-contributors</a
+        > specification. Contributions of any kind are welcome — code, tests, docs, ideas, and reviews all count.
+      </p>
+    </div>
+  </section>
+
+  <section class="border-t border-border/60">
+    <div class="mx-auto max-w-6xl px-4 py-16 md:px-8">
+      <ContributorsExplorer client:load contributors={contributors} />
+      <p class="mt-12 text-center text-sm text-muted-foreground">
+        Want to see your avatar here? Check out the <a
+          class="cursor-pointer text-foreground underline-offset-4 hover:underline"
+          href={withBase("/docs/getting-started")}>getting started guide</a
+        > and open a pull request on <a
+          class="cursor-pointer text-foreground underline-offset-4 hover:underline"
+          href="https://github.com/IEvangelist/azure-cosmos-dotnet-repository"
+          target="_blank"
+          rel="noreferrer">GitHub</a
+        >.
+      </p>
+    </div>
+  </section>
+</LandingLayout>

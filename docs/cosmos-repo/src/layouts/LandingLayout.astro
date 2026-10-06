@@ -4,7 +4,7 @@ import NuGetIcon from "@/components/icons/NuGetIcon.astro";
 import DiscordIcon from "@/components/icons/DiscordIcon.astro";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { withBase } from "@/lib/utils";
-import { BookOpen, History } from "lucide-react";
+import { BookOpen, History, Users } from "lucide-react";
 
 export interface Props {
   title: string;
@@ -53,6 +53,13 @@ const { title, description } = Astro.props;
         >
           <History className="size-4" aria-hidden="true" />
           Release notes
+        </a>
+        <a
+          class="hover:text-foreground inline-flex items-center gap-1.5"
+          href={withBase("/contributors")}
+        >
+          <Users className="size-4" aria-hidden="true" />
+          Contributors
         </a>
         <a
           class="hover:text-foreground inline-flex items-center gap-1.5"
