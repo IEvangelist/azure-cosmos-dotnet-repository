@@ -14,7 +14,7 @@
     "build:astro": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check",
+    "check": "pnpm contributors && astro check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
