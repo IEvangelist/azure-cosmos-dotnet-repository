@@ -76,7 +76,7 @@ internal class DefaultCosmosEventSourcingBuilder(IServiceCollection services) : 
         }
 
         services.Scan(x => x.FromAssemblies(assemblies)
-            .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventProjection<,,>)))
+            .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventProjection<,,>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 
