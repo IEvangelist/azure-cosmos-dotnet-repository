@@ -32,6 +32,11 @@ public class Processor2 : IItemChangeFeedProcessor<TestItem2>
     public ValueTask HandleAsync(TestItem2 rating, CancellationToken cancellationToken) => throw new System.NotImplementedException();
 }
 
+internal class InternalProcessor : IItemChangeFeedProcessor<TestItem1>
+{
+    public ValueTask HandleAsync(TestItem1 rating, CancellationToken cancellationToken) => throw new System.NotImplementedException();
+}
+
 public class ServiceCollectionExtensionsTests
 {
     [Fact]
@@ -67,5 +72,18 @@ public class ServiceCollectionExtensionsTests
         ServiceProvider? provider = services.BuildServiceProvider();
         provider.GetRequiredService<IItemChangeFeedProcessor<TestItem1>>();
         provider.GetRequiredService<IItemChangeFeedProcessor<TestItem2>>();
+    }
+
+    [Fact]
+    public void AddCosmosRepositoryItemChangeFeedProcessors_RegistersInternalProcessors()
+    {
+        ServiceCollection services = new();
+        services.AddCosmosRepositoryItemChangeFeedProcessors(Assembly.GetExecutingAssembly());
+
+        using ServiceProvider provider = services.BuildServiceProvider();
+
+        Assert.Contains(
+            provider.GetServices<IItemChangeFeedProcessor<TestItem1>>(),
+            processor => processor is InternalProcessor);
     }
 }

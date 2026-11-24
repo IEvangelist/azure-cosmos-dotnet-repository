@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
         params Assembly[] assemblies)
     {
         services.Scan(scan => scan.FromAssemblies(assemblies)
-            .AddClasses(classes => classes.AssignableTo(typeof(IItemChangeFeedProcessor<>)))
+            .AddClasses(classes => classes.AssignableTo(typeof(IItemChangeFeedProcessor<>)), publicOnly: false)
             .AsImplementedInterfaces().WithSingletonLifetime());
 
         return services;
